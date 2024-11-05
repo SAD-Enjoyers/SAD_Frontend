@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Container,
-  Divider,
   IconButton,
   InputAdornment,
   TextField,
@@ -11,8 +10,6 @@ import {
   Snackbar,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import GoogleIcon from "@mui/icons-material/Google";
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -42,7 +39,7 @@ function Signup() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        minHeight: "100vh",
+        minHeight: "100vh", // Full height of the viewport
       }}
     >
       <Box
@@ -91,7 +88,7 @@ function Signup() {
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton onClick={handleClickShowPassword} edge="end">
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               </InputAdornment>
             ),
@@ -110,7 +107,7 @@ function Signup() {
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton onClick={handleClickShowConfirmPassword} edge="end">
-                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               </InputAdornment>
             ),
@@ -133,35 +130,6 @@ function Signup() {
             Login
           </a>
         </Typography>
-
-        <Divider sx={{ width: "100%", mt: 2, mb: 2 }}>Or</Divider>
-
-        <Button
-          variant="contained"
-          startIcon={<FacebookIcon />}
-          fullWidth
-          sx={{
-            mb: 1,
-            backgroundColor: "#3b5998",
-            color: "white",
-            "&:hover": { backgroundColor: "#365492" },
-          }}
-        >
-          Login with Facebook
-        </Button>
-
-        <Button
-          variant="contained"
-          startIcon={<GoogleIcon />}
-          fullWidth
-          sx={{
-            backgroundColor: "#db4437",
-            color: "white",
-            "&:hover": { backgroundColor: "#c33d2f" },
-          }}
-        >
-          Login with Google
-        </Button>
       </Box>
 
       <Snackbar
