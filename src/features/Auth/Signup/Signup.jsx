@@ -8,28 +8,94 @@ import {
   TextField,
   Typography,
   Snackbar,
+  Checkbox,
+  FormControlLabel,
+  CircularProgress,
+  Link,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [username, setUsername] = useState(""); // New state for username
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleClickShowConfirmPassword = () =>
     setShowConfirmPassword((show) => !show);
 
-  const handleSignup = () => {
+  const validateUsername = (username) => /^[a-zA-Z0-9]{4,15}$/.test(username); // Alphanumeric, 4-15 characters
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePasswordStrength = (password) =>
+    password.length >= 8 && /[A-Z]/.test(password) && /\d/.test(password);
+
+  const handleSignup = async () => {
+    if (!username || !email || !password || !confirmPassword) {
+      setErrorMessage("All fields are required");
+      return;
+    }
+    if (!validateUsername(username)) {
+      setErrorMessage("Username must be 4-15 alphanumeric characters");
+      return;
+    }
+    if (!validateEmail(email)) {
+      setErrorMessage("Invalid email format");
+      return;
+    }
+    if (!validatePasswordStrength(password)) {
+      setErrorMessage(
+        "Password must be at least 8 characters, include an uppercase letter and a number"
+      );
+      return;
+    }
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match");
       return;
     }
-    // Add your signup logic here (e.g., API call)
+    if (!agreedToTerms) {
+      setErrorMessage("You must agree to the terms and conditions");
+      return;
+    }
+
+    // Simulate a signup process with a loading indicator
+    setLoading(true);
+
+    try {
+      const response = await fetch("https://your-api-url.com/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+        }),
+      });
+
+      if (!response.ok) {
+        // Handle error responses
+        const errorData = await response.json();
+        setErrorMessage(
+          errorData.message || "Signup failed. Please try again."
+        );
+      } else {
+        // Handle successful signup
+        const data = await response.json();
+        alert("Signup successful! Check your email for confirmation.");
+      }
+    } catch (error) {
+      // Handle network or other unexpected errors
+      setErrorMessage("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,7 +105,7 @@ function Signup() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        minHeight: "100vh", // Full height of the viewport
+        minHeight: "100vh",
       }}
     >
       <Box
@@ -64,7 +130,13 @@ function Signup() {
           variant="outlined"
           margin="normal"
           value={username}
-          onChange={(e) => setUsername(e.target.value)} // Handle username input
+          onChange={(e) => setUsername(e.target.value)}
+          error={!validateUsername(username) && Boolean(errorMessage)}
+          helperText={
+            !validateUsername(username)
+              ? "Username should be 4-15 alphanumeric characters."
+              : ""
+          }
         />
 
         <TextField
@@ -74,6 +146,12 @@ function Signup() {
           margin="normal"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          error={Boolean(errorMessage && !validateEmail(email))}
+          helperText={
+            !validateEmail(email)
+              ? "Enter a valid email address (e.g., name@example.com)."
+              : ""
+          }
         />
 
         <TextField
@@ -93,6 +171,12 @@ function Signup() {
               </InputAdornment>
             ),
           }}
+          error={!validatePasswordStrength(password) && Boolean(errorMessage)}
+          helperText={
+            !validatePasswordStrength(password)
+              ? "Password must be 8+ characters, include an uppercase letter and a number."
+              : ""
+          }
         />
 
         <TextField
@@ -112,6 +196,28 @@ function Signup() {
               </InputAdornment>
             ),
           }}
+          error={password !== confirmPassword && Boolean(errorMessage)}
+          helperText={
+            password !== confirmPassword ? "Passwords do not match." : ""
+          }
+        />
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={agreedToTerms}
+              onChange={(e) => setAgreedToTerms(e.target.checked)}
+              color="primary"
+            />
+          }
+          label={
+            <Typography variant="body2">
+              I agree to the{" "}
+              <Link href="/terms" underline="hover" color="primary">
+                terms and conditions
+              </Link>
+            </Typography>
+          }
         />
 
         <Button
@@ -120,15 +226,16 @@ function Signup() {
           fullWidth
           sx={{ mt: 2, mb: 2 }}
           onClick={handleSignup}
+          disabled={loading}
         >
-          Signup
+          {loading ? <CircularProgress size={24} color="inherit" /> : "Signup"}
         </Button>
 
         <Typography variant="body2">
           Already have an account?{" "}
-          <a href="/login" style={{ color: "#1976d2", textDecoration: "none" }}>
+          <Link href="/login" underline="hover" color="primary">
             Login
-          </a>
+          </Link>
         </Typography>
       </Box>
 
