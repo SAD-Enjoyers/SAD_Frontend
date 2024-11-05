@@ -40,3 +40,9 @@
 .read-the-docs {
   color: #888;
 }
+
+body {
+  background-color: #3367d6; /* Adjust color to match the blue shade you want */
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
