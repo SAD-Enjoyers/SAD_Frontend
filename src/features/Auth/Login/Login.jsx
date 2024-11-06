@@ -9,33 +9,29 @@ import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
 
 const Login = () => {
   // Password Field
   const [showPassword, setShowPassword] = React.useState(false);
 
-//   // Inputs
-//   const { emailInput, setEmailInput } = useState();
-//   const { passwordInput, setPasswordInput } = useState();
+  //   // Inputs
+  //   const { emailInput, setEmailInput } = useState();
+  //   const { passwordInput, setPasswordInput } = useState();
 
+  //   // // Input Error
+  //   const[emailError,setEmailError]=useState(false);
+  //   const[passwordError,setPasswordError]=useState(false);
 
-//   // // Input Error
-//   const[emailError,setEmailError]=useState(false);
-//   const[passwordError,setPasswordError]=useState(false);
-
-//   //Form Validity
-//   const[formValid,setFormValid]=useState();
-//   const[success,setSuccess]=useState();
+  //   //Form Validity
+  //   const[formValid,setFormValid]=useState();
+  //   const[success,setSuccess]=useState();
 
   //Validation for onBlur Email
-//    const handleEmail
+  //    const handleEmail
 
-
-
-
-
-   //Validation for onBlur Password
-
+  //Validation for onBlur Password
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
@@ -54,8 +50,8 @@ const Login = () => {
       <Paper
         elevation={1}
         sx={{
-          width: 350,
-          height: 450,
+          width: 300,
+          height: 380,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -63,26 +59,26 @@ const Login = () => {
           borderRadius: 2,
         }}
       >
-        <Box component="section" sx={{ fontSize: 20, marginBottom: 2 }}>
+        <Typography sx={{mb:2}} variant="h5" component="h2">
           Login
-        </Box>
+        </Typography>
 
         <TextField
           id="outlined-basic"
           // error={emailError}
           label="Email"
-        //   value={emailInput}
+          //   value={emailInput}
           // onChange={(event) => setEmailInput(event.target.value)}
           variant="outlined"
-          sx={{ width: "80%", marginBottom: 2 }}
+          sx={{ width: "100%", marginBottom: 2 }}
         />
 
-        <FormControl sx={{ width: "80%" }} variant="outlined">
+        <FormControl sx={{ width: "100%" }} variant="outlined">
           <InputLabel htmlFor="outlined-adornment-password">
             Password
           </InputLabel>
           <OutlinedInput
-          // error={passwordError}
+            // error={passwordError}
             id="outlined-adornment-password"
             type={showPassword ? "text" : "password"}
             // value={passwordInput}
@@ -104,21 +100,28 @@ const Login = () => {
             label="Password"
           />
         </FormControl>
-        <Box
-          component="section"
-          sx={{ fontSize: 13, marginTop: "10px", color: "#378CE7" }}
-        >
-          Forget password?
-        </Box>
 
-        <Button variant="contained">Login</Button>
+        <Typography variant="body2" sx={{ mt: 2,mb:2 }}>
+          <Link href="" underline="hover" color="primary">
+            Forgot password?
+          </Link>
+        </Typography>
 
-        <Box
-          component="section"
-          sx={{ fontSize: 13, marginTop: "10px", color: "#378CE7" }}
-        >
-          Dont have an account ? Signup
-        </Box>
+        <Button sx={{width:"100%"}} variant="contained">Login</Button>
+
+        <Typography variant="body2" sx={{ mt: 2 }}>
+          Dont have an account?{" "}
+          <Link href="signup" underline="hover" color="primary">
+             Signup
+          </Link>
+        </Typography>
+
+        <Typography variant="body2" sx={{ mt: 2 }}>
+          <Link href="/" underline="hover" color="primary">
+            Go to Homepage
+          </Link>
+        </Typography>
+        
       </Paper>
     </Container>
   );
