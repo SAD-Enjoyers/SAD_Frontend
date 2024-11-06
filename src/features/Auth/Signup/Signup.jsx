@@ -30,7 +30,7 @@ function Signup() {
   const handleClickShowConfirmPassword = () =>
     setShowConfirmPassword((show) => !show);
 
-  const validateUsername = (username) => /^[a-zA-Z0-9]{4,15}$/.test(username); // Alphanumeric, 4-15 characters
+  const validateUsername = (username) => /^[a-zA-Z0-9]{4,15}$/.test(username);
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePasswordStrength = (password) =>
     password.length >= 8 && /[A-Z]/.test(password) && /\d/.test(password);
@@ -63,7 +63,6 @@ function Signup() {
       return;
     }
 
-    // Simulate a signup process with a loading indicator
     setLoading(true);
 
     try {
@@ -80,18 +79,14 @@ function Signup() {
       });
 
       if (!response.ok) {
-        // Handle error responses
         const errorData = await response.json();
         setErrorMessage(
           errorData.message || "Signup failed. Please try again."
         );
       } else {
-        // Handle successful signup
-        const data = await response.json();
         alert("Signup successful! Check your email for confirmation.");
       }
     } catch (error) {
-      // Handle network or other unexpected errors
       setErrorMessage("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -124,6 +119,7 @@ function Signup() {
           Signup
         </Typography>
 
+        {/* Form Fields */}
         <TextField
           fullWidth
           label="Username"
@@ -138,7 +134,6 @@ function Signup() {
               : ""
           }
         />
-
         <TextField
           fullWidth
           label="Email"
@@ -153,7 +148,6 @@ function Signup() {
               : ""
           }
         />
-
         <TextField
           fullWidth
           label="Create password"
@@ -178,7 +172,6 @@ function Signup() {
               : ""
           }
         />
-
         <TextField
           fullWidth
           label="Confirm password"
@@ -231,15 +224,10 @@ function Signup() {
           {loading ? <CircularProgress size={24} color="inherit" /> : "Signup"}
         </Button>
 
-        <Typography variant="body2">
+        <Typography variant="body2" sx={{ mt: 1 }}>
           Already have an account?{" "}
           <Link href="/login" underline="hover" color="primary">
             Login
-          </Link>
-        </Typography>
-        <Typography variant="body2">
-          <Link href="/" underline="hover" color="primary">
-            Go to Homepage
           </Link>
         </Typography>
       </Box>
