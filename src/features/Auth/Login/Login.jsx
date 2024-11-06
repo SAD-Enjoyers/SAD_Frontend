@@ -28,7 +28,7 @@ const Login = () => {
   const[success,setSuccess]=useState();
 
   //Validation for onBlur Email
-   const handleEmail
+//    const handleEmail
 
 
 
