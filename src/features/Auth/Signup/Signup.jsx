@@ -230,6 +230,12 @@ function Signup() {
             Login
           </Link>
         </Typography>
+
+        <Typography variant="body2" sx={{ mt: 2 }}>
+          <Link href="/" underline="hover" color="primary">
+            Go to Homepage
+          </Link>
+        </Typography>
       </Box>
 
       <Snackbar
