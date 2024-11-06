@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./features/Home/Home";
 import Signup from "./features/Auth/Signup/Signup.jsx";
-// import Login from "./features/Auth/Login/Login.jsx";
+import Login from "./features/Auth/Login/Login.jsx";
 
 function AppRoutes() {
   return (
@@ -10,7 +10,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
-        {/* <Route path="/login" element={<Signup />} /> */}
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   );

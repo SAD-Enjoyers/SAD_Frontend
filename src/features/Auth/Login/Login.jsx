@@ -14,18 +14,18 @@ const Login = () => {
   // Password Field
   const [showPassword, setShowPassword] = React.useState(false);
 
-  // Inputs
-  const { emailInput, setEmailInput } = useState();
-  const { passwordInput, setPasswordInput } = useState();
+//   // Inputs
+//   const { emailInput, setEmailInput } = useState();
+//   const { passwordInput, setPasswordInput } = useState();
 
 
-  // // Input Error
-  const[emailError,setEmailError]=useState(false);
-  const[passwordError,setPasswordError]=useState(false);
+//   // // Input Error
+//   const[emailError,setEmailError]=useState(false);
+//   const[passwordError,setPasswordError]=useState(false);
 
-  //Form Validity
-  const[formValid,setFormValid]=useState();
-  const[success,setSuccess]=useState();
+//   //Form Validity
+//   const[formValid,setFormValid]=useState();
+//   const[success,setSuccess]=useState();
 
   //Validation for onBlur Email
 //    const handleEmail
@@ -71,7 +71,7 @@ const Login = () => {
           id="outlined-basic"
           // error={emailError}
           label="Email"
-          value={emailInput}
+        //   value={emailInput}
           // onChange={(event) => setEmailInput(event.target.value)}
           variant="outlined"
           sx={{ width: "80%", marginBottom: 2 }}
