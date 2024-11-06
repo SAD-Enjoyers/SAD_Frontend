@@ -12,6 +12,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 
+
 const Login = () => {
   // Password Field
   const [showPassword, setShowPassword] = React.useState(false);
@@ -29,9 +30,25 @@ const Login = () => {
   //   const[success,setSuccess]=useState();
 
   //Validation for onBlur Email
-  //    const handleEmail
+  //    const handleEmail=()=>{
+  //   if (!isEmail(emailInput)){
+  //     setEmailError(false);
+  //   }
+
+  // }
 
   //Validation for onBlur Password
+// const handlePassword = () =>{
+//   if(
+// !passwordInput || passwordInput.length < 5 || passwordInput.length > 20
+
+//   ){
+
+//     setPasswordError(true);
+//     return;
+//   }
+//   setPasswordError(false);
+// }
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
