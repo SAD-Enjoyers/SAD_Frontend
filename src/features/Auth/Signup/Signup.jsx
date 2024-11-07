@@ -14,6 +14,7 @@ import {
   Link,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,6 +26,8 @@ function Signup() {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+
+  const navigate = useNavigate(); // Initialize navigate
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleClickShowConfirmPassword = () =>
@@ -85,6 +88,7 @@ function Signup() {
         );
       } else {
         alert("Signup successful! Check your email for confirmation.");
+        navigate("/login"); // Redirect to login page
       }
     } catch (error) {
       setErrorMessage("An unexpected error occurred. Please try again.");
