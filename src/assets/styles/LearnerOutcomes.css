@@ -1,0 +1,64 @@
+/* استایل برای بخش Container */
+.learnerOutcomesContainer {
+    background-color: #FFFFFF;
+    padding: 40px;
+  }
+  
+  /* استایل برای جعبه تصویر */
+  .learnerOutcomesImagesContainer {
+    position: relative;
+    width: 250px;
+    height: 150px;
+    margin: 0 auto;
+  }
+  
+  /* استایل برای تصویر اول */
+  .learnerOutcomesImage1 {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-90%, 0);
+    width: 300px;
+    border-radius: 8px;
+  }
+  
+  /* استایل برای تصویر دوم */
+  .learnerOutcomesImage2 {
+    position: absolute;
+    top: 130px;
+    right: -60px;
+    width: 200px;
+    border-radius: 8px;
+  }
+  
+  /* استایل برای تصویر سوم */
+  .learnerOutcomesImage3 {
+    position: absolute;
+    top: 250px;
+    left: 50%;
+    transform: translate(-90%, 0);
+    width: 250px;
+    border-radius: 8px;
+  }
+  
+  /* استایل برای جعبه متن */
+  .learnerOutcomesTextContainer {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  /* استایل برای جعبه متن داخل */
+  .learnerOutcomesTextBox {
+    max-width: 600px;
+    padding: 20px;
+    line-height: 1.6;
+    margin-top: 300px;
+  }
+  
+  /* استایل برای دکمه */
+  .learnerOutcomesButton {
+    margin-top: 10px;
+  }
+  

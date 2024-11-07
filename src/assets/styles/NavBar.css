@@ -1,0 +1,44 @@
+.appBar {
+    transition: top .3s ease;
+    background: white;
+  }
+  
+  /* آیکون منو */
+  .appBar .menuIcon {
+    color: #378CE7;
+  }
+  
+  /* استایل‌های متن لوگو */
+  .appBar .logoText {
+    display: flex;
+    align-items: center;
+    font-family: monospace;
+    font-weight: 700;
+    letter-spacing: .3rem;
+    color: #378CE7;
+    text-decoration: none;
+  }
+  
+  .appBar .logoText:hover {
+    color: #378CE7;
+  }
+  
+  /* استایل‌های دکمه‌های منو */
+  .appBar .menuButton {
+    color: #7D7D7D;
+  }
+  
+  .appBar .menuButton:hover {
+    color: #378CE7;
+  }
+  
+  /* استایل‌های دکمه‌های ورود و ثبت‌نام */
+  .appBar .loginButton {
+    color: #378CE7;
+  }
+  
+  .appBar .signupButton {
+    color: #378CE7;
+    border-color: #378CE7;
+  }
+  
