@@ -14,6 +14,7 @@ import {
   Link,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,6 +27,8 @@ function Signup() {
   const [loading, setLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
+  const navigate = useNavigate(); // Initialize navigate
+
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleClickShowConfirmPassword = () =>
     setShowConfirmPassword((show) => !show);
@@ -36,7 +39,8 @@ function Signup() {
     password.length >= 8 && /[A-Z]/.test(password) && /\d/.test(password);
 
   const handleSignup = async () => {
-    if (!username || !email || !password || !confirmPassword) {
+    // Input validation checks
+    if (!username || !email || !password) {
       setErrorMessage("All fields are required");
       return;
     }
@@ -63,33 +67,41 @@ function Signup() {
       return;
     }
 
-    setLoading(true);
+    setLoading(true); // Show loading indicator
 
     try {
-      const response = await fetch("https://your-api-url.com/signup", {
+      // Send POST request to the backend
+      const response = await fetch("/api/v1/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username,
-          email,
-          password,
+          userName: username, // Ensure these match the backend field names
+          email: email,
+          userPassword: password,
         }),
       });
+      // console.log(response);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setErrorMessage(
-          errorData.message || "Signup failed. Please try again."
-        );
-      } else {
+      // Wait for JSON response from the server
+      const responseData = await response.json();
+
+      if (response.ok) {
+        // Handle a successful response (e.g., status 201 or 200)
         alert("Signup successful! Check your email for confirmation.");
+        navigate("/login"); // Redirect to the login page or another page as needed
+      } else {
+        // Handle server error messages
+        setErrorMessage(
+          responseData.message || "Signup failed. Please try again."
+        );
       }
     } catch (error) {
+      // Handle network or unexpected errors
       setErrorMessage("An unexpected error occurred. Please try again.");
     } finally {
-      setLoading(false);
+      setLoading(false); // Hide loading indicator
     }
   };
 
