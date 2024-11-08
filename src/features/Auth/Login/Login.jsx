@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 // import axios from "axios";
 import { Container, Paper, TextField, Typography, Link, Button } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -18,6 +18,17 @@ const Login = () => {
   const [passwordError, setPasswordError] = React.useState(false);
   const [formError, setFormError] = React.useState("");
   const [loginSuccess, setLoginSuccess] = React.useState(null);
+
+
+    useEffect(() => {
+      // Add the background class when Signup is mounted
+      document.body.classList.add("signup-background");
+  
+      // Remove the background class when Signup is unmounted
+      return () => {
+        document.body.classList.remove("signup-background");
+      };
+    }, []);
 
   // هندل کردن نمایش رمز عبور
   const handleClickShowPassword = () => setShowPassword((show) => !show);
