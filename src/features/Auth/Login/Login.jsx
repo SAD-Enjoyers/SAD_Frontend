@@ -1,190 +1,134 @@
 import React, { useState, useEffect } from "react";
-// import axios from "axios";
-import { Container, Paper, TextField, Typography, Link, Button } from "@mui/material";
-import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import InputAdornment from "@mui/material/InputAdornment";
-import FormControl from "@mui/material/FormControl";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import {
+  Box,
+  Button,
+  Container,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
+  Snackbar,
+  CircularProgress,
+  Link,
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [username, setUsername] = React.useState(""); // تغییر از ایمیل به یوزرنیم
-  const [password, setPassword] = React.useState("");
-  const [usernameError, setUsernameError] = React.useState(false); // تغییر نام متغیر خطا از ایمیل به یوزرنیم
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [formError, setFormError] = React.useState("");
-  const [loginSuccess, setLoginSuccess] = React.useState(null);
+function Login() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate();
 
-    useEffect(() => {
-      // Add the background class when Signup is mounted
-      document.body.classList.add("signup-background");
-  
-      // Remove the background class when Signup is unmounted
-      return () => {
-        document.body.classList.remove("signup-background");
-      };
-    }, []);
+  useEffect(() => {
+    // Add the background class when the component is mounted
+    document.body.classList.add("signup-background");
 
-  // هندل کردن نمایش رمز عبور
+    // Clean up by removing the class when the component is unmounted
+    return () => {
+      document.body.classList.remove("signup-background");
+    };
+  }, []);
+
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
 
-  // هندل کردن تغییر یوزرنیم
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-    if (usernameError) setUsernameError(false);
-  };
+  const handleLogin = async () => {
+    // Frontend validation checks
+    if (!username || !password) {
+      setErrorMessage("Username and password are required");
+      return;
+    }
 
-  // هندل کردن تغییر رمز عبور
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);    
-    if (passwordError) setPasswordError(false);
-  };
+    setLoading(true);
 
-  const loginUser = async () => {
     try {
+      // Send login request to backend with userName and userPassword
       const response = await fetch("/api/v1/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-
         body: JSON.stringify({
-          username: username, // ارسال یوزرنیم به جای ایمیل
-          password: password,
+          userName: username,
+          userPassword: password,
         }),
       });
-  
-      const data = await response.json();
-  
-      if (response.ok && data.success) {
-        setLoginSuccess(true);
-        console.log("Login successful:", data);
+
+      const responseData = await response.json();
+
+      // Handle backend response
+      if (response.ok) {
+        // Successfully logged in, redirect to home page
+        alert("Login successful!");
+        navigate("/home");
       } else {
-        setLoginSuccess(false);
-        setFormError(data.message || "Login failed");
+        setErrorMessage(
+          responseData.message || "Login failed. Please try again."
+        );
       }
     } catch (error) {
-      setLoginSuccess(false);
-      setFormError("Error logging in. Please try again.");
-      console.error("Login error:", error);
-    }
-  };
-
-
-
-  // هندل کردن ارسال فرم
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    let valid = true;
-
-    if (!username) {
-      setUsernameError(true);
-      valid = false;
-    }
-
-    if (!password || password.length < 5 || password.length > 20) {
-      setPasswordError(true);
-      valid = false;
-    }
-
-    if (valid) {
-      loginUser();
-    } else {
-      setFormError("Please fill in all fields correctly.");
+      setErrorMessage("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Container
+      maxWidth="xs"
       sx={{
-        height: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        minHeight: "100vh",
       }}
     >
-      <Paper
-        elevation={1}
+      <Box
         sx={{
-          width: 300,
-          height: 400,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          padding: 2,
+          padding: 3,
           borderRadius: 2,
+          backgroundColor: "white",
+          boxShadow: 3,
+          width: "100%",
         }}
       >
-        <Typography sx={{ mb: 2 }} variant="h5" component="h2">
+        <Typography variant="h4" gutterBottom>
           Login
         </Typography>
 
         <TextField
-          id="username"
-          error={usernameError}
-          label="Username" // تغییر لیبل از ایمیل به یوزرنیم
-          value={username}
-          onChange={handleUsernameChange}
+          fullWidth
+          label="Username"
           variant="outlined"
-          sx={{ width: "100%", marginBottom: 2 }}
-          helperText={usernameError && "Please enter your username."}
+          margin="normal"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
 
-        <FormControl sx={{ width: "100%" }} variant="outlined">
-          <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-          <OutlinedInput
-            id="outlined-adornment-password"
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={handlePasswordChange}
-            error={passwordError}
-            endAdornment={
+        <TextField
+          fullWidth
+          label="Password"
+          variant="outlined"
+          margin="normal"
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          InputProps={{
+            endAdornment: (
               <InputAdornment position="end">
-                <IconButton
-                  aria-label={
-                    showPassword ? "hide the password" : "display the password"
-                  }
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                <IconButton onClick={handleClickShowPassword} edge="end">
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               </InputAdornment>
-            }
-            label="Password"
-          />
-          {passwordError && (
-            <Typography variant="body2" color="error" sx={{ mt: 0.5 }}>
-              Password should be 5-20 characters long.
-            </Typography>
-          )}
-        </FormControl>
-
-        {formError && (
-          <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-            {formError}
-          </Typography>
-        )}
-
-        {loginSuccess === true && (
-          <Typography variant="body2" color="success" sx={{ mt: 1 }}>
-            Login successful!
-          </Typography>
-        )}
-        {loginSuccess === false && (
-          <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-            Login failed. {formError}
-          </Typography>
-        )}
+            ),
+          }}
+        />
 
         <Typography variant="body2" sx={{ mt: 2, mb: 2 }}>
           <Link href="" underline="hover" color="primary">
@@ -193,16 +137,19 @@ const Login = () => {
         </Typography>
 
         <Button
-          sx={{ width: "100%" }}
           variant="contained"
-          onClick={handleSubmit}
+          color="primary"
+          fullWidth
+          sx={{ mt: 2, mb: 2 }}
+          onClick={handleLogin}
+          disabled={loading}
         >
-          Login
+          {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
         </Button>
 
-        <Typography variant="body2" sx={{ mt: 2 }}>
+        <Typography variant="body2" sx={{ mt: 1 }}>
           Don't have an account?{" "}
-          <Link href="signup" underline="hover" color="primary">
+          <Link href="/signup" underline="hover" color="primary">
             Signup
           </Link>
         </Typography>
@@ -212,9 +159,16 @@ const Login = () => {
             Go to Homepage
           </Link>
         </Typography>
-      </Paper>
+      </Box>
+
+      <Snackbar
+        open={Boolean(errorMessage)}
+        autoHideDuration={6000}
+        onClose={() => setErrorMessage("")}
+        message={errorMessage}
+      />
     </Container>
   );
-};
+}
 
 export default Login;
