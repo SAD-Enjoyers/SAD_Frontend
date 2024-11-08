@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./features/Home/Home";
 import Signup from "./features/Auth/Signup/Signup.jsx";
 import Login from "./features/Auth/Login/Login.jsx";
-// import Login from "./features/Auth/Login/Login.jsx";
 
 function AppRoutes() {
   return (
