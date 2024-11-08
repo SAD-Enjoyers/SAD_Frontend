@@ -131,7 +131,7 @@ function Login() {
         />
 
         <Typography variant="body2" sx={{ mt: 2, mb: 2 }}>
-          <Link href="" underline="hover" color="primary">
+          <Link href="/fp" underline="hover" color="primary">
             Forgot password?
           </Link>
         </Typography>

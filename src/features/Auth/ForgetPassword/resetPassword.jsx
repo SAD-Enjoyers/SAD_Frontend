@@ -1,3 +1,4 @@
+import '../../../src/App.css'
 import React, { useState } from 'react';
 import {
   Box,
