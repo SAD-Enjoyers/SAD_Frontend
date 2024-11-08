@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -14,7 +14,7 @@ import {
   Link,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,7 +27,17 @@ function Signup() {
   const [loading, setLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Add the background class when the component is mounted
+    document.body.classList.add("signup-background");
+
+    // Clean up by removing the class when the component is unmounted
+    return () => {
+      document.body.classList.remove("signup-background");
+    };
+  }, []);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleClickShowConfirmPassword = () =>
@@ -39,7 +49,6 @@ function Signup() {
     password.length >= 8 && /[A-Z]/.test(password) && /\d/.test(password);
 
   const handleSignup = async () => {
-    // Input validation checks
     if (!username || !email || !password) {
       setErrorMessage("All fields are required");
       return;
@@ -67,41 +76,35 @@ function Signup() {
       return;
     }
 
-    setLoading(true); // Show loading indicator
+    setLoading(true);
 
     try {
-      // Send POST request to the backend
       const response = await fetch("/api/v1/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userName: username, // Ensure these match the backend field names
+          userName: username,
           email: email,
           userPassword: password,
         }),
       });
-      // console.log(response);
 
-      // Wait for JSON response from the server
       const responseData = await response.json();
 
       if (response.ok) {
-        // Handle a successful response (e.g., status 201 or 200)
         alert("Signup successful! Check your email for confirmation.");
-        navigate("/login"); // Redirect to the login page or another page as needed
+        navigate("/login");
       } else {
-        // Handle server error messages
         setErrorMessage(
           responseData.message || "Signup failed. Please try again."
         );
       }
     } catch (error) {
-      // Handle network or unexpected errors
       setErrorMessage("An unexpected error occurred. Please try again.");
     } finally {
-      setLoading(false); // Hide loading indicator
+      setLoading(false);
     }
   };
 
@@ -131,7 +134,6 @@ function Signup() {
           Signup
         </Typography>
 
-        {/* Form Fields */}
         <TextField
           fullWidth
           label="Username"
