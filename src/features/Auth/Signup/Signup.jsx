@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -14,6 +14,7 @@ import {
   Link,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,6 +27,18 @@ function Signup() {
   const [loading, setLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Add the background class when the component is mounted
+    document.body.classList.add("signup-background");
+
+    // Clean up by removing the class when the component is unmounted
+    return () => {
+      document.body.classList.remove("signup-background");
+    };
+  }, []);
+
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleClickShowConfirmPassword = () =>
     setShowConfirmPassword((show) => !show);
@@ -36,7 +49,7 @@ function Signup() {
     password.length >= 8 && /[A-Z]/.test(password) && /\d/.test(password);
 
   const handleSignup = async () => {
-    if (!username || !email || !password || !confirmPassword) {
+    if (!username || !email || !password) {
       setErrorMessage("All fields are required");
       return;
     }
@@ -66,25 +79,27 @@ function Signup() {
     setLoading(true);
 
     try {
-      const response = await fetch("https://your-api-url.com/signup", {
+      const response = await fetch("/api/v1/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username,
-          email,
-          password,
+          userName: username,
+          email: email,
+          userPassword: password,
         }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setErrorMessage(
-          errorData.message || "Signup failed. Please try again."
-        );
-      } else {
+      const responseData = await response.json();
+
+      if (response.ok) {
         alert("Signup successful! Check your email for confirmation.");
+        navigate("/login");
+      } else {
+        setErrorMessage(
+          responseData.message || "Signup failed. Please try again."
+        );
       }
     } catch (error) {
       setErrorMessage("An unexpected error occurred. Please try again.");
@@ -119,7 +134,6 @@ function Signup() {
           Signup
         </Typography>
 
-        {/* Form Fields */}
         <TextField
           fullWidth
           label="Username"

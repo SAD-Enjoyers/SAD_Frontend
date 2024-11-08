@@ -66,7 +66,8 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
-
-:root {
-  background-color: #3367d6;
+.signup-background {
+  background-color: #646cff;
+  min-height: 100vh;
+  margin: 0;
 }
