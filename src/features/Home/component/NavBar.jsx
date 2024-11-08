@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Box, Button, Container, IconButton, Menu, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AdbIcon from '@mui/icons-material/Adb';
+import { Link } from "react-router-dom";
 function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -121,6 +122,7 @@ function NavBar() {
 
           {/* دکمه‌ها سمت راست در همه حالات */}
           <Box sx={{ display: 'flex', gap: { xs: 0.5, md: 1 } }}>
+            <Link to="/login">
             <Button
               sx={{
                 color: '#378CE7', // رنگ متن دکمه ورود
@@ -131,6 +133,8 @@ function NavBar() {
             >
               login
             </Button>
+            </Link>
+            <Link to="/signup">
             <Button
               variant="outlined"
               sx={{
@@ -143,6 +147,7 @@ function NavBar() {
             >
               signup
             </Button>
+            </Link>
           </Box>
         </Toolbar>
       </Container>

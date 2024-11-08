@@ -7,17 +7,6 @@ import LearnerOutcomes from './component/LearnerOutcomes.jsx';
 import StatsSection from './component/StatsSection.jsx';
 
 function Home() {
-  const [count, setCount] = useState(0);
-  const backgroundStyle = {
-    backgroundImage: 'url("../public/image/cloud.png")',
-    backgroundAttachment: 'fixed',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    minHeight: '100vh', // Use minHeight to allow scrolling
-    width: '100%',
-    Opacity:0.4
-  };
-
   return (
     <>
       <Navbar />
@@ -27,7 +16,16 @@ function Home() {
       <LearnerOutcomes />
       <Footer />
     </>
-  );
+  )
 }
+
+// import { useNavigate } from "react-router-dom";
+
+//   const navigate = useNavigate();
+
+//   const goToSignup = () => {
+//     navigate("/signup");
+//   };
+
 
 export default Home;
