@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Container, Paper, TextField } from "@mui/material";
+// import axios from "axios";
+import { Container, Paper, TextField, Typography, Link, Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import OutlinedInput from "@mui/material/OutlinedInput";
@@ -8,67 +9,91 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
-
 
 const Login = () => {
-  // Password Field
   const [showPassword, setShowPassword] = React.useState(false);
+  const [username, setUsername] = React.useState(""); // تغییر از ایمیل به یوزرنیم
+  const [password, setPassword] = React.useState("");
+  const [usernameError, setUsernameError] = React.useState(false); // تغییر نام متغیر خطا از ایمیل به یوزرنیم
+  const [passwordError, setPasswordError] = React.useState(false);
+  const [formError, setFormError] = React.useState("");
+  const [loginSuccess, setLoginSuccess] = React.useState(null);
 
-  //   // Inputs
-  //   const { emailInput, setEmailInput } = useState();
-  //   const { passwordInput, setPasswordInput } = useState();
-
-  //   // // Input Error
-  //   const[emailError,setEmailError]=useState(false);
-  //   const[passwordError,setPasswordError]=useState(false);
-
-  //   //Form Validity
-  //   const[formValid,setFormValid]=useState();
-  //   const[success,setSuccess]=useState();
-
-  //Validation for onBlur Email
-  //    const handleEmail=()=>{
-  //   if (!isEmail(emailInput)){
-  //     setEmailError(false);
-  //   }
-
-  // }
-
-  //Validation for onBlur Password
-// const handlePassword = () =>{
-//   if(
-// !passwordInput || passwordInput.length < 5 || passwordInput.length > 20
-
-//   ){
-
-//     setPasswordError(true);
-//     return;
-//   }
-//   setPasswordError(false);
-// }
-
+  // هندل کردن نمایش رمز عبور
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
 
+  // هندل کردن تغییر یوزرنیم
+  const handleUsernameChange = (event) => {
+    setUsername(event.target.value);
+    if (usernameError) setUsernameError(false);
+  };
+
+  // هندل کردن تغییر رمز عبور
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);    
+    if (passwordError) setPasswordError(false);
+  };
+
+  // تابع لاگین
+  // const loginUser = async () => {
+  //   try {
+  //     const response = await axios.post("https://your-backend-url.com/api/login", {
+  //       username: username, // ارسال یوزرنیم به جای ایمیل
+  //       password: password,
+  //     });
+  //     if (response.data.success) {
+  //       setLoginSuccess(true);
+  //       console.log("Login successful:", response.data);
+  //     } else {
+  //       setLoginSuccess(false);
+  //       setFormError(response.data.message || "Login failed");
+  //     }
+  //   } catch (error) {
+  //     setLoginSuccess(false);
+  //     setFormError("Error logging in. Please try again.");
+  //     console.error("Login error:", error);
+  //   }
+  // };
+
+  // هندل کردن ارسال فرم
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    let valid = true;
+
+    if (!username) {
+      setUsernameError(true);
+      valid = false;
+    }
+
+    if (!password || password.length < 5 || password.length > 20) {
+      setPasswordError(true);
+      valid = false;
+    }
+
+    if (valid) {
+      loginUser();
+    } else {
+      setFormError("Please fill in all fields correctly.");
+    }
+  };
+
   return (
     <Container
       sx={{
-        height: "100vh", // ارتفاع کامل صفحه برای وسط‌چینی
+        height: "100vh",
         display: "flex",
-        alignItems: "center", // وسط‌چین عمودی
-        justifyContent: "center", // وسط‌چین افقی
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <Paper
         elevation={1}
         sx={{
           width: 300,
-          height: 380,
+          height: 400,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -76,30 +101,29 @@ const Login = () => {
           borderRadius: 2,
         }}
       >
-        <Typography sx={{mb:2}} variant="h5" component="h2">
+        <Typography sx={{ mb: 2 }} variant="h5" component="h2">
           Login
         </Typography>
 
         <TextField
-          id="outlined-basic"
-          // error={emailError}
-          label="Email"
-          //   value={emailInput}
-          // onChange={(event) => setEmailInput(event.target.value)}
+          id="username"
+          error={usernameError}
+          label="Username" // تغییر لیبل از ایمیل به یوزرنیم
+          value={username}
+          onChange={handleUsernameChange}
           variant="outlined"
           sx={{ width: "100%", marginBottom: 2 }}
+          helperText={usernameError && "Please enter your username."}
         />
 
         <FormControl sx={{ width: "100%" }} variant="outlined">
-          <InputLabel htmlFor="outlined-adornment-password">
-            Password
-          </InputLabel>
+          <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
           <OutlinedInput
-            // error={passwordError}
             id="outlined-adornment-password"
             type={showPassword ? "text" : "password"}
-            // value={passwordInput}
-            // onChange={(event) => setPasswordInput(event.target.value)}
+            value={password}
+            onChange={handlePasswordChange}
+            error={passwordError}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
@@ -116,20 +140,48 @@ const Login = () => {
             }
             label="Password"
           />
+          {passwordError && (
+            <Typography variant="body2" color="error" sx={{ mt: 0.5 }}>
+              Password should be 5-20 characters long.
+            </Typography>
+          )}
         </FormControl>
 
-        <Typography variant="body2" sx={{ mt: 2,mb:2 }}>
+        {formError && (
+          <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+            {formError}
+          </Typography>
+        )}
+
+        {loginSuccess === true && (
+          <Typography variant="body2" color="success" sx={{ mt: 1 }}>
+            Login successful!
+          </Typography>
+        )}
+        {loginSuccess === false && (
+          <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+            Login failed. {formError}
+          </Typography>
+        )}
+
+        <Typography variant="body2" sx={{ mt: 2, mb: 2 }}>
           <Link href="" underline="hover" color="primary">
             Forgot password?
           </Link>
         </Typography>
 
-        <Button sx={{width:"100%"}} variant="contained">Login</Button>
+        <Button
+          sx={{ width: "100%" }}
+          variant="contained"
+          onClick={handleSubmit}
+        >
+          Login
+        </Button>
 
         <Typography variant="body2" sx={{ mt: 2 }}>
-          Dont have an account?{" "}
+          Don't have an account?{" "}
           <Link href="signup" underline="hover" color="primary">
-             Signup
+            Signup
           </Link>
         </Typography>
 
@@ -138,7 +190,6 @@ const Login = () => {
             Go to Homepage
           </Link>
         </Typography>
-        
       </Paper>
     </Container>
   );
