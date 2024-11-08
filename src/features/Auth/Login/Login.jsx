@@ -37,26 +37,36 @@ const Login = () => {
     if (passwordError) setPasswordError(false);
   };
 
-  // تابع لاگین
-  // const loginUser = async () => {
-  //   try {
-  //     const response = await axios.post("https://your-backend-url.com/api/login", {
-  //       username: username, // ارسال یوزرنیم به جای ایمیل
-  //       password: password,
-  //     });
-  //     if (response.data.success) {
-  //       setLoginSuccess(true);
-  //       console.log("Login successful:", response.data);
-  //     } else {
-  //       setLoginSuccess(false);
-  //       setFormError(response.data.message || "Login failed");
-  //     }
-  //   } catch (error) {
-  //     setLoginSuccess(false);
-  //     setFormError("Error logging in. Please try again.");
-  //     console.error("Login error:", error);
-  //   }
-  // };
+  const loginUser = async () => {
+    try {
+      const response = await fetch("/api/v1/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username, // ارسال یوزرنیم به جای ایمیل
+          password: password,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok && data.success) {
+        setLoginSuccess(true);
+        console.log("Login successful:", data);
+      } else {
+        setLoginSuccess(false);
+        setFormError(data.message || "Login failed");
+      }
+    } catch (error) {
+      setLoginSuccess(false);
+      setFormError("Error logging in. Please try again.");
+      console.error("Login error:", error);
+    }
+  };
+
+
 
   // هندل کردن ارسال فرم
   const handleSubmit = (event) => {
