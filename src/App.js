@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css'
-import ResetPassword from './feature/Auth/resetPassword';
-import ForgotPassword from './feature/Auth/forgotPassword';
+import ResetPassword from './features/Auth/resetPassword';
+import ForgotPassword from './features/Auth/forgotPassword';
 
 function App() {
   return(
