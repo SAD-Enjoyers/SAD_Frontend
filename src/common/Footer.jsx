@@ -1,7 +1,7 @@
-import React from 'react';
-import { Box, Container, Typography, Grid2 } from '@mui/material';
+import React from "react";
+import { Box, Container, Typography, Grid2 } from "@mui/material";
 // css
-import '../../../assets/styles/Footer.css'; 
+import "../assets/styles/Footer.css";
 
 const Footer = () => {
   return (
@@ -12,10 +12,14 @@ const Footer = () => {
             <Typography variant="h6" className="footer-title">
               Your Company
             </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ wordWrap: 'break-word' }}>
-              We provide top-quality courses, blogs, and user profiles to help you
-              grow and connect with other professionals. Follow us on social media or
-              reach out if you have any questions!
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ wordWrap: "break-word" }}
+            >
+              We provide top-quality courses, blogs, and user profiles to help
+              you grow and connect with other professionals. Follow us on social
+              media or reach out if you have any questions!
             </Typography>
           </Grid2>
 
@@ -25,12 +29,11 @@ const Footer = () => {
             </Typography>
             <Typography variant="body2" color="textSecondary">
               Email: info@yourcompany.com <br />
- 
             </Typography>
           </Grid2>
         </Grid2>
 
-        <Box className="footer-bottom" >
+        <Box className="footer-bottom">
           <Typography variant="body2" color="textSecondary">
             &copy; 2024 Your Company. All rights reserved.
           </Typography>
