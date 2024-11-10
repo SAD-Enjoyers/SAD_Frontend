@@ -6,16 +6,18 @@ import { Box } from "@mui/material";
 
 const Layout = ({ children }) => {
   return (
-    <Box>
-      <Navbar />
-      <Box
-        component="main"
-        sx={{ minHeight: "calc(100vh - 80px)", paddingBottom: "80px" }}
-      >
-        {children} {/* This is where the page content will go */}
+    <div>
+      <Box>
+        <Navbar />
+        <Box
+          component="main"
+          sx={{ minHeight: "calc(100vh - 80px)", paddingBottom: "80px" }}
+        >
+          {children} {/* This is where the page content will go */}
+        </Box>
+        <Footer />
       </Box>
-      <Footer />
-    </Box>
+    </div>
   );
 };
 
