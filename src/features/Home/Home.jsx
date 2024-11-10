@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import Navbar from './component/NavBar.jsx';
+import Navbar from '../../common/NavBar.jsx';
 import InfoCardsSection from './component/InfoCardsSection.jsx'; 
-import Footer from './component/Footer.jsx';
+import Footer from '../../common/Footer.jsx';
 import GrowSection from './component/GrowSection.jsx';
 import LearnerOutcomes from './component/LearnerOutcomes.jsx';
 import StatsSection from './component/StatsSection.jsx';
