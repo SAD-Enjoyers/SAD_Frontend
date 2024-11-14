@@ -35,7 +35,7 @@ function GrowSection() {
 You can also build your resume and showcase your knowledge!
         </Typography>
 
-        <Box
+        <Box 
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
