@@ -24,7 +24,7 @@ export default function PrivateProfile() {
             <Box
               sx={{
                 position: "sticky",
-                top: "40px",
+                top: "80px",
                 backgroundColor: "white", // برای مشاهده‌ی بهتر در صورت چسبندگی
                 zIndex: 1,
                 // dont repead code
@@ -82,8 +82,8 @@ export default function PrivateProfile() {
                   <Box display="flex" justifyContent="center">
                     <Avatar
                       alt="User Name"
-                      src={exam} // URL تصویر پروفایل
-                      sx={{ width: "200px", height: "200px" }}
+                      src="images/profile.png" // URL تصویر پروفایل
+                      sx={{ width: "150px", height: "150px" }}
                     />
                   </Box>
                 </Grid2>
@@ -91,7 +91,6 @@ export default function PrivateProfile() {
                 {/* User Information */}
                 <CardContent
                   sx={{
-                    textAlign: "center",
                     textAlign: "justify",
                   }}
                 >
@@ -118,18 +117,18 @@ export default function PrivateProfile() {
                 </Button>
               </Box>
             </Card>
-            <ReviewComponent />
-            <ReviewComponent />
-            <ReviewComponent />
-            <ReviewComponent />
+            <ReviewComponent section="My Exams" />
+            <ReviewComponent section="My Courses" style_ml="-40px" />
+            <ReviewComponent section="My Articles" style_ml="0px" />
           </Grid2>
         </Grid2>
       </Container>
     </>
   );
 }
-function ReviewComponent() {
-  const [bgColor, setBgColor] = useState("transparent"); // حالت اولیه برای پس‌زمینه
+
+function ReviewComponent(props) {
+  const [bgColor, setBgColor] = useState("transmit"); // حالت اولیه برای پس‌زمینه
 
   const handleViewAllClick = () => {
     setBgColor("#E3F2FD"); // تغییر رنگ پس‌زمینه به آبی روشن
@@ -137,31 +136,32 @@ function ReviewComponent() {
   };
 
   return (
-    <Grid2
-      container
-      sx={{
-        backgroundColor: bgColor,
-        transition: "background-color 0.5s ease",
-      }}
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Box>
-        <Card
-          variant="outlined"
-          sx={{
-            p: 2,
-            borderColor: "#378CE7",
-            mb: 6,
-            maxWidth: 600,
-            mx: "auto",
-            borderRadius: "4%",
-          }}
-        >
-          {["Review"].map((section) => (
-            <Box key={section} mb={5}>
+    <Box ml={props.style_ml}>
+      <Grid2
+        container
+        sx={{
+          backgroundColor: bgColor,
+          transition: "background-color 0.5s ease",
+        }}
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Box>
+          <Card
+            variant="outlined"
+            sx={{
+              p: 2,
+              borderColor: "#378CE7",
+              mb: 6,
+              maxWidth: 600,
+              mx: "auto",
+              borderRadius: "4%",
+              background: "#E3F2FD",
+            }}
+          >
+            <Box mb={5}>
               <Typography variant="h6" mb={2} textAlign="center">
-                {section}
+                {props.section}
               </Typography>
 
               <Grid2
@@ -289,15 +289,19 @@ function ReviewComponent() {
                 ))}
               </Grid2>
             </Box>
-          ))}
 
-          <Box display="flex" justifyContent="center" mt={2}>
-            <Button variant="text" color="primary" onClick={handleViewAllClick}>
-              View All Exams
-            </Button>
-          </Box>
-        </Card>
-      </Box>
-    </Grid2>
+            <Box display="flex" justifyContent="center" mt={2}>
+              <Button
+                variant="text"
+                color="primary"
+                onClick={handleViewAllClick}
+              >
+                View All Exams
+              </Button>
+            </Box>
+          </Card>
+        </Box>
+      </Grid2>
+    </Box>
   );
 }
