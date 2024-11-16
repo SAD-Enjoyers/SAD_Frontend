@@ -15,6 +15,32 @@ import exam from "../../assets/images/exam.jpg";
 import { Edit } from "@mui/icons-material";
 
 export default function PrivateProfile() {
+  // dont repead yourself    dry
+  const StyledButton = ({ children }) => (
+    <Button
+      fullWidth
+      sx={{
+        borderBottom: "1px solid #387CE7",
+        fontSize: {
+          xs: "0.5rem",
+          sm: "0.75rem",
+          md: "1.1rem",
+        },
+        padding: {
+          xs: "2px 4px",
+          sm: "3px 4px",
+          md: "6px 4px",
+        },
+        borderRadius: "0px",
+        "&:hover": {
+          backgroundColor: "#387CE7", // رنگ پس زمینه در حالت hover
+          color: "#fff",
+        },
+      }}
+    >
+      {children}
+    </Button>
+  );
   return (
     <>
       <Container maxWidth="lg">
@@ -24,38 +50,17 @@ export default function PrivateProfile() {
             <Box
               sx={{
                 position: "sticky",
-                top: "80px",
-                backgroundColor: "white", // برای مشاهده‌ی بهتر در صورت چسبندگی
-                zIndex: 1,
-                // dont repead code
-                "& button": {
-                  fontSize: {
-                    xs: "0.5rem",
-                    sm: "0.75rem",
-                    md: "1.1rem",
-                  },
-                  padding: {
-                    xs: "2px 4px",
-                    sm: "3px 4px",
-                    md: "6px 4px",
-                  },
-                  borderRadius: "5px",
-                  color: "#387CE7",
-                  "&:hover": {
-                    backgroundColor: "#387CE7", // رنگ پس زمینه در حالت hover
-                    color: "#fff",
-                  },
-                },
+                top: "90px",
               }}
               display="flex"
               flexDirection="column"
               alignItems="center"
               gap={3}
             >
-              <Button fullWidth>add question</Button>
-              <Button fullWidth>bank question</Button>
-              <Button fullWidth>add courses</Button>
-              <Button fullWidth>review profile</Button>
+              <StyledButton>add question</StyledButton>
+              <StyledButton>bank question</StyledButton>
+              <StyledButton>add courses</StyledButton>
+              <StyledButton>review profile</StyledButton>
             </Box>
           </Grid2>
 
@@ -118,7 +123,7 @@ export default function PrivateProfile() {
               </Box>
             </Card>
             <ReviewComponent section="My Exams" />
-            <ReviewComponent section="My Courses" style_ml="-40px" />
+            <ReviewComponent section="My Courses" style_ml="20px" />
             <ReviewComponent section="My Articles" style_ml="0px" />
           </Grid2>
         </Grid2>
@@ -157,6 +162,14 @@ function ReviewComponent(props) {
               mx: "auto",
               borderRadius: "4%",
               background: "#E3F2FD",
+              transition: "all 0.3s ease", // تغییرات آرام با زمان 0.3 ثانیه
+              "&:hover": {
+                backgroundColor: "#387CE7", // رنگ پس زمینه در حالت hover
+                color: "#fff", // رنگ متن
+              },
+              "&:hover .buttonViewAll": {
+                color: "#fff",
+              },
             }}
           >
             <Box mb={5}>
@@ -266,20 +279,24 @@ function ReviewComponent(props) {
                         Needs improvement in algorithms.
                       </Typography>
                       <Button
-                        variant="contained"
+                        variant="outlined"
                         color="primary"
                         sx={{
                           fontSize: {
-                            xs: "0.5rem",
-                            sm: "0.85rem",
-                            md: "0.65rem",
+                            xs: "0.55rem",
+                            sm: "0.65rem",
+                            md: "0.75rem",
                           }, // تغییر اندازه فونت بر اساس سایز صفحه
                           padding: {
                             xs: "2px 4px",
                             sm: "3px 4px",
-                            md: "6px 4px",
+                            md: "6px 12px",
                           }, // تغییر padding بر اساس سایز صفحه
-                          borderRadius: "5px",
+                          borderRadius: "10%",
+                          "&:hover": {
+                            backgroundColor: "#387CE7", // رنگ پس زمینه در حالت hover
+                            color: "#fff",
+                          },
                         }}
                       >
                         View Details
@@ -292,6 +309,7 @@ function ReviewComponent(props) {
 
             <Box display="flex" justifyContent="center" mt={2}>
               <Button
+                className="buttonViewAll"
                 variant="text"
                 color="primary"
                 onClick={handleViewAllClick}
