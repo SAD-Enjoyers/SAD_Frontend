@@ -93,6 +93,40 @@ function QuestionPage() {
       }));
     }
   };
+
+  return (
+    <Box>
+      {loading ? (
+        <Typography variant="h6">Loading...</Typography>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginTop: "130px",
+          }}
+        >
+          <Box key={question.id} sx={{ marginBottom: 3 }}>
+            {/* حذف نام سوال */}
+            <Typography
+              variant="h5"
+              sx={{
+                textAlign: "center",
+                marginBottom: 2,
+                fontWeight: "bold",
+                color: "#3F51B5",
+              }}
+            >
+              {/* حذف نمایش نام سوال */}
+            </Typography>
+
+
+            </Box>
+
+            
+  );
+
 }
 
 export default QuestionPage;
