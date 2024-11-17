@@ -55,7 +55,44 @@ function QuestionPage() {
     }
   }, [question]);
 
-  return <Box>Loading...</Box>;
+  const handleOptionSelect = (optionText) => {
+    if (!submitted) {
+      setSelectedOption(optionText);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (!selectedOption) {
+      alert("Please select an option before submitting!");
+      return;
+    }
+
+    const selected = question.options.find(
+      (option) => option.text === selectedOption
+    );
+    const correct = question.options.find((option) => option.isCorrect);
+
+    setSubmitted(true); // گزینه‌ها را غیرقابل تغییر می‌کند.
+    setCorrectAnswer(correct.text);
+
+    if (selected && selected.isCorrect) {
+      setSuccessMessage("Correct! You chose the right answer.");
+    } else {
+      setSuccessMessage(
+        `Incorrect! The correct answer is: "${correct.text}".`
+      );
+    }
+  };
+
+  const handleRatingChange = (event, newValue) => {
+    if (newValue !== null) {
+      setQuestion((prevQuestion) => ({
+        ...prevQuestion,
+        rating: newValue,
+        ratingCount: prevQuestion.ratingCount + 1, // Increment rating count
+      }));
+    }
+  };
 }
 
 export default QuestionPage;
