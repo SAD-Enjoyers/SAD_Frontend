@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from "react";
 import {
-  Box,
-  Typography,
-  Paper,
-  Rating,
   Card,
   CardContent,
-  Button,
-  Snackbar,
-  Alert,
+  Typography,
   Chip,
+  Box,
+  Rating,
   FormControl,
   RadioGroup,
   FormControlLabel,
   Radio,
+  Button,
+  Paper,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 function QuestionPage() {
   const [question, setQuestion] = useState(null);
@@ -23,6 +27,7 @@ function QuestionPage() {
   const [selectedOption, setSelectedOption] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     const savedData = JSON.parse(localStorage.getItem("questionData"));
@@ -43,6 +48,7 @@ function QuestionPage() {
           { text: "Using Flask", isCorrect: false },
         ],
         author: "John Doe",
+        questionName: "How to create a Node.js API?"
       };
       setQuestion(dummyData);
     }
@@ -72,15 +78,14 @@ function QuestionPage() {
     );
     const correct = question.options.find((option) => option.isCorrect);
 
-    setSubmitted(true); // گزینه‌ها را غیرقابل تغییر می‌کند.
+    setSubmitted(true); // Disable further changes
     setCorrectAnswer(correct.text);
+    setOpenDialog(true); // Open dialog after submission
 
     if (selected && selected.isCorrect) {
       setSuccessMessage("Correct! You chose the right answer.");
     } else {
-      setSuccessMessage(
-        `Incorrect! The correct answer is: "${correct.text}".`
-      );
+      setSuccessMessage(`Incorrect! The correct answer is: ${correct.text}.`);
     }
   };
 
@@ -92,6 +97,14 @@ function QuestionPage() {
         ratingCount: prevQuestion.ratingCount + 1, // Increment rating count
       }));
     }
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleExitDialog = () => {
+    setOpenDialog(false);
   };
 
   return (
@@ -108,25 +121,226 @@ function QuestionPage() {
           }}
         >
           <Box key={question.id} sx={{ marginBottom: 3 }}>
-            {/* حذف نام سوال */}
-            <Typography
-              variant="h5"
+            <Paper
+              elevation={3}
               sx={{
-                textAlign: "center",
+                width: "600px",
+                padding: 2,
+                backgroundColor: "#E3F2FD",
                 marginBottom: 2,
-                fontWeight: "bold",
-                color: "#3F51B5",
+                textAlign: "center",
               }}
             >
-              {/* حذف نمایش نام سوال */}
-            </Typography>
+              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                {question.questionName}
+              </Typography>
+            </Paper>
 
+            <Card
+              sx={{
+                width: "600px",
+                minHeight: "300px",
+                padding: 2,
+                boxShadow: 3,
+                textAlign: "center",
+                position: "relative",
+                backgroundColor: "#E3F2FD",
+                display: "flex",
+              }}
+            >
+              <CardContent sx={{ flexGrow: 1 }}>
+                <Typography variant="h5" gutterBottom>
+                  {question.text}
+                </Typography>
+                <Typography variant="subtitle1" color="textSecondary">
+                  Author: {question.author}
+                </Typography>
 
-            </Box>
+                <Box sx={{ marginTop: 2, display: "flex", flexWrap: "wrap", marginLeft: "10px" }}>
+                  {question.tags.map((tag, index) => (
+                    <Chip
+                      key={index}
+                      label={tag}
+                      sx={{
+                        margin: 0.5,
+                        backgroundColor: "#5356FF",
+                        color: "white",
+                      }}
+                    />
+                  ))}
+                </Box>
 
-            
+                <Box sx={{ marginTop: 2 }}>
+                  <FormControl component="fieldset" sx={{ width: "100%" }}>
+                    <RadioGroup
+                      value={selectedOption}
+                      onChange={(e) => handleOptionSelect(e.target.value)}
+                    >
+                      {question.options.map((option, index) => (
+                        <FormControlLabel
+                          key={index}
+                          value={option.text}
+                          control={
+                            <Radio
+                              sx={{ zIndex: 1 }}
+                              disabled={submitted}
+                            />
+                          }
+                          label={`${index + 1}. ${option.text}`}
+                          sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "flex-start",
+                            alignItems: "center",
+                            marginBottom: 1,
+                            color:
+                              submitted && option.isCorrect
+                                ? "green"
+                                : submitted && selectedOption === option.text
+                                ? "red"
+                                : "inherit",
+                            fontWeight:
+                              submitted && option.isCorrect
+                                ? "bold"
+                                : "normal",
+                          }}
+                        />
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                </Box>
+
+                {!submitted && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSubmit}
+                    sx={{
+                      marginTop: 2,
+                      width: "90%",
+                      backgroundColor: "#5356FF",
+                      "&:hover": {
+                        backgroundColor: "#3f51b5",
+                      },
+                    }}
+                  >
+                    Submit
+                  </Button>
+                )}
+              </CardContent>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: 2,
+                  marginLeft: "20px",
+                }}
+              >
+                <Rating
+                  name={`rating-${question.id}`}
+                  value={question.rating}
+                  onChange={handleRatingChange}
+                  precision={0.5}
+                  sx={{
+                    color: "#5356FF",
+                    fontSize: "20px",
+                  }}
+                />
+                <Typography
+                  variant="body2"
+                  sx={{ marginTop: 1, color: "#5356FF" }}
+                >
+                  ({question.ratingCount} votes)
+                </Typography>
+              </Box>
+            </Card>
+          </Box>
+        </Box>
+      )}
+
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        sx={{
+          "& .MuiDialog-paper": {
+            backgroundColor: "#E3F2FD", // Match the background color of the question card
+            padding: "20px",
+            borderRadius: "10px",
+            boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontWeight: "bold",
+            color: successMessage.includes("Correct") ? "green" : "red", // Green for correct, red for incorrect
+            textAlign: "center",
+            padding: "10px",
+            borderRadius: "8px",
+            position: "relative",
+          }}
+        >
+          {successMessage.includes("Correct") ? "Correct Answer!" : "Incorrect Answer!"}
+          <IconButton
+            edge="end"
+            color="inherit"
+            onClick={handleExitDialog}
+            sx={{
+              position: "absolute",
+              right: 10,
+              top: 10,
+              color: "gray",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Typography
+            variant="body1"
+            sx={{
+              color: "#555",
+              textAlign: "center",
+              fontWeight: "normal",
+            }}
+          >
+            {successMessage.includes("Correct") ? (
+              successMessage
+            ) : (
+              <span>
+                <strong style={{ color: "green", fontWeight: "bold" }}>
+                  The correct answer is: {correctAnswer}
+                </strong>
+              </span>
+            )}
+          </Typography>
+        </DialogContent>
+        <DialogActions
+          sx={{
+            justifyContent: "center",
+            padding: "10px 20px",
+          }}
+        >
+          <Button
+            onClick={handleCloseDialog}
+            color="primary"
+            variant="contained"
+            sx={{
+              backgroundColor: "#5356FF", // Match submit button color
+              "&:hover": {
+                backgroundColor: "#3f51b5",
+              },
+            }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
-
 }
 
 export default QuestionPage;
