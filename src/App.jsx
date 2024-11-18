@@ -1,14 +1,11 @@
 // src/App.jsx
 import React from "react";
-// import AppRoutes from "./routes.jsx"; // Use .jsx extension
-import ExamPreview from "./features/Auth/Exams/ExamPreview/ExamPreview";
+import AppRoutes from "./routes.jsx"; // Use .jsx extension
 
 function App() {
   return (
     <div className="App">
-      {/* <AppRoutes /> */}
-
-      <ExamPreview />
+      <AppRoutes />
     </div>
   );
 }
