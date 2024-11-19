@@ -16,10 +16,9 @@ import {
   Snackbar,
   Rating,
 } from "@mui/material";
-import { Link } from "react-router-dom"; // Importing Link from react-router-dom
-import { styled } from "@mui/system"; // Import styled from MUI system
+import { Link } from "react-router-dom";
+import { styled } from "@mui/system";
 
-// Custom styled components
 const CustomCard = styled(Card)(({ theme }) => ({
   borderRadius: "8px",
   boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
@@ -67,7 +66,7 @@ const CommentSection = styled(Box)(({ theme }) => ({
 
 const getQuestionSnippet = (question) => {
   const words = question.title.split(" ");
-  return words.slice(0, 5).join(" ") + (words.length > 5 ? "..." : ""); // Show the first 5 words
+  return words.slice(0, 5).join(" ") + (words.length > 5 ? "..." : "");
 };
 
 const selectedExam = {
@@ -76,8 +75,8 @@ const selectedExam = {
   description:
     "A comprehensive exam covering advanced calculus, algebra, and geometry.",
   score: 98,
-  provider: "Math Institute", // This is now clickable
-  providerId: "math-institute", // Added provider ID for routing
+  provider: "Math Institute",
+  providerId: "math-institute",
   image: "public/images/cooperation.jpg",
   price: 49.99,
   questions: [
@@ -116,6 +115,12 @@ function ExamPreview() {
   const [errorMessage, setErrorMessage] = useState("");
   const [purchased, setPurchased] = useState(false);
 
+  const averageRating =
+    comments.length > 0
+      ? comments.reduce((sum, comment) => sum + comment.rating, 0) /
+        comments.length
+      : 0;
+
   const handlePurchase = () => {
     setPurchased(true);
     alert("Thank you for purchasing the exam! Questions are now unlocked.");
@@ -134,7 +139,7 @@ function ExamPreview() {
       id: comments.length + 1,
       name: newComment.name,
       comment: newComment.comment,
-      rating: newComment.rating, // Add rating
+      rating: newComment.rating,
       replies: [],
     };
     setComments([...comments, newCommentObj]);
@@ -143,8 +148,8 @@ function ExamPreview() {
   };
 
   const handleAddReply = () => {
-    if (!reply.trim() || !newComment.name.trim()) {
-      setErrorMessage("Reply and your name are required.");
+    if (!reply.trim()) {
+      setErrorMessage("Reply cannot be empty.");
       return;
     }
     const updatedComments = comments.map((comment) =>
@@ -153,14 +158,13 @@ function ExamPreview() {
             ...comment,
             replies: [
               ...comment.replies,
-              { id: comment.replies.length + 1, name: newComment.name, reply },
+              { id: comment.replies.length + 1, name: "You", reply },
             ],
           }
         : comment
     );
     setComments(updatedComments);
     setReply("");
-    setNewComment({ ...newComment, name: "" });
     setReplyingTo(null);
     setErrorMessage("");
   };
@@ -175,12 +179,10 @@ function ExamPreview() {
       }}
     >
       <Box sx={{ maxWidth: 900, width: "100%", paddingX: 4 }}>
-        {/* Header Section */}
         <CustomCard>
           <Title>{selectedExam.name}</Title>
           <SubTitle>{selectedExam.description}</SubTitle>
-          <SubTitle variant="body2" color="text.secondary">
-            {/* Provider name is now a clickable link */}
+          <SubTitle>
             Provided by:{" "}
             <Link
               to={`/provider/${selectedExam.providerId}`}
@@ -189,14 +191,13 @@ function ExamPreview() {
               {selectedExam.provider}
             </Link>
           </SubTitle>
-          {!purchased && (
-            <Price>Price: ${selectedExam.price}</Price> // Only show price if not purchased
-          )}
+          {!purchased && <Price>Price: ${selectedExam.price}</Price>}
           <Rating
-            value={4} // Static value for now. Replace with dynamic average rating.
+            value={averageRating}
             readOnly
             precision={0.5}
             sx={{ marginTop: 2 }}
+            aria-label="Average Rating"
           />
           <img
             src={selectedExam.image}
@@ -220,13 +221,9 @@ function ExamPreview() {
           )}
         </CustomCard>
 
-        {/* Available Questions Section */}
         {purchased && (
           <Box sx={{ marginTop: 4 }}>
-            <Typography
-              variant="h5"
-              sx={{ fontWeight: "bold", color: "#5A4DB2" }}
-            >
+            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
               Available Questions
             </Typography>
             <Grid container spacing={2} sx={{ marginTop: 2 }}>
@@ -236,7 +233,7 @@ function ExamPreview() {
                     <CardContent>
                       <Typography variant="h6">{question.title}</Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {getQuestionSnippet(question)} {/* Show snippet */}
+                        {getQuestionSnippet(question)}
                       </Typography>
                     </CardContent>
                   </CustomCard>
@@ -246,94 +243,116 @@ function ExamPreview() {
           </Box>
         )}
 
-        {/* Comment Section */}
         <CommentSection>
-          <Typography
-            variant="h5"
-            sx={{ fontWeight: "bold", color: "#5A4DB2" }}
-          >
+          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
             Comments
           </Typography>
-          <Box sx={{ display: "flex", flexDirection: "column", marginTop: 2 }}>
-            <TextField
-              fullWidth
-              label="Your Name"
-              variant="outlined"
-              margin="normal"
-              value={newComment.name}
-              onChange={(e) =>
-                setNewComment((prev) => ({ ...prev, name: e.target.value }))
-              }
-              error={!newComment.name && Boolean(errorMessage)}
-              helperText={!newComment.name ? "Name is required." : ""}
-            />
-            <TextField
-              fullWidth
-              label="Write a comment..."
-              variant="outlined"
-              margin="normal"
-              multiline
-              rows={3}
-              value={newComment.comment}
-              onChange={(e) =>
-                setNewComment((prev) => ({ ...prev, comment: e.target.value }))
-              }
-              error={!newComment.comment && Boolean(errorMessage)}
-              helperText={!newComment.comment ? "Comment cannot be empty." : ""}
-            />
-            <Rating
-              value={newComment.rating}
-              onChange={(e, newValue) =>
-                setNewComment((prev) => ({ ...prev, rating: newValue }))
-              }
-              precision={0.5}
-              sx={{ marginTop: 2 }}
-            />
-            <ButtonStyled
-              variant="contained"
-              color="primary"
-              sx={{ marginTop: 2, fontWeight: "bold" }}
-              onClick={handleAddComment}
+
+          {purchased ? (
+            // Only show the comment input if the exam is purchased
+            <Box
+              sx={{ display: "flex", flexDirection: "column", marginTop: 2 }}
             >
-              Post Comment
-            </ButtonStyled>
-          </Box>
+              <TextField
+                fullWidth
+                label="Your Name"
+                variant="outlined"
+                margin="normal"
+                value={newComment.name}
+                onChange={(e) =>
+                  setNewComment((prev) => ({ ...prev, name: e.target.value }))
+                }
+              />
+              <TextField
+                fullWidth
+                label="Write a comment..."
+                variant="outlined"
+                margin="normal"
+                multiline
+                rows={3}
+                value={newComment.comment}
+                onChange={(e) =>
+                  setNewComment((prev) => ({
+                    ...prev,
+                    comment: e.target.value,
+                  }))
+                }
+              />
+              <Rating
+                value={newComment.rating}
+                onChange={(e, newValue) =>
+                  setNewComment((prev) => ({ ...prev, rating: newValue }))
+                }
+                precision={0.5}
+                sx={{ marginTop: 2 }}
+                aria-label="Rating"
+              />
+              <ButtonStyled
+                variant="contained"
+                color="primary"
+                onClick={handleAddComment}
+                sx={{ marginTop: 2 }}
+              >
+                Add Comment
+              </ButtonStyled>
+            </Box>
+          ) : (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ marginTop: 2 }}
+            >
+              You must purchase this exam to leave comments.
+            </Typography>
+          )}
 
-          <List sx={{ marginTop: 2 }}>
-            {comments.map((comment) => (
-              <ListItem key={comment.id} alignItems="flex-start">
-                <ListItemAvatar>
-                  <Avatar>{comment.name[0]}</Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={comment.name}
-                  secondary={
-                    <>
-                      <Typography variant="body2" color="text.secondary">
-                        {comment.comment}
-                      </Typography>
-                      <Rating
-                        value={comment.rating}
-                        readOnly
-                        size="small"
-                        sx={{ marginTop: 1 }}
-                      />
-                    </>
-                  }
-                />
-                <Divider />
-              </ListItem>
-            ))}
-          </List>
+          {/* Display Comments */}
+          {comments.map((comment) => (
+            <React.Fragment key={comment.id}>
+              <List>
+                <ListItem alignItems="flex-start">
+                  <ListItemAvatar>
+                    <Avatar>{comment.name[0]}</Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={
+                      <>
+                        {comment.name}{" "}
+                        <Rating
+                          value={comment.rating}
+                          precision={0.5}
+                          size="small"
+                          readOnly
+                          aria-label="Comment Rating"
+                        />
+                      </>
+                    }
+                    secondary={comment.comment}
+                  />
+                </ListItem>
+                <Box sx={{ paddingLeft: 7 }}>
+                  {comment.replies.map((reply) => (
+                    <Typography
+                      variant="body2"
+                      key={reply.id}
+                      sx={{ marginBottom: 1 }}
+                    >
+                      <strong>{reply.name}:</strong> {reply.reply}
+                    </Typography>
+                  ))}
+                </Box>
+              </List>
+              <Divider />
+            </React.Fragment>
+          ))}
         </CommentSection>
-
-        <Snackbar
-          open={Boolean(errorMessage)}
-          autoHideDuration={6000}
-          onClose={() => setErrorMessage("")}
-          message={errorMessage}
-        />
       </Box>
+      <Snackbar
+        open={Boolean(errorMessage)}
+        message={errorMessage}
+        autoHideDuration={3000}
+        onClose={() => setErrorMessage("")}
+      />
     </Box>
   );
 }
