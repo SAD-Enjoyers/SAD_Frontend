@@ -78,6 +78,8 @@ const selectedExam = {
     { id: 2, title: "Solve the integral of x^2 dx." },
     { id: 3, title: "Prove that every group of prime order is cyclic." },
   ],
+  level: "Advanced", // Added level
+  tags: ["Mathematics", "Calculus", "Geometry"], // Added tags
 };
 
 const mockComments = [
@@ -140,6 +142,12 @@ function ExamPreview() {
               {selectedExam.provider}
             </Link>
           </SubTitle>
+          <Typography variant="body2" color="text.secondary">
+            Level: {selectedExam.level} {/* Display level */}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Tags: {selectedExam.tags.join(", ")} {/* Display tags */}
+          </Typography>
           <Rating
             value={staticAverageRating}
             readOnly
