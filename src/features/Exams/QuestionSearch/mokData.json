@@ -1,0 +1,162 @@
+[
+  {
+    "id": 1,
+    "name": "What is JavaScript?",
+    "text": "What is JavaScript and how does it work in web development?",
+    "subjects": ["JavaScript", "Frontend"],
+    "score": 5,
+    "writer": "John Doe"
+  },
+  {
+    "id": 2,
+    "name": "What is a Closure in JavaScript?",
+    "text": "Explain the concept of closures in JavaScript with an example.",
+    "subjects": ["JavaScript", "Frontend"],
+    "score": 4,
+    "writer": "Jane Smith"
+  },
+  {
+    "id": 3,
+    "name": "What is React?",
+    "text": "What is React and why is it popular in building modern web applications?",
+    "subjects": ["JavaScript", "Frontend", "React"],
+    "score": 4,
+    "writer": "Alice Johnson"
+  },
+  {
+    "id": 4,
+    "name": "Explain the Virtual DOM in React.",
+    "text": "What is the Virtual DOM in React and how does it improve performance?",
+    "subjects": ["React", "Frontend"],
+    "score": 5,
+    "writer": "Bob Brown"
+  },
+  {
+    "id": 5,
+    "name": "What is an API?",
+    "text": "Explain what an API is and give an example of how to use it in a web application.",
+    "subjects": ["Backend", "JavaScript"],
+    "score": 4,
+    "writer": "Charlie Davis"
+  },
+  {
+    "id": 6,
+    "name": "What is Node.js?",
+    "text": "Explain Node.js and its usage in server-side development.",
+    "subjects": ["Backend", "JavaScript"],
+    "score": 4,
+    "writer": "Daniel Lee"
+  },
+  {
+    "id": 7,
+    "name": "What is MongoDB?",
+    "text": "Explain MongoDB and why it is preferred in NoSQL databases.",
+    "subjects": ["Backend", "Database"],
+    "score": 5,
+    "writer": "Eve Clark"
+  },
+  {
+    "id": 8,
+    "name": "Explain SQL vs NoSQL databases.",
+    "text": "What are the differences between SQL and NoSQL databases? Give examples of each.",
+    "subjects": ["Backend", "Database"],
+    "score": 4,
+    "writer": "Frank Walker"
+  },
+  {
+    "id": 9,
+    "name": "What is Python?",
+    "text": "What is Python, and why is it widely used in data science and web development?",
+    "subjects": ["Python", "Backend", "Data Science"],
+    "score": 5,
+    "writer": "Grace Mitchell"
+  },
+  {
+    "id": 10,
+    "name": "What are Python decorators?",
+    "text": "Explain what decorators in Python are and provide an example.",
+    "subjects": ["Python", "Backend"],
+    "score": 4,
+    "writer": "Henry Scott"
+  },
+  {
+    "id": 11,
+    "name": "What is Machine Learning?",
+    "text": "Explain the concept of machine learning and how it is applied in real-world scenarios.",
+    "subjects": ["AI", "Data Science"],
+    "score": 5,
+    "writer": "Ivy Harris"
+  },
+  {
+    "id": 12,
+    "name": "What is the difference between supervised and unsupervised learning?",
+    "text": "Explain the difference between supervised and unsupervised learning with examples.",
+    "subjects": ["AI", "Data Science"],
+    "score": 5,
+    "writer": "Jack Walker"
+  },
+  {
+    "id": 13,
+    "name": "What is Deep Learning?",
+    "text": "What is deep learning, and how is it different from machine learning?",
+    "subjects": ["AI", "Data Science"],
+    "score": 4,
+    "writer": "Liam Robinson"
+  },
+  {
+    "id": 14,
+    "name": "What is a Neural Network?",
+    "text": "Explain the architecture of a neural network and its applications.",
+    "subjects": ["AI", "Data Science"],
+    "score": 5,
+    "writer": "Mia Harris"
+  },
+  {
+    "id": 15,
+    "name": "What is TensorFlow?",
+    "text": "Explain TensorFlow and how it is used in machine learning applications.",
+    "subjects": ["AI", "Data Science"],
+    "score": 4,
+    "writer": "Nate Green"
+  },
+  {
+    "id": 16,
+    "name": "What is AI in healthcare?",
+    "text": "Explain how AI is transforming the healthcare industry.",
+    "subjects": ["AI", "Healthcare"],
+    "score": 5,
+    "writer": "Olivia Adams"
+  },
+  {
+    "id": 17,
+    "name": "What is Data Science?",
+    "text": "What is data science and what are its key applications in the real world?",
+    "subjects": ["Data Science", "AI"],
+    "score": 5,
+    "writer": "Paul Lee"
+  },
+  {
+    "id": 18,
+    "name": "Explain the importance of Data Preprocessing.",
+    "text": "Why is data preprocessing important in machine learning models?",
+    "subjects": ["Data Science"],
+    "score": 4,
+    "writer": "Quincy King"
+  },
+  {
+    "id": 19,
+    "name": "What is Natural Language Processing?",
+    "text": "What is Natural Language Processing and how is it applied in real-world applications?",
+    "subjects": ["AI", "Data Science"],
+    "score": 5,
+    "writer": "Riley Carter"
+  },
+  {
+    "id": 20,
+    "name": "Explain the concept of Overfitting in Machine Learning.",
+    "text": "What is overfitting in machine learning, and how can it be prevented?",
+    "subjects": ["AI", "Data Science"],
+    "score": 4,
+    "writer": "Sophia Evans"
+  }
+]
