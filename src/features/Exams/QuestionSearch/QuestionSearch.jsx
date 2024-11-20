@@ -149,8 +149,12 @@ function QuestionSearch() {
     if (event.key === "Enter") handleSearchSubmit();
   };
 
-  const handleSubjectChange = (event) =>
-    setSelectedSubjects(event.target.value);
+  const handleSubjectChange = (event) => {
+    const selected = event.target.value;
+    if (selected.length <= 3) {
+      setSelectedSubjects(selected);
+    }
+  };
 
   const handleSortChange = (event) => {
     const [criterion, direction] = event.target.value.split("-");
@@ -290,10 +294,9 @@ function QuestionSearch() {
                   <MenuItem value="score-desc">Score (High to Low)</MenuItem>
                   <MenuItem value="name-asc">Name (A to Z)</MenuItem>
                   <MenuItem value="name-desc">Name (Z to A)</MenuItem>
-                  <MenuItem value="writer-asc">Writer (A to Z)</MenuItem>
-                  <MenuItem value="writer-desc">Writer (Z to A)</MenuItem>
                 </Select>
               </FormControl>
+
               <FormControl variant="outlined" sx={{ minWidth: 150 }}>
                 <InputLabel>Items Per Page</InputLabel>
                 <Select
