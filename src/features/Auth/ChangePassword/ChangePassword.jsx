@@ -38,7 +38,75 @@ function ChangePassword() {
           Change Password
         </Typography>
         <form onSubmit={handleSubmit}>
-          {/* Form fields go here */}
+        <Grid container spacing={3}>
+    <Grid item xs={12}>
+      <TextField
+        fullWidth
+        label="Old Password"
+        type={showOldPassword ? 'text' : 'password'}
+        variant="outlined"
+        value={oldPassword}
+        onChange={(e) => setOldPassword(e.target.value)}
+        required
+        error={Boolean(error.oldPassword)}
+        helperText={error.oldPassword}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={() => togglePasswordVisibility(setShowOldPassword)}>
+                {showOldPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+    </Grid>
+    <Grid item xs={12}>
+      <TextField
+        fullWidth
+        label="New Password"
+        type={showNewPassword ? 'text' : 'password'}
+        variant="outlined"
+        value={newPassword}
+        onChange={(e) => setNewPassword(e.target.value)}
+        required
+        error={Boolean(error.newPassword)}
+        helperText={error.newPassword}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={() => togglePasswordVisibility(setShowNewPassword)}>
+                {showNewPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+    </Grid>
+    <Grid item xs={12}>
+      <TextField
+        fullWidth
+        label="Confirm New Password"
+        type={showConfirmPassword ? 'text' : 'password'}
+        variant="outlined"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        required
+        error={Boolean(error.confirmPassword)}
+        helperText={error.confirmPassword}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={() => togglePasswordVisibility(setShowConfirmPassword)}>
+                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+    </Grid>
+  </Grid>
+
         </form>
       </Paper>
     </Container>
