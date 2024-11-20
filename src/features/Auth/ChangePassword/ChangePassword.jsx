@@ -16,6 +16,17 @@ function ChangePassword() {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
+    const togglePasswordVisibility = (setter) => {
+      setter((prev) => !prev);
+    };
+  
+    const validatePassword = (password) => {
+      const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+      return passwordRegex.test(password);
+    };
+  
+
+
 
   return (
     <Container component="main" maxWidth="xs" sx={{ marginTop: 8 }}>
