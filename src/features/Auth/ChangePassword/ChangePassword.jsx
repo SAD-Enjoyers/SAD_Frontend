@@ -5,7 +5,17 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/Visibility';
 
 function ChangePassword() {
-  // State and hook setup will go here
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState({});
+    const [success, setSuccess] = useState('');
+  
+    const [showOldPassword, setShowOldPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
 
   return (
     <Container component="main" maxWidth="xs" sx={{ marginTop: 8 }}>
