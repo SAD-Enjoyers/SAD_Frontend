@@ -261,8 +261,15 @@ function QuestionPage() {
                   variant="body2"
                   sx={{ marginTop: 1, color: "#5356FF" }}
                 >
-                  ({question.ratingCount} votes)
+                  Current Rating: {question.rating.toFixed(1)}
                 </Typography>
+                <Typography
+                variant="body2"
+                sx={{ marginTop: 1, color: "#5356FF" }}
+              >
+                Total Votes: {question.totalVotes}
+              </Typography>
+
               </Box>
             
           </Box>
@@ -315,15 +322,18 @@ function QuestionPage() {
               fontWeight: "normal",
             }}
           >
-            {successMessage.includes("Correct") ? (
-              successMessage
-            ) : (
-              <span>
-                <strong style={{ color: "green", fontWeight: "bold" }}>
-                  The correct answer is: {correctAnswer}
-                </strong>
-              </span>
-            )}
+          <span style={{ color: "#000", fontWeight: "bold" }}>
+              The correct answer is:{" "}
+            </span>
+            <span
+              style={{
+                color: "#4CAF50", // Softer green
+                fontWeight: "bold",
+              }}
+            >
+              {correctAnswer}
+            </span>
+            
           </Typography>
         </DialogContent>
         <DialogActions
