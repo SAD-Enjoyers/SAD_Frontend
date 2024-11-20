@@ -27,6 +27,9 @@ function ChangePassword() {
   
 
 
+    
+
+
 
   return (
     <Container component="main" maxWidth="xs" sx={{ marginTop: 8 }}>
@@ -39,7 +42,7 @@ function ChangePassword() {
         </Typography>
         <form onSubmit={handleSubmit}>
         <Grid container spacing={3}>
-    <Grid item xs={12}>
+         <Grid item xs={12}>
       <TextField
         fullWidth
         label="Old Password"
@@ -105,6 +108,30 @@ function ChangePassword() {
         }}
       />
     </Grid>
+
+    <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Confirm New Password"
+                type={showConfirmPassword ? 'text' : 'password'}
+                variant="outlined"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                error={Boolean(error.confirmPassword)}
+                helperText={error.confirmPassword}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => togglePasswordVisibility(setShowConfirmPassword)}>
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+
     <Grid item xs={12}>
               {loading ? (
                 <Button fullWidth variant="contained" color="secondary" disabled>
