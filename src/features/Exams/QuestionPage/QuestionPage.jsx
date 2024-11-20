@@ -235,27 +235,28 @@ function QuestionPage() {
                   </Button>
                 )}
               </CardContent>
+              </Card>
 
               <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: 2,
-                  marginLeft: "20px",
-                }}
-              >
-                <Rating
-                  name={`rating-${question.id}`}
-                  value={question.rating}
-                  onChange={handleRatingChange}
-                  precision={0.5}
-                  sx={{
-                    color: "#5356FF",
-                    fontSize: "20px",
-                  }}
-                />
+              sx={{
+                flex: 1,
+                padding: 2,
+                backgroundColor: "#E3F2FD",
+                borderRadius: 2,
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="h6" gutterBottom>
+                Rate this question
+              </Typography>
+              <Rating
+                name={`rating-${question.id}`}
+                value={question.rating}
+                onChange={handleRatingChange}
+                precision={0.5}
+                sx={{ color: "#5356FF", fontSize: "24px" }}
+              />
+
                 <Typography
                   variant="body2"
                   sx={{ marginTop: 1, color: "#5356FF" }}
@@ -263,7 +264,7 @@ function QuestionPage() {
                   ({question.ratingCount} votes)
                 </Typography>
               </Box>
-            </Card>
+            
           </Box>
         </Box>
       )}
