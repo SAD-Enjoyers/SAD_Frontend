@@ -120,34 +120,41 @@ function QuestionPage() {
             marginTop: "130px",
           }}
         >
-          <Box key={question.id} sx={{ marginBottom: 3 }}>
-            <Paper
-              elevation={3}
-              sx={{
-                width: "600px",
-                padding: 2,
-                backgroundColor: "#E3F2FD",
-                marginBottom: 2,
-                textAlign: "center",
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                {question.questionName}
-              </Typography>
-            </Paper>
+          <Paper
+            elevation={3}
+            sx={{
+              width: "670px",
+              padding: 2,
+              backgroundColor: "#E3F2FD",
+              marginBottom: 2,
+              textAlign: "center",
+            }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+              {question.questionName} {/* نمایش نام سوال */}
+            </Typography>
+          </Paper>
 
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "flex-start",
+              gap: 2,
+              width: "700px",
+            }}
+          >
             <Card
               sx={{
-                width: "600px",
-                minHeight: "300px",
+                flex: 2,
                 padding: 2,
                 boxShadow: 3,
                 textAlign: "center",
-                position: "relative",
                 backgroundColor: "#E3F2FD",
                 display: "flex",
               }}
             >
+            
               <CardContent sx={{ flexGrow: 1 }}>
                 <Typography variant="h5" gutterBottom>
                   {question.text}
