@@ -25,12 +25,55 @@ function ChangePassword() {
       return passwordRegex.test(password);
     };
   
-
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+  
+      const newError = {};
+  
+      if (newPassword !== confirmPassword) {
+        newError.confirmPassword = 'Passwords do not match!';
+      }
+  
+      if (!oldPassword) {
+        newError.oldPassword = 'Old password is required';
+      }
+  
+      if (!newPassword) {
+        newError.newPassword = 'New password is required';
+      } else if (!validatePassword(newPassword)) {
+        newError.newPassword = 'New password must be at least 8 characters, including a number, an uppercase letter, and a special character';
+      }
+  
+      if (Object.keys(newError).length > 0) {
+        setError(newError);
+        return;
+      }
+  
+      setLoading(true);
+      setError({});
+      setSuccess('');
+  
+      try {
+        const response = await axios.post('/api/change-password', {
+          oldPassword,
+          newPassword,
+        });
+  
+        if (response.status === 200) {
+          setSuccess('Password changed successfully!');
+        }
+      } catch (err) {
+        if (err.response) {
+          setError({ global: err.response.data.message || 'Error changing password' });
+        } else {
+          setError({ global: 'Network error' });
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
 
     
-
-
-
   return (
     <Container component="main" maxWidth="xs" sx={{ marginTop: 8 }}>
       <Paper elevation={6} sx={{ padding: 3, borderRadius: 3, boxShadow: 3 }}>
@@ -109,28 +152,6 @@ function ChangePassword() {
       />
     </Grid>
 
-    <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Confirm New Password"
-                type={showConfirmPassword ? 'text' : 'password'}
-                variant="outlined"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                error={Boolean(error.confirmPassword)}
-                helperText={error.confirmPassword}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => togglePasswordVisibility(setShowConfirmPassword)}>
-                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
 
     <Grid item xs={12}>
               {loading ? (
