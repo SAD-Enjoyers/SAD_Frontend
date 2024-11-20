@@ -25,6 +25,8 @@ function QuestionSearch() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
+  const [selectedLevel, setSelectedLevel] = useState("");
+
   const [sortOrder, setSortOrder] = useState({
     criterion: "",
     direction: "asc",
@@ -68,14 +70,21 @@ function QuestionSearch() {
   };
 
   const filteredQuestions = questions
-    .filter(
-      (question) =>
-        question.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        (selectedSubjects.length === 0 ||
-          selectedSubjects.every((subject) =>
-            question.subjects.includes(subject)
-          ))
-    )
+    .filter((question) => {
+      const matchesSearchTerm = question.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const matchesSubjects =
+        selectedSubjects.length === 0 ||
+        selectedSubjects.every((subject) =>
+          question.subjects.includes(subject)
+        );
+      const matchesLevel = selectedLevel
+        ? question.level === selectedLevel
+        : true;
+
+      return matchesSearchTerm && matchesSubjects && matchesLevel;
+    })
     .sort((a, b) => {
       const { criterion, direction } = sortOrder;
       if (criterion === "score") {
@@ -108,32 +117,39 @@ function QuestionSearch() {
           width: "100%",
           maxWidth: "800px",
           margin: "auto",
-          marginTop: "120px",
+          marginTop: "50px", // Adjusted margin for a more spacious layout
           padding: "20px",
-          backgroundColor: "#DFF5FF",
-          borderRadius: "8px",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          backgroundColor: "#F9FAFB", // Light background for a clean look
+          borderRadius: "12px", // Rounded corners
+          boxShadow: "0 8px 16px rgba(0, 0, 0, 0.1)", // Soft shadows for a floating effect
         }}
       >
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
           centered
-          TabIndicatorProps={{ style: { backgroundColor: "#5356FF" } }}
+          TabIndicatorProps={{ style: { backgroundColor: "#4A90E2" } }} // Updated accent color
           textColor="primary"
         >
           <Tab
             label="Questions"
-            style={{ color: activeTab === 0 ? "#5356FF" : "#378CE7" }}
+            style={{
+              color: activeTab === 0 ? "#4A90E2" : "#9B9B9B", // Updated tab color
+              fontWeight: activeTab === 0 ? "bold" : "normal",
+            }}
           />
           <Tab
             label="Exams"
-            style={{ color: activeTab === 1 ? "#5356FF" : "#378CE7" }}
+            style={{
+              color: activeTab === 1 ? "#4A90E2" : "#9B9B9B",
+              fontWeight: activeTab === 1 ? "bold" : "normal",
+            }}
           />
         </Tabs>
+
         {activeTab === 0 && (
           <Box>
-            <Grid container spacing={2} sx={{ marginTop: "20px" }}>
+            <Grid container spacing={3} sx={{ marginTop: "30px" }}>
               <Grid item xs={12} sm={8} md={9}>
                 <TextField
                   variant="outlined"
@@ -145,9 +161,15 @@ function QuestionSearch() {
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <SearchIcon style={{ color: "#5356FF" }} />
+                        <SearchIcon style={{ color: "#4A90E2" }} />
                       </InputAdornment>
                     ),
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "8px",
+                      backgroundColor: "#fff", // Added white background for input fields
+                    },
                   }}
                 />
               </Grid>
@@ -158,9 +180,11 @@ function QuestionSearch() {
                   disabled={loading}
                   fullWidth
                   sx={{
-                    backgroundColor: "#5356FF",
+                    backgroundColor: "#4A90E2", // Accent color
                     color: "#fff",
-                    "&:hover": { backgroundColor: "#378CE7" },
+                    borderRadius: "8px", // Rounded button
+                    "&:hover": { backgroundColor: "#357ABD" },
+                    padding: "10px",
                   }}
                 >
                   {loading ? "Searching..." : "Search"}
@@ -168,8 +192,9 @@ function QuestionSearch() {
               </Grid>
             </Grid>
 
-            <Grid container spacing={2} sx={{ marginTop: "20px" }}>
-              <Grid item xs={12} sm={4} md={3}>
+            {/* Filter Options */}
+            <Grid container spacing={3} sx={{ marginTop: "30px" }}>
+              <Grid item xs={12} sm={4}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>Subjects</InputLabel>
                   <Select
@@ -188,7 +213,22 @@ function QuestionSearch() {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={4} md={3}>
+              <Grid item xs={12} sm={4}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel>Level</InputLabel>
+                  <Select
+                    value={selectedLevel}
+                    onChange={(event) => setSelectedLevel(event.target.value)}
+                    label="Level"
+                  >
+                    <MenuItem value="">All Levels</MenuItem>
+                    <MenuItem value="beginner">Beginner</MenuItem>
+                    <MenuItem value="intermediate">Intermediate</MenuItem>
+                    <MenuItem value="advanced">Advanced</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={4}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>Sort By</InputLabel>
                   <Select
@@ -203,8 +243,7 @@ function QuestionSearch() {
                   </Select>
                 </FormControl>
               </Grid>
-
-              <Grid item xs={12} sm={4} md={3}>
+              <Grid item xs={12} sm={4}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>Items Per Page</InputLabel>
                   <Select
@@ -212,32 +251,41 @@ function QuestionSearch() {
                     onChange={handleItemsPerPageChange}
                     label="Items Per Page"
                   >
-                    <MenuItem value={5}>5</MenuItem>
+                    <MenuItem value={6}>6</MenuItem>
                     <MenuItem value={10}>10</MenuItem>
                     <MenuItem value={12}>12</MenuItem>
-                    <MenuItem value={15}>15</MenuItem>
+                    <MenuItem value={16}>16</MenuItem>
+                    <MenuItem value={32}>32</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
             </Grid>
 
-            <Grid container spacing={2} sx={{ marginTop: "20px" }}>
+            {/* Display Results */}
+            <Grid container spacing={3} sx={{ marginTop: "20px" }}>
               {currentQuestions.map((question) => (
                 <Grid item xs={12} sm={6} md={4} key={question.id}>
                   <Box
                     sx={{
                       display: "flex",
                       flexDirection: "column",
-                      padding: "15px",
-                      borderRadius: "8px",
+                      padding: "20px",
+                      borderRadius: "12px", // Rounded corners for cards
                       backgroundColor: "#fff",
-                      marginBottom: "10px",
-                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                      boxShadow: "0 4px 10px rgba(0, 0, 0, 0.08)", // Soft shadow
+                      transition: "transform 0.3s ease-in-out", // Hover effect
+                      "&:hover": {
+                        transform: "scale(1.03)", // Slightly enlarge on hover
+                      },
                     }}
                   >
                     <Typography
                       variant="h6"
-                      sx={{ color: "#5356FF", textDecoration: "none" }}
+                      sx={{
+                        color: "#4A90E2",
+                        fontWeight: "bold",
+                        textDecoration: "none",
+                      }}
                     >
                       <Link
                         to={`/question/${question.id}`}
@@ -249,7 +297,7 @@ function QuestionSearch() {
                     <Typography
                       variant="body2"
                       color="text.secondary"
-                      sx={{ marginTop: "5px" }}
+                      sx={{ marginTop: "8px" }}
                     >
                       {question.text.split(" ").slice(0, 10).join(" ")}...
                     </Typography>
@@ -270,11 +318,16 @@ function QuestionSearch() {
                           color="primary"
                           variant="outlined"
                           size="small"
-                          sx={{ fontSize: "0.75rem", fontWeight: "bold" }}
+                          sx={{
+                            fontSize: "0.75rem",
+                            fontWeight: "bold",
+                            borderRadius: "4px", // Slight rounding for chips
+                          }}
                         />
                       ))}
                     </Box>
 
+                    {/* Score & Writer */}
                     <Box
                       sx={{
                         display: "flex",
@@ -285,7 +338,11 @@ function QuestionSearch() {
                     >
                       <Typography
                         variant="body2"
-                        sx={{ color: "#6c757d", fontWeight: "bold" }}
+                        sx={{
+                          color: "#6c757d",
+                          fontWeight: "bold",
+                          fontSize: "0.9rem",
+                        }}
                       >
                         {question.writer}
                       </Typography>
@@ -305,15 +362,18 @@ function QuestionSearch() {
               ))}
             </Grid>
 
+            {/* Pagination */}
             <Pagination
               count={totalPages}
               page={currentPage}
               onChange={handlePageChange}
               color="primary"
               sx={{
-                marginTop: "20px",
+                marginTop: "30px",
                 display: "flex",
                 justifyContent: "center",
+                padding: "10px",
+                borderRadius: "8px", // Rounded pagination buttons
               }}
             />
           </Box>

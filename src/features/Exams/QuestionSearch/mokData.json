@@ -5,7 +5,8 @@
     "text": "What is JavaScript and how does it work in web development?",
     "subjects": ["JavaScript", "Frontend"],
     "score": 5,
-    "writer": "John Doe"
+    "writer": "John Doe",
+    "level": "beginner"
   },
   {
     "id": 2,
@@ -13,7 +14,8 @@
     "text": "Explain the concept of closures in JavaScript with an example.",
     "subjects": ["JavaScript", "Frontend"],
     "score": 4,
-    "writer": "Jane Smith"
+    "writer": "Jane Smith",
+    "level": "intermediate"
   },
   {
     "id": 3,
@@ -21,7 +23,8 @@
     "text": "What is React and why is it popular in building modern web applications?",
     "subjects": ["JavaScript", "Frontend", "React"],
     "score": 4,
-    "writer": "Alice Johnson"
+    "writer": "Alice Johnson",
+    "level": "beginner"
   },
   {
     "id": 4,
@@ -29,7 +32,8 @@
     "text": "What is the Virtual DOM in React and how does it improve performance?",
     "subjects": ["React", "Frontend"],
     "score": 5,
-    "writer": "Bob Brown"
+    "writer": "Bob Brown",
+    "level": "intermediate"
   },
   {
     "id": 5,
@@ -37,7 +41,8 @@
     "text": "Explain what an API is and give an example of how to use it in a web application.",
     "subjects": ["Backend", "JavaScript"],
     "score": 4,
-    "writer": "Charlie Davis"
+    "writer": "Charlie Davis",
+    "level": "beginner"
   },
   {
     "id": 6,
@@ -45,7 +50,8 @@
     "text": "Explain Node.js and its usage in server-side development.",
     "subjects": ["Backend", "JavaScript"],
     "score": 4,
-    "writer": "Daniel Lee"
+    "writer": "Daniel Lee",
+    "level": "intermediate"
   },
   {
     "id": 7,
@@ -53,7 +59,8 @@
     "text": "Explain MongoDB and why it is preferred in NoSQL databases.",
     "subjects": ["Backend", "Database"],
     "score": 5,
-    "writer": "Eve Clark"
+    "writer": "Eve Clark",
+    "level": "beginner"
   },
   {
     "id": 8,
@@ -61,7 +68,8 @@
     "text": "What are the differences between SQL and NoSQL databases? Give examples of each.",
     "subjects": ["Backend", "Database"],
     "score": 4,
-    "writer": "Frank Walker"
+    "writer": "Frank Walker",
+    "level": "intermediate"
   },
   {
     "id": 9,
@@ -69,7 +77,8 @@
     "text": "What is Python, and why is it widely used in data science and web development?",
     "subjects": ["Python", "Backend", "Data Science"],
     "score": 5,
-    "writer": "Grace Mitchell"
+    "writer": "Grace Mitchell",
+    "level": "beginner"
   },
   {
     "id": 10,
@@ -77,7 +86,8 @@
     "text": "Explain what decorators in Python are and provide an example.",
     "subjects": ["Python", "Backend"],
     "score": 4,
-    "writer": "Henry Scott"
+    "writer": "Henry Scott",
+    "level": "intermediate"
   },
   {
     "id": 11,
@@ -85,7 +95,8 @@
     "text": "Explain the concept of machine learning and how it is applied in real-world scenarios.",
     "subjects": ["AI", "Data Science"],
     "score": 5,
-    "writer": "Ivy Harris"
+    "writer": "Ivy Harris",
+    "level": "intermediate"
   },
   {
     "id": 12,
@@ -93,7 +104,8 @@
     "text": "Explain the difference between supervised and unsupervised learning with examples.",
     "subjects": ["AI", "Data Science"],
     "score": 5,
-    "writer": "Jack Walker"
+    "writer": "Jack Walker",
+    "level": "advanced"
   },
   {
     "id": 13,
@@ -101,7 +113,8 @@
     "text": "What is deep learning, and how is it different from machine learning?",
     "subjects": ["AI", "Data Science"],
     "score": 4,
-    "writer": "Liam Robinson"
+    "writer": "Liam Robinson",
+    "level": "advanced"
   },
   {
     "id": 14,
@@ -109,7 +122,8 @@
     "text": "Explain the architecture of a neural network and its applications.",
     "subjects": ["AI", "Data Science"],
     "score": 5,
-    "writer": "Mia Harris"
+    "writer": "Mia Harris",
+    "level": "advanced"
   },
   {
     "id": 15,
@@ -117,7 +131,8 @@
     "text": "Explain TensorFlow and how it is used in machine learning applications.",
     "subjects": ["AI", "Data Science"],
     "score": 4,
-    "writer": "Nate Green"
+    "writer": "Nate Green",
+    "level": "advanced"
   },
   {
     "id": 16,
@@ -125,7 +140,8 @@
     "text": "Explain how AI is transforming the healthcare industry.",
     "subjects": ["AI", "Healthcare"],
     "score": 5,
-    "writer": "Olivia Adams"
+    "writer": "Olivia Adams",
+    "level": "advanced"
   },
   {
     "id": 17,
@@ -133,7 +149,8 @@
     "text": "What is data science and what are its key applications in the real world?",
     "subjects": ["Data Science", "AI"],
     "score": 5,
-    "writer": "Paul Lee"
+    "writer": "Paul Lee",
+    "level": "intermediate"
   },
   {
     "id": 18,
@@ -141,7 +158,8 @@
     "text": "Why is data preprocessing important in machine learning models?",
     "subjects": ["Data Science"],
     "score": 4,
-    "writer": "Quincy King"
+    "writer": "Quincy King",
+    "level": "intermediate"
   },
   {
     "id": 19,
@@ -149,7 +167,8 @@
     "text": "What is Natural Language Processing and how is it applied in real-world applications?",
     "subjects": ["AI", "Data Science"],
     "score": 5,
-    "writer": "Riley Carter"
+    "writer": "Riley Carter",
+    "level": "advanced"
   },
   {
     "id": 20,
@@ -157,6 +176,7 @@
     "text": "What is overfitting in machine learning, and how can it be prevented?",
     "subjects": ["AI", "Data Science"],
     "score": 4,
-    "writer": "Sophia Evans"
+    "writer": "Sophia Evans",
+    "level": "intermediate"
   }
 ]
