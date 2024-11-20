@@ -207,6 +207,7 @@ function QuestionSearch() {
               <Grid item xs={12} sm={4}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>Subjects</InputLabel>
+
                   <Select
                     multiple
                     value={selectedSubjects}
