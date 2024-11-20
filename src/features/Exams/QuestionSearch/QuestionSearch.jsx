@@ -14,12 +14,21 @@ import {
   Chip,
   Rating,
   Pagination,
+  ListItemIcon,
   Grid,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
 import Layout from "../../../common/Layout";
 import Mokdata from "./mokData.json";
+import { motion } from "framer-motion";
+import {
+  School,
+  SchoolOutlined,
+  FilterList,
+  Sort,
+  SortByAlpha,
+} from "@mui/icons-material";
 
 function QuestionSearch() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -194,6 +203,7 @@ function QuestionSearch() {
 
             {/* Filter Options */}
             <Grid container spacing={3} sx={{ marginTop: "30px" }}>
+              {/* Filter by Subjects */}
               <Grid item xs={12} sm={4}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>Subjects</InputLabel>
@@ -204,15 +214,29 @@ function QuestionSearch() {
                     label="Subjects"
                     renderValue={(selected) => selected.join(", ")}
                   >
-                    <MenuItem value="JavaScript">JavaScript</MenuItem>
-                    <MenuItem value="Frontend">Frontend</MenuItem>
-                    <MenuItem value="Backend">Backend</MenuItem>
-                    <MenuItem value="AI">AI</MenuItem>
-                    <MenuItem value="Data Science">Data Science</MenuItem>
-                    <MenuItem value="Python">Python</MenuItem>
+                    <MenuItem value="JavaScript">
+                      <FilterList sx={{ marginRight: "8px" }} /> JavaScript
+                    </MenuItem>
+                    <MenuItem value="Frontend">
+                      <FilterList sx={{ marginRight: "8px" }} /> Frontend
+                    </MenuItem>
+                    <MenuItem value="Backend">
+                      <FilterList sx={{ marginRight: "8px" }} /> Backend
+                    </MenuItem>
+                    <MenuItem value="AI">
+                      <FilterList sx={{ marginRight: "8px" }} /> AI
+                    </MenuItem>
+                    <MenuItem value="Data Science">
+                      <FilterList sx={{ marginRight: "8px" }} /> Data Science
+                    </MenuItem>
+                    <MenuItem value="Python">
+                      <FilterList sx={{ marginRight: "8px" }} /> Python
+                    </MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
+
+              {/* Filter by Level */}
               <Grid item xs={12} sm={4}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>Level</InputLabel>
@@ -221,13 +245,45 @@ function QuestionSearch() {
                     onChange={(event) => setSelectedLevel(event.target.value)}
                     label="Level"
                   >
-                    <MenuItem value="">All Levels</MenuItem>
-                    <MenuItem value="beginner">Beginner</MenuItem>
-                    <MenuItem value="intermediate">Intermediate</MenuItem>
-                    <MenuItem value="advanced">Advanced</MenuItem>
+                    <MenuItem value="">
+                      <ListItemIcon>
+                        <SchoolOutlined
+                          sx={{ fontSize: "1.2rem", color: "#6c757d" }}
+                        />
+                      </ListItemIcon>
+                      <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                        All Levels
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem value="beginner">
+                      <ListItemIcon>
+                        <School sx={{ fontSize: "1.2rem", color: "#4CAF50" }} />
+                      </ListItemIcon>
+                      <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                        Beginner
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem value="intermediate">
+                      <ListItemIcon>
+                        <School sx={{ fontSize: "1.2rem", color: "#FF9800" }} />
+                      </ListItemIcon>
+                      <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                        Intermediate
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem value="advanced">
+                      <ListItemIcon>
+                        <School sx={{ fontSize: "1.2rem", color: "#F44336" }} />
+                      </ListItemIcon>
+                      <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                        Advanced
+                      </Typography>
+                    </MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
+
+              {/* Sort By */}
               <Grid item xs={12} sm={4}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>Sort By</InputLabel>
@@ -236,13 +292,23 @@ function QuestionSearch() {
                     onChange={handleSortChange}
                     label="Sort By"
                   >
-                    <MenuItem value="score-asc">Score (Low to High)</MenuItem>
-                    <MenuItem value="score-desc">Score (High to Low)</MenuItem>
-                    <MenuItem value="name-asc">Name (A to Z)</MenuItem>
-                    <MenuItem value="name-desc">Name (Z to A)</MenuItem>
+                    <MenuItem value="score-asc">
+                      <Sort sx={{ marginRight: "8px" }} /> Score (Low to High)
+                    </MenuItem>
+                    <MenuItem value="score-desc">
+                      <Sort sx={{ marginRight: "8px" }} /> Score (High to Low)
+                    </MenuItem>
+                    <MenuItem value="name-asc">
+                      <SortByAlpha sx={{ marginRight: "8px" }} /> Name (A to Z)
+                    </MenuItem>
+                    <MenuItem value="name-desc">
+                      <SortByAlpha sx={{ marginRight: "8px" }} /> Name (Z to A)
+                    </MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
+
+              {/* Items Per Page */}
               <Grid item xs={12} sm={4}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>Items Per Page</InputLabel>
@@ -252,10 +318,10 @@ function QuestionSearch() {
                     label="Items Per Page"
                   >
                     <MenuItem value={6}>6</MenuItem>
-                    <MenuItem value={10}>10</MenuItem>
+                    <MenuItem value={9}>9</MenuItem>
                     <MenuItem value={12}>12</MenuItem>
-                    <MenuItem value={16}>16</MenuItem>
-                    <MenuItem value={32}>32</MenuItem>
+                    <MenuItem value={15}>15</MenuItem>
+                    <MenuItem value={30}>30</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -264,27 +330,34 @@ function QuestionSearch() {
             {/* Display Results */}
             <Grid container spacing={3} sx={{ marginTop: "20px" }}>
               {currentQuestions.map((question) => (
-                <Grid item xs={12} sm={6} md={4} key={question.id}>
+                <Grid item xs={12} key={question.id}>
                   <Box
                     sx={{
                       display: "flex",
                       flexDirection: "column",
                       padding: "20px",
-                      borderRadius: "12px", // Rounded corners for cards
+                      borderRadius: "12px",
                       backgroundColor: "#fff",
-                      boxShadow: "0 4px 10px rgba(0, 0, 0, 0.08)", // Soft shadow
-                      transition: "transform 0.3s ease-in-out", // Hover effect
+                      boxShadow: "0 4px 10px rgba(0, 0, 0, 0.08)",
+                      transition: "transform 0.3s ease-in-out",
                       "&:hover": {
-                        transform: "scale(1.03)", // Slightly enlarge on hover
+                        transform: "scale(1.03)",
                       },
+                      width: "100%",
+                      maxWidth: "900px", // Max width for large screens
+                      margin: "0 auto",
+                      boxSizing: "border-box",
                     }}
                   >
+                    {/* Question Title */}
                     <Typography
                       variant="h6"
                       sx={{
                         color: "#4A90E2",
                         fontWeight: "bold",
                         textDecoration: "none",
+                        marginBottom: "10px",
+                        lineHeight: "1.4", // Adjust line height for better readability
                       }}
                     >
                       <Link
@@ -294,21 +367,27 @@ function QuestionSearch() {
                         {question.name}
                       </Link>
                     </Typography>
+
+                    {/* Question Description */}
                     <Typography
                       variant="body2"
                       color="text.secondary"
-                      sx={{ marginTop: "8px" }}
+                      sx={{
+                        marginBottom: "10px",
+                        fontSize: "0.875rem", // Slightly smaller font for description
+                        lineHeight: "1.5",
+                      }}
                     >
-                      {question.text.split(" ").slice(0, 10).join(" ")}...
+                      {question.text.split(" ").slice(0, 15).join(" ")}...
                     </Typography>
 
-                    {/* Display Subjects */}
+                    {/* Subjects */}
                     <Box
                       sx={{
                         display: "flex",
                         flexWrap: "wrap",
-                        gap: "5px",
-                        marginTop: "10px",
+                        gap: "8px",
+                        marginBottom: "15px", // Space before the next section
                       }}
                     >
                       {question.subjects.map((subject, index) => (
@@ -321,31 +400,63 @@ function QuestionSearch() {
                           sx={{
                             fontSize: "0.75rem",
                             fontWeight: "bold",
-                            borderRadius: "4px", // Slight rounding for chips
+                            borderRadius: "4px",
+                            padding: "2px 8px",
                           }}
                         />
                       ))}
                     </Box>
 
-                    {/* Score & Writer */}
+                    {/* Level, Score & Writer */}
                     <Box
                       sx={{
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        marginTop: "10px",
+                        marginTop: "15px",
+                        borderTop: "1px solid #ddd",
+                        paddingTop: "10px",
                       }}
                     >
-                      <Typography
-                        variant="body2"
+                      {/* Level Icon */}
+                      <Box
                         sx={{
-                          color: "#6c757d",
-                          fontWeight: "bold",
-                          fontSize: "0.9rem",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "5px",
                         }}
                       >
-                        {question.writer}
-                      </Typography>
+                        {question.level === "beginner" && (
+                          <School
+                            sx={{ fontSize: "1.5rem", color: "#4CAF50" }}
+                          />
+                        )}
+                        {question.level === "intermediate" && (
+                          <School
+                            sx={{ fontSize: "1.5rem", color: "#FF9800" }}
+                          />
+                        )}
+                        {question.level === "advanced" && (
+                          <School
+                            sx={{ fontSize: "1.5rem", color: "#F44336" }}
+                          />
+                        )}
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: "#6c757d",
+                            fontWeight: "bold",
+                            fontSize: "0.9rem",
+                          }}
+                        >
+                          {question.level
+                            ? question.level.charAt(0).toUpperCase() +
+                              question.level.slice(1)
+                            : "Not Specified"}
+                        </Typography>
+                      </Box>
+
+                      {/* Score */}
                       <Rating
                         name="score"
                         value={question.score}
@@ -356,6 +467,32 @@ function QuestionSearch() {
                           "& .MuiRating-iconFilled": { color: "#ffcc00" },
                         }}
                       />
+
+                      {/* Writer Name with Motion Effects */}
+                      <motion.div
+                        whileHover={{ scale: 1.05, color: "#4A90E2" }} // Hover effect: scale up and change color
+                        whileTap={{ scale: 0.98 }} // Click effect: scale down on tap
+                        transition={{ duration: 0.2 }} // Smooth transition for hover and click
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: "#6c757d",
+                            fontWeight: "bold",
+                            fontSize: "0.9rem",
+                          }}
+                        >
+                          <Link
+                            to={`/profile/${question.writerId}`}
+                            style={{
+                              color: "#6c757d",
+                              textDecoration: "none",
+                            }}
+                          >
+                            {question.writer}
+                          </Link>
+                        </Typography>
+                      </motion.div>
                     </Box>
                   </Box>
                 </Grid>
