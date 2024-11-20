@@ -105,9 +105,29 @@ function ChangePassword() {
         }}
       />
     </Grid>
-  </Grid>
-
+    <Grid item xs={12}>
+              {loading ? (
+                <Button fullWidth variant="contained" color="secondary" disabled>
+                  Changing...
+                </Button>
+              ) : (
+                <Button fullWidth type="submit" variant="contained" color="primary" size="large">
+                  Change Password
+                </Button>
+              )}
+            </Grid>
+          </Grid>
         </form>
+        {error.global && (
+          <Typography variant="body2" color="error" align="center" sx={{ marginTop: 2 }}>
+            {error.global}
+          </Typography>
+        )}
+        {success && (
+          <Typography variant="body2" color="primary" align="center" sx={{ marginTop: 2 }}>
+            {success}
+          </Typography>
+        )}
       </Paper>
     </Container>
   );
