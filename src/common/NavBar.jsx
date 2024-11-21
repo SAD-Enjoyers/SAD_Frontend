@@ -12,12 +12,12 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import AdbIcon from "@mui/icons-material/Adb";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const pages = ["blogs", "courses", "questions", "profiles", "my Profile"];
-
+  var location = useLocation();
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -96,11 +96,18 @@ function NavBar() {
                   key={page}
                   onClick={handleCloseNavMenu}
                 >
-                  <Link to="/profile">
+                  {page == "my Profile" ? (
+                    <Link to="/profile" style={{ textDecoration: "none" }}>
+                      <Typography textAlign="center" sx={{ color: "#7D7D7D" }}>
+                        {page}
+                      </Typography>
+                    </Link>
+                  ) : (
                     <Typography textAlign="center" sx={{ color: "#7D7D7D" }}>
                       {page}
                     </Typography>
-                  </Link>{" "}
+                  )}
+
                   {/* رنگ خاکستری */}
                 </MenuItem>
               ))}
@@ -115,27 +122,28 @@ function NavBar() {
               justifyContent: { xs: "center", md: "flex-start" },
             }}
           >
-            <Typography
-              variant="h6"
-              noWrap
-              component="a"
-              href="#"
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                fontFamily: "monospace",
-                fontWeight: 700,
-                letterSpacing: ".3rem",
-                color: "#378CE7", // رنگ لوگو به آبی
-                textDecoration: "none",
-                "&:hover": {
-                  color: "#378CE7", // رنگ آبی هنگام هاور
-                },
-              }}
-            >
-              <AdbIcon sx={{ mr: 0, color: "#378CE7" }} /> LOGO{" "}
-              {/* رنگ لوگو به آبی */}
-            </Typography>
+            <Link to="/" style={{ textDecoration: "none" }}>
+              <Typography
+                variant="h6"
+                noWrap
+                component="h3"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  fontFamily: "monospace",
+                  fontWeight: 700,
+                  letterSpacing: ".3rem",
+                  color: "#378CE7", // رنگ لوگو به آبی
+                  textDecoration: "none",
+                  "&:hover": {
+                    color: "#378CE7", // رنگ آبی هنگام هاور
+                  },
+                }}
+              >
+                <AdbIcon sx={{ mr: 0, color: "#378CE7" }} /> HOME{" "}
+                {/* رنگ لوگو به آبی */}
+              </Typography>
+            </Link>
           </Box>
 
           {/* صفحات در سمت راست در حالت دسکتاپ */}
