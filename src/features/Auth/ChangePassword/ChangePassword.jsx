@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+// import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import {
   Container,
   TextField,
@@ -11,14 +11,14 @@ import {
   IconButton,
   InputAdornment,
 } from "@mui/material";
+import { Snackbar } from '@mui/material';
 import LockIcon from "@mui/icons-material/Lock";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/Visibility";
 
 function ChangePassword() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [code, setCode] = useState("");
-  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -170,36 +170,6 @@ function ChangePassword() {
                                 }}
                             />
                         </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Confirm New Password"
-                type={showConfirmPassword ? "text" : "password"}
-                variant="outlined"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                error={Boolean(error.confirmPassword)}
-                helperText={error.confirmPassword}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() =>
-                          togglePasswordVisibility(setShowConfirmPassword)
-                        }
-                      >
-                        {showConfirmPassword ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
 
             <Grid item xs={12}>
               {loading ? (
