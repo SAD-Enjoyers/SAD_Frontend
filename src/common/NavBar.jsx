@@ -154,22 +154,44 @@ function NavBar() {
               marginRight: "auto",
             }}
           >
-            {pages.map((page) => (
-              <Button
-                className="page"
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{
-                  color: "#7D7D7D",
-                  fontSize: { md: "1rem" },
-                  "&:hover": {
-                    color: "#378CE7", // رنگ آبی هنگام هاور
-                  },
-                }} // رنگ خاکستری
-              >
-                {page}
-              </Button>
-            ))}
+            {pages.map((page) =>
+              page == "my Profile" ? (
+                <Link
+                  to="/profile"
+                  style={{ textDecoration: "none" }}
+                  key={page}
+                >
+                  <Button
+                    className="page"
+                    onClick={handleCloseNavMenu}
+                    sx={{
+                      color: "#7D7D7D",
+                      fontSize: { md: "1rem" },
+                      "&:hover": {
+                        color: "#378CE7", // رنگ آبی هنگام هاور
+                      },
+                    }} // رنگ خاکستری
+                  >
+                    {page}
+                  </Button>
+                </Link>
+              ) : (
+                <Button
+                  className="page"
+                  key={page}
+                  onClick={handleCloseNavMenu}
+                  sx={{
+                    color: "#7D7D7D",
+                    fontSize: { md: "1rem" },
+                    "&:hover": {
+                      color: "#378CE7", // رنگ آبی هنگام هاور
+                    },
+                  }} // رنگ خاکستری
+                >
+                  {page}
+                </Button>
+              )
+            )}
           </Box>
 
           {/* دکمه‌ها سمت راست در همه حالات */}

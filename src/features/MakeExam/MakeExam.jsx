@@ -59,7 +59,11 @@ export default function MakeExam() {
     <>
       <Container
         maxWidth="lg"
-        sx={{ border: "2px solid #378CE7", padding: "0px" }}
+        sx={{
+          border: "2px solid #378CE7",
+          mt: "150px",
+          mb: "150px",
+        }}
       >
         <form onSubmit={handleSubmit}>
           <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
@@ -127,7 +131,7 @@ export default function MakeExam() {
                     mb: "7px",
                   }}
                 >
-                  quize time:
+                  exam time:
                 </Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <TimePicker

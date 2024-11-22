@@ -1,9 +1,11 @@
+import { TroubleshootTwoTone } from "@mui/icons-material";
 import { useState } from "react";
 
 const useFetchWithLoader = (url, options) => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
+  // const [isValid, setIsValid] = useState(true);
 
   const fetchData = async (bodyData = null) => {
     setIsLoading(true); // شروع لودینگ
@@ -22,12 +24,14 @@ const useFetchWithLoader = (url, options) => {
       });
       // status code between 200 to 300
       if (!response.ok) {
+        setIsvalid(false);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const result = await response.json();
       setData(result);
     } catch (err) {
+      setIsValid(false);
       setError(err.message);
     } finally {
       setIsLoading(false); // پایان لودینگ

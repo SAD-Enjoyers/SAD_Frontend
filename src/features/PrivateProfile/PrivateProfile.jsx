@@ -14,36 +14,65 @@ import {
 import { Edit } from "@mui/icons-material";
 import ReviewComponent from "./components/ReviewComponent.jsx";
 import useFetchWithLoader from "./hooks/fetchloader.jsx";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function PrivateProfile() {
   const navigate = useNavigate();
   // dont repead yourself    dry
-  const StyledButton = ({ children }) => (
-    <Button
-      fullWidth
-      sx={{
-        borderBottom: "1px solid #387CE7",
-        fontSize: {
-          xs: "0.5rem",
-          sm: "0.75rem",
-          md: "1.1rem",
-        },
-        padding: {
-          xs: "2px 4px",
-          sm: "3px 4px",
-          md: "6px 4px",
-        },
-        borderRadius: "0px",
-        "&:hover": {
-          backgroundColor: "#387CE7", // رنگ پس زمینه در حالت hover
-          color: "#fff",
-        },
-      }}
-    >
-      {children}
-    </Button>
-  );
+  const StyledButton = ({ link, children }) => {
+    return link && link === "make_exam" ? (
+      <Link to="/make_exam" style={{ width: "100%" }}>
+        <Button
+          fullWidth
+          sx={{
+            borderBottom: "1px solid #387CE7",
+            fontSize: {
+              xs: "0.5rem",
+              sm: "0.75rem",
+              md: "1.1rem",
+            },
+            padding: {
+              xs: "2px 4px",
+              sm: "3px 4px",
+              md: "6px 4px",
+            },
+            borderRadius: "0px",
+            "&:hover": {
+              backgroundColor: "#387CE7",
+              color: "#fff",
+            },
+          }}
+        >
+          {children}
+        </Button>
+      </Link>
+    ) : (
+      <Button
+        fullWidth
+        sx={{
+          borderBottom: "1px solid #387CE7",
+          fontSize: {
+            xs: "0.5rem",
+            sm: "0.75rem",
+            md: "1.1rem",
+          },
+          padding: {
+            xs: "2px 4px",
+            sm: "3px 4px",
+            md: "6px 4px",
+          },
+          borderRadius: "0px",
+          "&:hover": {
+            backgroundColor: "#387CE7",
+            color: "#fff",
+          },
+        }}
+      >
+        {children}
+      </Button>
+    );
+  };
+
   const { isLoading, data, error, fetchData } = useFetchWithLoader(
     "/api/v1/profile/private-data",
     {
@@ -61,7 +90,6 @@ export default function PrivateProfile() {
   if (error) {
     navigate("/");
   }
-  console.log(data.data.userData.userName);
 
   return (
     <>
@@ -79,10 +107,11 @@ export default function PrivateProfile() {
               alignItems="center"
               gap={3}
             >
-              <StyledButton>add question</StyledButton>
-              <StyledButton>bank question</StyledButton>
-              <StyledButton>add courses</StyledButton>
-              <StyledButton>review profile</StyledButton>
+              <StyledButton link="">add question</StyledButton>
+              {/* <StyledButton link="">bank question</StyledButton> */}
+              <StyledButton link="make_exam">make exam</StyledButton>
+              <StyledButton link="">add courses</StyledButton>
+              <StyledButton link="">review profile</StyledButton>
             </Box>
           </Grid2>
 
