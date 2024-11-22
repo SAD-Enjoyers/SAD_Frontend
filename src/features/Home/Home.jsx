@@ -1,9 +1,7 @@
 import InfoCardsSection from "./component/InfoCardsSection.jsx";
-import Footer from "../../common/Footer.jsx";
 import GrowSection from "./component/GrowSection.jsx";
 import LearnerOutcomes from "./component/LearnerOutcomes.jsx";
 import StatsSection from "./component/StatsSection.jsx";
-import MakeExam from "../MakeExam/MakeExam.jsx";
 
 function Home() {
   return (
@@ -12,7 +10,6 @@ function Home() {
       <InfoCardsSection />
       <StatsSection />
       <LearnerOutcomes />
-      <MakeExam />
     </>
   );
 }

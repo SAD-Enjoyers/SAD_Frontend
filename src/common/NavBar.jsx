@@ -17,7 +17,9 @@ function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const pages = ["blogs", "courses", "questions", "profiles", "my Profile"];
+  const addresses = ["/", "/", "/QuestionSearch", "/", "/profile"];
   var location = useLocation();
+
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -90,23 +92,20 @@ function NavBar() {
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
             >
-              {pages.map((page) => (
+              {pages.map((page, index) => (
                 <MenuItem
                   className="page"
                   key={page}
                   onClick={handleCloseNavMenu}
                 >
-                  {page == "my Profile" ? (
-                    <Link to="/profile" style={{ textDecoration: "none" }}>
-                      <Typography textAlign="center" sx={{ color: "#7D7D7D" }}>
-                        {page}
-                      </Typography>
-                    </Link>
-                  ) : (
+                  <Link
+                    to={addresses[index]}
+                    style={{ textDecoration: "none" }}
+                  >
                     <Typography textAlign="center" sx={{ color: "#7D7D7D" }}>
                       {page}
                     </Typography>
-                  )}
+                  </Link>
 
                   {/* رنگ خاکستری */}
                 </MenuItem>
@@ -154,31 +153,14 @@ function NavBar() {
               marginRight: "auto",
             }}
           >
-            {pages.map((page) =>
-              page == "my Profile" ? (
-                <Link
-                  to="/profile"
-                  style={{ textDecoration: "none" }}
-                  key={page}
-                >
-                  <Button
-                    className="page"
-                    onClick={handleCloseNavMenu}
-                    sx={{
-                      color: "#7D7D7D",
-                      fontSize: { md: "1rem" },
-                      "&:hover": {
-                        color: "#378CE7", // رنگ آبی هنگام هاور
-                      },
-                    }} // رنگ خاکستری
-                  >
-                    {page}
-                  </Button>
-                </Link>
-              ) : (
+            {pages.map((page, index) => (
+              <Link
+                to={addresses[index]}
+                style={{ textDecoration: "none" }}
+                key={page}
+              >
                 <Button
                   className="page"
-                  key={page}
                   onClick={handleCloseNavMenu}
                   sx={{
                     color: "#7D7D7D",
@@ -190,8 +172,8 @@ function NavBar() {
                 >
                   {page}
                 </Button>
-              )
-            )}
+              </Link>
+            ))}
           </Box>
 
           {/* دکمه‌ها سمت راست در همه حالات */}

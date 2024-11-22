@@ -5,8 +5,10 @@ import Signup from "./features/Auth/Signup/Signup.jsx";
 import Login from "./features/Auth/Login/Login.jsx";
 import Fpass from "./features/Auth/ForgetPassword/forgotPassword.jsx";
 import PrivateProfile from "./features/PrivateProfile/PrivateProfile.jsx";
-import Layout from "./Layout.jsx";
+import Layout from "./common/Layout.jsx";
 import MakeExam from "./features/MakeExam/MakeExam.jsx";
+import ExamPreview from "./features/Exams/ExamPreview/ExamPreview.jsx";
+import QuestionSearch from "./features/Exams/QuestionSearch/QuestionSearch.jsx"; // Import QuestionSearch
 
 function AppRoutes() {
   return (
@@ -19,6 +21,8 @@ function AppRoutes() {
           <Route path="fp" element={<Fpass />} />
           <Route path="profile" element={<PrivateProfile />} />
           <Route path="make_exam" element={<MakeExam />} />
+          <Route path="ExamPreview" element={<ExamPreview />} />
+          <Route path="QuestionSearch" element={<QuestionSearch />} />
         </Route>
       </Routes>
     </Router>

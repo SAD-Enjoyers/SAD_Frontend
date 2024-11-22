@@ -151,14 +151,16 @@ export default function PrivateProfile() {
                   }}
                 >
                   <Typography variant="h6" component="div">
-                    Full Name:
-                    {data.data.userData.firstName + data.data.userData.lastName}
+                    Full Name:{" "}
+                    {data.data.userData.firstName +
+                      "   " +
+                      data.data.userData.lastName}
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
-                    Username: johndoe123
+                    Username: {data.data.userData.userName}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Email: johndoe@example.com
+                    Email: {data.data.userData.email}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Bio: Software Developer with a passion for coding and
