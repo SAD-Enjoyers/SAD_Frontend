@@ -7,6 +7,8 @@ import Fpass from "./features/Auth/ForgetPassword/forgotPassword.jsx";
 import ExamPreview from "./features/Exams/ExamPreview/ExamPreview.jsx";
 import QuestionSearch from "./features/Exams/QuestionSearch/QuestionSearch.jsx"; // Import QuestionSearch
 
+
+
 function AppRoutes() {
   return (
     <Router>
