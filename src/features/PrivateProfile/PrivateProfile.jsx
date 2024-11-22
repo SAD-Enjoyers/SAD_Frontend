@@ -20,8 +20,11 @@ export default function PrivateProfile() {
   const navigate = useNavigate();
   // dont repead yourself    dry
   const StyledButton = ({ link, children }) => {
-    return link && link === "make_exam" ? (
-      <Link to="/make_exam" style={{ width: "100%" }}>
+    if (!link) {
+      link = "";
+    }
+    return (
+      <Link to={"/" + link} style={{ width: "100%" }}>
         <Button
           fullWidth
           sx={{
@@ -46,30 +49,6 @@ export default function PrivateProfile() {
           {children}
         </Button>
       </Link>
-    ) : (
-      <Button
-        fullWidth
-        sx={{
-          borderBottom: "1px solid #387CE7",
-          fontSize: {
-            xs: "0.5rem",
-            sm: "0.75rem",
-            md: "1.1rem",
-          },
-          padding: {
-            xs: "2px 4px",
-            sm: "3px 4px",
-            md: "6px 4px",
-          },
-          borderRadius: "0px",
-          "&:hover": {
-            backgroundColor: "#387CE7",
-            color: "#fff",
-          },
-        }}
-      >
-        {children}
-      </Button>
     );
   };
 
@@ -107,7 +86,7 @@ export default function PrivateProfile() {
               alignItems="center"
               gap={3}
             >
-              <StyledButton link="">add question</StyledButton>
+              <StyledButton link="AddQuestions">add question</StyledButton>
               {/* <StyledButton link="">bank question</StyledButton> */}
               <StyledButton link="make_exam">make exam</StyledButton>
               <StyledButton link="">add courses</StyledButton>

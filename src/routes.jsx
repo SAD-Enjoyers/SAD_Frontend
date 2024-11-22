@@ -9,6 +9,7 @@ import Layout from "./common/Layout.jsx";
 import MakeExam from "./features/MakeExam/MakeExam.jsx";
 import ExamPreview from "./features/Exams/ExamPreview/ExamPreview.jsx";
 import QuestionSearch from "./features/Exams/QuestionSearch/QuestionSearch.jsx"; // Import QuestionSearch
+import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 
 function AppRoutes() {
   return (
@@ -23,6 +24,7 @@ function AppRoutes() {
           <Route path="make_exam" element={<MakeExam />} />
           <Route path="ExamPreview" element={<ExamPreview />} />
           <Route path="QuestionSearch" element={<QuestionSearch />} />
+          <Route path="AddQuestions" element={<AddQuestion />} />
         </Route>
       </Routes>
     </Router>

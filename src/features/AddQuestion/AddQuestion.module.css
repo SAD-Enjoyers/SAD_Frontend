@@ -1,34 +1,32 @@
-.countainer{
-    margin: 20px 300px;
+.countainer {
+  margin: 20px 300px;
 }
 
-.input_box_solution{
-    margin-top: 30px;
-    align-items: 'center';
-    display: flex;
-    justify-content: space-between;
-    
+.input_box_solution {
+  margin-top: 30px;
+  align-items: "center";
+  display: flex;
+  justify-content: space-between;
 }
 
-.input_box_option{
-    margin-top: 30px;
-    justify-content: space-between;
-    width: 500px;
-    
+.input_box_option {
+  margin-top: 30px;
+  justify-content: space-between;
+  width: 500px;
 }
 
-.input_box_tag{
-    margin-top: 10px;
-    width: 90px;
-    display: flex;
+.input_box_tag {
+  margin-top: 10px;
+  width: 90px;
+  display: flex;
 }
 
-.input_box_right_answer{
-    margin-right: 200px;
+.input_box_right_answer {
+  margin-right: 200px;
 }
 
-.input_box_other{
-    margin-top: 30px;
-    text-align: center;
-    display: block;
+.input_box_other {
+  margin-top: 30px;
+  text-align: center;
+  display: block;
 }
