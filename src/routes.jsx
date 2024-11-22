@@ -11,6 +11,7 @@ import ExamPreview from "./features/Exams/ExamPreview/ExamPreview.jsx";
 import QuestionSearch from "./features/Exams/QuestionSearch/QuestionSearch.jsx"; // Import QuestionSearch
 import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 import PrivateExamPage from "./features/PrivateExamPage/PrivateExamPage.jsx";
+import ChangePassword from "./features/Auth/ChangePassword/ChangePassword.jsx";
 
 function AppRoutes() {
   return (
@@ -27,6 +28,8 @@ function AppRoutes() {
           <Route path="private_exam_page" element={<PrivateExamPage />} />
           <Route path="QuestionSearch" element={<QuestionSearch />} />
           <Route path="AddQuestions" element={<AddQuestion />} />
+          <Route path="changepassword" element={<ChangePassword />} />
+
           {/* private_exam_page */}
         </Route>
       </Routes>
