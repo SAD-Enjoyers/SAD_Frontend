@@ -31,9 +31,9 @@ const ForgotPassword = () => {
     setErrorMessage("");
 
   
-    /*
+    
     try {
-      const response = await fetch("https://your-backend-api.com/forgot-password", {
+      const response = await fetch("//api/v1/auth/sendMail", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -45,17 +45,18 @@ const ForgotPassword = () => {
 
       if (response.ok) {
         alert("A reset code has been sent to your email.");
-        navigate("/change-password"); // تغییر مسیر به صفحه ChangePassword
-      } else {
+        navigate("/change-password"); 
+      } else 
         setErrorMessage(data.message || "Something went wrong.");
       }
-    } catch (error) {
+     catch (error) {
       console.error("Error:", error);
       setErrorMessage("Failed to connect to the server.");
-    } finally {
+    }
+     finally {
       setLoading(false);
     }
-    */
+  
 
    
     setTimeout(() => {
