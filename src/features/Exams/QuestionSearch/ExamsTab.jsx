@@ -26,3 +26,17 @@ import {
   Sort,
   SortByAlpha,
 } from "@mui/icons-material";
+
+const [searchTerm, setSearchTerm] = useState("");
+const [loading, setLoading] = useState(false);
+const [selectedSubjects, setSelectedSubjects] = useState([]);
+const [selectedLevel, setSelectedLevel] = useState("");
+
+const [sortOrder, setSortOrder] = useState({
+  criterion: "",
+  direction: "asc",
+});
+const [currentPage, setCurrentPage] = useState(1);
+const [itemsPerPage, setItemsPerPage] = useState(12);
+
+const questions = Mokdata;
