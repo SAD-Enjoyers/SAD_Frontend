@@ -31,14 +31,14 @@ function ChangePassword() {
     setShowConfirmPassword((show) => !show);
 
   const validatePassword = (password) => {
-    const passwordRegex =
-      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    return passwordRegex.test(password);
+    // const passwordRegex =
+    //   /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    return true;
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // const newError = {};
+    const newError = {};
 
     if (!code) {
       newError.code = "Recovery code is required";
@@ -48,7 +48,7 @@ function ChangePassword() {
       newError.confirmPassword = "Passwords do not match!";
     }
 
-    const email = localStorage.getItem('userEmail');
+    const email = localStorage.getItem("userEmail");
 
     if (!newPassword) {
       newError.newPassword = "New password is required";
@@ -68,27 +68,26 @@ function ChangePassword() {
     setSnackbarOpen(false);
 
     try {
-     
-      const response = await fetch('/api/v1/auth/verify-recovery-code', {
-          method: 'PUT',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email,recoverycode, newPassword }),
+      const response = await fetch("/api/v1/auth/verify-recovery-code", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, recoverycode, newPassword }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         // If password change is successful, show success message and redirect to login page
-        alert('Password changed successfully!');
-        localStorage.removeItem('userEmail');
-        navigate('/login'); // Redirect to login page
+        alert("Password changed successfully!");
+        localStorage.removeItem("userEmail");
+        navigate("/login"); // Redirect to login page
       } else {
-        setErrorMessage(data.message || 'Error changing password');
+        setErrorMessage(data.message || "Error changing password");
       }
     } catch (error) {
-      setErrorMessage('Network error');
+      setErrorMessage("Network error");
     } finally {
       setLoading(false);
     }
