@@ -46,7 +46,7 @@ function AddQuestion() {
         tag3: "",
         
     });
-
+    const [categories, setCategories] = useState([]);
     const [rightAnswer, setRightAnswer] = useState([]);
 
     const handleChangeQuestion = (e) =>{
@@ -137,8 +137,21 @@ function AddQuestion() {
 
     };
 
+    useEffect(() => {
+        const fetchCategories = async () => {
+          try {
+                const response = await axios.get("/api/v1/common/categories");
+                setCategories(response.data.data.categoryList || []);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+
+        fetchCategories();
+    }, []);
+
     const handleChangeAddButton = () => {
-        axios.post("",{
+        axios.post("/api/v1/questions/add-question",{
             question_name: question.questionName,
             question_text: question.question,
             o1: options.option1,
@@ -297,13 +310,23 @@ function AddQuestion() {
                         id="tag1"
                         defaultValue={5}
                         value={tags.tag1}
-                        label="Age"
+                        label=""
                         onChange={handleChangeTag}
                         >
-                        <MenuItem value={5}>None</MenuItem>
-                        <MenuItem value={1}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        {categories.map((category) => (
+                            <MenuItem key={category.categoryId} value={category.category}>
+                            <Checkbox
+                                checked={selectedSubjects.includes(category.category)}
+                                sx={{
+                                color: "#378CE7", // Checkbox icon color matches theme
+                                "&.Mui-checked": {
+                                    color: "#378CE7", // Checked state color
+                                },
+                                }}
+                            />
+                            <ListItemText primary={category.category} />
+                            </MenuItem>
+                        ))}
                         </Select>
                     </FormControl>
 
@@ -317,12 +340,23 @@ function AddQuestion() {
                         labelId="demo-simple-select-label"
                         id="tag2"
                         value={tags.tag2}
-                        label="Age"
+                        label="tag"
                         onChange={handleChangeTag}
                         >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        {categories.map((category) => (
+                            <MenuItem key={category.categoryId} value={category.category}>
+                            <Checkbox
+                                checked={selectedSubjects.includes(category.category)}
+                                sx={{
+                                color: "#378CE7", // Checkbox icon color matches theme
+                                "&.Mui-checked": {
+                                    color: "#378CE7", // Checked state color
+                                },
+                                }}
+                            />
+                            <ListItemText primary={category.category} />
+                            </MenuItem>
+                        ))}
                         </Select>
                     </FormControl>
                     
@@ -337,12 +371,23 @@ function AddQuestion() {
                         labelId="demo-simple-select-label"
                         id="tag3"
                         value={tags.tag3}
-                        label="Age"
+                        label="tag"
                         onChange={handleChangeTag}
                         >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        {categories.map((category) => (
+                            <MenuItem key={category.categoryId} value={category.category}>
+                            <Checkbox
+                                checked={selectedSubjects.includes(category.category)}
+                                sx={{
+                                color: "#378CE7", // Checkbox icon color matches theme
+                                "&.Mui-checked": {
+                                    color: "#378CE7", // Checked state color
+                                },
+                                }}
+                            />
+                            <ListItemText primary={category.category} />
+                            </MenuItem>
+                        ))}
                         </Select>
                     </FormControl>
                 
