@@ -30,7 +30,7 @@ function AppRoutes() {
           <Route path="QuestionSearch" element={<QuestionSearch />} />
           <Route path="AddQuestions" element={<AddQuestion />} />
           <Route path="changepassword" element={<ChangePassword />} />
-          <Route path="/QuestionPage" element={<QuestionPage />} />
+          <Route path="QuestionPage" element={<QuestionPage />} />
 
           {/* private_exam_page */}
         </Route>

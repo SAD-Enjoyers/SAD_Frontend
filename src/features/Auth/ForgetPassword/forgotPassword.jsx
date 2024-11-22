@@ -8,13 +8,13 @@ import {
   CircularProgress,
   Link,
 } from "@mui/material";
-// import { useNavigate } from "react-router-dom"; 
+// import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  // const navigate = useNavigate(); 
+  // const navigate = useNavigate();
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -30,16 +30,17 @@ const ForgotPassword = () => {
     setLoading(true);
     setErrorMessage("");
 
-  
-    /*
     try {
-      const response = await fetch("https://your-backend-api.com/forgot-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+      const response = await fetch(
+        "https://your-backend-api.com/forgot-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
 
       const data = await response.json();
 
@@ -55,12 +56,10 @@ const ForgotPassword = () => {
     } finally {
       setLoading(false);
     }
-    */
 
-   
     setTimeout(() => {
       alert("A reset code has been sent to your email.");
-      // navigate("/change-password"); 
+      // navigate("/change-password");
       setLoading(false);
     }, 2000);
   };
@@ -134,4 +133,3 @@ const ForgotPassword = () => {
 };
 
 export default ForgotPassword;
-
