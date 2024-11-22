@@ -49,6 +49,8 @@ function ChangePassword() {
       newError.confirmPassword = "Passwords do not match!";
     }
 
+    const email = localStorage.getItem('userEmail');
+
     if (!newPassword) {
       newError.newPassword = "New password is required";
     } else if (!validatePassword(newPassword)) {
@@ -81,6 +83,7 @@ function ChangePassword() {
       if (response.ok) {
         // If password change is successful, show success message and redirect to login page
         alert('Password changed successfully!');
+        localStorage.removeItem('userEmail');
         navigate('/login'); // Redirect to login page
       } else {
         setErrorMessage(data.message || 'Error changing password');
