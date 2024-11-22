@@ -38,7 +38,7 @@ function ChangePassword() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const newError = {};
+    // const newError = {};
 
     if (!code) {
       newError.code = "Recovery code is required";
@@ -47,6 +47,8 @@ function ChangePassword() {
     if (newPassword !== confirmPassword) {
       newError.confirmPassword = "Passwords do not match!";
     }
+
+    const email = localStorage.getItem('userEmail');
 
     if (!newPassword) {
       newError.newPassword = "New password is required";
@@ -66,34 +68,27 @@ function ChangePassword() {
     setSnackbarOpen(false);
 
     try {
-      // Replace with actual API call using fetch (instead of axios)
-      // const response = await fetch('/api/reset-password', {
-      //     method: 'POST',
-      //     headers: {
-      //         'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify({ code, newPassword }),
-      // });
+     
+      const response = await fetch('/api/v1/auth/verify-recovery-code', {
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email,recoverycode, newPassword }),
+      });
 
-      // const data = await response.json();
+      const data = await response.json();
 
-      // If the response is successful, set the success message
-      // if (data.status === 200) {
-      setSuccessMessage("Password changed successfully!");
-      setSnackbarOpen(true);
-      setTimeout(() => {
-        // Redirect to login page after success
-        // navigate('/login'); // Uncomment this line to redirect after success
-      }, 3000); // 3 seconds delay before redirect
-      // }
-    } catch (err) {
-      if (err.response) {
-        setError({
-          global: err.response.data.message || "Error changing password",
-        });
+      if (response.ok) {
+        // If password change is successful, show success message and redirect to login page
+        alert('Password changed successfully!');
+        localStorage.removeItem('userEmail');
+        navigate('/login'); // Redirect to login page
       } else {
-        setError({ global: "Network error" });
+        setErrorMessage(data.message || 'Error changing password');
       }
+    } catch (error) {
+      setErrorMessage('Network error');
     } finally {
       setLoading(false);
     }
