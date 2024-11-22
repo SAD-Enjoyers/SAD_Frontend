@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from "react";
 import AppRoutes from "./routes.jsx"; // Use .jsx extension
 
