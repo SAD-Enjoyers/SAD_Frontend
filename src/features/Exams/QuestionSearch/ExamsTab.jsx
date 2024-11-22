@@ -111,4 +111,53 @@ const filteredQuestions = questions
     startIndex,
     startIndex + itemsPerPage
   );
+
+<Grid container spacing={3} sx={{ marginTop: "20px" }}>
+  {currentQuestions.map((question) => (
+    <Grid item xs={12} key={question.id}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          padding: "20px",
+          borderRadius: "12px",
+          backgroundColor: "#fff",
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.08)",
+          transition: "transform 0.3s ease-in-out",
+          "&:hover": {
+            transform: "scale(1.03)",
+          },
+          width: "100%",
+          maxWidth: "900px", // Max width for large screens
+          margin: "0 auto",
+          boxSizing: "border-box",
+        }}
+      >
+        {/* Question Title */}
+        <Typography
+          variant="h6"
+          sx={{
+            color: "#4A90E2",
+            fontWeight: "bold",
+            textDecoration: "none",
+            marginBottom: "10px",
+            lineHeight: "1.4", // Adjust line height for better readability
+          }}
+        >
+          <Link
+            to={`/question/${question.id}`}
+            style={{ textDecoration: "none" }}
+          >
+            {question.name}
+          </Link>
+        </Typography>
+        
+        {/* More JSX for displaying question details */}
+        
+      </Box>
+    </Grid>
+  ))}
+</Grid>
+
+
   
