@@ -26,10 +26,9 @@ function ChangePassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-
-
   const handleClickShowNewPassword = () => setShowNewPassword((show) => !show);
-  const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
+  const handleClickShowConfirmPassword = () =>
+    setShowConfirmPassword((show) => !show);
 
   const validatePassword = (password) => {
     const passwordRegex =
@@ -144,9 +143,8 @@ function ChangePassword() {
                       <IconButton
                         onClick={handleClickShowNewPassword}
                         edge="end"
-                      
                       >
-                        {showNewPassword ? <VisibilityOff/> : <Visibility />}
+                        {showNewPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -169,7 +167,7 @@ function ChangePassword() {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                            onClick={handleClickShowConfirmPassword}
+                        onClick={handleClickShowConfirmPassword}
                         edge="end"
                       >
                         {showConfirmPassword ? (

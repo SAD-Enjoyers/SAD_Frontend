@@ -8,60 +8,52 @@ import {
   CircularProgress,
   Link,
 } from "@mui/material";
-// import { useNavigate } from "react-router-dom";
+
+import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  // const validateEmail = (email) =>
+  //   /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // بررسی فرمت ایمیل
-    if (!validateEmail(email)) {
-      setErrorMessage("Invalid email format. Please enter a valid email.");
-      return;
-    }
+    // if (!validateEmail(email)) {
+    //   setErrorMessage("Invalid email format. Please enter a valid email.");
+    //   return;
+    // }
 
     setLoading(true);
     setErrorMessage("");
 
     try {
-      const response = await fetch(
-        "https://your-backend-api.com/forgot-password",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
+      const response = await fetch("/api/v1/auth/sendMail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
 
       const data = await response.json();
 
       if (response.ok) {
-        alert("A reset code has been sent to your email.");
-        navigate("/change-password"); // تغییر مسیر به صفحه ChangePassword
-      } else {
-        setErrorMessage(data.message || "Something went wrong.");
-      }
+        localStorage.setItem("userEmail", email);
+        alert("The recovery code has been sent to your email.");
+
+        navigate("/changepassword");
+      } else setErrorMessage(data.message || "Something went wrong.");
     } catch (error) {
-      console.error("Error:", error);
       setErrorMessage("Failed to connect to the server.");
     } finally {
       setLoading(false);
     }
-
-    setTimeout(() => {
-      alert("A reset code has been sent to your email.");
-      // navigate("/change-password");
-      setLoading(false);
-    }, 2000);
   };
 
   return (
