@@ -89,6 +89,7 @@ export default function PrivateProfile() {
               <StyledButton link="AddQuestions">add question</StyledButton>
               {/* <StyledButton link="">bank question</StyledButton> */}
               <StyledButton link="make_exam">make exam</StyledButton>
+              <StyledButton link="ExamPreview">Exam Preview</StyledButton>
               <StyledButton link="">add courses</StyledButton>
               <StyledButton link="">review profile</StyledButton>
             </Box>

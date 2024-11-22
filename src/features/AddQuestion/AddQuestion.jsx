@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -21,6 +21,7 @@ import {
   ButtonGroup,
   ToggleButton,
   ToggleButtonGroup,
+  Grid2,
 } from "@mui/material";
 import styled from "./AddQuestion.module.css";
 import axios from "axios";
@@ -44,6 +45,7 @@ function AddQuestion() {
     tag2: "",
     tag3: "",
   });
+  const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [categories, setCategories] = useState([]);
   const [rightAnswer, setRightAnswer] = useState([]);
 
@@ -101,12 +103,11 @@ function AddQuestion() {
     setvisibility(event.target.checked);
   };
 
-  const handleChangeRightAnswer = (
-    event: React.MouseEvent<HTMLElement>,
-    newAlignment: string
-  ) => {
-    setRightAnswer(newAlignment);
-  };
+  const handleChangeRightAnswer = () =>
+    // newAlignment: string,
+    {
+      setRightAnswer(newAlignment);
+    };
 
   const handleChangeTag = (e) => {
     switch (e.target.id) {
@@ -164,215 +165,268 @@ function AddQuestion() {
   console.log(rightAnswer);
 
   return (
-    <div className={styled.countainer}>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
+    <Grid2
+      container
+      justifyContent={"center"}
+      alignItems={"center"}
+      mt="100px"
+      mb="100px"
+    >
+      <div className={styled.countainer}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
 
-          padding: 3,
-          borderRadius: 2,
-          backgroundColor: "white",
-          boxShadow: 3,
-          width: "90ch",
-          minWidth: 600,
-        }}
-      >
-        <div>
-          <Typography>Question Name:</Typography>
+            padding: 3,
+            borderRadius: 2,
+            backgroundColor: "white",
+            boxShadow: 3,
+            width: "90ch",
+            minWidth: 600,
+          }}
+        >
+          <div>
+            <Typography>Question Name:</Typography>
 
-          <Box
-            component="form"
-            sx={{ "& .MuiTextField-root": { m: 1, width: "70ch" } }}
-            noValidate
-            autoComplete="off"
-          >
-            <TextField id="questionName" onChange={handleChangeQuestion} />
-          </Box>
-        </div>
-
-        <div className={styled.input_box_question}>
-          <Typography>Question:</Typography>
-
-          <Box
-            component="form"
-            sx={{ "& .MuiTextField-root": { m: 1, width: "70ch" } }}
-            noValidate
-            autoComplete="off"
-          >
-            <TextField
-              id="question"
-              onChange={handleChangeQuestion}
-              multiline
-              rows={5}
-            />
-          </Box>
-        </div>
-
-        <div>
-          <Typography>Options:</Typography>
-
-          <Box
-            component="form"
-            sx={{ "& .MuiTextField-root": { m: 1, width: "70ch" } }}
-            noValidate
-            autoComplete="off"
-          >
-            <TextField
-              id="option1"
-              label="1"
-              onChange={handleChangeOptions}
-              multiline
-            />
-            <TextField
-              id="option2"
-              label="2"
-              onChange={handleChangeOptions}
-              multiline
-            />
-            <TextField
-              id="option3"
-              label="3"
-              onChange={handleChangeOptions}
-              multiline
-            />
-            <TextField
-              id="option4"
-              label="4"
-              onChange={handleChangeOptions}
-              multiline
-            />
-          </Box>
-        </div>
-
-        <div className={styled.input_box_solution}>
-          <div className={styled.input_box_right_answer}>
             <Box
               component="form"
-              sx={{ "& .MuiTextField-root": {} }}
+              sx={{ "& .MuiTextField-root": { m: 1, width: "70ch" } }}
               noValidate
               autoComplete="off"
             >
-              <Typography>Right Answer</Typography>
-              <ToggleButtonGroup
-                color="primary"
-                value={rightAnswer}
-                exclusive
-                onChange={handleChangeRightAnswer}
-                aria-label="Platform"
-              >
-                <ToggleButton value="1">1</ToggleButton>
-                <ToggleButton value="2">2</ToggleButton>
-                <ToggleButton value="3">3</ToggleButton>
-                <ToggleButton value="4">4</ToggleButton>
-              </ToggleButtonGroup>
+              <TextField id="questionName" onChange={handleChangeQuestion} />
             </Box>
           </div>
-          <div className={styled.input_box_tag}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">tag</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="tag1"
-                defaultValue={5}
-                value={tags.tag1}
-                label=""
-                onChange={handleChangeTag}
-              >
-                {categories.map((category) => (
-                  <MenuItem key={category.categoryId} value={category.category}>
-                    <Checkbox
-                      checked={selectedSubjects.includes(category.category)}
-                      sx={{
-                        color: "#378CE7", // Checkbox icon color matches theme
-                        "&.Mui-checked": {
-                          color: "#378CE7", // Checked state color
-                        },
-                      }}
-                    />
-                    <ListItemText primary={category.category} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
 
-          <div className={styled.input_box_tag}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">tag</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="tag2"
-                value={tags.tag2}
-                label="tag"
-                onChange={handleChangeTag}
-              >
-                {categories.map((category) => (
-                  <MenuItem key={category.categoryId} value={category.category}>
-                    <Checkbox
-                      checked={selectedSubjects.includes(category.category)}
-                      sx={{
-                        color: "#378CE7", // Checkbox icon color matches theme
-                        "&.Mui-checked": {
-                          color: "#378CE7", // Checked state color
-                        },
-                      }}
-                    />
-                    <ListItemText primary={category.category} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
+          <div className={styled.input_box_question}>
+            <Typography>Question:</Typography>
 
-          <div className={styled.input_box_tag}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">tag</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="tag3"
-                value={tags.tag3}
-                label="tag"
-                onChange={handleChangeTag}
-              >
-                {categories.map((category) => (
-                  <MenuItem key={category.categoryId} value={category.category}>
-                    <Checkbox
-                      checked={selectedSubjects.includes(category.category)}
-                      sx={{
-                        color: "#378CE7", // Checkbox icon color matches theme
-                        "&.Mui-checked": {
-                          color: "#378CE7", // Checked state color
-                        },
-                      }}
-                    />
-                    <ListItemText primary={category.category} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
-        </div>
-
-        <div className={styled.input_box_other}>
-          <FormControlLabel
-            label="Visibility"
-            control={
-              <Checkbox
-                checked={visibility}
-                onChange={handleChangeVisibility}
+            <Box
+              component="form"
+              sx={{ "& .MuiTextField-root": { m: 1, width: "70ch" } }}
+              noValidate
+              autoComplete="off"
+            >
+              <TextField
+                id="question"
+                onChange={handleChangeQuestion}
+                multiline
+                rows={5}
               />
-            }
-          />
-        </div>
+            </Box>
+          </div>
 
-        <div className={styled.input_box_other}>
-          <Button variant="contained" onClick={handleChangeAddButton}>
-            Add question
-          </Button>
-        </div>
-      </Box>
-    </div>
+          <div>
+            <Typography>Options:</Typography>
+
+            <Box
+              component="form"
+              sx={{ "& .MuiTextField-root": { m: 1, width: "70ch" } }}
+              noValidate
+              autoComplete="off"
+            >
+              <TextField
+                id="option1"
+                label="1"
+                onChange={handleChangeOptions}
+                multiline
+              />
+              <TextField
+                id="option2"
+                label="2"
+                onChange={handleChangeOptions}
+                multiline
+              />
+              <TextField
+                id="option3"
+                label="3"
+                onChange={handleChangeOptions}
+                multiline
+              />
+              <TextField
+                id="option4"
+                label="4"
+                onChange={handleChangeOptions}
+                multiline
+              />
+            </Box>
+          </div>
+
+          <div className={styled.input_box_solution}>
+            <div className={styled.input_box_right_answer}>
+              <Box
+                component="form"
+                sx={{ "& .MuiTextField-root": {} }}
+                noValidate
+                autoComplete="off"
+              >
+                <Typography>Right Answer</Typography>
+                <ToggleButtonGroup
+                  color="primary"
+                  value={rightAnswer}
+                  exclusive
+                  onChange={handleChangeRightAnswer}
+                  aria-label="Platform"
+                >
+                  <ToggleButton
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "#387CE7",
+                      },
+                    }}
+                    value="1"
+                  >
+                    1
+                  </ToggleButton>
+                  <ToggleButton
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "#387CE7",
+                      },
+                    }}
+                    value="2"
+                  >
+                    2
+                  </ToggleButton>
+                  <ToggleButton
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "#387CE7",
+                      },
+                    }}
+                    value="3"
+                  >
+                    3
+                  </ToggleButton>
+                  <ToggleButton
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "#387CE7",
+                      },
+                    }}
+                    value="4"
+                  >
+                    4
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+            </div>
+            <div className={styled.input_box_tag}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">tag</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="tag1"
+                  defaultValue={5}
+                  value={tags.tag1}
+                  label=""
+                  onChange={handleChangeTag}
+                >
+                  {categories.map((category) => (
+                    <MenuItem
+                      key={category.categoryId}
+                      value={category.category}
+                    >
+                      <Checkbox
+                        checked={selectedSubjects.includes(category.category)}
+                        sx={{
+                          color: "#378CE7", // Checkbox icon color matches theme
+                          "&.Mui-checked": {
+                            color: "#378CE7", // Checked state color
+                          },
+                        }}
+                      />
+                      <ListItemText primary={category.category} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+
+            <div className={styled.input_box_tag}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">tag</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="tag2"
+                  value={tags.tag2}
+                  label="tag"
+                  onChange={handleChangeTag}
+                >
+                  {categories.map((category) => (
+                    <MenuItem
+                      key={category.categoryId}
+                      value={category.category}
+                    >
+                      <Checkbox
+                        checked={selectedSubjects.includes(category.category)}
+                        sx={{
+                          color: "#378CE7", // Checkbox icon color matches theme
+                          "&.Mui-checked": {
+                            color: "#378CE7", // Checked state color
+                          },
+                        }}
+                      />
+                      <ListItemText primary={category.category} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+
+            <div className={styled.input_box_tag}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">tag</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="tag3"
+                  value={tags.tag3}
+                  label="tag"
+                  onChange={handleChangeTag}
+                >
+                  {categories.map((category) => (
+                    <MenuItem
+                      key={category.categoryId}
+                      value={category.category}
+                    >
+                      <Checkbox
+                        checked={selectedSubjects.includes(category.category)}
+                        sx={{
+                          color: "#378CE7", // Checkbox icon color matches theme
+                          "&.Mui-checked": {
+                            color: "#378CE7", // Checked state color
+                          },
+                        }}
+                      />
+                      <ListItemText primary={category.category} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+          </div>
+
+          <div className={styled.input_box_other}>
+            <FormControlLabel
+              label="Visibility"
+              control={
+                <Checkbox
+                  checked={visibility}
+                  onChange={handleChangeVisibility}
+                />
+              }
+            />
+          </div>
+
+          <div className={styled.input_box_other}>
+            <Button variant="contained" onClick={handleChangeAddButton}>
+              Add question
+            </Button>
+          </div>
+        </Box>
+      </div>
+    </Grid2>
   );
 }
 
