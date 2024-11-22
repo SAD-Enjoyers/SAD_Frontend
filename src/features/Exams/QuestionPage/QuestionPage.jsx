@@ -28,7 +28,7 @@ function QuestionPage() {
   const [submitted, setSubmitted] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-
+  
   useEffect(() => {
     const savedData = JSON.parse(localStorage.getItem("questionData"));
     if (savedData) {
