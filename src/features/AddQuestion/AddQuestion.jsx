@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {
     Box,
     Button,
@@ -46,6 +46,7 @@ function AddQuestion() {
         tag3: "",
         
     });
+    const [selectedSubjects, setSelectedSubjects] = useState([]);
     const [categories, setCategories] = useState([]);
     const [rightAnswer, setRightAnswer] = useState([]);
 
