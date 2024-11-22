@@ -105,3 +105,10 @@ const filteredQuestions = questions
     }
     return 0;
   });
+  const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentQuestions = filteredQuestions.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+  
