@@ -70,3 +70,38 @@ const handleItemsPerPageChange = (event) => {
   setItemsPerPage(event.target.value);
   setCurrentPage(1);
 };
+
+
+const filteredQuestions = questions
+  .filter((question) => {
+    const matchesSearchTerm = question.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesSubjects =
+      selectedSubjects.length === 0 ||
+      selectedSubjects.every((subject) =>
+        question.subjects.includes(subject)
+      );
+    const matchesLevel = selectedLevel
+      ? question.level === selectedLevel
+      : true;
+
+    return matchesSearchTerm && matchesSubjects && matchesLevel;
+  })
+  .sort((a, b) => {
+    const { criterion, direction } = sortOrder;
+    if (criterion === "score") {
+      return direction === "asc" ? a.score - b.score : b.score - a.score;
+    }
+    if (criterion === "name") {
+      return direction === "asc"
+        ? a.name.localeCompare(b.name)
+        : b.name.localeCompare(a.name);
+    }
+    if (criterion === "writer") {
+      return direction === "asc"
+        ? a.writer.localeCompare(b.writer)
+        : b.writer.localeCompare(a.writer);
+    }
+    return 0;
+  });
