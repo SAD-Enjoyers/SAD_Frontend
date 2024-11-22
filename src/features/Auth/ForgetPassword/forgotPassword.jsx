@@ -44,7 +44,9 @@ const ForgotPassword = () => {
       const data = await response.json();
 
       if (response.ok) {
+        localStorage.setItem('userEmail', email);
         alert("The recovery code has been sent to your email.");
+
         navigate("/changepassword"); 
       } else 
         setErrorMessage(data.message || "Something went wrong.");
@@ -55,8 +57,6 @@ const ForgotPassword = () => {
      finally {
       setLoading(false);
     }
-  
-
   
     
   };
