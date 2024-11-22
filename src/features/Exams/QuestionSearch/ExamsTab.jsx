@@ -40,3 +40,33 @@ const [currentPage, setCurrentPage] = useState(1);
 const [itemsPerPage, setItemsPerPage] = useState(12);
 
 const questions = Mokdata;
+
+const handleSearch = (event) => setSearchTerm(event.target.value);
+
+const handleSearchSubmit = () => {
+  setLoading(true);
+  setTimeout(() => setLoading(false), 1500);
+};
+
+const handleKeyPress = (event) => {
+  if (event.key === "Enter") handleSearchSubmit();
+};
+
+const handleSubjectChange = (event) => {
+  const selected = event.target.value;
+  if (selected.length <= 3) {
+    setSelectedSubjects(selected);
+  }
+};
+
+const handleSortChange = (event) => {
+  const [criterion, direction] = event.target.value.split("-");
+  setSortOrder({ criterion, direction });
+};
+
+const handlePageChange = (event, value) => setCurrentPage(value);
+
+const handleItemsPerPageChange = (event) => {
+  setItemsPerPage(event.target.value);
+  setCurrentPage(1);
+};
