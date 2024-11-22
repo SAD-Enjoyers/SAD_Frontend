@@ -4,7 +4,7 @@ import Home from "./features/Home/Home";
 import Signup from "./features/Auth/Signup/Signup.jsx";
 import Login from "./features/Auth/Login/Login.jsx";
 import Fpass from "./features/Auth/ForgetPassword/forgotPassword.jsx";
-import ExamPreview from "./features/Exams/QuestionSearch/ExamPreview/ExamPreview.jsx";
+import ExamPreview from "./features/Exams/ExamPreview/ExamPreview.jsx";
 import QuestionSearch from "./features/Exams/QuestionSearch/QuestionSearch.jsx"; // Import QuestionSearch
 
 function AppRoutes() {
