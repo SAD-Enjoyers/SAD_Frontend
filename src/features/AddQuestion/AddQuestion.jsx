@@ -51,7 +51,7 @@ function AddQuestion() {
     const [rightAnswer, setRightAnswer] = useState([]);
 
     const handleChangeQuestion = (e) =>{
-        switch(e.target.id) {
+        switch(e.target.form[0].id) {
             case "questionName":
                 setQuestion((prevState) => ({
                     ...prevState,
@@ -66,10 +66,11 @@ function AddQuestion() {
                     }));
                     break;
         }       
+        console.log()
     }
     
     const handleChangeOptions = (e) =>{
-        switch(e.target.id) {
+        switch(e.target.labels[0].htmlFor) {
             case "option1":
                 setOptions((prevState) => ({
                     ...prevState,
@@ -98,22 +99,21 @@ function AddQuestion() {
                 }));
                 break;
         }
+        
     }
+    
 
     const handleChangeVisibility = (event) => {
         setvisibility(event.target.checked);
-    };
+    };    
 
     
-    const handleChangeRightAnswer = (
-        event: React.MouseEvent<HTMLElement>,
-        newAlignment: string,
-      ) => {
-        setRightAnswer(newAlignment);
+    const handleChangeRightAnswer = (e) => {
+        setRightAnswer(e.target.value);
       };
 
     const handleChangeTag = (e) => {
-        switch(e.target.id) {
+        switch(e.target.name) {
             case "tag1":
                     setTags((prevState) => ({
                         ...prevState,
@@ -135,7 +135,7 @@ function AddQuestion() {
                     }));
                     break;
         }
-
+        console.log( e)
     };
 
     useEffect(() => {
@@ -167,7 +167,7 @@ function AddQuestion() {
 
         })
     };
-    console.log(rightAnswer)
+    
     
 
     return(
@@ -300,6 +300,7 @@ function AddQuestion() {
                         <ToggleButton value="3">3</ToggleButton>
                         <ToggleButton value="4">4</ToggleButton>
                     </ToggleButtonGroup>
+                    <p>Current Right Answer: {rightAnswer}</p>
                 </Box>
                 </div>
                 <div className={styled.input_box_tag}>
@@ -308,23 +309,14 @@ function AddQuestion() {
                         <InputLabel id="demo-simple-select-label">tag</InputLabel>
                         <Select
                         labelId="demo-simple-select-label"
-                        id="tag1"
+                        name='tag1'
                         defaultValue={5}
                         value={tags.tag1}
                         label=""
                         onChange={handleChangeTag}
                         >
                         {categories.map((category) => (
-                            <MenuItem key={category.categoryId} value={category.category}>
-                            <Checkbox
-                                checked={selectedSubjects.includes(category.category)}
-                                sx={{
-                                color: "#378CE7", // Checkbox icon color matches theme
-                                "&.Mui-checked": {
-                                    color: "#378CE7", // Checked state color
-                                },
-                                }}
-                            />
+                            <MenuItem key={category.categoryId} value={category.category}>                                                  
                             <ListItemText primary={category.category} />
                             </MenuItem>
                         ))}
@@ -339,22 +331,13 @@ function AddQuestion() {
                         <InputLabel id="demo-simple-select-label">tag</InputLabel>
                         <Select
                         labelId="demo-simple-select-label"
-                        id="tag2"
+                        name='tag2'
                         value={tags.tag2}
                         label="tag"
                         onChange={handleChangeTag}
                         >
                         {categories.map((category) => (
-                            <MenuItem key={category.categoryId} value={category.category}>
-                            <Checkbox
-                                checked={selectedSubjects.includes(category.category)}
-                                sx={{
-                                color: "#378CE7", // Checkbox icon color matches theme
-                                "&.Mui-checked": {
-                                    color: "#378CE7", // Checked state color
-                                },
-                                }}
-                            />
+                            <MenuItem key={category.categoryId} value={category.category}>                            
                             <ListItemText primary={category.category} />
                             </MenuItem>
                         ))}
@@ -369,15 +352,15 @@ function AddQuestion() {
                     <FormControl fullWidth>
                         <InputLabel id="demo-simple-select-label">tag</InputLabel>
                         <Select
-                        labelId="demo-simple-select-label"
-                        id="tag3"
+                        labelId="demo-simple-select-label"                        
                         value={tags.tag3}
+                        name='tag3'
                         label="tag"
                         onChange={handleChangeTag}
                         >
                         {categories.map((category) => (
                             <MenuItem key={category.categoryId} value={category.category}>
-                            <Checkbox
+                            {/* <Checkbox
                                 checked={selectedSubjects.includes(category.category)}
                                 sx={{
                                 color: "#378CE7", // Checkbox icon color matches theme
@@ -385,7 +368,7 @@ function AddQuestion() {
                                     color: "#378CE7", // Checked state color
                                 },
                                 }}
-                            />
+                            /> */}
                             <ListItemText primary={category.category} />
                             </MenuItem>
                         ))}
