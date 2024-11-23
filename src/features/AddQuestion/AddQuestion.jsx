@@ -312,7 +312,7 @@ function AddQuestion() {
                         name='tag1'
                         defaultValue={5}
                         value={tags.tag1}
-                        label=""
+                        label="tag"
                         onChange={handleChangeTag}
                         >
                         {categories.map((category) => (
@@ -359,16 +359,7 @@ function AddQuestion() {
                         onChange={handleChangeTag}
                         >
                         {categories.map((category) => (
-                            <MenuItem key={category.categoryId} value={category.category}>
-                            {/* <Checkbox
-                                checked={selectedSubjects.includes(category.category)}
-                                sx={{
-                                color: "#378CE7", // Checkbox icon color matches theme
-                                "&.Mui-checked": {
-                                    color: "#378CE7", // Checked state color
-                                },
-                                }}
-                            /> */}
+                            <MenuItem key={category.categoryId} value={category.category}>                            
                             <ListItemText primary={category.category} />
                             </MenuItem>
                         ))}
