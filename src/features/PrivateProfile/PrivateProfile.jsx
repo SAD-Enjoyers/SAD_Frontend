@@ -13,11 +13,13 @@ import {
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import ReviewComponent from "./components/ReviewComponent.jsx";
-import useFetchWithLoader from "./hooks/fetchloader.jsx";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function PrivateProfile() {
   const navigate = useNavigate();
+  const [isValid, setIsValid] = useState(true); // استفاده از useState برای مدیریت isValid
+  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState(false);
   // dont repead yourself    dry
   const StyledButton = ({ link, children }) => {
     if (!link) {
@@ -52,21 +54,45 @@ export default function PrivateProfile() {
     );
   };
 
-  const { isLoading, data, error, fetchData } = useFetchWithLoader(
-    "/api/v1/profile/private-data",
-    {
-      method: "GET",
-    }
-  );
   useEffect(() => {
-    fetchData({ data: "some data" });
+    const token = localStorage.getItem("token");
+
+    if (!token || !data) {
+      fetch("/api/v1/profile/private-data", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "x-role": localStorage.getItem("role"),
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            setIsValid(false); // تغییر وضعیت به false در صورت خطا
+          } else {
+            return response.json();
+          }
+        })
+        .then((data) => {
+          console.log("2");
+          console.log(data);
+          setData(data);
+          setLoading(false); // وقتی درخواست تمام شد، حالت loading را به false تغییر بده
+        })
+        .catch((err) => {
+          setIsValid(false); // در صورت بروز خطا، وضعیت را به false تغییر دهید
+          setLoading(false); // حتی در صورت خطا نیز بارگذاری تمام می‌شود
+        });
+    } else {
+      setLoading(false); // اگر توکن موجود باشد، بارگذاری تمام می‌شود
+    }
   }, []);
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return <LoadingScreen />; // نمایش لودینگ
   }
 
-  if (error) {
+  if (!isValid) {
     navigate("/");
   }
 
