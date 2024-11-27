@@ -237,7 +237,11 @@ function Signup() {
           label={
             <Typography variant="body2">
               I agree to the{" "}
-              <Link href="/terms" underline="hover" color="primary">
+              <Link
+                href="/TermsAndConditions"
+                underline="hover"
+                color="primary"
+              >
                 terms and conditions
               </Link>
             </Typography>
