@@ -245,19 +245,27 @@ function QuestionsTab() {
               value={selectedSubjects}
               onChange={handleSubjectChange}
               label="Subjects"
-              renderValue={(selected) => selected.join(", ")} // Comma-separated values
+              renderValue={(selected) => selected.join(", ")}
               sx={{
-                backgroundColor: "#ffffff", // Clean white background
-                borderRadius: "8px", // Rounded corners
-                borderColor: "#E0E0E0", // Lighter border color
+                backgroundColor: "#ffffff",
+                borderRadius: "8px",
+                borderColor: "#E0E0E0",
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#E0E0E0", // Light grey border color
+                  borderColor: "#E0E0E0",
                 },
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#378CE7", // Hover effect with blue border
+                  borderColor: "#378CE7",
                 },
                 "& .MuiSelect-icon": {
-                  color: "#378CE7", // Icon color matches theme
+                  color: "#378CE7",
+                },
+              }}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 200, // Limit height
+                    overflow: "auto", // Enable scrolling
+                  },
                 },
               }}
             >
@@ -266,9 +274,9 @@ function QuestionsTab() {
                   <Checkbox
                     checked={selectedSubjects.includes(category.category)}
                     sx={{
-                      color: "#378CE7", // Checkbox icon color matches theme
+                      color: "#378CE7",
                       "&.Mui-checked": {
-                        color: "#378CE7", // Checked state color
+                        color: "#378CE7",
                       },
                     }}
                   />
