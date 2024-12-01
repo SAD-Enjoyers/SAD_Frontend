@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "name": "What is the capital of France?",
+    "text": "Paris is the capital city of France. It's one of the most famous cities in the world.",
+    "subjects": ["Geography", "History"],
+    "score": 4,
+    "numberOfVoters": 100,
+    "writer": "John Doe",
+    "writerId": 101
+  },
+  {
+    "id": 2,
+    "name": "What is 2 + 2?",
+    "text": "Simple math question, what is the result of adding 2 and 2?",
+    "subjects": ["Mathematics"],
+    "score": 5,
+    "numberOfVoters": 200,
+    "writer": "Jane Smith",
+    "writerId": 102
+  },
+  {
+    "id": 3,
+    "name": "What is the boiling point of water?",
+    "text": "Boiling point of water can be considered in different conditions. What is the standard boiling point?",
+    "subjects": ["Physics", "Chemistry"],
+    "score": 3,
+    "numberOfVoters": 150,
+    "writer": "Alice Johnson",
+    "writerId": 103
+  },
+  {
+    "id": 4,
+    "name": "What is the largest planet in our solar system?",
+    "text": "Jupiter is the largest planet in our solar system. It is a gas giant and has a strong magnetic field.",
+    "subjects": ["Astronomy", "Science"],
+    "score": 4,
+    "numberOfVoters": 180,
+    "writer": "Michael Brown",
+    "writerId": 104
+  },
+  {
+    "id": 5,
+    "name": "What is the chemical formula for water?",
+    "text": "The chemical formula of water is H2O, consisting of two hydrogen atoms bonded to one oxygen atom.",
+    "subjects": ["Chemistry"],
+    "score": 5,
+    "numberOfVoters": 250,
+    "writer": "Emily Davis",
+    "writerId": 105
+  },
+  {
+    "id": 6,
+    "name": "What is the Pythagorean theorem?",
+    "text": "The Pythagorean theorem states that in a right-angled triangle, the square of the length of the hypotenuse is equal to the sum of the squares of the lengths of the other two sides.",
+    "subjects": ["Mathematics"],
+    "score": 5,
+    "numberOfVoters": 300,
+    "writer": "David Wilson",
+    "writerId": 106
+  },
+  {
+    "id": 7,
+    "name": "Who discovered the theory of relativity?",
+    "text": "Albert Einstein is credited with the discovery of the theory of relativity, one of the two pillars of modern physics.",
+    "subjects": ["Physics"],
+    "score": 4,
+    "numberOfVoters": 220,
+    "writer": "Sophia Martinez",
+    "writerId": 107
+  },
+  {
+    "id": 8,
+    "name": "What is the process of photosynthesis?",
+    "text": "Photosynthesis is the process by which plants use sunlight to synthesize foods from carbon dioxide and water, releasing oxygen as a byproduct.",
+    "subjects": ["Biology"],
+    "score": 4,
+    "numberOfVoters": 130,
+    "writer": "Daniel Lee",
+    "writerId": 108
+  }
+]
