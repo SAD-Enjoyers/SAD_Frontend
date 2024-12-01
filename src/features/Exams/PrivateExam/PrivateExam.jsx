@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Tabs, Tab, useMediaQuery, useTheme } from "@mui/material";
 import { LibraryBooks, Settings, People, Comment } from "@mui/icons-material"; // Importing icons
 import ExamQuestions from "./tabs/ExamQuestions";
@@ -8,12 +8,58 @@ import ParticipantStatus from "./tabs/ParticipantStatus";
 
 const PrivateExam = () => {
   const [selectedTab, setSelectedTab] = useState(0);
+  const [participants, setParticipants] = useState([]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Check if mobile device
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
+
+  // Simulating fetching participants (you can replace this with an API call)
+  useEffect(() => {
+    setTimeout(() => {
+      setParticipants([
+        {
+          name: "John Doe",
+          score: 90,
+          grade: "A",
+          answeredRight: 45,
+          answeredWrong: 5,
+          notAnswered: 0,
+          image: "",
+        },
+        {
+          name: "Jane Smith",
+          score: 85,
+          grade: "B",
+          answeredRight: 40,
+          answeredWrong: 10,
+          notAnswered: 0,
+          image: "",
+        },
+        {
+          name: "Tom Brown",
+          score: 75,
+          grade: "C",
+          answeredRight: 30,
+          answeredWrong: 15,
+          notAnswered: 0,
+          image: "",
+        },
+        {
+          name: "Emily White",
+          score: 88,
+          grade: "B",
+          answeredRight: 44,
+          answeredWrong: 6,
+          notAnswered: 0,
+          image: "",
+        },
+        // Add more participants as needed
+      ]);
+    }, 1000);
+  }, []);
 
   const tabContent = [
     {
@@ -28,7 +74,7 @@ const PrivateExam = () => {
     },
     {
       label: "Participant Status",
-      content: <ParticipantStatus />,
+      content: <ParticipantStatus participants={participants} />, // Pass participants to ParticipantStatus
       icon: <People />, // Icon for Participant Status tab
     },
     {
@@ -47,7 +93,7 @@ const PrivateExam = () => {
         padding: "20px", // Padding to match the layout
         backgroundColor: "#F9FAFB", // Light background for a clean look
         borderRadius: "12px", // Rounded corners
-        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.1)", // Soft shadows for a floating effect
+        boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.1)", // Soft shadows for a floating effect
       }}
     >
       {/* Tab Navigation */}
