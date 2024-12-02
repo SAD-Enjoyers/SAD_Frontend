@@ -20,6 +20,35 @@ export default function PrivateProfile() {
   const [isValid, setIsValid] = useState(true); // استفاده از useState برای مدیریت isValid
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState(false);
+  const [token, setToken] = useState(false);
+
+  const fetchData = (tokenCheck) => {
+    fetch("/api/v1/profile/private-data", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${tokenCheck}`,
+        "x-role": localStorage.getItem("role"),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          setIsValid(false); // تغییر وضعیت به false در صورت خطا
+        } else {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log("2");
+        console.log(data);
+        setData(data);
+        setLoading(false); // وقتی درخواست تمام شد، حالت loading را به false تغییر بده
+      })
+      .catch((err) => {
+        setIsValid(false); // در صورت بروز خطا، وضعیت را به false تغییر دهید
+        setLoading(false); // حتی در صورت خطا نیز بارگذاری تمام می‌شود
+      });
+  };
   // dont repead yourself    dry
   const StyledButton = ({ link, children }) => {
     if (!link) {
@@ -53,46 +82,32 @@ export default function PrivateProfile() {
       </Link>
     );
   };
+  // setToken(localStorage.getItem("token"));
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (!token || !data) {
-      fetch("/api/v1/profile/private-data", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "x-role": localStorage.getItem("role"),
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => {
-          if (!response.ok) {
-            setIsValid(false); // تغییر وضعیت به false در صورت خطا
-          } else {
-            return response.json();
-          }
-        })
-        .then((data) => {
-          console.log("2");
-          console.log(data);
-          setData(data);
-          setLoading(false); // وقتی درخواست تمام شد، حالت loading را به false تغییر بده
-        })
-        .catch((err) => {
-          setIsValid(false); // در صورت بروز خطا، وضعیت را به false تغییر دهید
-          setLoading(false); // حتی در صورت خطا نیز بارگذاری تمام می‌شود
-        });
+      fetchData(token);
     } else {
       setLoading(false); // اگر توکن موجود باشد، بارگذاری تمام می‌شود
     }
   }, []);
+  // useEffect(() => {
+  //   if (!token || !data) {
+  //     fetchData(token);
+  //   } else {
+  //     setLoading(false); // اگر توکن موجود باشد، بارگذاری تمام می‌شود
+  //   }
+  // }, [token]);
 
   if (isLoading) {
     return <LoadingScreen />; // نمایش لودینگ
   }
 
   if (!isValid) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
     navigate("/");
   }
 

@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import AdbIcon from "@mui/icons-material/Adb";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 export default function NavBar() {
   const [isValid, setIsValid] = useState(true); // استفاده از useState برای مدیریت isValid
@@ -21,35 +21,34 @@ export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const pages = ["blogs", "courses", "questions", "profiles", "my Profile"];
-  const addresses = ["/", "/", "/QuestionSearch", "/", "/profile"];
+  const pages = ["blogs", "courses", "questions", "profiles"];
+  const addresses = ["/", "/", "/QuestionSearch", "/"];
+  const navigate = useNavigate();
   // const location = useLocation();
 
-  // انجام fetch برای اعتبارسنجی
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      fetch("/api/v1/profile/private-data", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "x-role": localStorage.getItem("role"),
-          "Content-Type": "application/json",
-        },
+    // if (!token) {
+    fetch("/api/v1/profile/private-data", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "x-role": localStorage.getItem("role"),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          setIsValid(false);
+        } else {
+          return response.json();
+        }
       })
-        .then((response) => {
-          if (!response.ok) {
-            setIsValid(false); // تغییر وضعیت به false در صورت خطا
-          } else {
-            console.log("1");
-            return response.json();
-          }
-        })
-        .catch((err) => {
-          setIsValid(false); // در صورت بروز خطا، وضعیت را به false تغییر دهید
-        });
-    }
-  }, []); // این useEffect فقط یکبار پس از بارگذاری کامپوننت اجرا می‌شود
+      .catch((err) => {
+        setIsValid(false);
+      });
+    // }
+  }, []);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -65,6 +64,12 @@ export default function NavBar() {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogOut = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    setIsValid(false);
   };
 
   const fetchData = () => {
@@ -117,6 +122,7 @@ export default function NavBar() {
             />
           </IconButton>
           <Menu
+            sx={{ mt: 5 }}
             id="menu-appbar"
             anchorEl={anchorEl}
             anchorOrigin={{
@@ -131,8 +137,25 @@ export default function NavBar() {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>My account</MenuItem>
+            {/* inside jsx useNavigate */}
+            <MenuItem
+              onClick={() => {
+                navigate("/profile");
+              }}
+            >
+              Profile
+            </MenuItem>
+            <MenuItem onClick={handleClose}>Wallet</MenuItem>
+            <MenuItem
+              onClick={() => {
+                localStorage.removeItem("token");
+                localStorage.removeItem("role");
+                setIsValid(false);
+              }}
+              sx={{ color: "red", fontSize: "20px" }}
+            >
+              LogOut
+            </MenuItem>
           </Menu>
         </Box>
       );
