@@ -12,6 +12,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { useState } from "react";
 import quiz from "../../assets/images/quiz.png";
+import ImageUpload from "./components/ImageUpload";
 
 export default function MakeExam() {
   const [value, setValue] = useState(null);
@@ -66,62 +67,46 @@ export default function MakeExam() {
         }}
       >
         <form onSubmit={handleSubmit}>
-          <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
-            <Avatar
-              alt="User Name"
-              src={quiz}
-              variant="square"
-              sx={{ width: { xs: "50%", sm: "50%", md: "30%" }, height: "40%" }}
-            />
-          </Box>
-          <Box
-            textAlign={"center"}
-            sx={{
-              "& .MuiTextField-root": {
-                mb: 4,
-                width: { xs: "50%", sm: "50%", md: "30%" },
-              },
-            }}
-          >
-            <div>
-              <TextField
-                id="standard-required"
-                label="Exam Name:"
-                variant="standard"
-                value={examName}
-                onChange={(e) => setExamName(e.target.value)}
-              />
-            </div>
-          </Box>
-          <Box
-            textAlign={"center"}
-            sx={{
-              "& .MuiTextField-root": {
-                m: 1,
-                width: { xs: "50%", sm: "50%", md: "40%" },
-                mt: "20px",
-              },
-            }}
-          >
-            <TextField
-              id="outlined-multiline"
-              label="Desciption"
-              multiline
-              rows={3}
-              placeholder="Enter your text here"
-              variant="outlined"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </Box>
-
           <Grid2 container alignItems="center" justifyContent="center">
-            <Grid2 item size={6}>
+            <Grid2 size={12}>
+              <Box
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                mb={"20px"}
+              >
+                <ImageUpload />
+              </Box>
+            </Grid2>
+            <Grid2 size={6}>
               <Box
                 display={"flex"}
                 flexDirection={"column"}
                 justifyContent={"center"}
-                alignItems={"center"}
+                alignItems={"flex-end"}
+                mb={"20px"}
+                sx={{
+                  "& .MuiTextField-root": {
+                    mb: 4,
+                    width: { xs: "50%", sm: "50%", md: "30%" },
+                  },
+                }}
+              >
+                <TextField
+                  id="standard-required"
+                  label="Exam Name:"
+                  variant="standard"
+                  value={examName}
+                  onChange={(e) => setExamName(e.target.value)}
+                />
+              </Box>
+            </Grid2>
+            <Grid2 size={6}>
+              <Box
+                display={"flex"}
+                flexDirection={"column"}
+                justifyContent={"center"}
+                alignItems={"left"}
                 mb={"20px"}
               >
                 <Typography
@@ -140,10 +125,39 @@ export default function MakeExam() {
                     value={value}
                     onChange={(newValue) => setValue(newValue)}
                     renderInput={(params) => <TextField {...params} />}
-                    sx={{ width: { xs: "100%", md: "80%" } }}
+                    sx={{ width: "50%" }}
                   />
                 </LocalizationProvider>
               </Box>
+            </Grid2>
+            <Grid2 size={12}>
+              <Box
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                textAlign={"center"}
+                mb={"20px"}
+                sx={{
+                  "& .MuiTextField-root": {
+                    m: 1,
+                    width: { xs: "50%", sm: "50%", md: "40%" },
+                    mt: "20px",
+                  },
+                }}
+              >
+                <TextField
+                  id="outlined-multiline"
+                  label="Desciption"
+                  multiline
+                  rows={3}
+                  placeholder="Enter your text here"
+                  variant="outlined"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </Box>
+            </Grid2>
+            <Grid2 size={6}>
               <Box
                 sx={{
                   display: "flex",
