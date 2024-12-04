@@ -21,7 +21,7 @@ export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const pages = ["blogs", "courses", "questions", "profiles"];
+  const pages = ["blogs", "courses", "questions", "users"];
   const addresses = ["/", "/", "/QuestionSearch", "/"];
   const navigate = useNavigate();
   // const location = useLocation();
@@ -46,6 +46,9 @@ export default function NavBar() {
       })
       .catch((err) => {
         setIsValid(false);
+      })
+      .then((profile) => {
+        localStorage.setItem("profile", profile);
       });
     // }
   }, []);
@@ -247,9 +250,10 @@ export default function NavBar() {
           {/* لوگو وسط در حالت موبایل و سمت چپ در حالت دسکتاپ */}
           <Box
             sx={{
-              flexGrow: 1,
+              flexGrow: 5,
               display: "flex",
               justifyContent: { xs: "center", md: "flex-start" },
+              alignItems: "center",
             }}
           >
             <Link to="/" style={{ textDecoration: "none" }}>

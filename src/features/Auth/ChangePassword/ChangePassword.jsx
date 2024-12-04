@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-// import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import {
   Container,
   TextField,
@@ -15,8 +15,8 @@ import { Snackbar } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 function ChangePassword() {
-  // const navigate = useNavigate();
-  const [code, setCode] = useState("");
+  const navigate = useNavigate();
+  const [recoveryCode, setRecoveryCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,7 @@ function ChangePassword() {
     event.preventDefault();
     const newError = {};
 
-    if (!code) {
+    if (!recoveryCode) {
       newError.code = "Recovery code is required";
     }
 
@@ -66,7 +66,7 @@ function ChangePassword() {
     setError({});
     setSuccessMessage("");
     setSnackbarOpen(false);
-    console.log(code, email, newPassword);
+    console.log(recoveryCode, email, newPassword);
 
     try {
       const response = await fetch("/api/v1/auth/verify-recovery-code", {
@@ -74,7 +74,7 @@ function ChangePassword() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, code, newPassword }),
+        body: JSON.stringify({ email, recoveryCode, newPassword }),
       });
 
       const data = await response.json();
@@ -121,8 +121,8 @@ function ChangePassword() {
                 fullWidth
                 label="Recovery Code"
                 variant="outlined"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
+                value={recoveryCode}
+                onChange={(e) => setRecoveryCode(e.target.value)}
                 required
                 error={Boolean(error.code)}
                 helperText={error.code}

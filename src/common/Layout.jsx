@@ -4,7 +4,9 @@ import Footer from "./Footer.jsx";
 
 export default function Layout() {
   const location = useLocation();
-  const hideNavBar = ["/login", "/signup"].includes(location.pathname);
+  const hideNavBar = ["/login", "/signup", "/changepassword"].includes(
+    location.pathname
+  );
 
   return (
     <>
