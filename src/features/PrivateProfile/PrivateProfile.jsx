@@ -29,6 +29,19 @@ export default function PrivateProfile() {
     userName: " ",
     email: " ",
   });
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageName, setImageName] = useState("");
+  const [previewImage, setPreviewImage] = useState(null);
+  const [imageNameUrl, setImageNameurl] = useState("");
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedImage(file); // ذخیره فایل برای ارسال به سرور
+      setPreviewImage(URL.createObjectURL(file)); // پیش‌نمایش
+      setImageName(file.name);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -72,6 +85,80 @@ export default function PrivateProfile() {
         setLoading(false); // حتی در صورت خطا نیز بارگذاری تمام می‌شود
       });
   };
+  const ImageUpload = () => {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+
+          textAlign: "center",
+          margin: "0 auto",
+
+          gap: 2,
+          p: 3,
+          border: "1px solid #ddd",
+          borderRadius: 2,
+          width: 200,
+          mt: "30px",
+          mb: "20px",
+        }}
+      >
+        <Typography variant="h6">Upload an Image</Typography>
+        <Button variant="contained" component="label">
+          Choose Image
+          <input
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={handleImageUpload}
+          />
+        </Button>
+        {imageName && (
+          <TextField
+            value={imageName}
+            variant="outlined"
+            disabled
+            fullWidth
+            size="small"
+            label="Selected File"
+          />
+        )}
+        {previewImage && (
+          <Box
+            component="img"
+            src={previewImage}
+            alt="Uploaded Preview"
+            sx={{
+              maxWidth: "100%",
+              height: "auto",
+              borderRadius: 2,
+              boxShadow: 2,
+            }}
+          />
+        )}
+        {selectedImage && (
+          <Button variant="outlined" color="error" onClick={handleClear}>
+            Remove Image
+          </Button>
+        )}
+        {/* <Button
+          variant="contained"
+          color="primary"
+          onClick={submitImage}
+          disabled={!selectedImage}
+        >
+          Upload Image
+        </Button> */}
+      </Box>
+    );
+  };
+  const handleClear = () => {
+    setSelectedImage(null);
+    setPreviewImage(null);
+    setImageName("");
+  };
+
   // dont repead yourself    dry
   const StyledButton = ({ link, children }) => {
     if (!link) {
@@ -239,6 +326,7 @@ export default function PrivateProfile() {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
+                  textAlign: "center",
                 }}
               >
                 <Card
@@ -251,6 +339,7 @@ export default function PrivateProfile() {
                     boxShadow: 5,
                   }}
                 >
+                  <ImageUpload />
                   <Typography variant="h6" gutterBottom>
                     Edit Profile
                   </Typography>

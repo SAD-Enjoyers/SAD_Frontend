@@ -85,7 +85,7 @@ export default function MakeExam() {
       console.log("Response:", data.data.image);
       setImageNameurl(data.data.image);
       submitInformation();
-      alert("Image uploaded successfully!");
+      // alert("Image uploaded successfully!");
     } catch (error) {
       console.error("Error uploading image:", error);
       alert("Failed to upload image. Please try again.");
@@ -162,7 +162,7 @@ export default function MakeExam() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        alert("maked exam successfully");
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -417,7 +417,7 @@ export default function MakeExam() {
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
-                  gap: 6,
+                  gap: 3,
                 }}
               >
                 <Box
@@ -440,7 +440,7 @@ export default function MakeExam() {
                     size="small"
                     value={maxMembers}
                     onChange={(e) => setMaxMembers(e.target.value)}
-                    sx={{ width: "100%" }}
+                    sx={{ width: "70%" }}
                   />
                 </Box>
                 <Box
@@ -465,7 +465,7 @@ export default function MakeExam() {
                     InputProps={{
                       endAdornment: <Typography>$</Typography>,
                     }}
-                    sx={{ width: "100%" }}
+                    sx={{ width: "70%" }}
                   />
                 </Box>
                 <Box
@@ -490,7 +490,7 @@ export default function MakeExam() {
                     InputProps={{
                       endAdornment: <Typography>%</Typography>,
                     }}
-                    sx={{ width: "100%" }}
+                    sx={{ width: "70%" }}
                   />
                 </Box>
               </Box>
