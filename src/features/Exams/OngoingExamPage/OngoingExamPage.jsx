@@ -231,3 +231,33 @@ const OngoingExamPage = () => {
             </Box>
           </Paper>
         </Box>
+                {/* Navigation Buttons */}
+                <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handlePrevious}
+            disabled={currentQuestionIndex === 0}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleFinish}
+            sx={{
+              bgcolor: "#4caf50",
+              "&:hover": { bgcolor: "#388e3c" },
+            }}
+          >
+            Finish
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleNext}
+            disabled={currentQuestionIndex === questions.length - 1}
+          >
+            Next
+          </Button>
+        </Box>
+      </Container>
