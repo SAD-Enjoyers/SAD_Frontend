@@ -39,3 +39,21 @@ const OngoingExamPage = () => {
       { id: 9, question: "Who is the author of '1984'?", options: ["George Orwell", "J.K. Rowling", "Mark Twain", "Charles Dickens"] },
       { id: 10, question: "What is the capital of Japan?", options: ["Seoul", "Beijing", "Tokyo", "Bangkok"] },
     ];
+    useEffect(() => {
+        const timer = setInterval(() => {
+          setTimeRemaining((prev) => (prev > 0 ? prev - 1 : 0));
+        }, 1000);
+    
+        return () => clearInterval(timer);
+      }, []);
+    
+      useEffect(() => {
+        setProgress(((currentQuestionIndex + 1) / questions.length) * 100);
+      }, [currentQuestionIndex, questions.length]);
+    
+      const handleOptionChange = (event) => {
+        setSelectedOption({
+          ...selectedOption,
+          [currentQuestionIndex]: event.target.value,
+        });
+      };
