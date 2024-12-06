@@ -185,3 +185,49 @@ const OngoingExamPage = () => {
               </Button>
             </CardContent>
           </Card>
+                    {/* Right Panel */}
+                    <Paper
+            sx={{
+              flex: 1,
+              boxShadow: 3,
+              p: 2,
+              bgcolor: "#ffffff",
+              borderRadius: "8px",
+            }}
+          >
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Question Progress
+            </Typography>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              {questions.map((_, index) => (
+                <Box
+                  key={index}
+                  onClick={() => handleQuestionClick(index)}
+                  sx={{
+                    width: "50px",
+                    height: "30px",
+                    borderRadius: "5px",
+                    backgroundColor:
+                      selectedOption[index] !== undefined ? "#3f51b5" : "#f5f5f5",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    border: "1px solid #ccc",
+                    transition: "background-color 0.3s",
+                    "&:hover": { backgroundColor: "#e0e0e0" },
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      color: selectedOption[index] !== undefined ? "#fff" : "#000",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {index + 1}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Paper>
+        </Box>
