@@ -144,3 +144,44 @@ const OngoingExamPage = () => {
                 }}
               />
             </Box>
+                    {/* Question Card */}
+        <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+          <Card
+            sx={{
+              flex: 3,
+              boxShadow: 3,
+              bgcolor: "#ffffff",
+              borderRadius: "8px",
+            }}
+          >
+            <CardContent>
+              <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
+                Question {currentQuestionIndex + 1}: {questions[currentQuestionIndex].question}
+              </Typography>
+              <RadioGroup
+                value={selectedOption[currentQuestionIndex] || ""}
+                onChange={handleOptionChange}
+              >
+                {questions[currentQuestionIndex].options.map((option, index) => (
+                  <FormControlLabel
+                    key={index}
+                    value={option}
+                    label={`${String.fromCharCode(97 + index)}) ${option}`}
+                    control={<Radio />}
+                  />
+                ))}
+              </RadioGroup>
+              <Button
+                variant="text"
+                startIcon={<Clear />}
+                onClick={handleClearAnswer}
+                sx={{
+                  mt: 2,
+                  color: "#f44336",
+                  "&:hover": { color: "#d32f2f" },
+                }}
+              >
+                Clear Answer
+              </Button>
+            </CardContent>
+          </Card>
