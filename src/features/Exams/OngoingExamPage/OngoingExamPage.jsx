@@ -57,3 +57,40 @@ const OngoingExamPage = () => {
           [currentQuestionIndex]: event.target.value,
         });
       };
+      const handleClearAnswer = () => {
+        setSelectedOption({
+          ...selectedOption,
+          [currentQuestionIndex]: undefined,
+        });
+      };
+    
+      const handleNext = () => {
+        if (currentQuestionIndex < questions.length - 1) {
+          setCurrentQuestionIndex(currentQuestionIndex + 1);
+        }
+      };
+    
+      const handlePrevious = () => {
+        if (currentQuestionIndex > 0) {
+          setCurrentQuestionIndex(currentQuestionIndex - 1);
+        }
+      };
+    
+      const handleFinish = () => {
+        setOpenDialog(true);
+      };
+    
+      const confirmSubmission = () => {
+        setOpenDialog(false);
+        console.log("Exam finished. Answers:", selectedOption);
+      };
+    
+      const formatTime = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+      };
+    
+      const handleQuestionClick = (index) => {
+        setCurrentQuestionIndex(index);
+      };
