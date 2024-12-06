@@ -94,3 +94,53 @@ const OngoingExamPage = () => {
       const handleQuestionClick = (index) => {
         setCurrentQuestionIndex(index);
       };
+      return (
+        <Box
+          sx={{
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            bgcolor: "#f5f5f5",
+            p: 2,
+          }}
+        >
+          {/* Header */}
+          <AppBar
+            position="static"
+            sx={{
+              width: "100%",
+              maxWidth: "900px",
+              bgcolor: "#3f51b5",
+              borderRadius: "8px",
+              mb: 2,
+            }}
+          >
+            <Toolbar>
+              <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                Ongoing Exam: Mathematics
+              </Typography>
+              <Typography variant="subtitle1">
+                Time Remaining: {formatTime(timeRemaining)}
+              </Typography>
+            </Toolbar>
+          </AppBar>
+    
+          <Container maxWidth="md">
+            {/* Progress Bar */}
+            <Box sx={{ width: "100%", mb: 2 }}>
+              <LinearProgress
+                variant="determinate"
+                value={progress}
+                sx={{
+                  height: 12,
+                  borderRadius: 5,
+                  bgcolor: "#e0e0e0",
+                  "& .MuiLinearProgress-bar": {
+                    borderRadius: 5,
+                    background: "linear-gradient(90deg, #3f51b5, #1a73e8)",
+                  },
+                }}
+              />
+            </Box>
