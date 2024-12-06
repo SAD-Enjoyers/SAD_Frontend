@@ -10,6 +10,7 @@ import {
   CardContent,
   CardMedia,
   Avatar,
+  TextField,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import ReviewComponent from "./components/ReviewComponent.jsx";
@@ -21,6 +22,23 @@ export default function PrivateProfile() {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState(false);
   const [token, setToken] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: " ",
+    lastName: " ",
+    userName: " ",
+    email: " ",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSave = () => {
+    console.log("Updated Profile Data:", formData);
+    setOpen(false);
+  };
 
   const fetchData = (tokenCheck) => {
     fetch("/api/v1/profile/private-data", {
@@ -39,9 +57,14 @@ export default function PrivateProfile() {
         }
       })
       .then((data) => {
-        console.log("2");
-        console.log(data);
+        // console.log(data);
         setData(data);
+        setFormData({
+          firstName: data.data.userData.firstName,
+          lastName: data.data.userData.lastName,
+          userName: data.data.userData.userName,
+          email: data.data.userData.email,
+        });
         setLoading(false); // وقتی درخواست تمام شد، حالت loading را به false تغییر بده
       })
       .catch((err) => {
@@ -130,10 +153,10 @@ export default function PrivateProfile() {
               <StyledButton link="AddQuestions">add question</StyledButton>
               {/* <StyledButton link="">bank question</StyledButton> */}
               <StyledButton link="make_exam">make exam</StyledButton>
-              <StyledButton link="private_exam_page">
+              {/* <StyledButton link="private_exam_page">
                 private exam page
               </StyledButton>
-              <StyledButton link="ExamPreview">Exam Preview</StyledButton>
+              <StyledButton link="ExamPreview">Exam Preview</StyledButton> */}
               <StyledButton link="">add courses</StyledButton>
               <StyledButton link="">review profile</StyledButton>
             </Box>
@@ -162,29 +185,22 @@ export default function PrivateProfile() {
                   <Box display="flex" justifyContent="center">
                     <Avatar
                       alt="User Name"
-                      src="images/profile.png" // URL تصویر پروفایل
+                      src="images/profile.png"
                       sx={{ width: "150px", height: "150px" }}
                     />
                   </Box>
                 </Grid2>
 
                 {/* User Information */}
-                <CardContent
-                  sx={{
-                    textAlign: "justify",
-                  }}
-                >
+                <CardContent sx={{ textAlign: "justify" }}>
                   <Typography variant="h6" component="div">
-                    Full Name:{" "}
-                    {data.data.userData.firstName +
-                      "   " +
-                      data.data.userData.lastName}
+                    Full Name: {formData.firstName + " " + formData.lastName}
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
-                    Username: {data.data.userData.userName}
+                    Username: {formData.userName}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Email: {data.data.userData.email}
+                    Email: {formData.email}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Bio: Software Developer with a passion for coding and
@@ -195,14 +211,101 @@ export default function PrivateProfile() {
 
               {/* Edit Button */}
               <Box display="flex" justifyContent="center" mt={2}>
-                <Button variant="outlined" startIcon={<Edit />}>
+                <Button
+                  variant="outlined"
+                  startIcon={<Edit />}
+                  onClick={() => setOpen(true)}
+                >
                   Edit profile
                 </Button>
               </Box>
             </Card>
+
             <ReviewComponent section="My Exams" />
             <ReviewComponent section="My Courses" style_ml="20px" />
             <ReviewComponent section="My Articles" style_ml="0px" />
+
+            {/* Edit Profile Dialog */}
+            {open && (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  zIndex: 10,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Card
+                  sx={{
+                    p: 4,
+                    width: "90%",
+                    maxWidth: 400,
+                    backgroundColor: "white",
+                    borderRadius: 2,
+                    boxShadow: 5,
+                  }}
+                >
+                  <Typography variant="h6" gutterBottom>
+                    Edit Profile
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    label="First Name"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    margin="normal"
+                  />
+                  <TextField
+                    fullWidth
+                    label="Last Name"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    margin="normal"
+                  />
+                  <TextField
+                    fullWidth
+                    label="Username"
+                    name="userName"
+                    value={formData.userName}
+                    onChange={handleInputChange}
+                    margin="normal"
+                  />
+                  <TextField
+                    fullWidth
+                    label="Email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    margin="normal"
+                  />
+                  <Box display="flex" justifyContent="flex-end" mt={2}>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => setOpen(false)}
+                      sx={{ mr: 2 }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleSave}
+                    >
+                      Save
+                    </Button>
+                  </Box>
+                </Card>
+              </Box>
+            )}
           </Grid2>
         </Grid2>
       </Container>

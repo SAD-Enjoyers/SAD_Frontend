@@ -38,6 +38,7 @@ export default function MakeExam() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageName, setImageName] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
+  const [imageNameUrl, setImageNameurl] = useState("");
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -54,7 +55,8 @@ export default function MakeExam() {
     setImageName("");
   };
 
-  const submitImage = async () => {
+  const submitImage = async (event) => {
+    event.preventDefault();
     if (!selectedImage) {
       alert("Please select an image first!");
       return;
@@ -79,7 +81,10 @@ export default function MakeExam() {
       }
 
       const data = await response.json();
-      console.log("Response:", data);
+
+      console.log("Response:", data.data.image);
+      setImageNameurl(data.data.image);
+      submitInformation();
       alert("Image uploaded successfully!");
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -126,46 +131,45 @@ export default function MakeExam() {
       setSelectedSubjects(selected);
     }
   };
-  const handleSubmit = (event) => {
-    event.preventDefault(); // جلوگیری از رفتار پیش‌فرض
+
+  const submitInformation = () => {
+    var [tag1, tag2, tag3] = [...selectedSubjects];
+
     const formData = {
-      examName,
-      quizTime: value,
-      maxMembers,
-      price,
+      name: examName,
       description,
-      selectedSubjects,
-      selectedLevel,
-      minScore,
+      level: selectedLevel,
+      activityStatus: "Active",
+      serviceType: "1",
+      price: parseInt(price),
+      image: imageNameUrl,
+      tag1,
+      tag2,
+      tag3,
+      examDuration: value.$H * 60 + value.$m,
+      maxMembers,
+      minPassScore: parseInt(minScore),
     };
 
-    console.log("Form Data Submitted:", formData);
-    // در اینجا می‌توانید داده‌ها را به سرور ارسال کنید
-    // fetch("/api/some-endpoint", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${localStorage.getItem("token")}`,
-    //     "x-role": localStorage.getItem("role"), // Add role to headers
-    //   },
-    //   body: JSON.stringify({ data: "some data" }),
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error:", error);
-    //   });
-    // // Storing the theme
-    // localStorage.setItem("theme", "dark");
-
-    // // Retrieving the theme
-    // const theme = localStorage.getItem("theme");
-    // console.log(theme); // Output: dark
+    fetch("/api/v1/exam/make-exam", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "x-role": localStorage.getItem("role"), // Add role to headers
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
   if (isLoading) {
-    return <LoadingScreen />; // نمایش لودینگ
+    return <LoadingScreen />;
   }
   const ImageUpload = () => {
     return (
@@ -178,7 +182,7 @@ export default function MakeExam() {
           p: 3,
           border: "1px solid #ddd",
           borderRadius: 2,
-          maxWidth: 400,
+          width: 400,
           mt: "30px",
         }}
       >
@@ -241,17 +245,19 @@ export default function MakeExam() {
           mt: "150px",
           mb: "150px",
           bgcolor: "",
+          borderRadius: "70px",
         }}
       >
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={submitImage}>
           <Grid2 container alignItems="center" justifyContent="center">
-            <Grid2 size={{ xs: 6, sm: 6, md: 4 }}>
+            <Grid2 size={{ xs: 6, sm: 6, md: 6 }}>
               <Box
                 display={"flex"}
                 flexDirection={"column"}
                 justifyContent={"center"}
-                alignItems={{ xs: "center", md: "flex-end" }}
-                mr={{ xs: "7px", sm: "100px", md: "80px" }}
+                alignItems={"center"}
+                // mr={{ xs: "7px", sm: "100px", md: "80px" }}
+                mt={"20px"}
                 textAlign={"center"}
                 sx={{
                   "& .MuiTextField-root": {
@@ -299,7 +305,7 @@ export default function MakeExam() {
                         All Levels
                       </Typography>
                     </MenuItem>
-                    <MenuItem value="beginner">
+                    <MenuItem value="Beginner">
                       <ListItemIcon>
                         <School sx={{ fontSize: "1.2rem", color: "#4CAF50" }} />
                       </ListItemIcon>
@@ -307,7 +313,7 @@ export default function MakeExam() {
                         Beginner
                       </Typography>
                     </MenuItem>
-                    <MenuItem value="intermediate">
+                    <MenuItem value="Intermediate">
                       <ListItemIcon>
                         <School sx={{ fontSize: "1.2rem", color: "#FF9800" }} />
                       </ListItemIcon>
@@ -315,7 +321,7 @@ export default function MakeExam() {
                         Intermediate
                       </Typography>
                     </MenuItem>
-                    <MenuItem value="advanced">
+                    <MenuItem value="Advanced">
                       <ListItemIcon>
                         <School sx={{ fontSize: "1.2rem", color: "#F44336" }} />
                       </ListItemIcon>
@@ -525,8 +531,8 @@ export default function MakeExam() {
               type="submit"
               variant="contained"
               color="primary"
-              onClick={() => {
-                submitImage();
+              onClick={(event) => {
+                submitImage(event);
               }}
             >
               Make Exam
