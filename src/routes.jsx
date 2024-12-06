@@ -14,6 +14,7 @@ import PrivateExamPage from "./features/PrivateExamPage/PrivateExamPage.jsx";
 import ChangePassword from "./features/Auth/ChangePassword/ChangePassword.jsx";
 import QuestionPage from "./features/Exams/QuestionPage/QuestionPage";
 import ImageUpload from "./features/MakeExam/components/ImageUpload.jsx";
+import TermsAndConditions from "./features/Auth/TermsAndConditions/TermsAndConditions.jsx";
 
 function AppRoutes() {
   return (
@@ -33,6 +34,7 @@ function AppRoutes() {
           <Route path="changepassword" element={<ChangePassword />} />
           <Route path="QuestionPage" element={<QuestionPage />} />
           <Route path="image" element={<ImageUpload />} />
+          <Route path="TermsAndConditions" element={<TermsAndConditions />} />
 
           {/* private_exam_page */}
         </Route>
