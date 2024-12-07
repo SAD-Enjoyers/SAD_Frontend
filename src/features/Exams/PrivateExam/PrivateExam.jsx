@@ -11,6 +11,7 @@ const PrivateExam = () => {
   const [participants, setParticipants] = useState([]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Check if mobile device
+  const accessToken = localStorage.getItem("token");
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -69,7 +70,7 @@ const PrivateExam = () => {
     },
     {
       label: "Exam Settings",
-      content: <ExamSettings />,
+      content: <ExamSettings serviceId={1} />,
       icon: <Settings />, // Icon for Exam Settings tab
     },
     {
