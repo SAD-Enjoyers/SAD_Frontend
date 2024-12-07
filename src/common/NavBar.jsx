@@ -154,6 +154,7 @@ export default function NavBar() {
                 localStorage.removeItem("token");
                 localStorage.removeItem("role");
                 setIsValid(false);
+                navigate("/");
               }}
               sx={{ color: "red", fontSize: "20px" }}
             >
