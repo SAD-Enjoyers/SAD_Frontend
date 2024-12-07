@@ -28,6 +28,7 @@ import CommentIcon from "@mui/icons-material/Comment";
 import PeopleIcon from "@mui/icons-material/People";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
+import DefaultExamImage from "../../../assets/images/default_exam_image.jpg";
 
 const primaryGradient = ["#5356FF", "#378CE7", "#67C6E3", "#DFF5FF"];
 const levelColors = {

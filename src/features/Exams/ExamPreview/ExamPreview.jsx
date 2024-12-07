@@ -268,20 +268,22 @@ function ExamPreview() {
                   textAlign: "center",
                 }}
               >
-                {/* Dynamically render image from the backend */}
-                {examData.image && (
-                  <img
-                    src={`/api/v1/uploads/service-images/${examData.image}`}
-                    alt="Exam Preview"
-                    style={{
-                      width: "100%", // Make it responsive
-                      maxWidth: "500px", // Set a maximum width for better scaling
-                      height: "auto",
-                      borderRadius: "8px",
-                      marginBottom: "16px", // Add space below the image
-                    }}
-                  />
-                )}
+                {/* Dynamically render image or fallback to default */}
+                <img
+                  src={
+                    examData.image
+                      ? `/api/v1/uploads/service-images/${examData.image}`
+                      : DefaultExamImage // مسیر تصویر پیش‌فرض
+                  }
+                  alt="Exam Preview"
+                  style={{
+                    width: "100%", // واکنش‌گرا کردن
+                    maxWidth: "500px",
+                    height: "auto",
+                    borderRadius: "8px",
+                    marginBottom: "16px",
+                  }}
+                />
 
                 {/* Display the "Buy The Exam" button */}
                 {!purchased && (
