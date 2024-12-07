@@ -168,3 +168,37 @@ const AddArticle = () => {
                 backgroundColor: "#f9f9f9",
               }}
             >
+                            {/* Right Section (Text) */}
+                            <Box>
+                <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>
+                  {formData.title || "Untitled"}
+                </Typography>
+                <Typography variant="subtitle1" gutterBottom sx={{ color: "#555" }}>
+                  By {formData.author || "Unknown"} - {formData.date || "No Date"}
+                </Typography>
+                <Box
+                  dangerouslySetInnerHTML={{ __html: formData.content }}
+                  sx={{
+                    padding: 2,
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    backgroundColor: "#ffffff",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                  }}
+                />
+              </Box>
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowPreview(false)} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Paper>
+      <ToastContainer position="top-center" autoClose={3000} />
+    </Container>
+  );
+};
+
+export default AddArticle;
