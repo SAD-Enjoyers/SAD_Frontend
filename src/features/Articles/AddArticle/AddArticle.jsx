@@ -141,3 +141,30 @@ const AddArticle = () => {
               }}
             />
           </Box>
+          <Box display="flex" gap={2}>
+            <Button variant="outlined" onClick={handlePreview} fullWidth>
+              Preview
+            </Button>
+            <Button type="submit" variant="contained" fullWidth>
+              Submit
+            </Button>
+          </Box>
+        </form>
+
+        {/* Preview Section - نمایش پریویو به صورت دیالوگ */}
+        <Dialog
+          open={showPreview}
+          onClose={() => setShowPreview(false)}
+          fullWidth
+          maxWidth="md"
+        >
+          <DialogTitle>Article Preview</DialogTitle>
+          <DialogContent>
+            <Box
+              sx={{
+                padding: 3,
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                backgroundColor: "#f9f9f9",
+              }}
+            >
