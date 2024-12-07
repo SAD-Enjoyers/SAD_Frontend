@@ -8,26 +8,16 @@ import Layout from "./common/Layout.jsx";
 import MakeExam from "./features/MakeExam/MakeExam.jsx";
 import ExamPreview from "./features/Exams/ExamPreview/ExamPreview.jsx";
 import PublicExam from "./features/Exams/PublicExam/PublicExam.jsx";
-<<<<<<< HEAD
 import QuestionSearch from "./features/Exams/QuestionSearch/QuestionSearch.jsx";
-import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 import PrivateExam from "./features/Exams/PrivateExam/PrivateExam.jsx";
 import QuestionBank from "./features/Exams/PrivateExam/tabs/QuestionBank.jsx";
-=======
-import QuestionSearch from "./features/Exams/QuestionSearch/QuestionSearch.jsx"; // Import QuestionSearch
-import PrivateExamPage from "./features/PrivateExamPage/PrivateExamPage.jsx";
->>>>>>> feature/SearchAndFilterArticle
 import ChangePassword from "./features/Auth/ChangePassword/ChangePassword.jsx";
 import QuestionPage from "./features/Exams/QuestionPage/QuestionPage";
 import ImageUpload from "./features/MakeExam/components/ImageUpload.jsx";
 import TermsAndConditions from "./features/Auth/TermsAndConditions/TermsAndConditions.jsx";
-<<<<<<< HEAD
 import OngoingExamPage from "./features/Exams/OngoingExamPage/OngoingExamPage.jsx";
 import AddArticle from "./features/Articles/AddArticle/AddArticle.jsx";
-
-=======
 import ArticleSearch  from "./features/SearchAndFilterArticle/SearchAndFilterArticle.jsx";
->>>>>>> feature/SearchAndFilterArticle
 function AppRoutes() {
   return (
     <Router>
@@ -49,12 +39,9 @@ function AppRoutes() {
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
           <Route path="PrivateExam" element={<PrivateExam />} />
           <Route path="PublicExam" element={<PublicExam />} />
-<<<<<<< HEAD
           <Route path="AddArticle" element={<AddArticle />} />
           <Route path="OngoingExamPage" element={<OngoingExamPage />} />
-=======
           <Route path="SearchArticle" element={<ArticleSearch />} />
->>>>>>> feature/SearchAndFilterArticle
           {/* private_exam_page */}
         </Route>
       </Routes>
