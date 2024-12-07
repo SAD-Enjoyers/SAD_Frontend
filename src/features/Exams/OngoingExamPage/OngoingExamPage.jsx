@@ -261,3 +261,47 @@ const OngoingExamPage = () => {
           </Button>
         </Box>
       </Container>
+            {/* Confirmation Dialog */}
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Warning color="warning" />
+          Confirm Submission
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to submit your exam? Once submitted, you cannot change your answers.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpenDialog(false)}
+            variant="outlined"
+            sx={{
+              color: "#f44336",
+              borderColor: "#f44336",
+              "&:hover": {
+                backgroundColor: "#f8d7da",
+              },
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={confirmSubmission}
+            variant="contained"
+            sx={{
+              bgcolor: "#4caf50",
+              "&:hover": {
+                bgcolor: "#388e3c",
+              },
+            }}
+          >
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
+};
+
+export default OngoingExamPage;
