@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
-  Grid2,
   List,
   ListItem,
   ListItemAvatar,
@@ -11,7 +10,9 @@ import {
   TextField,
   Avatar,
   Rating,
+  Grid2,
   Card,
+  CardContent,
   Button,
   Chip,
   CircularProgress,
@@ -21,14 +22,26 @@ import { styled } from "@mui/system";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import QuizIcon from "@mui/icons-material/Quiz";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
+import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import CommentIcon from "@mui/icons-material/Comment";
 import PeopleIcon from "@mui/icons-material/People";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
 
 const primaryGradient = ["#5356FF", "#378CE7", "#67C6E3", "#DFF5FF"];
 const levelColors = {
   Beginner: "#4CAF50",
   Intermediate: "#FF9800",
   Advanced: "#F44336",
+};
+
+const mockExamResult = {
+  score: 85,
+  passed: true,
+  totalQuestions: 100,
+  correctAnswers: 85,
+  timeTaken: "15 minutes",
 };
 
 // Styled components
@@ -106,20 +119,26 @@ function PublicExam() {
   const [newComment, setNewComment] = useState({ name: "", comment: "" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [examResult, setExamResult] = useState(null);
   useEffect(() => {
+    // Check if exam results are available in location state
+    if (location.state && location.state.examResult) {
+      setExamResult(location.state.examResult);
+      setLoading(false);
+      return;
+    }
+
+    // Handle loading exam data
     setLoading(true);
     setError(null);
 
     setTimeout(() => {
       if (!examData) {
         setError("Failed to load exam data.");
-        setLoading(false);
-      } else {
-        setLoading(false);
       }
+      setLoading(false);
     }, 2000);
-  }, [examData]);
+  }, [location.state, examData]);
 
   const handleAddComment = () => {
     if (!newComment.name || !newComment.comment.trim()) {
@@ -136,9 +155,29 @@ function PublicExam() {
     ]);
     setNewComment({ name: "", comment: "" });
   };
-
   const handleStartExam = () => {
-    navigate("/start-exam", { state: { examData } });
+    // Simulate navigating to the exam page
+    console.log("Starting the exam...");
+
+    // Simulate an exam process
+    setTimeout(() => {
+      console.log("Exam completed!");
+
+      // Display an alert with the result
+      alert(
+        `Exam Done! Your Score: ${mockExamResult.score}, Status: ${
+          mockExamResult.passed ? "Passed" : "Failed"
+        }`
+      );
+
+      // Pass the result and exam data to the current page
+      navigate("/PublicExam", {
+        state: {
+          examResult: mockExamResult,
+          examData,
+        },
+      });
+    }, 2000); // Simulate a 2-second delay for the exam process
   };
 
   if (loading) {
@@ -429,6 +468,121 @@ function PublicExam() {
               </CustomCard>
             </Grid2>
           </Grid2>
+
+          <Box sx={{ padding: { xs: 2, sm: 4 } }}>
+            {examResult ? (
+              <Card
+                sx={{
+                  maxWidth: 600,
+                  margin: "35px auto",
+                  padding: { xs: 2, sm: 3 },
+                  boxShadow: 5,
+                  borderRadius: 3,
+                  backgroundColor: "#fff",
+                  width: "100%", // Ensures full width on smaller screens
+                }}
+              >
+                <CardContent>
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      marginBottom: { xs: 2, sm: 3 },
+                      textAlign: "center",
+                      fontWeight: "bold",
+                      color: "#5356FF",
+                      fontSize: { xs: "h5", sm: "h4" }, // Adjust font size for smaller screens
+                    }}
+                  >
+                    Exam Results
+                  </Typography>
+                  <Divider sx={{ marginBottom: { xs: 2, sm: 3 } }} />
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: 2,
+                      color: examResult.passed ? "green" : "red",
+                    }}
+                  >
+                    {examResult.passed ? (
+                      <CheckCircleIcon sx={{ marginRight: 1 }} />
+                    ) : (
+                      <CancelIcon sx={{ marginRight: 1 }} />
+                    )}
+                    <strong>Status:</strong>{" "}
+                    {examResult.passed ? "Passed" : "Failed"}
+                  </Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: 2,
+                      color: "#378CE7",
+                    }}
+                  >
+                    <QuestionAnswerIcon sx={{ marginRight: 1 }} />
+                    <strong>Score:</strong> {examResult.score || "N/A"}
+                  </Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: 2,
+                      color: "#67C6E3",
+                    }}
+                  >
+                    <AssignmentIcon sx={{ marginRight: 1 }} />
+                    <strong>Total Questions:</strong>{" "}
+                    {examResult.totalQuestions || "N/A"}
+                  </Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: 2,
+                      color: "#67C6E3",
+                    }}
+                  >
+                    <DoneAllIcon sx={{ marginRight: 1 }} />
+                    <strong>Correct Answers:</strong>{" "}
+                    {examResult.correctAnswers || "N/A"}
+                  </Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      color: "#5356FF",
+                    }}
+                  >
+                    <AccessTimeIcon sx={{ marginRight: 1 }} />
+                    <strong>Time Taken:</strong> {examResult.timeTaken || "N/A"}
+                  </Typography>
+                </CardContent>
+              </Card>
+            ) : (
+              <Box
+                sx={{
+                  maxWidth: 600,
+                  margin: "35px auto",
+                  textAlign: "center",
+                  padding: { xs: 2, sm: 3 },
+                  borderRadius: 2,
+                  boxShadow: 3,
+                  backgroundColor: "#f8f9fa",
+                  width: "100%", // Ensures full width on smaller screens
+                }}
+              >
+                <Typography variant="h6" sx={{ color: "#5356FF" }}>
+                  You haven’t taken the test yet.
+                </Typography>
+              </Box>
+            )}
+          </Box>
 
           <CommentsContainer>
             <SectionHeader>Comments</SectionHeader>
