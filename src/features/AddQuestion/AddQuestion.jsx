@@ -150,8 +150,8 @@ function AddQuestion() {
         };
 
         const token = localStorage.getItem("token");
-        if (!token) {
-            fetch("/api/v1/questions/add-question", {
+        //if (!token) {
+            fetch("/api/v1/profile/private-data", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -169,7 +169,7 @@ function AddQuestion() {
                 .catch((err) => {
                     setIsValid(false);
                 });
-        }
+        //}
 
         fetchCategories();
     }, []);
