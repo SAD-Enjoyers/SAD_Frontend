@@ -17,6 +17,7 @@ import QuestionPage from "./features/Exams/QuestionPage/QuestionPage";
 import ImageUpload from "./features/MakeExam/components/ImageUpload.jsx";
 import TermsAndConditions from "./features/Auth/TermsAndConditions/TermsAndConditions.jsx";
 import OngoingExamPage from "./features/Exams/OngoingExamPage/OngoingExamPage.jsx";
+import AddArticle from "./features/Articles/AddArticle/AddArticle.jsx";
 
 function AppRoutes() {
   return (
@@ -40,7 +41,7 @@ function AppRoutes() {
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
           <Route path="PrivateExam" element={<PrivateExam />} />
           <Route path="PublicExam" element={<PublicExam />} />
-
+          <Route path="AddArticle" element={<AddArticle />} />
           <Route path="OngoingExamPage" element={<OngoingExamPage />} />
           {/* private_exam_page */}
         </Route>
