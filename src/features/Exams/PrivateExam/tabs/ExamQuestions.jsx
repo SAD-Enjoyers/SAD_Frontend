@@ -21,14 +21,13 @@ import { motion } from "framer-motion";
 import examQuestionsData from "../data/examQuestions.json"; // Import the JSON data
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useNavigate } from "react-router-dom";
+import { handleAddQuestions } from "./handleAddQuestions";
 
 function ExamQuestions() {
   const navigate = useNavigate(); // Use navigation
 
   // Add button handler
-  const handleAddQuestions = () => {
-    navigate("/question-bank"); // Navigate to the Question Bank page
-  };
+  const onAddQuestions = () => handleAddQuestions(navigate);
 
   const [questions, setQuestions] = useState(examQuestionsData);
   const [openDialog, setOpenDialog] = useState(false);
@@ -174,7 +173,7 @@ function ExamQuestions() {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleAddQuestions}
+          onClick={onAddQuestions}
           sx={{
             padding: "10px 20px",
             fontWeight: "bold",
