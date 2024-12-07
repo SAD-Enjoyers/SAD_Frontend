@@ -112,3 +112,32 @@ const AddArticle = () => {
               }}
             />
           </Box>
+          <Box sx={{ marginBottom: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Content
+            </Typography>
+            <ReactQuill
+              theme="snow"
+              value={formData.content}
+              onChange={(value) => handleChange("content", value)}
+              placeholder="Write your article..."
+              modules={{
+                toolbar: [
+                  [{ header: "1" }, { header: "2" }, { font: [] }],
+                  [{ list: "ordered" }, { list: "bullet" }],
+                  ["bold", "italic", "underline"],
+                  ["link", "image"], // اضافه کردن آیکون تصویر در نوار ابزار
+                  ["blockquote", "code-block"],
+                  [{ align: [] }],
+                  ["clean"],
+                ],
+              }}
+              style={{
+                height: "250px",
+                border: errors.content ? "1px solid red" : "1px solid #ddd",
+                borderRadius: "8px",
+                backgroundColor: "#f4f7fc",
+                fontFamily: "'Roboto', sans-serif", // اضافه کردن فونت
+              }}
+            />
+          </Box>
