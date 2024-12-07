@@ -1,15 +1,71 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
 import { Box, Button, Grid2, Typography, Card, CardMedia } from "@mui/material";
-import exam from "../../../assets/images/exam.jpg";
-export default function ReviewComponent(props) {
-  const [bgColor, setBgColor] = useState("transmit"); // حالت اولیه برای پس‌زمینه
+import { LineAxis } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
+export default function ReviewComponent(props) {
+  const [bgColor, setBgColor] = useState("transparent"); // حالت اولیه برای پس‌زمینه
+  const [data, setData] = useState([]);
+
+  // توابع
+  const fetchExamData = async () => {
+    try {
+      const response = await fetch("/api/v1/profile/exam-list", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // توکن را اینجا اضافه کنید
+          "x-role": localStorage.getItem("role"),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+
+      // دریافت تصاویر و ذخیره در حافظه
+      const fetchedData = await Promise.all(
+        responseData.data.map(async (item) => {
+          console.log(item.serviceId);
+          if (!item.image) {
+            return { ...item, imageURL: null }; // یا هر مقدار پیش‌فرض دلخواه
+          }
+          // console.log(`${item.image}`);
+
+          const imageResponse = await fetch(
+            `/api/v1/uploads/service-images/${item.image}`,
+            {
+              method: "GET",
+            }
+          );
+          const imageBlob = await imageResponse.blob();
+          const imageURL = URL.createObjectURL(imageBlob); // ساخت URL محلی
+          return { ...item, imageURL }; // اضافه کردن تصویر به داده‌ها
+        })
+      );
+
+      setData(fetchedData); // ذخیره داده‌ها در State
+    } catch (error) {
+      console.error("Error fetching exam data:", error);
+    }
+  };
+
+  // اجرا در بارگذاری اولیه
+  useEffect(() => {
+    if (props.section === "My Exams") {
+      fetchExamData();
+    }
+  }, [props.section]);
+
+  // مدیریت رنگ پس‌زمینه
   const handleViewAllClick = () => {
     setBgColor("#E3F2FD"); // تغییر رنگ پس‌زمینه به آبی روشن
     window.location.href = "/full-exam-reviews";
   };
 
+  // کامپوننت بازگشتی
   return (
     <Box ml={props.style_ml}>
       <Grid2
@@ -37,9 +93,6 @@ export default function ReviewComponent(props) {
                 backgroundColor: "#387CE7",
                 color: "#fff",
               },
-              "&:hover .buttonViewAll": {
-                color: "#fff",
-              },
             }}
           >
             <Box mb={5}>
@@ -52,22 +105,21 @@ export default function ReviewComponent(props) {
                 justifyContent="flex-start"
                 alignItems="stretch"
                 sx={{
-                  overflowX: "auto", // فعال‌سازی اسکرول افقی
+                  overflowX: "auto",
                   paddingBottom: "20px",
-                  flexWrap: "nowrap", // جلوگیری از شکستن کارت‌ها
-                  width: { xs: "220px", sm: "370px", md: "600px" }, // عرض کامل برای گرید
+                  flexWrap: "nowrap",
+                  width: { xs: "220px", sm: "370px", md: "600px" },
                   flexShrink: 0,
                 }}
               >
-                {[1, 2, 3, 4, 5, 6, 7].map((item) => (
-                  <Box key={item} display="flex" justifyContent="center">
+                {data.map((item, index) => (
+                  <Box key={index} display="flex" justifyContent="center">
                     <Card
                       sx={{
                         p: 1,
                         borderColor: "#378CE7",
                         width: "100%",
                         maxWidth: 220,
-                        // height: "30px",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
@@ -75,7 +127,7 @@ export default function ReviewComponent(props) {
                         borderRadius: "10px",
                         boxShadow: 1,
                         transition: "transform 0.3s ease",
-                        minWidth: { xs: 100, sm: 150, md: 220 }, // عرض حداقل برای جلوگیری از کوچک شدن کارت‌ها
+                        minWidth: { xs: 100, sm: 150, md: 220 },
                         "&:hover": {
                           transform: "scale(1.05)",
                           boxShadow: 3,
@@ -85,7 +137,7 @@ export default function ReviewComponent(props) {
                       <CardMedia
                         component="img"
                         height="100"
-                        image={exam} // جایگزین مسیر تصویر خود کنید
+                        image={item.imageURL} // از URL محلی استفاده می‌شود
                         alt="Review Image"
                         sx={{
                           borderRadius: "8px",
@@ -98,62 +150,34 @@ export default function ReviewComponent(props) {
                         variant="subtitle2"
                         component="div"
                         gutterBottom
-                        fontSize="0.85rem"
-                        sx={{
-                          fontSize: {
-                            xs: "0.75rem",
-                            sm: "0.85rem",
-                            md: "0.95rem",
-                          },
-                        }}
                       >
-                        Final Review
+                        {item.name ?? "Final Review"}
                       </Typography>
                       <Typography
                         variant="body2"
                         color="text.secondary"
-                        fontSize="0.7rem"
                         mb={0.5}
-                        sx={{
-                          fontSize: {
-                            xs: "0.75rem",
-                            sm: "0.85rem",
-                            md: "0.95rem",
-                          },
-                        }}
                       >
-                        2024-12-15
+                        Price: {item.price ?? "10$"}
                       </Typography>
                       <Typography
                         variant="body2"
                         color="text.secondary"
-                        fontSize="0.7rem"
-                        mb={1}
-                        sx={{
-                          fontSize: {
-                            xs: "0.75rem",
-                            sm: "0.85rem",
-                            md: "0.95rem",
-                          },
-                        }}
+                        mb={0.5}
                       >
-                        Score: 85/100
+                        Level: {item.level ?? "Beginser"}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" mb={1}>
+                        Score: {item.score ?? "85/100"}
                       </Typography>
                       <Typography
                         variant="caption"
                         color="text.secondary"
                         textAlign="center"
-                        fontSize="0.75rem"
                         mb={1.5}
-                        sx={{
-                          fontSize: {
-                            xs: "0.70rem",
-                            sm: "0.70rem",
-                            md: "0.95rem",
-                          },
-                        }}
                       >
-                        Needs improvement in algorithms.
+                        Description:{" "}
+                        {item.description ?? "Needs improvement in algorithms."}
                       </Typography>
                       <Button
                         variant="outlined"
@@ -163,20 +187,25 @@ export default function ReviewComponent(props) {
                             xs: "0.65rem",
                             sm: "0.75rem",
                             md: "0.95rem",
-                          }, // تغییر اندازه فونت بر اساس سایز صفحه
+                          },
                           padding: {
                             xs: "2px 4px",
                             sm: "3px 4px",
                             md: "6px 12px",
-                          }, // تغییر padding بر اساس سایز صفحه
+                          },
                           borderRadius: "10%",
                           "&:hover": {
-                            backgroundColor: "#387CE7", // رنگ پس زمینه در حالت hover
+                            backgroundColor: "#387CE7",
                             color: "#fff",
                           },
                         }}
                       >
-                        View Details
+                        <Link
+                          style={{ textDecoration: "none" }}
+                          to={item.type == "member" ? "" : ""}
+                        >
+                          View Details
+                        </Link>
                       </Button>
                     </Card>
                   </Box>

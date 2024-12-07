@@ -39,6 +39,36 @@ export default function MakeExam() {
   const [imageName, setImageName] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
   const [imageNameUrl, setImageNameurl] = useState("");
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    const validateForm = () => {
+      if (
+        examName.trim() &&
+        selectedLevel &&
+        selectedSubjects.length > 0 &&
+        value && // زمان
+        maxMembers &&
+        price &&
+        minScore &&
+        description.trim()
+      ) {
+        setIsFormValid(true);
+      } else {
+        setIsFormValid(false);
+      }
+    };
+    validateForm();
+  }, [
+    examName,
+    selectedLevel,
+    selectedSubjects,
+    value,
+    maxMembers,
+    price,
+    minScore,
+    description,
+  ]);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -83,9 +113,11 @@ export default function MakeExam() {
       const data = await response.json();
 
       console.log("Response:", data.data.image);
+      alert("Image uploaded successfully!");
       setImageNameurl(data.data.image);
-      submitInformation();
-      // alert("Image uploaded successfully!");
+      setTimeout(() => {
+        submitInformation();
+      }, 100);
     } catch (error) {
       console.error("Error uploading image:", error);
       alert("Failed to upload image. Please try again.");
@@ -162,7 +194,8 @@ export default function MakeExam() {
     })
       .then((response) => response.json())
       .then((data) => {
-        alert("maked exam successfully");
+        console.log(data);
+        // alert("maked exam successfully");
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -313,12 +346,12 @@ export default function MakeExam() {
                         Beginner
                       </Typography>
                     </MenuItem>
-                    <MenuItem value="Intermediate">
+                    <MenuItem value="Medium">
                       <ListItemIcon>
                         <School sx={{ fontSize: "1.2rem", color: "#FF9800" }} />
                       </ListItemIcon>
                       <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
-                        Intermediate
+                        Medium
                       </Typography>
                     </MenuItem>
                     <MenuItem value="Advanced">
@@ -531,6 +564,7 @@ export default function MakeExam() {
               type="submit"
               variant="contained"
               color="primary"
+              disabled={!isFormValid}
               onClick={(event) => {
                 submitImage(event);
               }}
