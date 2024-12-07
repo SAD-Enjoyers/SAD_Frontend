@@ -112,12 +112,9 @@ export default function MakeExam() {
 
       const data = await response.json();
 
-      console.log("Response:", data.data.image);
-      alert("Image uploaded successfully!");
-      setImageNameurl(data.data.image);
-      setTimeout(() => {
-        submitInformation();
-      }, 100);
+      // console.log("Response:", data.data.image);
+      // alert("Image uploaded successfully!");
+      submitInformation(data.data.image);
     } catch (error) {
       console.error("Error uploading image:", error);
       alert("Failed to upload image. Please try again.");
@@ -164,7 +161,7 @@ export default function MakeExam() {
     }
   };
 
-  const submitInformation = () => {
+  const submitInformation = (image) => {
     var [tag1, tag2, tag3] = [...selectedSubjects];
 
     const formData = {
@@ -174,7 +171,7 @@ export default function MakeExam() {
       activityStatus: "Active",
       serviceType: "1",
       price: parseInt(price),
-      image: imageNameUrl,
+      image: image,
       tag1,
       tag2,
       tag3,
@@ -195,7 +192,8 @@ export default function MakeExam() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        // alert("maked exam successfully");
+        alert("maked exam successfully");
+        navigate("/profile");
       })
       .catch((error) => {
         console.error("Error:", error);

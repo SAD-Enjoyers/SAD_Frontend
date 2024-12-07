@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Box, Button, Grid2, Typography, Card, CardMedia } from "@mui/material";
 import { LineAxis } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 export default function ReviewComponent(props) {
   const [bgColor, setBgColor] = useState("transparent"); // حالت اولیه برای پس‌زمینه
   const [data, setData] = useState([]);
+  const navigate = useNavigate();
 
   // توابع
   const fetchExamData = async () => {
@@ -28,7 +29,7 @@ export default function ReviewComponent(props) {
       // دریافت تصاویر و ذخیره در حافظه
       const fetchedData = await Promise.all(
         responseData.data.map(async (item) => {
-          console.log(item.serviceId);
+          // console.log(item.serviceId);
           if (!item.image) {
             return { ...item, imageURL: null }; // یا هر مقدار پیش‌فرض دلخواه
           }
@@ -52,6 +53,14 @@ export default function ReviewComponent(props) {
     }
   };
 
+  const navigateToPublicExam = (examDara) => {
+    localStorage.setItem("examData", JSON.stringify(examData)); // Save to localStorage
+    navigate("/PublicExam", { state: { examData } });
+  };
+  const navigateToPrivateExam = (examData) => {
+    localStorage.setItem("examData", JSON.stringify(examData)); // Save to localStorage
+    navigate("/PublicExam", { state: { examData } });
+  };
   // اجرا در بارگذاری اولیه
   useEffect(() => {
     if (props.section === "My Exams") {
@@ -112,7 +121,10 @@ export default function ReviewComponent(props) {
                   flexShrink: 0,
                 }}
               >
-                {data.map((item, index) => (
+                {(data.length === 0
+                  ? [...Array(10).keys()].map((i) => i + 1)
+                  : data
+                ).map((item, index) => (
                   <Box key={index} display="flex" justifyContent="center">
                     <Card
                       sx={{
@@ -137,7 +149,9 @@ export default function ReviewComponent(props) {
                       <CardMedia
                         component="img"
                         height="100"
-                        image={item.imageURL} // از URL محلی استفاده می‌شود
+                        image={
+                          item.imageURL ? item.imageURL : "/images/exam.png"
+                        } // از URL محلی استفاده می‌شود
                         alt="Review Image"
                         sx={{
                           borderRadius: "8px",
@@ -165,7 +179,7 @@ export default function ReviewComponent(props) {
                         color="text.secondary"
                         mb={0.5}
                       >
-                        Level: {item.level ?? "Beginser"}
+                        Level: {item.level ?? "Beginner"}
                       </Typography>
                       <Typography variant="body2" color="text.secondary" mb={1}>
                         Score: {item.score ?? "85/100"}
@@ -182,6 +196,15 @@ export default function ReviewComponent(props) {
                       <Button
                         variant="outlined"
                         color="primary"
+                        onClick={
+                          item.type == "member"
+                            ? () => {
+                                navigateToPublicExam(item);
+                              }
+                            : () => {
+                                navigateToPrivateExam(item);
+                              }
+                        }
                         sx={{
                           fontSize: {
                             xs: "0.65rem",
@@ -200,12 +223,7 @@ export default function ReviewComponent(props) {
                           },
                         }}
                       >
-                        <Link
-                          style={{ textDecoration: "none" }}
-                          to={item.type == "member" ? "" : ""}
-                        >
-                          View Details
-                        </Link>
+                        View Details
                       </Button>
                     </Card>
                   </Box>
