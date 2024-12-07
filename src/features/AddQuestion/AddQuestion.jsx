@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import styled from "./AddQuestion.module.css";
 import axios from "axios";
+import { Navigate } from "react-router-dom";
 
 function AddQuestion() {
   const [selectedSubjects, setSelectedSubjects] = useState([]);
@@ -134,8 +135,11 @@ function AddQuestion() {
       const data = await response.json();
 
       console.log("Response:", data);
+      alert("added questoin successfully");
+      Navigate("/QuestionBank");
     } catch (error) {
       console.error(error);
+      s;
       alert(" Please try again.");
     }
   };
