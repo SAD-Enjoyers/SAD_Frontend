@@ -30,29 +30,52 @@ function QuestionPage() {
   const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
-    const savedData = JSON.parse(localStorage.getItem("questionData"));
-    if (savedData) {
-      setQuestion(savedData);
-    } else {
-      const dummyData = {
-        id: 1,
-        title: "API Development in Node.js",
-        text: "How can I create an API in Node.js?",
-        tags: ["Node.js", "API"],
-        rating: 3,
-        ratingCount: 15,
-        options: [
-          { text: "Using Express.js", isCorrect: true },
-          { text: "Using Koa.js", isCorrect: false },
-          { text: "Using Hapi.js", isCorrect: false },
-          { text: "Using Flask", isCorrect: false },
-        ],
-        author: "John Doe",
-        questionName: "How to create a Node.js API?"
-      };
-      setQuestion(dummyData);
-    }
-    setLoading(false);
+    // const savedData = JSON.parse(localStorage.getItem("questionData"));
+    // if (savedData) {
+    //   setQuestion(savedData);
+    // } else {
+    //   const dummyData = {
+    //     id: 1,
+    //     title: "API Development in Node.js",
+    //     text: "How can I create an API in Node.js?",
+    //     tags: ["Node.js", "API"],
+    //     rating: 3,
+    //     ratingCount: 15,
+    //     options: [
+    //       { text: "Using Express.js", isCorrect: true },
+    //       { text: "Using Koa.js", isCorrect: false },
+    //       { text: "Using Hapi.js", isCorrect: false },
+    //       { text: "Using Flask", isCorrect: false },
+    //     ],
+    //     author: "John Doe",
+    //     questionName: "How to create a Node.js API?"
+    //   };
+    //   setQuestion(dummyData);
+    // }
+    // setLoading(false);
+    
+    fetch("/api/some-endpoint", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "x-role": localStorage.getItem("role"), // Add role to headers
+      },
+      body: JSON.stringify({ data: "some data" }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    // Storing the theme
+    localStorage.setItem("theme", "dark");
+
+    // Retrieving the theme
+    const theme = localStorage.getItem("theme");
+    console.log(theme); // Output: dark
   }, []);
 
   useEffect(() => {
