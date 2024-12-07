@@ -19,17 +19,10 @@ import styled from "./AddQuestion.module.css";
 import axios from "axios";
 
 function AddQuestion() {
-    const [selectedSubjects, setSelectedSubjects] = useState([]);
     const [question, setQuestion] = useState({
         questionName: "",
         question: "",
     });
-    const handleSubjectChange = (event) => {
-        const selected = event.target.value;
-        if (selected.length <= 3) {
-            setSelectedSubjects(selected);
-        }
-    };
 
     const [options, setOptions] = useState({
         option1: "",
@@ -41,39 +34,95 @@ function AddQuestion() {
     const [visibility, setvisibility] = useState(false);
     const [tags, setTags] = useState({
         tag1: "",
+        tag2: "",
+        tag3: "",
     });
+
     const [categories, setCategories] = useState([]);
     const [rightAnswer, setRightAnswer] = useState("");
 
     const handleChangeQuestion = (e) => {
-        setQuestion((prevState) => ({
-            ...prevState,
-            [e.target.id]: e.target.value,
-        }));
+        switch (e.target.form[0].id) {
+            case "questionName":
+                setQuestion((prevState) => ({
+                    ...prevState,
+                    questionName: e.target.value,
+                }));
+                break;
+
+            case "question":
+                setQuestion((prevState) => ({
+                    ...prevState,
+                    question: e.target.value,
+                }));
+                break;
+        }
     };
 
     const handleChangeOptions = (e) => {
-        setOptions((prevState) => ({
-            ...prevState,
-            [e.target.id]: e.target.value,
-        }));
+        switch (e.target.labels[0].htmlFor) {
+            case "option1":
+                setOptions((prevState) => ({
+                    ...prevState,
+                    option1: e.target.value,
+                }));
+                break;
+
+            case "option2":
+                setOptions((prevState) => ({
+                    ...prevState,
+                    option2: e.target.value,
+                }));
+                break;
+
+            case "option3":
+                setOptions((prevState) => ({
+                    ...prevState,
+                    option3: e.target.value,
+                }));
+                break;
+
+            case "option4":
+                setOptions((prevState) => ({
+                    ...prevState,
+                    option4: e.target.value,
+                }));
+                break;
+        }
+
     };
 
     const handleChangeVisibility = (event) => {
         setvisibility(event.target.checked);
     };
 
-    const handleChangeRightAnswer = (event, newAlignment) => {
-        if (newAlignment !== null) {
-            setRightAnswer(newAlignment);
-        }
-    };
+    const handleChangeRightAnswer = (e) => {
+        setRightAnswer(e.target.value);
+    }
 
     const handleChangeTag = (e) => {
-        setTags((prevState) => ({
-            ...prevState,
-            [e.target.id]: e.target.value,
-        }));
+        switch (e.target.name) {
+            case "tag1":
+                setTags((prevState) => ({
+                    ...prevState,
+                    tag1: e.target.value,
+                }));
+                break;
+
+            case "tag2":
+                setTags((prevState) => ({
+                    ...prevState,
+                    tag2: e.target.value,
+                }));
+                break;
+
+            case "tag3":
+                setTags((prevState) => ({
+                    ...prevState,
+                    tag3: e.target.value,
+                }));
+                break;
+        }
     };
 
     useEffect(() => {
@@ -90,7 +139,6 @@ function AddQuestion() {
     }, []);
 
     const handleChangeAddButton = async () => {
-        var [tag1, tag2, tag3] = [...selectedSubjects];
         console.log({
             question_name: question.questionName,
             question_text: question.question,
@@ -100,9 +148,9 @@ function AddQuestion() {
             o4: options.option4,
             right_answer: rightAnswer,
             visibility: visibility,
-            tag1,
-            tag2,
-            tag3,
+            tag1: tags.tag1,
+            tag2: tags.tag2,
+            tag3: tags.tag3
         });
         try {
             const response = await fetch("/api/v1/questions/add-question", {
@@ -121,9 +169,9 @@ function AddQuestion() {
                     o4: options.option4,
                     rightAnswer: rightAnswer,
                     visibility: visibility,
-                    tag1,
-                    tag2,
-                    tag3,
+                    tag1: tags.tag1,
+                    tag2: tags.tag2,
+                    tag3: tags.tag3
                 }),
             });
 
@@ -141,8 +189,6 @@ function AddQuestion() {
     };
 
     return (
-
-
 
         <div className={styled.countainer}>
 
