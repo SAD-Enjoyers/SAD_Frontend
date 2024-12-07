@@ -19,8 +19,66 @@ import {
   Cancel as CancelIcon,
   HourglassEmpty as HourglassEmptyIcon,
 } from "@mui/icons-material";
-import participants from "../data/participants.json";
-const ParticipantStatus = ({ participants = [] }) => {
+
+// Mock participants data
+const participants = [
+  {
+    name: "John Doe",
+    score: 90,
+    grade: "A",
+    answeredRight: 45,
+    answeredWrong: 5,
+    notAnswered: 0,
+    image: "",
+  },
+  {
+    name: "Jane Smith",
+    score: 85,
+    grade: "B",
+    answeredRight: 40,
+    answeredWrong: 10,
+    notAnswered: 0,
+    image: "",
+  },
+  {
+    name: "Tom Brown",
+    score: 75,
+    grade: "C",
+    answeredRight: 30,
+    answeredWrong: 15,
+    notAnswered: 0,
+    image: "",
+  },
+  {
+    name: "Emily White",
+    score: 88,
+    grade: "B",
+    answeredRight: 44,
+    answeredWrong: 6,
+    notAnswered: 0,
+    image: "",
+  },
+  {
+    name: "Michael Lee",
+    score: 95,
+    grade: "A",
+    answeredRight: 48,
+    answeredWrong: 2,
+    notAnswered: 0,
+    image: "",
+  },
+  {
+    name: "Sarah Johnson",
+    score: 92,
+    grade: "A",
+    answeredRight: 47,
+    answeredWrong: 3,
+    notAnswered: 0,
+    image: "",
+  },
+];
+
+const ParticipantStatus = () => {
   const [filteredParticipants, setFilteredParticipants] = useState([]);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("score");
@@ -34,7 +92,7 @@ const ParticipantStatus = ({ participants = [] }) => {
       setFilteredParticipants(participants);
       setLoading(false);
     }, 1000);
-  }, [participants]);
+  }, []);
 
   useEffect(() => {
     let result = participants.filter((p) =>
@@ -46,7 +104,7 @@ const ParticipantStatus = ({ participants = [] }) => {
       result.sort((a, b) => a.name.localeCompare(b.name));
     }
     setFilteredParticipants(result);
-  }, [search, sortBy, participants]);
+  }, [search, sortBy]);
 
   const handlePagination = (event, value) => setCurrentPage(value);
 
