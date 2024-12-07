@@ -111,7 +111,7 @@ const OngoingExamPage = () => {
             position="static"
             sx={{
               width: "100%",
-              maxWidth: "900px",
+              maxWidth: "850px",
               bgcolor: "#3f51b5",
               borderRadius: "8px",
               mb: 2,
@@ -129,7 +129,7 @@ const OngoingExamPage = () => {
     
           <Container maxWidth="md">
             {/* Progress Bar */}
-            <Box sx={{ width: "100%", mb: 2 }}>
+            {/* <Box sx={{ width: "100%", mb: 2 }}>
               <LinearProgress
                 variant="determinate"
                 value={progress}
@@ -143,7 +143,7 @@ const OngoingExamPage = () => {
                   },
                 }}
               />
-            </Box>
+            </Box> */}
                     {/* Question Card */}
         <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
           <Card
