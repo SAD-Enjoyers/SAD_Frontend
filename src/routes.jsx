@@ -10,13 +10,12 @@ import MakeExam from "./features/MakeExam/MakeExam.jsx";
 import ExamPreview from "./features/Exams/ExamPreview/ExamPreview.jsx";
 import PublicExam from "./features/Exams/PublicExam/PublicExam.jsx";
 import QuestionSearch from "./features/Exams/QuestionSearch/QuestionSearch.jsx"; // Import QuestionSearch
-import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 import PrivateExamPage from "./features/PrivateExamPage/PrivateExamPage.jsx";
 import ChangePassword from "./features/Auth/ChangePassword/ChangePassword.jsx";
 import QuestionPage from "./features/Exams/QuestionPage/QuestionPage";
 import ImageUpload from "./features/MakeExam/components/ImageUpload.jsx";
 import TermsAndConditions from "./features/Auth/TermsAndConditions/TermsAndConditions.jsx";
-
+import ArticleSearch  from "./features/SearchAndFilterArticle/SearchAndFilterArticle.jsx";
 function AppRoutes() {
   return (
     <Router>
@@ -31,13 +30,12 @@ function AppRoutes() {
           <Route path="ExamPreview/:serviceId" element={<ExamPreview />} />
           <Route path="private_exam_page" element={<PrivateExamPage />} />
           <Route path="QuestionSearch" element={<QuestionSearch />} />
-          <Route path="AddQuestions" element={<AddQuestion />} />
           <Route path="changepassword" element={<ChangePassword />} />
           <Route path="QuestionPage" element={<QuestionPage />} />
           <Route path="image" element={<ImageUpload />} />
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
           <Route path="PublicExam" element={<PublicExam />} />
-
+          <Route path="SearchArticle" element={<ArticleSearch />} />
           {/* private_exam_page */}
         </Route>
       </Routes>
