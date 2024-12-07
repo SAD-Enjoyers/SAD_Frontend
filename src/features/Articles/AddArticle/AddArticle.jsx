@@ -11,11 +11,9 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import "react-quill/dist/quill.snow.css";
-import ReactQuill from "react-quill";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { keyframes } from '@mui/system';
+import { keyframes } from "@mui/system";
 
 // تعریف انیمیشن
 const fadeIn = keyframes`
@@ -50,7 +48,7 @@ const AddArticle = () => {
     if (!formData.title) newErrors.title = "Title is required.";
     if (!formData.author) newErrors.author = "Author name is required.";
     if (!formData.date) newErrors.date = "Date is required.";
-    if (!formData.content || formData.content === "<p><br></p>")
+    if (!formData.content || formData.content.trim() === "")
       newErrors.content = "Article content cannot be empty.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -60,7 +58,19 @@ const AddArticle = () => {
     e.preventDefault();
     if (!validateFields()) return;
 
-    toast.success("Article submitted successfully!");
+    // پیام تایید با Toastify
+    toast.success("Article submitted successfully!", {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+
+    // تمیزکاری فرم
     setFormData({
       title: "",
       author: "",
@@ -73,9 +83,13 @@ const AddArticle = () => {
   const handlePreview = () => {
     if (validateFields()) setShowPreview(true);
   };
+
   return (
-    <Container maxWidth="md" sx={{ marginTop: 14 ,marginBottom:14 }}>
-      <Paper elevation={3} sx={{ padding: 4, borderRadius: 4, animation: `${fadeIn} 0.5s ease-out` }}>
+    <Container maxWidth="md" sx={{ marginTop: 14, marginBottom: 14 }}>
+      <Paper
+        elevation={3}
+        sx={{ padding: 4, borderRadius: 4, animation: `${fadeIn} 0.5s ease-out` }}
+      >
         <Typography variant="h4" align="center" gutterBottom>
           Add New Article
         </Typography>
@@ -89,9 +103,9 @@ const AddArticle = () => {
               error={!!errors.title}
               helperText={errors.title}
               sx={{
-                '& .MuiInputBase-root': {
-                  backgroundColor: '#f4f7fc',
-                  borderRadius: '8px',
+                "& .MuiInputBase-root": {
+                  backgroundColor: "#f4f7fc",
+                  borderRadius: "8px",
                 },
               }}
             />
@@ -105,38 +119,54 @@ const AddArticle = () => {
               error={!!errors.author}
               helperText={errors.author}
               sx={{
-                '& .MuiInputBase-root': {
-                  backgroundColor: '#f4f7fc',
-                  borderRadius: '8px',
+                "& .MuiInputBase-root": {
+                  backgroundColor: "#f4f7fc",
+                  borderRadius: "8px",
+                },
+              }}
+            />
+          </Box>
+          <Box sx={{ marginBottom: 3 }}>
+            <TextField
+              fullWidth
+              label="Date"
+              type="date"
+              value={formData.date}
+              onChange={(e) => handleChange("date", e.target.value)}
+              error={!!errors.date}
+              helperText={errors.date}
+              sx={{
+                "& .MuiInputBase-root": {
+                  backgroundColor: "#f4f7fc",
+                  borderRadius: "8px",
                 },
               }}
             />
           </Box>
           <Box sx={{ marginBottom: 7 }}>
-  <Typography variant="h6" gutterBottom>
-    Content
-  </Typography> 
-      <TextField
-        id="content-editor"
-        label="Write your article..."
-        multiline
-        rows={8} // تعداد خطوط اولیه
-        value={formData.content}
-        onChange={(e) => handleChange("content", e.target.value)}
-        placeholder="Write your article..."
-        variant="outlined"
-        error={!!errors.content} // نمایش خطا در صورت وجود
-        helperText={errors.content ? "This field is required." : ""}
-        sx={{
-          width: "100%",
-          maxWidth: "600px", // محدود کردن عرض
-          backgroundColor: "#f4f7fc",
-          borderRadius: "8px",
-          fontFamily: "'Roboto', sans-serif",
-        }}
-      />
-    </Box>
-
+            <Typography variant="h6" gutterBottom>
+              Content
+            </Typography>
+            <TextField
+              id="content-editor"
+              label="Write your article..."
+              multiline
+              rows={8} // تعداد خطوط اولیه
+              value={formData.content}
+              onChange={(e) => handleChange("content", e.target.value)}
+              placeholder="Write your article..."
+              variant="outlined"
+              error={!!errors.content} // نمایش خطا در صورت وجود
+              helperText={errors.content ? "This field is required." : ""}
+              sx={{
+                width: "100%",
+                maxWidth: "600px", // محدود کردن عرض
+                backgroundColor: "#f4f7fc",
+                borderRadius: "8px",
+                fontFamily: "'Roboto', sans-serif",
+              }}
+            />
+          </Box>
           <Box display="flex" gap={2}>
             <Button variant="outlined" onClick={handlePreview} fullWidth>
               Preview
@@ -164,16 +194,23 @@ const AddArticle = () => {
                 backgroundColor: "#f9f9f9",
               }}
             >
-                            {/* Right Section (Text) */}
-                            <Box>
-                <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>
+              {/* Right Section (Text) */}
+              <Box>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{ fontWeight: "bold" }}
+                >
                   {formData.title || "Untitled"}
                 </Typography>
-                <Typography variant="subtitle1" gutterBottom sx={{ color: "#555" }}>
+                <Typography
+                  variant="subtitle1"
+                  gutterBottom
+                  sx={{ color: "#555" }}
+                >
                   By {formData.author || "Unknown"} - {formData.date || "No Date"}
                 </Typography>
                 <Box
-                  dangerouslySetInnerHTML={{ __html: formData.content }}
                   sx={{
                     padding: 2,
                     border: "1px solid #ddd",
@@ -181,7 +218,9 @@ const AddArticle = () => {
                     backgroundColor: "#ffffff",
                     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
                   }}
-                />
+                >
+                  {formData.content || "No content available."}
+                </Box>
               </Box>
             </Box>
           </DialogContent>
