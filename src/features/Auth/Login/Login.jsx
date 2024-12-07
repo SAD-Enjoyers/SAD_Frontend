@@ -50,6 +50,8 @@ function Login() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          // Authorization: `Bearer ${localStorage.getItem("token")}`,
+          // "x-role": localStorage.getItem("role"),
         },
         body: JSON.stringify({
           userName: username,
@@ -62,8 +64,11 @@ function Login() {
       // Handle backend response
       if (response.ok) {
         // Successfully logged in, redirect to home page
+        console;
         alert("Login successful!");
-        navigate("/home");
+        localStorage.setItem("token", responseData.data.token);
+        localStorage.setItem("role", responseData.data.role);
+        navigate("/");
       } else {
         setErrorMessage(
           responseData.message || "Login failed. Please try again."
@@ -131,7 +136,7 @@ function Login() {
         />
 
         <Typography variant="body2" sx={{ mt: 2, mb: 2 }}>
-          <Link href="" underline="hover" color="primary">
+          <Link href="/fp" underline="hover" color="primary">
             Forgot password?
           </Link>
         </Typography>
