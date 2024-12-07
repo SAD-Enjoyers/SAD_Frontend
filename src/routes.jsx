@@ -14,6 +14,7 @@ import PrivateExamPage from "./features/PrivateExamPage/PrivateExamPage.jsx";
 import ChangePassword from "./features/Auth/ChangePassword/ChangePassword.jsx";
 import QuestionPage from "./features/Exams/QuestionPage/QuestionPage";
 import TermsAndConditions from "./features/Auth/TermsAndConditions/TermsAndConditions.jsx";
+import OngoingExamPage from "./features/Exams/OngoingExamPage/OngoingExamPage.jsx";
 
 function AppRoutes() {
   return (
@@ -33,7 +34,7 @@ function AppRoutes() {
           <Route path="changepassword" element={<ChangePassword />} />
           <Route path="QuestionPage" element={<QuestionPage />} />
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
-
+          <Route path="OngoingExamPage" element={<OngoingExamPage />} />
           {/* private_exam_page */}
         </Route>
       </Routes>
