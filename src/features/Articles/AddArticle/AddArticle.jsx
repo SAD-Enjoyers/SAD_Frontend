@@ -74,7 +74,7 @@ const AddArticle = () => {
     if (validateFields()) setShowPreview(true);
   };
   return (
-    <Container maxWidth="md" sx={{ marginTop: 6 }}>
+    <Container maxWidth="md" sx={{ marginTop: 14 ,marginBottom:14 }}>
       <Paper elevation={3} sx={{ padding: 4, borderRadius: 4, animation: `${fadeIn} 0.5s ease-out` }}>
         <Typography variant="h4" align="center" gutterBottom>
           Add New Article
@@ -112,35 +112,31 @@ const AddArticle = () => {
               }}
             />
           </Box>
-          <Box sx={{ marginBottom: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Content
-            </Typography>
-            <ReactQuill
-              theme="snow"
-              value={formData.content}
-              onChange={(value) => handleChange("content", value)}
-              placeholder="Write your article..."
-              modules={{
-                toolbar: [
-                  [{ header: "1" }, { header: "2" }, { font: [] }],
-                  [{ list: "ordered" }, { list: "bullet" }],
-                  ["bold", "italic", "underline"],
-                  ["link", "image"], // اضافه کردن آیکون تصویر در نوار ابزار
-                  ["blockquote", "code-block"],
-                  [{ align: [] }],
-                  ["clean"],
-                ],
-              }}
-              style={{
-                height: "250px",
-                border: errors.content ? "1px solid red" : "1px solid #ddd",
-                borderRadius: "8px",
-                backgroundColor: "#f4f7fc",
-                fontFamily: "'Roboto', sans-serif", // اضافه کردن فونت
-              }}
-            />
-          </Box>
+          <Box sx={{ marginBottom: 7 }}>
+  <Typography variant="h6" gutterBottom>
+    Content
+  </Typography> 
+      <TextField
+        id="content-editor"
+        label="Write your article..."
+        multiline
+        rows={8} // تعداد خطوط اولیه
+        value={formData.content}
+        onChange={(e) => handleChange("content", e.target.value)}
+        placeholder="Write your article..."
+        variant="outlined"
+        error={!!errors.content} // نمایش خطا در صورت وجود
+        helperText={errors.content ? "This field is required." : ""}
+        sx={{
+          width: "100%",
+          maxWidth: "600px", // محدود کردن عرض
+          backgroundColor: "#f4f7fc",
+          borderRadius: "8px",
+          fontFamily: "'Roboto', sans-serif",
+        }}
+      />
+    </Box>
+
           <Box display="flex" gap={2}>
             <Button variant="outlined" onClick={handlePreview} fullWidth>
               Preview
