@@ -9,16 +9,49 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Avatar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import AdbIcon from "@mui/icons-material/Adb";
-import { Link, useLocation } from "react-router-dom";
-function NavBar() {
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+
+export default function NavBar() {
+  const [isValid, setIsValid] = useState(true); // استفاده از useState برای مدیریت isValid
+  const [loading, setLoading] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
-  const pages = ["blogs", "courses", "questions", "profiles", "my Profile"];
-  const addresses = ["/", "/", "/QuestionSearch", "/", "/profile"];
-  var location = useLocation();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const pages = ["blogs", "courses", "questions", "users"];
+  const addresses = ["/", "/", "/QuestionSearch", "/"];
+  const navigate = useNavigate();
+  // const location = useLocation();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    // if (!token) {
+    fetch("/api/v1/profile/private-data", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "x-role": localStorage.getItem("role"),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          setIsValid(false);
+        } else {
+          return response.json();
+        }
+      })
+      .catch((err) => {
+        setIsValid(false);
+      })
+      .then((profile) => {
+        localStorage.setItem("profile", profile);
+      });
+    // }
+  }, []);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -26,6 +59,110 @@ function NavBar() {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogOut = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    setIsValid(false);
+  };
+
+  const fetchData = () => {
+    if (!isValid) {
+      return (
+        <Box sx={{ display: "flex", gap: { xs: 0.5, md: 1 } }}>
+          <Link to="/login">
+            <Button
+              sx={{
+                color: "#378CE7",
+                fontSize: { xs: "0.8rem", md: "1rem" },
+                padding: { xs: "6px 12px", md: "8px 16px" },
+                minWidth: "80px",
+              }}
+            >
+              login
+            </Button>
+          </Link>
+          <Link to="/signup">
+            <Button
+              variant="outlined"
+              sx={{
+                color: "#378CE7",
+                borderColor: "#378CE7",
+                fontSize: { xs: "0.8rem", md: "1rem" },
+                padding: { xs: "6px 12px", md: "8px 16px" },
+                minWidth: "80px",
+              }}
+            >
+              signup
+            </Button>
+          </Link>
+        </Box>
+      );
+    } else {
+      return (
+        <Box ml="20px">
+          <IconButton
+            size="large"
+            aria-label="account of current user"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            onClick={handleMenu}
+            color="inherit"
+          >
+            <Avatar
+              alt="User Profile"
+              src="/images/profile.png"
+              sx={{ width: 40, height: 40 }}
+            />
+          </IconButton>
+          <Menu
+            sx={{ mt: 5 }}
+            id="menu-appbar"
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            {/* inside jsx useNavigate */}
+            <MenuItem
+              onClick={() => {
+                navigate("/profile");
+              }}
+            >
+              Profile
+            </MenuItem>
+            <MenuItem onClick={handleClose}>Wallet</MenuItem>
+            <MenuItem
+              onClick={() => {
+                localStorage.removeItem("token");
+                localStorage.removeItem("role");
+                setIsValid(false);
+              }}
+              sx={{ color: "red", fontSize: "20px" }}
+            >
+              LogOut
+            </MenuItem>
+          </Menu>
+        </Box>
+      );
+    }
   };
 
   useEffect(() => {
@@ -47,7 +184,7 @@ function NavBar() {
       sx={{
         top: scrolled ? "-100px" : "0",
         transition: "top .3s ease",
-        background: "white", // پس‌زمینه سفید
+        background: "white",
       }}
     >
       <Container maxWidth="xl">
@@ -72,10 +209,9 @@ function NavBar() {
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              color="inherit" // رنگ آیکون سه‌خطی
+              color="inherit"
             >
-              <MenuIcon sx={{ color: "#378CE7" }} />{" "}
-              {/* رنگ آیکون سه‌خطی به آبی */}
+              <MenuIcon sx={{ color: "#378CE7" }} />
             </IconButton>
             <Menu
               id="menu-appbar"
@@ -106,8 +242,6 @@ function NavBar() {
                       {page}
                     </Typography>
                   </Link>
-
-                  {/* رنگ خاکستری */}
                 </MenuItem>
               ))}
             </Menu>
@@ -116,9 +250,10 @@ function NavBar() {
           {/* لوگو وسط در حالت موبایل و سمت چپ در حالت دسکتاپ */}
           <Box
             sx={{
-              flexGrow: 1,
+              flexGrow: 5,
               display: "flex",
               justifyContent: { xs: "center", md: "flex-start" },
+              alignItems: "center",
             }}
           >
             <Link to="/" style={{ textDecoration: "none" }}>
@@ -132,15 +267,14 @@ function NavBar() {
                   fontFamily: "monospace",
                   fontWeight: 700,
                   letterSpacing: ".3rem",
-                  color: "#378CE7", // رنگ لوگو به آبی
+                  color: "#378CE7",
                   textDecoration: "none",
                   "&:hover": {
-                    color: "#378CE7", // رنگ آبی هنگام هاور
+                    color: "#378CE7",
                   },
                 }}
               >
-                <AdbIcon sx={{ mr: 0, color: "#378CE7" }} /> HOME{" "}
-                {/* رنگ لوگو به آبی */}
+                <AdbIcon sx={{ mr: 0, color: "#378CE7" }} /> HOME
               </Typography>
             </Link>
           </Box>
@@ -166,9 +300,9 @@ function NavBar() {
                     color: "#7D7D7D",
                     fontSize: { md: "1rem" },
                     "&:hover": {
-                      color: "#378CE7", // رنگ آبی هنگام هاور
+                      color: "#378CE7",
                     },
-                  }} // رنگ خاکستری
+                  }}
                 >
                   {page}
                 </Button>
@@ -176,39 +310,9 @@ function NavBar() {
             ))}
           </Box>
 
-          {/* دکمه‌ها سمت راست در همه حالات */}
-          <Box sx={{ display: "flex", gap: { xs: 0.5, md: 1 } }}>
-            <Link to="/login">
-              <Button
-                sx={{
-                  color: "#378CE7", // رنگ متن دکمه ورود
-                  fontSize: { xs: "0.8rem", md: "1rem" },
-                  padding: { xs: "6px 12px", md: "8px 16px" },
-                  minWidth: "80px",
-                }}
-              >
-                login
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button
-                variant="outlined"
-                sx={{
-                  color: "#378CE7", // رنگ متن دکمه عضویت
-                  borderColor: "#378CE7", // رنگ مرز دکمه عضویت
-                  fontSize: { xs: "0.8rem", md: "1rem" },
-                  padding: { xs: "6px 12px", md: "8px 16px" },
-                  minWidth: "80px",
-                }}
-              >
-                signup
-              </Button>
-            </Link>
-          </Box>
+          {fetchData()}
         </Toolbar>
       </Container>
     </AppBar>
   );
 }
-
-export default NavBar;

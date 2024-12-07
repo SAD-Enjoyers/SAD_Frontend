@@ -32,10 +32,10 @@ export default function ReviewComponent(props) {
               mx: "auto",
               borderRadius: "4%",
               background: "#E3F2FD",
-              transition: "all 0.3s ease", // تغییرات آرام با زمان 0.3 ثانیه
+              transition: "all 0.3s ease",
               "&:hover": {
-                backgroundColor: "#387CE7", // رنگ پس زمینه در حالت hover
-                color: "#fff", // رنگ متن
+                backgroundColor: "#387CE7",
+                color: "#fff",
               },
               "&:hover .buttonViewAll": {
                 color: "#fff",
@@ -46,14 +46,20 @@ export default function ReviewComponent(props) {
               <Typography variant="h6" mb={2} textAlign="center">
                 {props.section}
               </Typography>
-
               <Grid2
                 container
                 spacing={1}
-                justifyContent="center"
+                justifyContent="flex-start"
                 alignItems="stretch"
+                sx={{
+                  overflowX: "auto", // فعال‌سازی اسکرول افقی
+                  paddingBottom: "20px",
+                  flexWrap: "nowrap", // جلوگیری از شکستن کارت‌ها
+                  width: { xs: "220px", sm: "370px", md: "600px" }, // عرض کامل برای گرید
+                  flexShrink: 0,
+                }}
               >
-                {[1, 2, 3].map((item) => (
+                {[1, 2, 3, 4, 5, 6, 7].map((item) => (
                   <Box key={item} display="flex" justifyContent="center">
                     <Card
                       sx={{
@@ -61,6 +67,7 @@ export default function ReviewComponent(props) {
                         borderColor: "#378CE7",
                         width: "100%",
                         maxWidth: 220,
+                        // height: "30px",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
@@ -68,6 +75,7 @@ export default function ReviewComponent(props) {
                         borderRadius: "10px",
                         boxShadow: 1,
                         transition: "transform 0.3s ease",
+                        minWidth: { xs: 100, sm: 150, md: 220 }, // عرض حداقل برای جلوگیری از کوچک شدن کارت‌ها
                         "&:hover": {
                           transform: "scale(1.05)",
                           boxShadow: 3,
@@ -77,7 +85,7 @@ export default function ReviewComponent(props) {
                       <CardMedia
                         component="img"
                         height="100"
-                        image={exam} // مسیر تصویر را جایگزین کنید
+                        image={exam} // جایگزین مسیر تصویر خود کنید
                         alt="Review Image"
                         sx={{
                           borderRadius: "8px",
@@ -86,7 +94,6 @@ export default function ReviewComponent(props) {
                           height: { xs: "60px", sm: "100px", md: "100px" },
                         }}
                       />
-
                       <Typography
                         variant="subtitle2"
                         component="div"
@@ -140,9 +147,9 @@ export default function ReviewComponent(props) {
                         mb={1.5}
                         sx={{
                           fontSize: {
-                            xs: "0.0rem",
-                            sm: "0.0rem",
-                            md: "0.65rem",
+                            xs: "0.70rem",
+                            sm: "0.70rem",
+                            md: "0.95rem",
                           },
                         }}
                       >
@@ -153,9 +160,9 @@ export default function ReviewComponent(props) {
                         color="primary"
                         sx={{
                           fontSize: {
-                            xs: "0.55rem",
-                            sm: "0.65rem",
-                            md: "0.75rem",
+                            xs: "0.65rem",
+                            sm: "0.75rem",
+                            md: "0.95rem",
                           }, // تغییر اندازه فونت بر اساس سایز صفحه
                           padding: {
                             xs: "2px 4px",
@@ -175,17 +182,6 @@ export default function ReviewComponent(props) {
                   </Box>
                 ))}
               </Grid2>
-            </Box>
-
-            <Box display="flex" justifyContent="center" mt={2}>
-              <Button
-                className="buttonViewAll"
-                variant="text"
-                color="primary"
-                onClick={handleViewAllClick}
-              >
-                View All Exams
-              </Button>
             </Box>
           </Card>
         </Box>

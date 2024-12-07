@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-// import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import {
   Container,
   TextField,
@@ -15,8 +15,8 @@ import { Snackbar } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 function ChangePassword() {
-  // const navigate = useNavigate();
-  const [code, setCode] = useState("");
+  const navigate = useNavigate();
+  const [recoveryCode, setRecoveryCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,7 @@ function ChangePassword() {
     event.preventDefault();
     const newError = {};
 
-    if (!code) {
+    if (!recoveryCode) {
       newError.code = "Recovery code is required";
     }
 
@@ -66,6 +66,7 @@ function ChangePassword() {
     setError({});
     setSuccessMessage("");
     setSnackbarOpen(false);
+    console.log(recoveryCode, email, newPassword);
 
     try {
       const response = await fetch("/api/v1/auth/verify-recovery-code", {
@@ -73,22 +74,29 @@ function ChangePassword() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, recoverycode, newPassword }),
+        body: JSON.stringify({ email, recoveryCode, newPassword }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // If password change is successful, show success message and redirect to login page
+        // اگر تغییر رمز عبور موفق بود، پیام موفقیت نمایش دهید و کاربر را به صفحه ورود هدایت کنید
         alert("Password changed successfully!");
         localStorage.removeItem("userEmail");
-        navigate("/login"); // Redirect to login page
+        navigate("/login"); // هدایت به صفحه ورود
       } else {
-        setErrorMessage(data.message || "Error changing password");
+        // اگر درخواست موفق نبود، پیام خطا نمایش دهید
+        console.error("Error:", data.message || "Something went wrong.");
+        alert(
+          data.message || "Failed to change the password. Please try again."
+        );
       }
     } catch (error) {
-      setErrorMessage("Network error");
+      // خطاهای مربوط به شبکه یا سایر مشکلات غیرمنتظره
+      console.error("Catch Error:", error);
+      alert("An error occurred. Please try again later.");
     } finally {
+      // در هر صورت، مقدار `setLoading` به false تنظیم می‌شود
       setLoading(false);
     }
   };
@@ -113,8 +121,8 @@ function ChangePassword() {
                 fullWidth
                 label="Recovery Code"
                 variant="outlined"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
+                value={recoveryCode}
+                onChange={(e) => setRecoveryCode(e.target.value)}
                 required
                 error={Boolean(error.code)}
                 helperText={error.code}
