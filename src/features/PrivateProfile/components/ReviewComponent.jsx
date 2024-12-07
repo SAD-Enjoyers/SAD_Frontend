@@ -53,13 +53,13 @@ export default function ReviewComponent(props) {
     }
   };
 
-  const navigateToPublicExam = (examDara) => {
+  const navigateToPublicExam = (examData) => {
     localStorage.setItem("examData", JSON.stringify(examData)); // Save to localStorage
     navigate("/PublicExam", { state: { examData } });
   };
   const navigateToPrivateExam = (examData) => {
     localStorage.setItem("examData", JSON.stringify(examData)); // Save to localStorage
-    navigate("/PublicExam", { state: { examData } });
+    navigate("/PrivateExam", { state: { examData } });
   };
   // اجرا در بارگذاری اولیه
   useEffect(() => {
