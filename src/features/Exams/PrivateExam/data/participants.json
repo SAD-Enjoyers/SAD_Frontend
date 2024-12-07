@@ -1,0 +1,38 @@
+[
+  {
+    "name": "LeBron James",
+    "image": "https://via.placeholder.com/50",
+    "score": 95,
+    "grade": "A",
+    "answeredRight": 45,
+    "answeredWrong": 5,
+    "notAnswered": 10
+  },
+  {
+    "name": "Tom Brady",
+    "image": "https://via.placeholder.com/50",
+    "score": 88,
+    "grade": "B",
+    "answeredRight": 40,
+    "answeredWrong": 8,
+    "notAnswered": 12
+  },
+  {
+    "name": "Rafa Nadal",
+    "image": "https://via.placeholder.com/50",
+    "score": 72,
+    "grade": "C",
+    "answeredRight": 35,
+    "answeredWrong": 15,
+    "notAnswered": 10
+  },
+  {
+    "name": "Serena Williams",
+    "image": "https://via.placeholder.com/50",
+    "score": 100,
+    "grade": "A+",
+    "answeredRight": 50,
+    "answeredWrong": 0,
+    "notAnswered": 0
+  }
+]

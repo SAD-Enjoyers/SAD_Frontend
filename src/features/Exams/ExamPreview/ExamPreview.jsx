@@ -12,6 +12,7 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import { styled } from "@mui/system";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import DefaultExamImage from "../../../assets/images/default_exam_image.jpg";
 
 // Palette colors
 const primaryGradient = ["#5356FF", "#378CE7", "#67C6E3", "#DFF5FF"];
