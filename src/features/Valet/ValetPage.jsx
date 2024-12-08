@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Box, Typography, TextField, Grid, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Button, Box, Typography, TextField, Grid, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar } from '@mui/material';
+import { Alert } from '@mui/lab'; // Import Alert component for Snackbar styling
 
 const ValetPage = () => {
     // Initial mock account data
@@ -25,6 +26,11 @@ const ValetPage = () => {
     const [newCardNumber, setNewCardNumber] = useState('');
     const [openCardDialog, setOpenCardDialog] = useState(false);
 
+    // State for Snackbar feedback
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // 'success' or 'error'
+
     // Handle deposit
     const handleDeposit = () => {
         const amount = parseFloat(transactionAmount);
@@ -36,8 +42,13 @@ const ValetPage = () => {
                 { amount: amount, date: new Date().toLocaleDateString(), type: 'Deposit' },
             ]);
             setTransactionAmount('');
+            setSnackbarMessage('Deposit successful!');
+            setSnackbarSeverity('success');
+            setOpenSnackbar(true);
         } else {
-            alert('Please enter a valid amount for deposit.');
+            setSnackbarMessage('Please enter a valid deposit amount.');
+            setSnackbarSeverity('error');
+            setOpenSnackbar(true);
         }
     };
 
@@ -52,8 +63,13 @@ const ValetPage = () => {
                 { amount: -amount, date: new Date().toLocaleDateString(), type: 'Withdraw' },
             ]);
             setTransactionAmount('');
+            setSnackbarMessage('Withdrawal successful!');
+            setSnackbarSeverity('success');
+            setOpenSnackbar(true);
         } else {
-            alert('Insufficient balance or invalid amount for withdrawal.');
+            setSnackbarMessage('Insufficient balance or invalid withdrawal amount.');
+            setSnackbarSeverity('error');
+            setOpenSnackbar(true);
         }
     };
 
@@ -68,8 +84,13 @@ const ValetPage = () => {
             setMockAccount(updatedAccount);
             setOpenCardDialog(false);
             setNewCardNumber('');
+            setSnackbarMessage('Card number updated successfully!');
+            setSnackbarSeverity('success');
+            setOpenSnackbar(true);
         } else {
-            alert('Please enter a valid 16-digit card number.');
+            setSnackbarMessage('Please enter a valid 16-digit card number.');
+            setSnackbarSeverity('error');
+            setOpenSnackbar(true);
         }
     };
 
@@ -158,6 +179,17 @@ const ValetPage = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            {/* Snackbar for feedback messages */}
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={() => setOpenSnackbar(false)}
+            >
+                <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };
