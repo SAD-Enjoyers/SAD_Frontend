@@ -27,57 +27,54 @@ const ValetPage = () => {
 
     // Handle deposit
     const handleDeposit = () => {
-        if (transactionAmount > 0) {
-            const newBalance = mockAccount.balance + parseFloat(transactionAmount);
+        const amount = parseFloat(transactionAmount);
+        if (amount > 0) {
+            const newBalance = mockAccount.balance + amount;
             setMockAccount({ ...mockAccount, balance: newBalance });
             setTransactions([
                 ...transactions,
-                { amount: parseFloat(transactionAmount), date: new Date().toLocaleDateString(), type: 'Deposit' },
+                { amount: amount, date: new Date().toLocaleDateString(), type: 'Deposit' },
             ]);
             setTransactionAmount('');
+        } else {
+            alert('Please enter a valid amount for deposit.');
         }
     };
 
     // Handle withdraw
     const handleWithdraw = () => {
-        if (transactionAmount > 0 && transactionAmount <= mockAccount.balance) {
-            const newBalance = mockAccount.balance - parseFloat(transactionAmount);
+        const amount = parseFloat(transactionAmount);
+        if (amount > 0 && amount <= mockAccount.balance) {
+            const newBalance = mockAccount.balance - amount;
             setMockAccount({ ...mockAccount, balance: newBalance });
             setTransactions([
                 ...transactions,
-                { amount: -parseFloat(transactionAmount), date: new Date().toLocaleDateString(), type: 'Withdraw' },
+                { amount: -amount, date: new Date().toLocaleDateString(), type: 'Withdraw' },
             ]);
             setTransactionAmount('');
         } else {
-            alert('Insufficient balance or invalid amount');
+            alert('Insufficient balance or invalid amount for withdrawal.');
         }
     };
 
     // Handle adding card number
     const handleAddCard = () => {
-        if (newCardNumber) {
-            // Create a new mock account with the new card number, 0 balance, and Active status
+        if (newCardNumber.length === 16 && /^\d+$/.test(newCardNumber)) {
             const updatedAccount = {
-                cardNumber: newCardNumber,
-                balance: 0, // New balance is 0
-                accountStatus: 'Active' // Account is active
+                ...mockAccount, // Keep the current balance and status
+                cardNumber: newCardNumber, // Update the card number
             };
 
-            // Update the mock account state with the new card number
             setMockAccount(updatedAccount);
-            
-            // Reset the transaction history since it's a new card
-            setTransactions([]);
-            
             setOpenCardDialog(false);
             setNewCardNumber('');
         } else {
-            alert('Please enter a valid card number');
+            alert('Please enter a valid 16-digit card number.');
         }
     };
 
     return (
-        <Box sx={{ width: '100%', margin: '100px 200px', padding: 3 }}>
+        <Box sx={{ width: '100%', margin: '100px 200px', padding: 3, maxWidth: 1100 }}>
             {/* Account Information Section */}
             <Card sx={{ marginBottom: 2 }}>
                 <CardContent>
@@ -149,6 +146,7 @@ const ValetPage = () => {
                         onChange={(e) => setNewCardNumber(e.target.value)}
                         variant="outlined"
                         fullWidth
+                        inputProps={{ maxLength: 16 }} // Restrict to 16 characters
                     />
                 </DialogContent>
                 <DialogActions>
