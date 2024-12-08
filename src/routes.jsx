@@ -45,6 +45,7 @@ function AppRoutes() {
           <Route path="OngoingExamPage" element={<OngoingExamPage />} />
           <Route path="SearchArticle" element={<ArticleSearch />} />
           <Route path="ValetPage" element={<ValetPage />} />
+          <Route path="AddQuestion" element={<AddQuestion />} />
           {/* private_exam_page */}
         </Route>
       </Routes>
