@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Box, Typography, TextField, Grid, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Button, Box, Typography, TextField, Grid, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar } from '@mui/material';
+import { Alert } from '@mui/lab'; // Import Alert component for Snackbar styling
 
 const ValetPage = () => {
     // Initial mock account data
@@ -25,59 +26,76 @@ const ValetPage = () => {
     const [newCardNumber, setNewCardNumber] = useState('');
     const [openCardDialog, setOpenCardDialog] = useState(false);
 
+    // State for Snackbar feedback
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // 'success' or 'error'
+
     // Handle deposit
     const handleDeposit = () => {
-        if (transactionAmount > 0) {
-            const newBalance = mockAccount.balance + parseFloat(transactionAmount);
+        const amount = parseFloat(transactionAmount);
+        if (amount > 0) {
+            const newBalance = mockAccount.balance + amount;
             setMockAccount({ ...mockAccount, balance: newBalance });
             setTransactions([
                 ...transactions,
-                { amount: parseFloat(transactionAmount), date: new Date().toLocaleDateString(), type: 'Deposit' },
+                { amount: amount, date: new Date().toLocaleDateString(), type: 'Deposit' },
             ]);
             setTransactionAmount('');
+            setSnackbarMessage('Deposit successful!');
+            setSnackbarSeverity('success');
+            setOpenSnackbar(true);
+        } else {
+            setSnackbarMessage('Please enter a valid deposit amount.');
+            setSnackbarSeverity('error');
+            setOpenSnackbar(true);
         }
     };
 
     // Handle withdraw
     const handleWithdraw = () => {
-        if (transactionAmount > 0 && transactionAmount <= mockAccount.balance) {
-            const newBalance = mockAccount.balance - parseFloat(transactionAmount);
+        const amount = parseFloat(transactionAmount);
+        if (amount > 0 && amount <= mockAccount.balance) {
+            const newBalance = mockAccount.balance - amount;
             setMockAccount({ ...mockAccount, balance: newBalance });
             setTransactions([
                 ...transactions,
-                { amount: -parseFloat(transactionAmount), date: new Date().toLocaleDateString(), type: 'Withdraw' },
+                { amount: -amount, date: new Date().toLocaleDateString(), type: 'Withdraw' },
             ]);
             setTransactionAmount('');
+            setSnackbarMessage('Withdrawal successful!');
+            setSnackbarSeverity('success');
+            setOpenSnackbar(true);
         } else {
-            alert('Insufficient balance or invalid amount');
+            setSnackbarMessage('Insufficient balance or invalid withdrawal amount.');
+            setSnackbarSeverity('error');
+            setOpenSnackbar(true);
         }
     };
 
     // Handle adding card number
     const handleAddCard = () => {
-        if (newCardNumber) {
-            // Create a new mock account with the new card number, 0 balance, and Active status
+        if (newCardNumber.length === 16 && /^\d+$/.test(newCardNumber)) {
             const updatedAccount = {
-                cardNumber: newCardNumber,
-                balance: 0, // New balance is 0
-                accountStatus: 'Active' // Account is active
+                ...mockAccount, // Keep the current balance and status
+                cardNumber: newCardNumber, // Update the card number
             };
 
-            // Update the mock account state with the new card number
             setMockAccount(updatedAccount);
-            
-            // Reset the transaction history since it's a new card
-            setTransactions([]);
-            
             setOpenCardDialog(false);
             setNewCardNumber('');
+            setSnackbarMessage('Card number updated successfully!');
+            setSnackbarSeverity('success');
+            setOpenSnackbar(true);
         } else {
-            alert('Please enter a valid card number');
+            setSnackbarMessage('Please enter a valid 16-digit card number.');
+            setSnackbarSeverity('error');
+            setOpenSnackbar(true);
         }
     };
 
     return (
-        <Box sx={{ width: '100%', margin: '100px 200px', padding: 3 }}>
+        <Box sx={{ width: '100%', margin: '100px 200px', padding: 3, maxWidth: 1100 }}>
             {/* Account Information Section */}
             <Card sx={{ marginBottom: 2 }}>
                 <CardContent>
@@ -149,6 +167,7 @@ const ValetPage = () => {
                         onChange={(e) => setNewCardNumber(e.target.value)}
                         variant="outlined"
                         fullWidth
+                        inputProps={{ maxLength: 16 }} // Restrict to 16 characters
                     />
                 </DialogContent>
                 <DialogActions>
@@ -160,6 +179,17 @@ const ValetPage = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            {/* Snackbar for feedback messages */}
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={() => setOpenSnackbar(false)}
+            >
+                <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };
