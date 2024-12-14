@@ -8,7 +8,8 @@ import Layout from "./common/Layout.jsx";
 import MakeExam from "./features/MakeExam/MakeExam.jsx";
 import ExamPreview from "./features/Exams/ExamPreview/ExamPreview.jsx";
 import PublicExam from "./features/Exams/PublicExam/PublicExam.jsx";
-import QuestionSearch from "./features/Exams/QuestionSearch/QuestionSearch.jsx";
+import QuestionSearch from "./features/Questions/QuestionsSearch/QuestionsTab.jsx";
+import ExamSearch from "./features/Exams/ExamsSearch/ExamsTab.jsx";
 import PrivateExam from "./features/Exams/PrivateExam/PrivateExam.jsx";
 import QuestionBank from "./features/Exams/PrivateExam/tabs/QuestionBank.jsx";
 import ChangePassword from "./features/Auth/ChangePassword/ChangePassword.jsx";
@@ -35,6 +36,7 @@ function AppRoutes() {
           <Route path="QuestionBank" element={<QuestionBank />} />
           <Route path="ExamPreview/:serviceId" element={<ExamPreview />} />
           <Route path="QuestionSearch" element={<QuestionSearch />} />
+          <Route path="ExamSearch" element={<ExamSearch />} />
           <Route path="changepassword" element={<ChangePassword />} />
           <Route path="QuestionPage" element={<QuestionPage />} />
           <Route path="image" element={<ImageUpload />} />

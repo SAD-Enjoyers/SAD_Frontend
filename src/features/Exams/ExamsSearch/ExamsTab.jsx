@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import {
   Box,
   TextField,
@@ -9,71 +9,30 @@ import {
   FormControl,
   InputLabel,
   Typography,
-  Checkbox,
-  ListItemText,
   Chip,
-  Grid,
   Rating,
   Pagination,
+  ListItemIcon,
+  Grid,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { motion } from "framer-motion";
-import { Sort, SortByAlpha } from "@mui/icons-material";
-import axios from "axios";
 import { Link } from "react-router-dom";
-import PeopleIcon from "@mui/icons-material/People";
+import Mokdata from "./examData.json";
+import { motion } from "framer-motion";
+import {
+  School,
+  SchoolOutlined,
+  FilterList,
+  Sort,
+  SortByAlpha,
+} from "@mui/icons-material";
 
-// Reusable Category Filter Component
-const CategoryFilter = ({ categories, selectedSubjects, onSubjectChange }) => (
-  <FormControl fullWidth variant="outlined">
-    <InputLabel>Categories</InputLabel>
-    <Select
-      multiple
-      value={selectedSubjects}
-      onChange={onSubjectChange}
-      renderValue={(selected) => selected.join(", ")}
-      sx={{ backgroundColor: "#f5f5f5" }}
-    >
-      {categories.map((category) => (
-        <MenuItem key={category.categoryId} value={category.category}>
-          <Checkbox checked={selectedSubjects.includes(category.category)} />
-          <ListItemText primary={category.category} />
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-);
-
-// Reusable Sort By Component
-const SortBy = ({ sortOrder, onSortChange }) => (
-  <FormControl fullWidth variant="outlined">
-    <InputLabel>Sort By</InputLabel>
-    <Select
-      value={`${sortOrder.criterion}-${sortOrder.direction}`}
-      onChange={onSortChange}
-    >
-      <MenuItem value="score-asc">
-        <Sort sx={{ marginRight: "8px" }} /> Score (Low to High)
-      </MenuItem>
-      <MenuItem value="score-desc">
-        <Sort sx={{ marginRight: "8px" }} /> Score (High to Low)
-      </MenuItem>
-      <MenuItem value="name-asc">
-        <SortByAlpha sx={{ marginRight: "8px" }} /> Name (A to Z)
-      </MenuItem>
-      <MenuItem value="name-desc">
-        <SortByAlpha sx={{ marginRight: "8px" }} /> Name (Z to A)
-      </MenuItem>
-    </Select>
-  </FormControl>
-);
-
-function QuestionsTab() {
+function ExamsTab() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [questions, setQuestions] = useState([]);
-  const [categories, setCategories] = useState([]); // Categories for filter
   const [selectedSubjects, setSelectedSubjects] = useState([]);
+  const [selectedLevel, setSelectedLevel] = useState("");
+
   const [sortOrder, setSortOrder] = useState({
     criterion: "",
     direction: "asc",
@@ -81,46 +40,17 @@ function QuestionsTab() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("/api/v1/common/categories");
-        setCategories(response.data.data.categoryList || []);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-
-    const fetchQuestions = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get("/api/v1/questions");
-        const transformedQuestions = response.data.data.result.map((q) => ({
-          id: q.questionId,
-          name: q.questionName,
-          text: q.questionText,
-          subjects: [q.tag1, q.tag2, q.tag3].filter(Boolean),
-          score: q.score,
-          writer: q.userName,
-          numberOfVoters: q.numberOfVoters, // Add number of voters here
-        }));
-        setQuestions(transformedQuestions);
-      } catch (error) {
-        console.error("Error fetching questions:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-    fetchQuestions();
-  }, []);
+  const questions = Mokdata;
 
   const handleSearch = (event) => setSearchTerm(event.target.value);
 
   const handleSearchSubmit = () => {
     setLoading(true);
     setTimeout(() => setLoading(false), 1500);
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") handleSearchSubmit();
   };
 
   const handleSubjectChange = (event) => {
@@ -142,43 +72,39 @@ function QuestionsTab() {
     setCurrentPage(1);
   };
 
-  // Memoized filtering and sorting logic
-  const filteredQuestions = useMemo(() => {
-    return questions
-      .filter((question) => {
-        const matchesSearchTerm = question.name
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
-        const matchesSubjects =
-          selectedSubjects.length === 0 ||
-          selectedSubjects.every((subject) =>
-            question.subjects.includes(subject)
-          );
-        return matchesSearchTerm && matchesSubjects;
-      })
-      .sort((a, b) => {
-        const { criterion, direction } = sortOrder;
-        if (criterion === "score") {
-          return direction === "asc" ? a.score - b.score : b.score - a.score;
-        }
-        if (criterion === "voters") {
-          return direction === "asc"
-            ? a.numberOfVoters - b.numberOfVoters
-            : b.numberOfVoters - a.numberOfVoters;
-        }
-        if (criterion === "name") {
-          return direction === "asc"
-            ? a.name.localeCompare(b.name)
-            : b.name.localeCompare(a.name);
-        }
-        if (criterion === "writer") {
-          return direction === "asc"
-            ? a.writer.localeCompare(b.writer)
-            : b.writer.localeCompare(a.writer);
-        }
-        return 0;
-      });
-  }, [searchTerm, selectedSubjects, questions, sortOrder]);
+  const filteredQuestions = questions
+    .filter((question) => {
+      const matchesSearchTerm = question.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const matchesSubjects =
+        selectedSubjects.length === 0 ||
+        selectedSubjects.every((subject) =>
+          question.subjects.includes(subject)
+        );
+      const matchesLevel = selectedLevel
+        ? question.level === selectedLevel
+        : true;
+
+      return matchesSearchTerm && matchesSubjects && matchesLevel;
+    })
+    .sort((a, b) => {
+      const { criterion, direction } = sortOrder;
+      if (criterion === "score") {
+        return direction === "asc" ? a.score - b.score : b.score - a.score;
+      }
+      if (criterion === "name") {
+        return direction === "asc"
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
+      }
+      if (criterion === "writer") {
+        return direction === "asc"
+          ? a.writer.localeCompare(b.writer)
+          : b.writer.localeCompare(a.writer);
+      }
+      return 0;
+    });
 
   const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -188,17 +114,26 @@ function QuestionsTab() {
   );
 
   return (
-    <Box>
-      {/* Search and Sort Filters */}
+    <Box
+      sx={{
+        width: "100%",
+        maxWidth: "800px",
+        margin: "auto",
+        marginTop: "50px", // Adjusted margin for a more spacious layout
+        padding: "20px",
+        backgroundColor: "#F9FAFB", // Light background for a clean look
+        borderRadius: "12px", // Rounded corners
+        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.1)", // Soft shadows for a floating effect
+      }}
+    >
       <Grid container spacing={3} sx={{ marginTop: "30px" }}>
-        {/* Search */}
         <Grid item xs={12} sm={8} md={9}>
           <TextField
             variant="outlined"
             placeholder="Search questions..."
             value={searchTerm}
             onChange={handleSearch}
-            onKeyDown={(event) => event.key === "Enter" && handleSearchSubmit()}
+            onKeyDown={handleKeyPress}
             fullWidth
             InputProps={{
               endAdornment: (
@@ -210,7 +145,7 @@ function QuestionsTab() {
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "8px",
-                backgroundColor: "#fff",
+                backgroundColor: "#fff", // Added white background for input fields
               },
             }}
           />
@@ -222,9 +157,9 @@ function QuestionsTab() {
             disabled={loading}
             fullWidth
             sx={{
-              backgroundColor: "#4A90E2",
+              backgroundColor: "#4A90E2", // Accent color
               color: "#fff",
-              borderRadius: "8px",
+              borderRadius: "8px", // Rounded button
               "&:hover": { backgroundColor: "#357ABD" },
               padding: "10px",
             }}
@@ -234,6 +169,7 @@ function QuestionsTab() {
         </Grid>
       </Grid>
 
+      {/* Filter Options */}
       <Grid container spacing={3} sx={{ marginTop: "30px" }}>
         {/* Filter by Subjects */}
         <Grid item xs={12} sm={4}>
@@ -246,79 +182,77 @@ function QuestionsTab() {
               onChange={handleSubjectChange}
               label="Subjects"
               renderValue={(selected) => selected.join(", ")}
-              sx={{
-                backgroundColor: "#ffffff",
-                borderRadius: "8px",
-                borderColor: "#E0E0E0",
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#E0E0E0",
-                },
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#378CE7",
-                },
-                "& .MuiSelect-icon": {
-                  color: "#378CE7",
-                },
-              }}
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: 200, // Limit height
-                    overflow: "auto", // Enable scrolling
-                  },
-                },
-              }}
             >
-              {categories.map((category) => (
-                <MenuItem key={category.categoryId} value={category.category}>
-                  <Checkbox
-                    checked={selectedSubjects.includes(category.category)}
-                    sx={{
-                      color: "#378CE7",
-                      "&.Mui-checked": {
-                        color: "#378CE7",
-                      },
-                    }}
-                  />
-                  <ListItemText primary={category.category} />
-                </MenuItem>
-              ))}
+              <MenuItem value="JavaScript">
+                <FilterList sx={{ marginRight: "8px" }} /> JavaScript
+              </MenuItem>
+              <MenuItem value="Frontend">
+                <FilterList sx={{ marginRight: "8px" }} /> Frontend
+              </MenuItem>
+              <MenuItem value="Backend">
+                <FilterList sx={{ marginRight: "8px" }} /> Backend
+              </MenuItem>
+              <MenuItem value="AI">
+                <FilterList sx={{ marginRight: "8px" }} /> AI
+              </MenuItem>
+              <MenuItem value="Data Science">
+                <FilterList sx={{ marginRight: "8px" }} /> Data Science
+              </MenuItem>
+              <MenuItem value="Python">
+                <FilterList sx={{ marginRight: "8px" }} /> Python
+              </MenuItem>
             </Select>
           </FormControl>
-
-          {/* Display selected categories as tags */}
-          {/* <Box sx={{ marginTop: 2 }}>
-            {selectedSubjects.length > 0 && (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                {selectedSubjects.slice(0, 3).map((category) => (
-                  <Chip
-                    key={category}
-                    label={category}
-                    sx={{
-                      backgroundColor: "#67C6E3", // Tag background color
-                      color: "#ffffff", // Tag text color
-                      borderRadius: "20px", // Rounded corners for the tag
-                      padding: "6px 12px", // Padding for better appearance
-                    }}
-                  />
-                ))}
-                {selectedSubjects.length > 3 && (
-                  <Chip
-                    label="..."
-                    sx={{
-                      backgroundColor: "#67C6E3", // Tag background color
-                      color: "#ffffff", // Tag text color
-                      borderRadius: "20px", // Rounded corners for the tag
-                      padding: "6px 12px", // Padding for better appearance
-                    }}
-                  />
-                )}
-              </Box>
-            )}
-          </Box> */}
         </Grid>
 
-        {/* Sort By Filter */}
+        {/* Filter by Level */}
+        <Grid item xs={12} sm={4}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Level</InputLabel>
+            <Select
+              value={selectedLevel}
+              onChange={(event) => setSelectedLevel(event.target.value)}
+              label="Level"
+            >
+              <MenuItem value="">
+                <ListItemIcon>
+                  <SchoolOutlined
+                    sx={{ fontSize: "1.2rem", color: "#6c757d" }}
+                  />
+                </ListItemIcon>
+                <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                  All Levels
+                </Typography>
+              </MenuItem>
+              <MenuItem value="beginner">
+                <ListItemIcon>
+                  <School sx={{ fontSize: "1.2rem", color: "#4CAF50" }} />
+                </ListItemIcon>
+                <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                  Beginner
+                </Typography>
+              </MenuItem>
+              <MenuItem value="intermediate">
+                <ListItemIcon>
+                  <School sx={{ fontSize: "1.2rem", color: "#FF9800" }} />
+                </ListItemIcon>
+                <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                  Intermediate
+                </Typography>
+              </MenuItem>
+              <MenuItem value="advanced">
+                <ListItemIcon>
+                  <School sx={{ fontSize: "1.2rem", color: "#F44336" }} />
+                </ListItemIcon>
+                <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                  Advanced
+                </Typography>
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+
+        {/* Sort By */}
         <Grid item xs={12} sm={4}>
           <FormControl fullWidth variant="outlined">
             <InputLabel>Sort By</InputLabel>
@@ -326,16 +260,6 @@ function QuestionsTab() {
               value={`${sortOrder.criterion}-${sortOrder.direction}`}
               onChange={handleSortChange}
               label="Sort By"
-              sx={{
-                backgroundColor: "#f5f5f5", // Light background for Select box
-                borderRadius: "8px",
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#ddd", // Lighter border color
-                },
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#4A90E2", // Hover effect with blue border
-                },
-              }}
             >
               <MenuItem value="score-asc">
                 <Sort sx={{ marginRight: "8px" }} /> Score (Low to High)
@@ -349,17 +273,11 @@ function QuestionsTab() {
               <MenuItem value="name-desc">
                 <SortByAlpha sx={{ marginRight: "8px" }} /> Name (Z to A)
               </MenuItem>
-              <MenuItem value="voters-asc">
-                <Sort sx={{ marginRight: "8px" }} /> Voters (Low to High)
-              </MenuItem>
-              <MenuItem value="voters-desc">
-                <Sort sx={{ marginRight: "8px" }} /> Voters (High to Low)
-              </MenuItem>
             </Select>
           </FormControl>
         </Grid>
 
-        {/* Items Per Page Filter */}
+        {/* Items Per Page */}
         <Grid item xs={12} sm={4}>
           <FormControl fullWidth variant="outlined">
             <InputLabel>Items Per Page</InputLabel>
@@ -367,20 +285,12 @@ function QuestionsTab() {
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
               label="Items Per Page"
-              sx={{
-                backgroundColor: "#f5f5f5", // Light background for Select box
-                borderRadius: "8px",
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#ddd", // Lighter border color
-                },
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#4A90E2", // Hover effect with blue border
-                },
-              }}
             >
+              <MenuItem value={6}>6</MenuItem>
+              <MenuItem value={9}>9</MenuItem>
               <MenuItem value={12}>12</MenuItem>
-              <MenuItem value={24}>24</MenuItem>
-              <MenuItem value={36}>36</MenuItem>
+              <MenuItem value={15}>15</MenuItem>
+              <MenuItem value={30}>30</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -466,7 +376,7 @@ function QuestionsTab() {
                 ))}
               </Box>
 
-              {/* Score & Writer */}
+              {/* Level, Score & Writer */}
               <Box
                 sx={{
                   display: "flex",
@@ -489,20 +399,37 @@ function QuestionsTab() {
                   }}
                 />
 
-                {/* Display number of voters */}
-                <Typography
-                  variant="body2"
+                {/* Level Icon */}
+                <Box
                   sx={{
-                    color: "#6c757d",
-                    fontWeight: "bold",
-                    fontSize: "0.9rem",
                     display: "flex",
                     alignItems: "center",
+                    gap: "5px",
                   }}
                 >
-                  <PeopleIcon sx={{ marginRight: "5px", fontSize: "1rem" }} />
-                  {question.numberOfVoters} Voters
-                </Typography>
+                  {question.level === "beginner" && (
+                    <School sx={{ fontSize: "1.5rem", color: "#4CAF50" }} />
+                  )}
+                  {question.level === "intermediate" && (
+                    <School sx={{ fontSize: "1.5rem", color: "#FF9800" }} />
+                  )}
+                  {question.level === "advanced" && (
+                    <School sx={{ fontSize: "1.5rem", color: "#F44336" }} />
+                  )}
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "#6c757d",
+                      fontWeight: "bold",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {question.level
+                      ? question.level.charAt(0).toUpperCase() +
+                        question.level.slice(1)
+                      : "Not Specified"}
+                  </Typography>
+                </Box>
 
                 {/* Writer Name with Motion Effects */}
                 <motion.div
@@ -541,10 +468,16 @@ function QuestionsTab() {
         page={currentPage}
         onChange={handlePageChange}
         color="primary"
-        sx={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+        sx={{
+          marginTop: "30px",
+          display: "flex",
+          justifyContent: "center",
+          padding: "10px",
+          borderRadius: "8px", // Rounded pagination buttons
+        }}
       />
     </Box>
   );
 }
 
-export default QuestionsTab;
+export default ExamsTab;
