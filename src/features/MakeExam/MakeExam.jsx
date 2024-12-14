@@ -14,9 +14,6 @@ import {
   Checkbox,
   ListItemText,
 } from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { School, SchoolOutlined } from "@mui/icons-material";
 import LoadingScreen from "../PrivateProfile/components/Loading";
@@ -24,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function MakeExam() {
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState();
   const [maxMembers, setMaxMembers] = useState(10);
   const [price, setPrice] = useState(10);
   const [minScore, setMinScore] = useState(50);
@@ -41,34 +38,63 @@ export default function MakeExam() {
   const [imageNameUrl, setImageNameurl] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
 
-  useEffect(() => {
-    const validateForm = () => {
-      if (
-        examName.trim() &&
-        selectedLevel &&
-        selectedSubjects.length > 0 &&
-        value && // زمان
-        maxMembers &&
-        price &&
-        minScore &&
-        description.trim()
-      ) {
-        setIsFormValid(true);
-      } else {
-        setIsFormValid(false);
-      }
-    };
-    validateForm();
-  }, [
-    examName,
-    selectedLevel,
-    selectedSubjects,
-    value,
-    maxMembers,
-    price,
-    minScore,
-    description,
-  ]);
+  const [examNameError, setExamNameError] = useState("");
+  const [selectedLevelError, setSelectedLevelError] = useState("");
+  const [selectedSubjectsError, setSelectedSubjectsError] = useState("");
+  const [timeError, setTimeError] = useState("");
+  const [priceError, setPriceError] = useState("");
+  const [minScoreError, setMinScoreError] = useState("");
+
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    let isValid = true;
+
+    if (!examName.trim()) {
+      setExamNameError(" ");
+      isValid = false;
+    } else {
+      setExamNameError("");
+    }
+
+    if (!selectedLevel) {
+      setSelectedLevelError(" ");
+      isValid = false;
+    } else {
+      setSelectedLevelError("");
+    }
+
+    if (selectedSubjects.length === 0) {
+      setSelectedSubjectsError(" ");
+      isValid = false;
+    } else {
+      setSelectedSubjectsError("");
+    }
+
+    if (!value) {
+      setTimeError(" ");
+      isValid = false;
+    } else {
+      setTimeError("");
+    }
+    if (!price) {
+      setPriceError(" ");
+      isValid = false;
+    } else {
+      setPriceError("");
+    }
+    if (!minScore) {
+      setMinScoreError(" ");
+      isValid = false;
+    } else {
+      setMinScoreError("");
+    }
+    // console.log(isValid);
+    if (isValid) {
+      console.log("Form submitted successfully.");
+      submitImage();
+      // Add form submission logic here
+    }
+  };
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -85,10 +111,16 @@ export default function MakeExam() {
     setImageName("");
   };
 
-  const submitImage = async (event) => {
-    event.preventDefault();
+  const submitImage = async () => {
     if (!selectedImage) {
       alert("Please select an image first!");
+      return;
+    }
+
+    // بررسی فرمت فایل
+    const validImageTypes = ["image/jpeg", "image/png"];
+    if (!validImageTypes.includes(selectedImage.type)) {
+      alert("Only image files (jpeg, png) are allowed!");
       return;
     }
 
@@ -99,8 +131,7 @@ export default function MakeExam() {
       const response = await fetch("/api/v1/educational-service/upload-image", {
         method: "POST",
         headers: {
-          // "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // توکن را اینجا اضافه کنید
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
           "x-role": localStorage.getItem("role"),
         },
         body: formData,
@@ -111,9 +142,6 @@ export default function MakeExam() {
       }
 
       const data = await response.json();
-
-      // console.log("Response:", data.data.image);
-      // alert("Image uploaded successfully!");
       submitInformation(data.data.image);
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -144,7 +172,7 @@ export default function MakeExam() {
       try {
         const parsedCategoryList = JSON.parse(storedCategoryList);
         setCategories(parsedCategoryList);
-        console.log(parsedCategoryList[0]);
+        // console.log(parsedCategoryList[0]);
       } catch (error) {
         console.error("Error parsing category list from localStorage:", error);
         // Optional: Handle the case where parsing fails, e.g., clear invalid data
@@ -175,7 +203,7 @@ export default function MakeExam() {
       tag1,
       tag2,
       tag3,
-      examDuration: value.$H * 60 + value.$m,
+      examDuration: value,
       maxMembers,
       minPassScore: parseInt(minScore),
     };
@@ -279,7 +307,7 @@ export default function MakeExam() {
           borderRadius: "70px",
         }}
       >
-        <form onSubmit={submitImage}>
+        <form onSubmit={handleFormSubmit}>
           <Grid2 container alignItems="center" justifyContent="center">
             <Grid2 size={{ xs: 6, sm: 6, md: 6 }}>
               <Box
@@ -302,7 +330,15 @@ export default function MakeExam() {
                   label="Exam Name:"
                   variant="standard"
                   value={examName}
-                  onChange={(e) => setExamName(e.target.value)}
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    setExamName(value);
+                    setExamNameError("");
+
+                    // value ? setExamNameError("") : setExamNameError(" ");
+                  }}
+                  error={!!examNameError}
+                  // helperText={examNameError}
                 />
               </Box>
             </Grid2>
@@ -318,11 +354,19 @@ export default function MakeExam() {
             </Grid2>
             <Grid2 size={4}>
               <Box margin={"0 auto"} width={"50%"}>
-                <FormControl fullWidth variant="outlined">
+                <FormControl
+                  fullWidth
+                  variant="outlined"
+                  error={!!selectedLevelError}
+                  // helperText={selectedLevelError}
+                >
                   <InputLabel>Level</InputLabel>
                   <Select
                     value={selectedLevel}
-                    onChange={(event) => setSelectedLevel(event.target.value)}
+                    onChange={(event) => {
+                      setSelectedLevel(event.target.value);
+                      setSelectedLevelError("");
+                    }}
                     label="Level"
                   >
                     FormControl
@@ -365,15 +409,30 @@ export default function MakeExam() {
               </Box>
             </Grid2>
             <Grid2 size={4}>
-              <FormControl fullWidth variant="outlined">
+              <FormControl
+                fullWidth
+                variant="outlined"
+                error={!!selectedSubjectsError}
+              >
                 <InputLabel>Subjects</InputLabel>
 
                 <Select
                   multiple
                   value={selectedSubjects}
-                  onChange={handleSubjectChange}
+                  onChange={(e) => {
+                    handleSubjectChange(e);
+                    setSelectedSubjectsError("");
+                  }}
                   label="Subjects"
                   renderValue={(selected) => selected.join(", ")} // Comma-separated values
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 224, // حداکثر ارتفاع منو
+                        width: 250, // عرض منو
+                      },
+                    },
+                  }}
                   sx={{
                     backgroundColor: "#ffffff", // Clean white background
                     borderRadius: "8px", // Rounded corners
@@ -420,24 +479,36 @@ export default function MakeExam() {
               >
                 <Typography
                   variant="body1"
-                  sx={{
-                    fontSize: { xs: "12px", sm: "15px", md: "17px" },
-                    // mb: "7px",
-                    ml: { md: "25px" },
-                  }}
+                  sx={
+                    timeError
+                      ? {
+                          color: "#FF0000",
+                          fontSize: { xs: "12px", sm: "15px", md: "17px" },
+                          // mb: "7px",
+                          ml: { md: "25px" },
+                        }
+                      : {
+                          color: "inherit",
+                          fontSize: { xs: "12px", sm: "15px", md: "17px" },
+                          // mb: "7px",
+                          ml: { md: "25px" },
+                        }
+                  }
                 >
                   exam time:
                 </Typography>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <TimePicker
-                    views={["hours", "minutes"]}
-                    ampm={false}
-                    value={value}
-                    onChange={(newValue) => setValue(newValue)}
-                    renderInput={(params) => <TextField {...params} />}
-                    sx={{ width: "50%" }}
-                  />
-                </LocalizationProvider>
+                <TextField
+                  error={!!timeError}
+                  // helperText={timeError}
+                  value={value}
+                  onChange={(e) => {
+                    setValue(e.target.value);
+                    setTimeError("");
+                  }}
+                  type="number"
+                  size="small"
+                  placeholder="time in minutes"
+                ></TextField>
               </Box>
             </Grid2>
 
@@ -456,43 +527,34 @@ export default function MakeExam() {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    justifyContent: "center",
                     gap: 1,
                   }}
                 >
                   <Typography
                     variant="body1"
-                    sx={{ fontSize: { xs: "12px", sm: "15px", md: "17px" } }}
-                  >
-                    max members:
-                  </Typography>
-                  <TextField
-                    type="number"
-                    size="small"
-                    value={maxMembers}
-                    onChange={(e) => setMaxMembers(e.target.value)}
-                    sx={{ width: "70%" }}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  <Typography
-                    variant="body1"
-                    sx={{ fontSize: { xs: "12px", sm: "15px", md: "17px" } }}
+                    sx={
+                      priceError
+                        ? {
+                            color: "#FF0000",
+                            fontSize: { xs: "12px", sm: "15px", md: "17px" },
+                          }
+                        : {
+                            color: "inherit",
+                            fontSize: { xs: "12px", sm: "15px", md: "17px" },
+                          }
+                    }
                   >
                     Price:
                   </Typography>
                   <TextField
+                    error={!!priceError}
                     type="number"
                     size="small"
                     value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                    onChange={(e) => {
+                      setPrice(e.target.value);
+                      setPriceError("");
+                    }}
                     InputProps={{
                       endAdornment: <Typography>$</Typography>,
                     }}
@@ -509,15 +571,29 @@ export default function MakeExam() {
                 >
                   <Typography
                     variant="body1"
-                    sx={{ fontSize: { xs: "12px", sm: "15px", md: "17px" } }}
+                    sx={
+                      minScoreError
+                        ? {
+                            color: "#FF0000",
+                            fontSize: { xs: "12px", sm: "15px", md: "17px" },
+                          }
+                        : {
+                            color: "inherit",
+                            fontSize: { xs: "12px", sm: "15px", md: "17px" },
+                          }
+                    }
                   >
                     min pass score:
                   </Typography>
                   <TextField
+                    error={!!minScoreError}
                     type="number"
                     size="small"
                     value={minScore}
-                    onChange={(e) => setMinScore(e.target.value)}
+                    onChange={(e) => {
+                      setMinScore(e.target.value);
+                      setMinScoreError("");
+                    }}
                     InputProps={{
                       endAdornment: <Typography>%</Typography>,
                     }}
@@ -558,15 +634,7 @@ export default function MakeExam() {
 
           {/* دکمه ارسال */}
           <Box textAlign="center" mt={3} mb={5}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={!isFormValid}
-              onClick={(event) => {
-                submitImage(event);
-              }}
-            >
+            <Button type="submit" variant="contained" color="primary">
               Make Exam
             </Button>
           </Box>

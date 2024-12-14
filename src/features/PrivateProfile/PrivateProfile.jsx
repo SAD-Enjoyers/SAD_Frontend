@@ -13,8 +13,8 @@ import {
   TextField,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
-import ReviewComponent from "./components/ReviewComponent.jsx";
 import { Link, useNavigate } from "react-router-dom";
+import ReviewComponent from "./components/ReviewComponent.jsx";
 
 export default function PrivateProfile() {
   const navigate = useNavigate();
