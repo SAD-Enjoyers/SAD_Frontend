@@ -17,7 +17,7 @@ import ImageUpload from "./features/MakeExam/components/ImageUpload.jsx";
 import TermsAndConditions from "./features/Auth/TermsAndConditions/TermsAndConditions.jsx";
 import OngoingExamPage from "./features/Exams/OngoingExamPage/OngoingExamPage.jsx";
 import AddArticle from "./features/Articles/AddArticle/AddArticle.jsx";
-import ArticleSearch from "./features/SearchAndFilterArticle/SearchAndFilterArticle.jsx";
+import ArticleSearch from "./features/Articles/SearchArticle/SearchArticle.jsx";
 import ValetPage from "./features/Valet/ValetPage.jsx";
 import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 function AppRoutes() {
