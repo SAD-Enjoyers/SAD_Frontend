@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   TextField,
@@ -15,24 +15,10 @@ import {
 } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
 
-// Mock data representing the current state of the exam
-const mockData = {
-  serviceId: 1,
-  description: "An updated description for the AI exam.",
-  level: "Beginner",
-  price: 250.0,
-  activityStatus: "Active",
-  image: "updated_image.jpg",
-  tag1: "ai",
-  tag2: "Machine Learning",
-  tag3: null,
-  examDuration: 35,
-};
-
-function EditExam() {
-  const [formData, setFormData] = useState(mockData);
-  const [openDialog, setOpenDialog] = useState(false); // State to manage dialog visibility
-  const [imageFile, setImageFile] = useState(null); // State to manage uploaded image file
+function EditExam({ examData }) {
+  const [formData, setFormData] = useState(examData || {});
+  const [openDialog, setOpenDialog] = useState(false); // Dialog visibility
+  const [imageFile, setImageFile] = useState(null); // To store uploaded image
 
   // Handle form data changes
   const handleChange = (event) => {
@@ -48,18 +34,18 @@ function EditExam() {
     const file = event.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setImageFile(imageUrl); // Set the uploaded image as the preview
+      setImageFile(imageUrl); // Preview image
       setFormData((prevData) => ({
         ...prevData,
-        image: imageUrl,
+        image: imageUrl, // Update formData with the new image
       }));
     }
   };
 
   // Handle form submission
   const handleSubmit = () => {
-    console.log("Updated Exam Data:", formData);
-    setOpenDialog(false); // Close the dialog after saving
+    console.log("Updated Exam Data:", formData); // Here, you can send data to backend
+    setOpenDialog(false); // Close dialog after saving
     alert("Exam information has been updated successfully!");
   };
 
@@ -82,7 +68,7 @@ function EditExam() {
         p: 3,
         border: "1px solid #ccc",
         borderRadius: 2,
-        boxShadow: 3, // Add subtle shadow for depth
+        boxShadow: 3,
       }}
     >
       <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold" }}>
@@ -99,7 +85,12 @@ function EditExam() {
             mb: 2,
             backgroundColor: "#f0f0f0",
           }}
-          src={imageFile || formData.image} // Display the uploaded image or the current image
+          src={
+            imageFile ||
+            (formData.image
+              ? `/api/v1/uploads/service-images/${formData.image}`
+              : "")
+          } // Dynamically fetch image from backend
         />
         <input
           accept="image/*"
@@ -118,13 +109,14 @@ function EditExam() {
         </Typography>
       </Box>
 
+      {/* Form fields for exam details */}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
             fullWidth
             label="Description"
             name="description"
-            value={formData.description}
+            value={formData.description || ""}
             onChange={handleChange}
             multiline
             rows={2}
@@ -135,7 +127,7 @@ function EditExam() {
             fullWidth
             label="Level"
             name="level"
-            value={formData.level}
+            value={formData.level || ""}
             onChange={handleChange}
             select
           >
@@ -149,10 +141,10 @@ function EditExam() {
             fullWidth
             label="Price"
             name="price"
-            value={formData.price}
+            value={formData.price || ""}
             onChange={handleChange}
             type="number"
-            inputProps={{ min: 0 }} // Ensure price can't be negative
+            inputProps={{ min: 0 }}
           />
         </Grid>
         <Grid item xs={12}>
@@ -160,7 +152,7 @@ function EditExam() {
             fullWidth
             label="Activity Status"
             name="activityStatus"
-            value={formData.activityStatus}
+            value={formData.activityStatus || ""}
             onChange={handleChange}
             select
           >
@@ -173,7 +165,7 @@ function EditExam() {
             fullWidth
             label="Image URL"
             name="image"
-            value={formData.image}
+            value={formData.image || ""}
             onChange={handleChange}
           />
         </Grid>
@@ -182,7 +174,7 @@ function EditExam() {
             fullWidth
             label="Tag 1"
             name="tag1"
-            value={formData.tag1}
+            value={formData.tag1 || ""}
             onChange={handleChange}
           />
         </Grid>
@@ -191,7 +183,7 @@ function EditExam() {
             fullWidth
             label="Tag 2"
             name="tag2"
-            value={formData.tag2}
+            value={formData.tag2 || ""}
             onChange={handleChange}
           />
         </Grid>
@@ -209,7 +201,7 @@ function EditExam() {
             fullWidth
             label="Exam Duration (minutes)"
             name="examDuration"
-            value={formData.examDuration}
+            value={formData.examDuration || ""}
             onChange={handleChange}
             type="number"
           />
@@ -221,7 +213,7 @@ function EditExam() {
             fullWidth
             onClick={handleSave}
             sx={{
-              textTransform: "none", // Avoid uppercase text transformation
+              textTransform: "none",
             }}
           >
             Save Changes
@@ -251,82 +243,3 @@ function EditExam() {
 }
 
 export default EditExam;
-
-// import React, { useState, useEffect } from "react";
-// import { Typography, CircularProgress, Alert } from "@mui/material";
-
-// function ExamSettings({ serviceId, accessToken }) {
-//   const [examData, setExamData] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [errorMessage, setErrorMessage] = useState("");
-
-//   useEffect(() => {
-//     const fetchExamData = async () => {
-//       setLoading(true);
-//       setErrorMessage("");
-
-//       try {
-//         const response = await fetch(`/api/v1/exam/${serviceId}`, {
-//           method: "GET",
-//           headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Bearer ${localStorage.getItem("token")}`,
-//             "x-role": localStorage.getItem("role"),
-//           },
-//         });
-
-//         if (!response.ok) {
-//           const responseData = await response.json();
-//           setErrorMessage(responseData.message || "Failed to fetch exam data.");
-//           return;
-//         }
-
-//         const responseData = await response.json();
-//         setExamData(responseData.data);
-//       } catch (error) {
-//         setErrorMessage("An unexpected error occurred. Please try again.");
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchExamData();
-//   }, [serviceId]);
-
-//   if (loading) {
-//     return <CircularProgress />;
-//   }
-
-//   if (errorMessage) {
-//     return <Alert severity="error">{errorMessage}</Alert>;
-//   }
-
-//   if (!examData) {
-//     return <Typography>No exam data available.</Typography>;
-//   }
-
-//   // Render exam details
-//   return (
-//     <div>
-//       <Typography variant="h5">{examData.name}</Typography>
-//       <Typography variant="body1">{examData.description}</Typography>
-//       <Typography variant="body2">
-//         Level: {examData.level}, Price: {examData.price}
-//       </Typography>
-//       <Typography variant="body2">
-//         Tags: {examData.tag1}, {examData.tag2}, {examData.tag3}
-//       </Typography>
-//       <Typography variant="body2">
-//         Duration: {examData.examDuration} mins
-//       </Typography>
-//       <Typography variant="body2">
-//         Minimum Pass Score: {examData.minPassScore}
-//       </Typography>
-//       <Typography variant="body2">
-//         Number of Questions: {examData.numberOfQuestion}
-//       </Typography>
-//     </div>
-//   );
-// }
-
-// export default ExamSettings;

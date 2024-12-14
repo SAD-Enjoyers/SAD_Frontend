@@ -8,15 +8,19 @@ import Layout from "./common/Layout.jsx";
 import MakeExam from "./features/MakeExam/MakeExam.jsx";
 import ExamPreview from "./features/Exams/ExamPreview/ExamPreview.jsx";
 import PublicExam from "./features/Exams/PublicExam/PublicExam.jsx";
-import QuestionSearch from "./features/Exams/QuestionSearch/QuestionSearch.jsx";
-import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
+import QuestionSearch from "./features/Questions/QuestionsSearch/QuestionsTab.jsx";
+import ExamSearch from "./features/Exams/ExamsSearch/ExamsTab.jsx";
 import PrivateExam from "./features/Exams/PrivateExam/PrivateExam.jsx";
 import QuestionBank from "./features/Exams/PrivateExam/tabs/QuestionBank.jsx";
 import ChangePassword from "./features/Auth/ChangePassword/ChangePassword.jsx";
 import QuestionPage from "./features/Exams/QuestionPage/QuestionPage";
 import ImageUpload from "./features/MakeExam/components/ImageUpload.jsx";
 import TermsAndConditions from "./features/Auth/TermsAndConditions/TermsAndConditions.jsx";
-
+import OngoingExamPage from "./features/Exams/OngoingExamPage/OngoingExamPage.jsx";
+import AddArticle from "./features/Articles/AddArticle/AddArticle.jsx";
+import ArticleSearch from "./features/Articles/SearchArticle/SearchArticle.jsx";
+import ValetPage from "./features/Valet/ValetPage.jsx";
+import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 function AppRoutes() {
   return (
     <Router>
@@ -32,13 +36,19 @@ function AppRoutes() {
           <Route path="QuestionBank" element={<QuestionBank />} />
           <Route path="ExamPreview/:serviceId" element={<ExamPreview />} />
           <Route path="QuestionSearch" element={<QuestionSearch />} />
-          <Route path="AddQuestions" element={<AddQuestion />} />
+          <Route path="ExamSearch" element={<ExamSearch />} />
           <Route path="changepassword" element={<ChangePassword />} />
           <Route path="QuestionPage" element={<QuestionPage />} />
           <Route path="image" element={<ImageUpload />} />
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
           <Route path="PrivateExam" element={<PrivateExam />} />
           <Route path="PublicExam" element={<PublicExam />} />
+          <Route path="AddArticle" element={<AddArticle />} />
+          <Route path="OngoingExamPage" element={<OngoingExamPage />} />
+          <Route path="SearchArticle" element={<ArticleSearch />} />
+          <Route path="ValetPage" element={<ValetPage />} />
+          <Route path="AddQuestion" element={<AddQuestion />} />
+          {/* private_exam_page */}
         </Route>
       </Routes>
     </Router>
