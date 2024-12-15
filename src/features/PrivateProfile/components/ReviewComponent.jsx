@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { Box, Button, Grid2, Typography, Card, CardMedia } from "@mui/material";
 import { LineAxis } from "@mui/icons-material";
 import { Link } from "react-router-dom";
@@ -59,7 +59,7 @@ export default function ReviewComponent(props) {
   };
   const navigateToPrivateExam = (examData) => {
     localStorage.setItem("examData", JSON.stringify(examData)); // Save to localStorage
-    navigate("/PrivateExam", { state: { examData } });
+    navigate(`/PrivateExam/${examData.serviceId}`, { state: { examData } });
   };
   // اجرا در بارگذاری اولیه
   useEffect(() => {
@@ -98,9 +98,14 @@ export default function ReviewComponent(props) {
               borderRadius: "4%",
               background: "#E3F2FD",
               transition: "all 0.3s ease",
+
               "&:hover": {
                 backgroundColor: "#387CE7",
                 color: "#fff",
+              },
+              "&:hover .buttonMakeExam": {
+                color: "#ffffff",
+                borderColor: "#ffffff",
               },
             }}
           >
@@ -114,24 +119,21 @@ export default function ReviewComponent(props) {
                 justifyContent="flex-start"
                 alignItems="stretch"
                 sx={{
-                  overflowX: "auto",
+                  overflow: "auto",
                   paddingBottom: "20px",
                   flexWrap: "nowrap",
                   width: { xs: "220px", sm: "370px", md: "600px" },
                   flexShrink: 0,
                 }}
               >
-                {(data.length === 0
-                  ? [...Array(10).keys()].map((i) => i + 1)
-                  : data
-                ).map((item, index) => (
+                {data.map((item, index) => (
                   <Box key={index} display="flex" justifyContent="center">
                     <Card
                       sx={{
                         p: 1,
                         borderColor: "#378CE7",
                         width: "100%",
-                        maxWidth: 220,
+                        maxWidth: 250,
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
@@ -141,8 +143,8 @@ export default function ReviewComponent(props) {
                         transition: "transform 0.3s ease",
                         minWidth: { xs: 100, sm: 150, md: 220 },
                         "&:hover": {
-                          transform: "scale(1.05)",
-                          boxShadow: 3,
+                          transform: "scale(1.05)", // مقدار کمی بزرگ‌تر
+                          boxShadow: 5, // سایه بیشتر برای تمایز
                         },
                       }}
                     >
@@ -151,7 +153,7 @@ export default function ReviewComponent(props) {
                         height="100"
                         image={
                           item.imageURL ? item.imageURL : "/images/exam.png"
-                        } // از URL محلی استفاده می‌شود
+                        }
                         alt="Review Image"
                         sx={{
                           borderRadius: "8px",
@@ -165,24 +167,24 @@ export default function ReviewComponent(props) {
                         component="div"
                         gutterBottom
                       >
-                        {item.name ?? "Final Review"}
+                        {item.name}
                       </Typography>
                       <Typography
                         variant="body2"
                         color="text.secondary"
                         mb={0.5}
                       >
-                        Price: {item.price ?? "10$"}
+                        Price: {item.price}
                       </Typography>
                       <Typography
                         variant="body2"
                         color="text.secondary"
                         mb={0.5}
                       >
-                        Level: {item.level ?? "Beginner"}
+                        Level: {item.level}
                       </Typography>
                       <Typography variant="body2" color="text.secondary" mb={1}>
-                        Score: {item.score ?? "85/100"}
+                        Score: {item.score}
                       </Typography>
                       <Typography
                         variant="caption"
@@ -190,8 +192,7 @@ export default function ReviewComponent(props) {
                         textAlign="center"
                         mb={1.5}
                       >
-                        Description:{" "}
-                        {item.description ?? "Needs improvement in algorithms."}
+                        Description: {item.description}
                       </Typography>
                       <Button
                         variant="outlined"
@@ -229,6 +230,11 @@ export default function ReviewComponent(props) {
                   </Box>
                 ))}
               </Grid2>
+              <Box sx={{ textAlign: "center", mt: "30px" }}>
+                <Button className="buttonMakeExam" variant="outlined">
+                  make Exam
+                </Button>
+              </Box>
             </Box>
           </Card>
         </Box>

@@ -94,7 +94,7 @@ const ForgotPassword = () => {
             margin="normal"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            error={Boolean(errorMessage && !validateEmail(email))}
+            error={Boolean(errorMessage)}
             helperText={errorMessage}
           />
 
