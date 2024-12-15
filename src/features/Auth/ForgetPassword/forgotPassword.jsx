@@ -8,29 +8,21 @@ import {
   CircularProgress,
   Link,
 } from "@mui/material";
-
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  // const navigate = useNavigate();
+  const [success, setSuccess] = useState(false); // حالت موفقیت
   const navigate = useNavigate();
-
-  // const validateEmail = (email) =>
-  //   /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // if (!validateEmail(email)) {
-    //   setErrorMessage("Invalid email format. Please enter a valid email.");
-    //   return;
-    // }
-
     setLoading(true);
     setErrorMessage("");
+    setSuccess(false);
 
     try {
       const response = await fetch("/api/v1/auth/sendMail", {
@@ -45,10 +37,10 @@ const ForgotPassword = () => {
 
       if (response.ok) {
         localStorage.setItem("userEmail", email);
-        alert("The recovery code has been sent to your email.");
-
-        navigate("/changepassword");
-      } else setErrorMessage(data.message || "Something went wrong.");
+        setSuccess(true); // نمایش پیام موفقیت
+      } else {
+        setErrorMessage(data.message || "Something went wrong.");
+      }
     } catch (error) {
       setErrorMessage("Failed to connect to the server.");
     } finally {
@@ -66,60 +58,89 @@ const ForgotPassword = () => {
         minHeight: "100vh",
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: 3,
-          borderRadius: 2,
-          backgroundColor: "white",
-          boxShadow: 3,
-          width: "100%",
-        }}
-      >
-        <Typography variant="h4" gutterBottom>
-          Forgot Password
-        </Typography>
-
-        <form onSubmit={handleSubmit}>
-          <Typography variant="body1" gutterBottom>
-            Enter your Email Address to receive a password reset code.
+      {success ? (
+        <Box
+          sx={{
+            textAlign: "center",
+            padding: 3,
+            borderRadius: 2,
+            backgroundColor: "white",
+            boxShadow: 3,
+            width: "100%",
+          }}
+        >
+          <CheckCircleIcon sx={{ fontSize: 50, color: "#378CE7" }} />
+          <Typography variant="h5" sx={{ mt: 2 }}>
+            Send email successful!
           </Typography>
-
-          <TextField
-            fullWidth
-            label="Email"
-            variant="outlined"
-            margin="normal"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={Boolean(errorMessage)}
-            helperText={errorMessage}
-          />
-
+          <Typography variant="body1" sx={{ mt: 1 }}>
+            please Check your email
+          </Typography>
           <Button
             variant="contained"
             color="primary"
-            fullWidth
-            sx={{ mt: 2, mb: 2 }}
-            type="submit"
-            disabled={loading}
+            sx={{ mt: 3 }}
+            onClick={() => navigate("/changePassword")} // رفتن به صفحه لاگین
           >
-            {loading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              "Send Code"
-            )}
+            GO TO change password
           </Button>
-        </form>
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            padding: 3,
+            borderRadius: 2,
+            backgroundColor: "white",
+            boxShadow: 3,
+            width: "100%",
+          }}
+        >
+          <Typography variant="h4" gutterBottom>
+            Forgot Password
+          </Typography>
 
-        <Typography variant="body2" sx={{ mt: 2 }}>
-          <Link href="/" underline="hover" color="primary">
-            Go to Homepage
-          </Link>
-        </Typography>
-      </Box>
+          <form onSubmit={handleSubmit}>
+            <Typography variant="body1" gutterBottom>
+              Enter your Email Address to receive a password reset code.
+            </Typography>
+
+            <TextField
+              fullWidth
+              label="Email"
+              variant="outlined"
+              margin="normal"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={Boolean(errorMessage)}
+              helperText={errorMessage}
+            />
+
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ mt: 2, mb: 2 }}
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Send Code"
+              )}
+            </Button>
+          </form>
+
+          <Typography variant="body2" sx={{ mt: 2 }}>
+            <Link href="/" underline="hover" color="primary">
+              Go to Homepage
+            </Link>
+          </Typography>
+        </Box>
+      )}
     </Container>
   );
 };

@@ -13,6 +13,8 @@ import {
 } from "@mui/material";
 import { Snackbar } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 function ChangePassword() {
   const navigate = useNavigate();
@@ -81,9 +83,9 @@ function ChangePassword() {
 
       if (response.ok) {
         // اگر تغییر رمز عبور موفق بود، پیام موفقیت نمایش دهید و کاربر را به صفحه ورود هدایت کنید
-        alert("Password changed successfully!");
-        localStorage.removeItem("userEmail");
-        navigate("/login"); // هدایت به صفحه ورود
+        setSuccessMessage("Password changed successfully!");
+        // localStorage.removeItem("userEmail");
+        // navigate("/login"); // هدایت به صفحه ورود
       } else {
         // اگر درخواست موفق نبود، پیام خطا نمایش دهید
         console.error("Error:", data.message || "Something went wrong.");
@@ -106,127 +108,166 @@ function ChangePassword() {
   };
 
   return (
-    <Container component="main" maxWidth="xs" sx={{ marginTop: 8 }}>
-      <Paper elevation={6} sx={{ padding: 3, borderRadius: 3, boxShadow: 3 }}>
-        <Box display="flex" justifyContent="center" mb={2}>
-          <LockIcon sx={{ fontSize: 40, color: "primary.main" }} />
-        </Box>
-        <Typography variant="h5" align="center" gutterBottom>
-          Change Password
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Recovery Code"
-                variant="outlined"
-                value={recoveryCode}
-                onChange={(e) => setRecoveryCode(e.target.value)}
-                required
-                error={Boolean(error.code)}
-                helperText={error.code}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="New Password"
-                type={showNewPassword ? "text" : "password"}
-                variant="outlined"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-                error={Boolean(error.newPassword)}
-                helperText={error.newPassword}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={handleClickShowNewPassword}
-                        edge="end"
-                      >
-                        {showNewPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Confirm New Password"
-                type={showConfirmPassword ? "text" : "password"}
-                variant="outlined"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                error={Boolean(error.confirmPassword)}
-                helperText={error.confirmPassword}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={handleClickShowConfirmPassword}
-                        edge="end"
-                      >
-                        {showConfirmPassword ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              {loading ? (
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="secondary"
-                  disabled
-                >
-                  Changing...
-                </Button>
-              ) : (
-                <Button
-                  fullWidth
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                >
-                  Change Password
-                </Button>
-              )}
-            </Grid>
-          </Grid>
-        </form>
-        {error.global && (
-          <Typography
-            variant="body2"
-            color="error"
-            align="center"
-            sx={{ marginTop: 2 }}
-          >
-            {error.global}
+    <Container
+      component="main"
+      maxWidth="xs"
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh", // صفحه کامل
+      }}
+    >
+      {successMessage ? (
+        <Box
+          sx={{
+            textAlign: "center",
+            padding: 3,
+            borderRadius: 2,
+            backgroundColor: "white",
+            boxShadow: 3,
+            width: "100%",
+          }}
+        >
+          <CheckCircleIcon sx={{ fontSize: 50, color: "#378CE7" }} />
+          <Typography variant="h5" sx={{ mt: 2 }}>
+            Password Changed Successfully!
           </Typography>
-        )}
+          <Typography variant="body1" sx={{ mt: 1 }}>
+            Please log in with your new password.
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ mt: 3 }}
+            onClick={() => navigate("/login")} // رفتن به صفحه لاگین
+          >
+            Go to Login
+          </Button>
+        </Box>
+      ) : (
+        <Paper elevation={6} sx={{ padding: 3, borderRadius: 3, boxShadow: 3 }}>
+          <Box display="flex" justifyContent="center" mb={2}>
+            <LockIcon sx={{ fontSize: 40, color: "primary.main" }} />
+          </Box>
+          <Typography variant="h5" align="center" gutterBottom>
+            Change Password
+          </Typography>
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Recovery Code"
+                  variant="outlined"
+                  value={recoveryCode}
+                  onChange={(e) => setRecoveryCode(e.target.value)}
+                  required
+                  error={Boolean(error.code)}
+                  helperText={error.code}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="New Password"
+                  type={showNewPassword ? "text" : "password"}
+                  variant="outlined"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  error={Boolean(error.newPassword)}
+                  helperText={error.newPassword}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={handleClickShowNewPassword}
+                          edge="end"
+                        >
+                          {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
 
-        {/* Snackbar for success message */}
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={3000}
-          onClose={handleSnackbarClose}
-          message={successMessage}
-        />
-      </Paper>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Confirm New Password"
+                  type={showConfirmPassword ? "text" : "password"}
+                  variant="outlined"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  error={Boolean(error.confirmPassword)}
+                  helperText={error.confirmPassword}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={handleClickShowConfirmPassword}
+                          edge="end"
+                        >
+                          {showConfirmPassword ? (
+                            <VisibilityOff />
+                          ) : (
+                            <Visibility />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                {loading ? (
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    color="secondary"
+                    disabled
+                  >
+                    Changing...
+                  </Button>
+                ) : (
+                  <Button
+                    fullWidth
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                  >
+                    Change Password
+                  </Button>
+                )}
+              </Grid>
+            </Grid>
+          </form>
+          {error.global && (
+            <Typography
+              variant="body2"
+              color="error"
+              align="center"
+              sx={{ marginTop: 2 }}
+            >
+              {error.global}
+            </Typography>
+          )}
+
+          {/* Snackbar for success message */}
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={3000}
+            onClose={handleSnackbarClose}
+            message={successMessage}
+          />
+        </Paper>
+      )}
     </Container>
   );
 }
