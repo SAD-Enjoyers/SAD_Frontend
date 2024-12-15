@@ -1190,131 +1190,97 @@
 // }
 
 // export default ExamQuestions;
-
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Box,
-  Typography,
-  Grid,
-  Chip,
-  Rating,
-  IconButton,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Button,
+  Typography,
   Snackbar,
-  Alert,
+  Dialog,
+  DialogTitle,
+  IconButton,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import PeopleIcon from "@mui/icons-material/People";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom"; // Importing useNavigate
 
-function ExamQuestions({ examData }) {
-  const navigate = useNavigate();
+const ExamQuestions = (examData) => {
+  const navigate = useNavigate(); // Initialize the navigate function
 
-  const [questions, setQuestions] = useState([]); // Store questions fetched from API
-  const [openDialog, setOpenDialog] = useState(false);
-  const [questionToDelete, setQuestionToDelete] = useState(null);
-  const [changesMade, setChangesMade] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [page, setPage] = useState(0);
+  const [itemsPerPage] = useState(10);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [severity, setSeverity] = useState("success"); // success | error
-  const [page, setPage] = useState(0);
-
-  const itemsPerPage = 10; // Number of questions per page
+  const [severity, setSeverity] = useState("success");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [questionToDelete, setQuestionToDelete] = useState(null);
 
   useEffect(() => {
-    // Fetch questions from API when the component mounts or serviceId changes
     const fetchQuestions = async () => {
-      if (!examData?.serviceId) {
-        console.error("Service ID is missing.");
+      if (!examData?.examData?.serviceId) {
         setSnackbarMessage("Invalid service ID. Cannot fetch questions.");
         setSeverity("error");
         setOpenSnackbar(true);
         return;
       }
 
-      const token = examData.accessToken; // Token from examData
-
       try {
-        console.log("Fetching questions for serviceId:", examData.serviceId);
         const response = await fetch(
-          `/api/v1/exam/questions/${examData.serviceId}`,
+          `/api/v1/exam/questions/${examData.examData.serviceId}`,
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${examData.accessToken}`,
               "Content-Type": "application/json",
             },
           }
         );
 
-        // Get response as JSON
         const responseData = await response.json();
 
-        // Log the full JSON response in a structured way
-        console.log(
-          "Full Response Data:",
-          JSON.stringify(responseData, null, 2)
-        );
-
         if (!response.ok) {
-          throw new Error(
-            `Failed to fetch questions. Status: ${response.status}`
-          );
+          throw new Error(`Error ${response.status}: ${responseData.message}`);
         }
 
-        if (responseData.data && Array.isArray(responseData.data)) {
-          setQuestions(responseData.data); // Set the questions using the data part
-        } else {
-          setSnackbarMessage("No questions found.");
-          setSeverity("error");
-          setOpenSnackbar(true);
-        }
+        setQuestions(responseData.data || []);
       } catch (error) {
-        console.error("Error fetching questions:", error);
-        setSnackbarMessage("Error fetching questions. Please try again later.");
+        setSnackbarMessage(error.message || "Failed to fetch questions.");
         setSeverity("error");
         setOpenSnackbar(true);
       }
     };
 
     fetchQuestions();
-  }, [examData?.serviceId]);
+  }, [examData]);
 
-  const validQuestions = useMemo(() => {
-    return questions.filter(
-      (question) =>
-        question?.Question?.question_name && question?.Question?.question_text
-    );
-  }, [questions]);
+  const validQuestions = useMemo(
+    () =>
+      questions.filter(
+        (q) =>
+          q?.Question?.question_id &&
+          q?.Question?.question_name &&
+          q?.Question?.question_text
+      ),
+    [questions]
+  );
 
   const paginatedQuestions = validQuestions.slice(
     page * itemsPerPage,
     (page + 1) * itemsPerPage
   );
 
-  const handleOnDragEnd = (result) => {
-    const { destination, source } = result;
-    if (!destination) return;
-    if (destination.index === source.index) return;
+  const handleOnDragEnd = ({ source, destination }) => {
+    if (!destination || source.index === destination.index) return;
 
-    const reorderedQuestions = Array.from(questions);
-    const [movedQuestion] = reorderedQuestions.splice(source.index, 1);
-    reorderedQuestions.splice(destination.index, 0, movedQuestion);
+    const reordered = Array.from(questions);
+    const [removed] = reordered.splice(source.index, 1);
+    reordered.splice(destination.index, 0, removed);
 
-    setQuestions(reorderedQuestions);
-    setChangesMade(true);
-    setSnackbarMessage(
-      `Moved "${movedQuestion.Question.question_name}" from position ${
-        source.index + 1
-      } to position ${destination.index + 1}`
-    );
+    setQuestions(reordered);
+    setSnackbarMessage("Question order updated.");
     setSeverity("info");
     setOpenSnackbar(true);
   };
@@ -1323,25 +1289,68 @@ function ExamQuestions({ examData }) {
     setQuestionToDelete(id);
     setOpenDialog(true);
   };
-
   const confirmDelete = async () => {
     try {
-      await fetch(`/api/questions/${questionToDelete}`, {
-        method: "DELETE",
-      });
-      const updatedQuestions = questions.filter(
-        (question) => question.id !== questionToDelete
+      // Get the question that is about to be deleted
+      const questionToDeleteData = questions.find(
+        (question) => question.Question.question_id === questionToDelete
       );
-      setQuestions(updatedQuestions);
-      setOpenDialog(false);
-      setSnackbarMessage("Question deleted successfully!");
+
+      // Ensure the question exists
+      if (!questionToDeleteData) {
+        setSnackbarMessage("Question not found.");
+        setSeverity("error");
+        setOpenSnackbar(true);
+        return;
+      }
+
+      // Log the full question data to inspect its structure
+      console.log(JSON.stringify(questionToDeleteData, null, 2));
+
+      // Extract the values from the correct structure
+      const { question_id, sort_number, service_id } = questionToDeleteData; // Note sort_number is at the top level
+      const { question_id: questionId } = questionToDeleteData.Question; // The question_id is inside Question object
+      const { serviceId } = examData.examData; // Get the serviceId from the examData
+
+      // Log values to verify the extraction
+      console.log("Sort number:", sort_number);
+      console.log("Question ID:", questionId);
+      console.log("Service ID:", serviceId);
+
+      // Send a request to the backend to delete the question
+      const response = await fetch(`/api/v1/exam/delete-question`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${examData.accessToken}`,
+        },
+        body: JSON.stringify({
+          questionId: questionId, // The ID of the question inside the Question object
+          serviceId: serviceId, // The service ID for the exam
+          sortNumber: sort_number, // The sort number from the top-level object
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete question on the backend.");
+      }
+
+      // After successfully deleting from the backend, update the state
+      setQuestions((prev) =>
+        prev.filter((q) => q.Question.question_id !== questionToDelete)
+      );
+      setSnackbarMessage("Question deleted successfully.");
       setSeverity("success");
       setOpenSnackbar(true);
     } catch (error) {
       console.error("Error deleting question:", error);
-      setSnackbarMessage("Error deleting question. Please try again later.");
+      setSnackbarMessage("Error deleting question. Please try again.");
       setSeverity("error");
       setOpenSnackbar(true);
+    } finally {
+      // Close the delete confirmation dialog
+      setOpenDialog(false);
+      setQuestionToDelete(null);
     }
   };
 
@@ -1350,104 +1359,58 @@ function ExamQuestions({ examData }) {
     setQuestionToDelete(null);
   };
 
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
+  const handleCloseSnackbar = () => setOpenSnackbar(false);
+
+  const changePage = (newPage) => setPage(newPage);
 
   return (
-    <div>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "20px 0",
-        }}
-      >
-        <Typography variant="h4" sx={{ fontWeight: "bold", color: "#333" }}>
-          My Exam Questions
-        </Typography>
+    <Box>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+        <Typography variant="h4">My Exam Questions</Typography>
         <Button
           variant="contained"
-          color="primary"
-          onClick={() => navigate("/QuestionBank", { state: { examData } })}
+          onClick={() => navigate("/QuestionBank", { state: { examData } })} // Navigate to QuestionBank with examData
         >
           Add Questions
         </Button>
       </Box>
 
       {validQuestions.length === 0 ? (
-        <Box sx={{ textAlign: "center", marginTop: "40px" }}>
-          <Typography variant="h5" color="textSecondary">
-            There are no questions for your exam.
-          </Typography>
-        </Box>
+        <Typography sx={{ textAlign: "center", mt: 5 }} variant="h6">
+          No questions found.
+        </Typography>
       ) : (
         <DragDropContext onDragEnd={handleOnDragEnd}>
-          <Droppable droppableId="questions">
+          <Droppable droppableId="questions" direction="vertical">
             {(provided) => (
-              <Grid
-                container
-                spacing={2}
-                sx={{ marginTop: "20px" }}
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-              >
+              <Box ref={provided.innerRef} {...provided.droppableProps}>
                 {paginatedQuestions.map((question, index) => (
                   <Draggable
-                    key={question.Question.question_id}
+                    key={question.Question.question_id.toString()}
                     draggableId={question.Question.question_id.toString()}
                     index={index}
                   >
                     {(provided) => (
-                      <Grid
-                        item
-                        xs={12}
+                      <Box
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                         sx={{
-                          padding: "20px",
-                          backgroundColor: "#fff",
-                          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-                          borderRadius: "8px",
-                          marginBottom: "10px",
+                          border: "1px solid #ccc",
+                          p: 2,
+                          mb: 2,
+                          borderRadius: 1,
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                         }}
                       >
-                        <Typography
-                          variant="h6"
-                          sx={{ fontWeight: "bold", color: "#4A90E2" }}
-                        >
-                          <Link
-                            to={`/question/${question.Question.question_id}`}
-                            style={{ textDecoration: "none" }}
-                          >
+                        <Box>
+                          <Typography variant="h6">
                             {question.Question.question_name}
-                          </Link>
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                          {question.Question.question_text
-                            .split(" ")
-                            .slice(0, 15)
-                            .join(" ")}
-                          ...
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            marginTop: "10px",
-                          }}
-                        >
-                          <Rating
-                            value={parseFloat(question.Question.score)}
-                            max={5}
-                            readOnly
-                          />
+                          </Typography>
                           <Typography variant="body2" color="textSecondary">
-                            <PeopleIcon
-                              sx={{ fontSize: "16px", marginRight: "4px" }}
-                            />
-                            {question.Question.number_of_voters} Voters
+                            {question.Question.question_text}
                           </Typography>
                         </Box>
                         <IconButton
@@ -1455,25 +1418,21 @@ function ExamQuestions({ examData }) {
                           onClick={() =>
                             handleDeleteQuestion(question.Question.question_id)
                           }
-                          sx={{
-                            position: "absolute",
-                            top: "10px",
-                            right: "10px",
-                          }}
                         >
                           <DeleteIcon />
                         </IconButton>
-                      </Grid>
+                      </Box>
                     )}
                   </Draggable>
                 ))}
                 {provided.placeholder}
-              </Grid>
+              </Box>
             )}
           </Droppable>
         </DragDropContext>
       )}
 
+      {/* Dialog for delete confirmation */}
       <Dialog open={openDialog} onClose={cancelDelete}>
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
@@ -1489,21 +1448,15 @@ function ExamQuestions({ examData }) {
         </DialogActions>
       </Dialog>
 
+      {/* Snackbar for messages */}
       <Snackbar
         open={openSnackbar}
-        autoHideDuration={3000}
+        autoHideDuration={4000}
         onClose={handleCloseSnackbar}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-    </div>
+        message={snackbarMessage}
+      />
+    </Box>
   );
-}
+};
 
 export default ExamQuestions;
