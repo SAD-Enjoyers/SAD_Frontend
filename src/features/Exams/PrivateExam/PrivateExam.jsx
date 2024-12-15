@@ -1,61 +1,65 @@
 import React, { useState, useEffect } from "react";
-import { Box, Tabs, Tab, useMediaQuery, useTheme } from "@mui/material";
-import { LibraryBooks, Settings, People, Comment } from "@mui/icons-material"; // Importing icons
-import { useLocation } from "react-router-dom"; // Import useLocation hook
+import {
+  Box,
+  Tabs,
+  Tab,
+  CircularProgress,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import { LibraryBooks, Settings, People, Comment } from "@mui/icons-material";
+import { useLocation, useParams } from "react-router-dom"; // Import useLocation and useParams
 import ExamQuestions from "./tabs/ExamQuestions";
 import CommentSection from "./tabs/CommentSection";
 import ExamSettings from "./tabs/ExamSettings";
 import ParticipantStatus from "./tabs/ParticipantStatus";
 
 const PrivateExam = () => {
+  const { serviceId } = useParams(); // Extract serviceId from URL
+  const location = useLocation(); // Get location state
   const [selectedTab, setSelectedTab] = useState(0);
   const [participants, setParticipants] = useState([]);
-  const [examData, setExamResult] = useState(null); // State to hold the exam result
+  const [examData, setExamResult] = useState(null);
+  const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const location = useLocation(); // Get the location object to access passed state
-
   const accessToken = localStorage.getItem("token");
 
+  // Handle tab changes and persist the selected tab
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
+    localStorage.setItem("selectedTab", newValue); // Save selected tab to localStorage
   };
 
   useEffect(() => {
-    // Check if exam results are available in location state
+    // First, check if examData is passed via location state
     if (location.state && location.state.examData) {
-      setExamResult(location.state.examData); // Set the exam results if available
-      console.log(
-        "Exam data received from the other page:",
-        location.state.examData
-      );
+      setExamResult(location.state.examData);
+      setLoading(false);
     } else {
-      // Handle loading exam data if state is not passed
-      setTimeout(() => {
-        setParticipants([
-          /* Simulated participants data */
-        ]);
-        setExamResult({
-          serviceId: 1,
-          name: "Sample Exam",
-          description: "This is a sample exam for demonstration.",
-          // Add more default exam details if necessary
-        });
-      }, 1000);
+      // Otherwise, try fetching the exam data from localStorage
+      const storedExamData = JSON.parse(localStorage.getItem("examData"));
+      if (storedExamData && storedExamData.serviceId === parseInt(serviceId)) {
+        setExamResult(storedExamData);
+        setLoading(false);
+      } else {
+        // Handle the case if there's no matching examData
+        console.error("Exam data not found or invalid serviceId");
+        setLoading(false);
+      }
     }
-  }, [location.state]);
+  }, [location.state, serviceId]);
 
   useEffect(() => {
-    // Log the examData data whenever it changes
-    if (examData) {
-      console.log("Current Exam Data (examData):", examData);
-    }
-  }, [examData]);
+    // Retrieve saved tab from localStorage
+    const savedTab = localStorage.getItem("selectedTab");
+    if (savedTab) setSelectedTab(parseInt(savedTab, 10));
+  }, []);
 
   const tabContent = [
     {
       label: "Exam Questions",
-      content: <ExamQuestions examData={examData} />, // Pass examData to tab
+      content: <ExamQuestions examData={examData} accessToken={accessToken} />,
       icon: <LibraryBooks />,
     },
     {
@@ -66,17 +70,24 @@ const PrivateExam = () => {
           serviceId={examData?.serviceId || 1}
           accessToken={accessToken}
         />
-      ), // Dynamically pass serviceId
+      ),
       icon: <Settings />,
     },
     {
       label: "Participant Status",
-      content: <ParticipantStatus participants={participants} />,
+      content: participants.length ? (
+        <ParticipantStatus
+          participants={participants}
+          accessToken={accessToken}
+        />
+      ) : (
+        <Box>No participants yet.</Box>
+      ),
       icon: <People />,
     },
     {
       label: "Comment Section",
-      content: <CommentSection />,
+      content: <CommentSection accessToken={accessToken} />,
       icon: <Comment />,
     },
   ];
@@ -114,6 +125,7 @@ const PrivateExam = () => {
               label={isMobile ? "" : tab.label}
               icon={tab.icon}
               iconPosition="start"
+              aria-label={`Tab for ${tab.label}`}
               sx={{ minWidth: isMobile ? 50 : 120, padding: isMobile ? 0 : 2 }}
             />
           ))}
@@ -121,7 +133,20 @@ const PrivateExam = () => {
       </Box>
 
       <Box sx={{ flex: 1, p: 2, overflowY: "auto" }}>
-        {tabContent[selectedTab]?.content}
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "200px",
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          tabContent[selectedTab]?.content
+        )}
       </Box>
     </Box>
   );

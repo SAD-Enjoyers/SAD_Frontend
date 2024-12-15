@@ -1,9 +1,9 @@
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
-export const handleAddQuestions = (navigate) => {
-  navigate("/QuestionBank");
-};
+// export const handleAddQuestions = (navigate) => {
+//   navigate("/QuestionBank");
+// };
 
-export const handleAddQuestionsBack = (navigate) => {
-  navigate("/PrivateExam");
-};
+// export const handleAddQuestionsBack = (navigate) => {
+//   navigate("/PrivateExam");
+// };

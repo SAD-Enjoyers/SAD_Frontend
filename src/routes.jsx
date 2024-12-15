@@ -41,14 +41,13 @@ function AppRoutes() {
           <Route path="QuestionPage" element={<QuestionPage />} />
           <Route path="image" element={<ImageUpload />} />
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
-          <Route path="PrivateExam" element={<PrivateExam />} />
+          <Route path="PrivateExam/:serviceId" element={<PrivateExam />} />
           <Route path="PublicExam" element={<PublicExam />} />
           <Route path="AddArticle" element={<AddArticle />} />
           <Route path="OngoingExamPage" element={<OngoingExamPage />} />
           <Route path="SearchArticle" element={<ArticleSearch />} />
           <Route path="ValetPage" element={<ValetPage />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
-          {/* private_exam_page */}
         </Route>
       </Routes>
     </Router>

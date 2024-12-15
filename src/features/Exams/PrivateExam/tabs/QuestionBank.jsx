@@ -28,7 +28,8 @@ import IconButton from "@mui/material/IconButton"; // Import IconButton
 import PeopleIcon from "@mui/icons-material/People";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // Import the icon you want to use
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked"; // Import icon for unselected state
-import { handleAddQuestionsBack } from "./handleAddQuestions";
+// import { handleAddQuestionsBack } from "./handleAddQuestions";
+import { useLocation } from "react-router-dom";
 
 // Reusable Category Filter Component
 const CategoryFilter = ({ categories, selectedSubjects, onSubjectChange }) => (
@@ -81,7 +82,10 @@ function QuestionsTab() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [severity, setSeverity] = useState("success"); // You can change this to "error" based on the outcome
   const [snackbarMessage, setSnackbarMessage] = useState("");
-
+  // Access state passed by navigate
+  const location = useLocation();
+  const examData = location.state?.examData; // Ensure it exists
+  // console.log("Exam Data:", examData.examData);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState([]);
@@ -155,28 +159,91 @@ function QuestionsTab() {
   };
 
   const handlePageChange = (event, value) => setCurrentPage(value);
+  const handleAddQuestionsBack = (navigate, examData) => {
+    // Log the input data for debugging
+    console.log("Exam Data:", examData);
+
+    if (examData && examData.serviceId) {
+      // Save to localStorage
+      localStorage.setItem("examData", JSON.stringify(examData));
+
+      // Navigate to dynamic route with examData in state
+      navigate(`/PrivateExam/${examData.serviceId}`, { state: { examData } });
+    } else {
+      console.error("Missing or invalid examData. Unable to navigate.");
+    }
+  };
 
   const handleItemsPerPageChange = (event) => {
     setItemsPerPage(event.target.value);
     setCurrentPage(1);
   };
+  const handleAddToExam = async () => {
+    if (selectedQuestions.length === 0) return;
 
-  const handleAddToExam = () => {
-    if (selectedQuestions.length > 0) {
-      // Assuming the questions are successfully added here
-      setSeverity("success");
-      setSnackbarMessage("Questions successfully added to the exam.");
-      setOpenSnackbar(true);
+    // Show loading state or feedback
+    setSnackbarMessage("Adding selected questions...");
+    setOpenSnackbar(true);
 
-      // Navigate back to the previous page or the desired page after a delay
-      setTimeout(() => {
-        navigate("/PrivateExam"); // Replace with the actual route
-      }, 3000); // 3 seconds delay to allow user to see the success message
-    } else {
-      setSeverity("error");
-      setSnackbarMessage("No questions selected.");
-      setOpenSnackbar(true);
+    // Get the token and role from localStorage
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    const ExamServiceId = examData.examData.serviceId; // You can get this from the state or props if it's dynamic
+
+    // Log the token and role to the console
+    console.log("Token:", token); // This will print the token in the console
+    console.log("Role:", role); // This will print the role in the console
+
+    // Loop through selected questions and send them one by one
+    for (let i = 0; i < selectedQuestions.length; i++) {
+      const questionId = selectedQuestions[i];
+
+      // Prepare request data
+      const requestData = {
+        serviceId: ExamServiceId,
+        questionId: questionId,
+      };
+
+      // Log the request data
+      console.log("Sending Request Data:", requestData); // Log what is being sent
+
+      try {
+        // Send each question to the backend with the correct API endpoint
+        const response = await axios.post(
+          "/api/v1/exam/add-question", // Corrected endpoint
+          requestData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "x-role": role, // Add role from localStorage
+            },
+          }
+        );
+
+        // Log the response from the backend
+        console.log("Response Data:", response.data);
+
+        // Check the response status and handle accordingly
+        if (response.data.status === "error") {
+          setSeverity("error");
+          setSnackbarMessage(response.data.message); // Display error message from backend
+        } else {
+          setSeverity("success");
+          setSnackbarMessage(`Question ${questionId} added successfully.`); // Success message
+        }
+      } catch (error) {
+        // Handle error if API request fails
+        setSeverity("error");
+        setSnackbarMessage("An error occurred while adding the question.");
+      }
+
+      // Wait for the response before moving to the next question
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Optional: Add delay between requests
     }
+
+    // Reset or close loading state after processing
+    setOpenSnackbar(false);
   };
 
   const handleCloseSnackbar = () => {
@@ -537,10 +604,9 @@ function QuestionsTab() {
                   paddingTop: "10px",
                 }}
               >
-                {/* Score */}
                 <Rating
                   name="score"
-                  value={question.score}
+                  value={Number(question.score) || 0} // Fallback to 0 if not a valid number
                   max={5}
                   readOnly
                   sx={{
@@ -602,11 +668,10 @@ function QuestionsTab() {
           marginTop: "20px",
         }}
       >
-        {/* Back Button: Navigates to the Exam Overview */}
         <Button
           variant="contained"
           color="primary"
-          onClick={() => handleAddQuestionsBack(navigate)}
+          onClick={() => handleAddQuestionsBack(navigate, examData.examData)} // Pass examData here
           sx={{
             padding: "12px 24px",
             fontWeight: "bold",
@@ -648,7 +713,7 @@ function QuestionsTab() {
         {/* Snackbar for Feedback and Alerts */}
         <Snackbar
           open={openSnackbar}
-          autoHideDuration={3000} // Auto-hide after 3 seconds
+          autoHideDuration={3000}
           onClose={handleCloseSnackbar}
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
