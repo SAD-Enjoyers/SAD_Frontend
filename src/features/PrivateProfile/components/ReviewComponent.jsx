@@ -59,7 +59,7 @@ export default function ReviewComponent(props) {
   };
   const navigateToPrivateExam = (examData) => {
     localStorage.setItem("examData", JSON.stringify(examData)); // Save to localStorage
-    navigate("/PrivateExam", { state: { examData } });
+    navigate(`/PrivateExam/${examData.serviceId}`, { state: { examData } });
   };
   // اجرا در بارگذاری اولیه
   useEffect(() => {
