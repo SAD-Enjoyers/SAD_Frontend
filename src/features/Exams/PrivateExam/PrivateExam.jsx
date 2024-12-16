@@ -64,13 +64,7 @@ const PrivateExam = () => {
     },
     {
       label: "Exam Settings",
-      content: (
-        <ExamSettings
-          examData={examData}
-          serviceId={examData?.serviceId || 1}
-          accessToken={accessToken}
-        />
-      ),
+      content: <ExamSettings examData={examData} accessToken={accessToken} />,
       icon: <Settings />,
     },
     {

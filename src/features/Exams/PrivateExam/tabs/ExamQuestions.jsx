@@ -1190,6 +1190,7 @@
 // }
 
 // export default ExamQuestions;
+
 import React, { useState, useEffect, useMemo } from "react";
 import {
   Box,
@@ -1272,17 +1273,52 @@ const ExamQuestions = (examData) => {
     (page + 1) * itemsPerPage
   );
 
-  const handleOnDragEnd = ({ source, destination }) => {
+  const handleOnDragEnd = async ({ source, destination }) => {
     if (!destination || source.index === destination.index) return;
 
+    // Reorder questions locally
     const reordered = Array.from(questions);
     const [removed] = reordered.splice(source.index, 1);
     reordered.splice(destination.index, 0, removed);
 
+    // Update the sort numbers based on the new order
+    const updatedOrders = reordered.map((q, index) => ({
+      questionId: q.Question.question_id,
+      sortNumber: index + 1, // New order starts from 1
+    }));
+
+    // Update state to reflect new order
     setQuestions(reordered);
-    setSnackbarMessage("Question order updated.");
-    setSeverity("info");
-    setOpenSnackbar(true);
+
+    try {
+      // Send the updated order to the backend
+      const response = await fetch(`/api/v1/exam/reorder-questions`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${examData.accessToken}`,
+        },
+        body: JSON.stringify({
+          serviceId: examData.examData.serviceId,
+          reorderedquestions: updatedOrders,
+        }),
+      });
+      console.log(examData.examData.serviceId);
+      console.log(updatedOrders);
+
+      if (!response.ok) {
+        throw new Error("Failed to update question order.");
+      }
+
+      setSnackbarMessage("Question order updated successfully.");
+      setSeverity("success");
+      setOpenSnackbar(true);
+    } catch (error) {
+      console.error("Error updating question order:", error);
+      setSnackbarMessage("Error updating question order. Please try again.");
+      setSeverity("error");
+      setOpenSnackbar(true);
+    }
   };
 
   const handleDeleteQuestion = (id) => {
