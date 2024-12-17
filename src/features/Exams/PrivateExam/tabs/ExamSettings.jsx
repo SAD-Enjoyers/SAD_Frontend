@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+// Material-UI components
 import {
   Box,
   Grid,
@@ -16,6 +17,17 @@ import {
   Checkbox,
   ListItemText,
 } from "@mui/material";
+
+// Material-UI icons
+import {
+  Image as ImageIcon,
+  Description as DescriptionIcon,
+  Grade as GradeIcon,
+  AttachMoney as AttachMoneyIcon,
+  Timelapse as TimelapseIcon,
+  LocalOffer as LocalOfferIcon,
+  Save as SaveIcon,
+} from "@mui/icons-material";
 
 const ExamSettings = ({ examData, accessToken }) => {
   const [newImage, setNewImage] = useState(null); // New image file
@@ -50,9 +62,15 @@ const ExamSettings = ({ examData, accessToken }) => {
         console.error("Error fetching categories:", error);
       }
     };
+    console.log("accesstoken:", accessToken);
 
     fetchCategories();
-  }, []);
+
+    // Initialize selectedTags with existing examData tags
+    setSelectedTags(
+      [examData.tag1, examData.tag2, examData.tag3].filter(Boolean) // Filter out null or undefined tags
+    );
+  }, [examData]);
 
   // Handle new image selection
   const handleImageChange = (e) => {
@@ -87,10 +105,6 @@ const ExamSettings = ({ examData, accessToken }) => {
       console.log("New Image:", newImageName);
       setUploadedImage(newImageName);
 
-      // Log the previous and new image names
-      console.log("Previous Image:", uploadedImage);
-      console.log("New Image:", newImageName);
-
       // Extract and prepare the updated parameters
       const updatedExamData = {
         serviceId: examData.serviceId,
@@ -104,8 +118,8 @@ const ExamSettings = ({ examData, accessToken }) => {
         tag3,
         examDuration,
       };
-      console.log("updatedExamData:", JSON.stringify(updatedExamData, null, 2));
 
+      console.log("updatedExamData:", JSON.stringify(updatedExamData, null, 2));
       // Send updated exam data to the backend
       await axios.post("/api/v1/exam/edit-exam", updatedExamData, {
         headers: {
@@ -125,21 +139,28 @@ const ExamSettings = ({ examData, accessToken }) => {
   };
 
   // Handle form data changes
-
   const handleSaveChanges = async () => {
     try {
+      // Map selected tags to tag1, tag2, tag3, and fill with null for unselected tags
+      const updatedTags = [
+        selectedTags[0] || null, // First tag or null
+        selectedTags[1] || null, // Second tag or null
+        selectedTags[2] || null, // Third tag or null
+      ];
+
       const updatedExamData = {
         serviceId: examData.serviceId,
         description,
         level,
-        price: parseFloat(price), // Ensure price is a number
+        price: parseFloat(price),
         activityStatus,
         image: uploadedImage,
-        tag1: selectedTags[0] || null, // Set tag1, tag2, tag3 to null if not selected
-        tag2: selectedTags[1] || null,
-        tag3: selectedTags[2] || null,
-        examDuration,
+        tag1: updatedTags[0],
+        tag2: updatedTags[1],
+        tag3: updatedTags[2],
+        examDuration: parseFloat(examDuration),
       };
+
       console.log("updatedExamData:", JSON.stringify(updatedExamData, null, 2));
 
       await axios.post("/api/v1/exam/edit-exam", updatedExamData, {
@@ -150,57 +171,60 @@ const ExamSettings = ({ examData, accessToken }) => {
       });
 
       alert("Exam data updated successfully!");
+      setSelectedTags(selectedTags); // Update state to reflect saved tags
     } catch (error) {
       console.error("Error updating exam data:", error);
       alert("Failed to update exam data.");
     }
   };
+
   const handleTagChange = (event) => {
     const { value } = event.target;
 
-    // Limit the selected tags to a maximum of 3
+    // Ensure selected tags are unique and limited to 3
     if (value.length <= 3) {
-      // If user selects 1 or 2 tags, set unselected tags to null
-      if (value.length === 1) {
-        setTag2(null);
-        setTag3(null);
-      } else if (value.length === 2) {
-        setTag3(null);
-      } else {
-        // If all 3 tags are selected, set the tags accordingly
-        setTag1(value[0]);
-        setTag2(value[1] || null);
-        setTag3(value[2] || null);
-      }
-
-      setSelectedTags(value); // Update selected tags
+      setSelectedTags(value);
     } else {
       alert("You can only select up to 3 tags.");
     }
   };
 
   return (
-    // Inside the return function
-    <Grid container spacing={2}>
+    <Grid container spacing={3}>
       {/* Image and Description in a row layout */}
-      <Grid item xs={12} container spacing={2} alignItems="center">
+      <Grid item xs={12} container spacing={3} alignItems="center">
         <Grid item xs={12} sm={4}>
-          <Typography variant="h6">Current Image:</Typography>
+          <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 1 }}>
+            <ImageIcon sx={{ marginRight: 1, color: "#378CE7" }} /> Current
+            Image:
+          </Typography>
           {uploadedImage ? (
             <Avatar
               src={`/api/v1/uploads/service-images/${uploadedImage}`}
               alt="Exam Image"
-              sx={{ width: 200, height: 200, marginBottom: 2 }}
+              sx={{ width: 200, height: 200, marginBottom: 2, boxShadow: 3 }}
             />
           ) : (
-            <CircularProgress />
+            <CircularProgress size={50} sx={{ marginBottom: 2 }} />
           )}
-          <input type="file" accept="image/*" onChange={handleImageChange} />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            style={{ marginBottom: "12px" }}
+          />
           <Button
             variant="contained"
             color="primary"
             onClick={uploadNewImage}
-            sx={{ marginTop: 2 }}
+            sx={{
+              marginTop: 2,
+              width: "100%",
+              backgroundColor: "#378CE7",
+              "&:hover": {
+                backgroundColor: "#67C6E3",
+              },
+            }}
             disabled={isUploading || !newImage}
           >
             {isUploading ? "Uploading..." : "Upload & Save Image"}
@@ -208,7 +232,10 @@ const ExamSettings = ({ examData, accessToken }) => {
         </Grid>
 
         <Grid item xs={12} sm={8}>
-          <Typography variant="h6">Exam Description:</Typography>
+          <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 1 }}>
+            <DescriptionIcon sx={{ marginRight: 1, color: "#67C6E3" }} /> Exam
+            Description:
+          </Typography>
           <TextField
             fullWidth
             value={description}
@@ -216,15 +243,20 @@ const ExamSettings = ({ examData, accessToken }) => {
             variant="outlined"
             multiline
             rows={4}
-            sx={{ marginBottom: 2 }}
+            sx={{
+              marginBottom: 2,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+            }}
           />
         </Grid>
       </Grid>
 
       {/* Editable Exam Data */}
       <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          Level:
+        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
+          <GradeIcon sx={{ marginRight: 1, color: "#5356FF" }} /> Level:
         </Typography>
         <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
           <InputLabel>Level</InputLabel>
@@ -232,6 +264,11 @@ const ExamSettings = ({ examData, accessToken }) => {
             value={level}
             onChange={(e) => setLevel(e.target.value)}
             label="Level"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+            }}
           >
             <MenuItem value="Beginner">Beginner</MenuItem>
             <MenuItem value="Medium">Medium</MenuItem>
@@ -241,8 +278,8 @@ const ExamSettings = ({ examData, accessToken }) => {
       </Grid>
 
       <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          Price:
+        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
+          <AttachMoneyIcon sx={{ marginRight: 1, color: "#FFAB00" }} /> Price:
         </Typography>
         <TextField
           fullWidth
@@ -250,13 +287,19 @@ const ExamSettings = ({ examData, accessToken }) => {
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           variant="outlined"
-          sx={{ marginBottom: 2 }}
+          sx={{
+            marginBottom: 2,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "10px",
+            },
+          }}
         />
       </Grid>
 
       <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          Activity Status:
+        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
+          <TimelapseIcon sx={{ marginRight: 1, color: "#F9A825" }} /> Activity
+          Status:
         </Typography>
         <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
           <InputLabel>Activity Status</InputLabel>
@@ -264,6 +307,11 @@ const ExamSettings = ({ examData, accessToken }) => {
             value={activityStatus}
             onChange={(e) => setActivityStatus(e.target.value)}
             label="Activity Status"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+            }}
           >
             <MenuItem value="Active">Active</MenuItem>
             <MenuItem value="Inactive">Inactive</MenuItem>
@@ -272,8 +320,9 @@ const ExamSettings = ({ examData, accessToken }) => {
       </Grid>
 
       <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          Exam Duration:
+        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
+          <TimelapseIcon sx={{ marginRight: 1, color: "#F9A825" }} /> Exam
+          Duration:
         </Typography>
         <TextField
           fullWidth
@@ -281,14 +330,19 @@ const ExamSettings = ({ examData, accessToken }) => {
           value={examDuration}
           onChange={(e) => setExamDuration(e.target.value)}
           variant="outlined"
-          sx={{ marginBottom: 2 }}
+          sx={{
+            marginBottom: 2,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "10px",
+            },
+          }}
         />
       </Grid>
 
       {/* Tags Section */}
       <Grid item xs={12}>
-        <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          Tags:
+        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
+          <LocalOfferIcon sx={{ marginRight: 1, color: "#0288D1" }} /> Tags:
         </Typography>
         <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
           <InputLabel>Tags</InputLabel>
@@ -297,6 +351,19 @@ const ExamSettings = ({ examData, accessToken }) => {
             value={selectedTags}
             onChange={handleTagChange}
             renderValue={(selected) => selected.join(", ")}
+            MenuProps={{
+              PaperProps: {
+                style: {
+                  maxHeight: 200,
+                  overflow: "auto",
+                },
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+            }}
           >
             {categories.map((category) => (
               <MenuItem key={category.categoryId} value={category.category}>
@@ -316,9 +383,16 @@ const ExamSettings = ({ examData, accessToken }) => {
           variant="contained"
           color="secondary"
           onClick={handleSaveChanges}
-          sx={{ padding: "10px 20px", width: "100%" }}
+          sx={{
+            padding: "12px 24px",
+            width: "100%",
+            backgroundColor: "#5356FF",
+            "&:hover": {
+              backgroundColor: "#378CE7",
+            },
+          }}
         >
-          Save Changes
+          <SaveIcon sx={{ marginRight: 1, color: "#FFFFFF" }} /> Save Changes
         </Button>
       </Grid>
     </Grid>

@@ -10,7 +10,6 @@ import {
 import { LibraryBooks, Settings, People, Comment } from "@mui/icons-material";
 import { useLocation, useParams } from "react-router-dom"; // Import useLocation and useParams
 import ExamQuestions from "./tabs/ExamQuestions";
-import CommentSection from "./tabs/CommentSection";
 import Comments from "../../../common/Comments/CommentSection";
 import ExamSettings from "./tabs/ExamSettings";
 import ParticipantStatus from "./tabs/ParticipantStatus";
