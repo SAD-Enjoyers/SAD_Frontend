@@ -21,6 +21,7 @@ import AddArticle from "./features/Articles/AddArticle/AddArticle.jsx";
 import ArticleSearch from "./features/Articles/SearchArticle/SearchArticle.jsx";
 import ValetPage from "./features/Valet/ValetPage.jsx";
 import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
+import Comments from "./common/Comments/CommentSection.jsx";
 function AppRoutes() {
   return (
     <Router>
@@ -48,6 +49,7 @@ function AppRoutes() {
           <Route path="SearchArticle" element={<ArticleSearch />} />
           <Route path="ValetPage" element={<ValetPage />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
+          <Route path="Comments" element={<Comments />} />
         </Route>
       </Routes>
     </Router>
