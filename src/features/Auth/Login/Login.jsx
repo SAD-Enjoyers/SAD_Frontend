@@ -106,6 +106,23 @@ function Login() {
         <Typography variant="h4" gutterBottom>
           Login
         </Typography>
+{/* Error Message Box */}
+<Box
+  sx={{
+    backgroundColor: "#fce4e4", // Light red background
+    color: "#d32f2f", // Dark red text
+    padding: "10px 20px",
+    borderRadius: "5px",
+    fontSize: "14px",
+    fontWeight: 500,
+    textAlign: "center",
+    marginBottom: "10px",
+    border: "1px solid #f8b6b6",
+    display: errorMessage ? "block" : "none", // Hide if no error
+  }}
+>
+  {errorMessage}
+</Box>
 
         <TextField
           fullWidth
@@ -166,12 +183,12 @@ function Login() {
         </Typography>
       </Box>
 
-      <Snackbar
+      {/* <Snackbar
         open={Boolean(errorMessage)}
         autoHideDuration={6000}
         onClose={() => setErrorMessage("")}
         message={errorMessage}
-      />
+      /> */}
     </Container>
   );
 }
