@@ -20,6 +20,8 @@ function Login() {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [usernameError, setUsernameError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   const navigate = useNavigate();
 
@@ -36,11 +38,22 @@ function Login() {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleLogin = async () => {
-    // Frontend validation checks
-    if (!username || !password) {
-      setErrorMessage("Username and password are required");
-      return;
-    }
+   // Reset errors
+   setUsernameError(false);
+   setPasswordError(false);
+
+   // Frontend validation checks
+   if (!username) {
+     setUsernameError(true);
+     setErrorMessage("Username is required");
+     return;
+   }
+
+   if (!password) {
+     setPasswordError(true);
+     setErrorMessage("Password is required");
+     return;
+   }
 
     setLoading(true);
 
@@ -64,8 +77,8 @@ function Login() {
       // Handle backend response
       if (response.ok) {
         // Successfully logged in, redirect to home page
-        console;
-        alert("Login successful!");
+        // console;
+        // alert("Login successful!");
         localStorage.setItem("token", responseData.data.token);
         localStorage.setItem("role", responseData.data.role);
         navigate("/");
@@ -131,6 +144,8 @@ function Login() {
           margin="normal"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          error={usernameError}
+          helperText={usernameError ? "Username is required" : ""}
         />
 
         <TextField
@@ -150,6 +165,8 @@ function Login() {
               </InputAdornment>
             ),
           }}
+          error={passwordError}
+          helperText={passwordError ? "Password is required" : ""}
         />
 
         <Typography variant="body2" sx={{ mt: 2, mb: 2 }}>
