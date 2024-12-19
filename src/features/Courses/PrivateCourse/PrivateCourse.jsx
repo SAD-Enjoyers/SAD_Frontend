@@ -77,14 +77,17 @@ const PrivateCourse = () => {
     },
     {
       label: "Enrolled Students",
-      content: enrolledStudents.length ? (
-        <EnrolledStudents
-          students={enrolledStudents}
-          accessToken={accessToken}
-        />
-      ) : (
-        <Box>No students enrolled yet.</Box>
+      content: (
+        <EnrolledStudents courseData={courseData} accessToken={accessToken} />
       ),
+      // content: enrolledStudents.length ? (
+      //   <EnrolledStudents
+      //     students={enrolledStudents}
+      //     accessToken={accessToken}
+      //   />
+      // ) : (
+      //   <Box>No students enrolled yet.</Box>
+      // ),
       icon: <People />,
     },
     {
