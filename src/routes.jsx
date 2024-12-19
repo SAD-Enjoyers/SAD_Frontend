@@ -21,6 +21,7 @@ import AddArticle from "./features/Articles/AddArticle/AddArticle.jsx";
 import ArticleSearch from "./features/Articles/SearchArticle/SearchArticle.jsx";
 import ValetPage from "./features/Valet/ValetPage.jsx";
 import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
+import PrivateCourse from "./features/Courses/PrivateCourse/PrivateCourse.jsx";
 import Comments from "./common/Comments/CommentSection.jsx";
 function AppRoutes() {
   return (
@@ -43,6 +44,7 @@ function AppRoutes() {
           <Route path="image" element={<ImageUpload />} />
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
           <Route path="PrivateExam/:serviceId" element={<PrivateExam />} />
+          <Route path="PrivateCourse" element={<PrivateCourse />} />
           <Route path="PublicExam" element={<PublicExam />} />
           <Route path="AddArticle" element={<AddArticle />} />
           <Route path="OngoingExamPage" element={<OngoingExamPage />} />
