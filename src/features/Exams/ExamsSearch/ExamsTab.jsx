@@ -40,7 +40,61 @@ function ExamsTab() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
 
-  const questions = Mokdata;
+    
+    const fetchExams = async () => {
+      setLoading(true); 
+      try {
+       
+        const params = new URLSearchParams({
+          sort: `${sortOrder.criterion}-${sortOrder.direction}`, 
+          search: searchTerm, 
+          tags: selectedSubjects.join(","), 
+          level: selectedLevel, 
+        });
+  
+        
+        const response = await fetch(`/api/v1/exam?${params}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch exams"); 
+        }
+  
+        
+        const data = await response.json();
+  
+       
+        const transformedExams = data.data.result.map((exam) => ({
+          id: exam.serviceId,
+          name: exam.name,
+          description: exam.description,
+          subjects: [exam.tag1, exam.tag2, exam.tag3].filter(Boolean),
+          level: exam.level,
+          score: exam.score,
+          price: exam.price,
+          numberOfVoters: exam.numberOfVoters,
+          image: exam.image,
+        }));
+  
+        
+        setExams(transformedExams);
+      } catch (error) {
+        console.error("Error fetching exams:", error); 
+      } finally {
+        setLoading(false); 
+      }
+    };
+  
+    
+    useEffect(() => {
+      fetchExams(); 
+    }, [searchTerm, selectedSubjects, selectedLevel, sortOrder]); 
+  
+    
+    const totalPages = Math.ceil(exams.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentExams = exams.slice(
+      startIndex,
+      startIndex + itemsPerPage
+    );
 
   const handleSearch = (event) => setSearchTerm(event.target.value);
 
@@ -106,8 +160,8 @@ function ExamsTab() {
       return 0;
     });
 
-  const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
+  // const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
+  // const startIndex = (currentPage - 1) * itemsPerPage;
   const currentQuestions = filteredQuestions.slice(
     startIndex,
     startIndex + itemsPerPage
