@@ -27,6 +27,7 @@ import {
 } from "@mui/icons-material";
 
 function ExamsTab() {
+  const [exams, setExams] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
