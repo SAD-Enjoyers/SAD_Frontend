@@ -8,6 +8,7 @@ import Layout from "./common/Layout.jsx";
 import MakeExam from "./features/MakeExam/MakeExam.jsx";
 import ExamPreview from "./features/Exams/ExamPreview/ExamPreview.jsx";
 import PublicExam from "./features/Exams/PublicExam/PublicExam.jsx";
+import ExamResult from "./features/Exams/PublicExam/ExamResult.jsx";
 import QuestionSearch from "./features/Questions/QuestionsSearch/QuestionsTab.jsx";
 import ExamSearch from "./features/Exams/ExamsSearch/ExamsTab.jsx";
 import PrivateExam from "./features/Exams/PrivateExam/PrivateExam.jsx";
@@ -46,6 +47,7 @@ function AppRoutes() {
           <Route path="PrivateExam/:serviceId" element={<PrivateExam />} />
           <Route path="PrivateCourse" element={<PrivateCourse />} />
           <Route path="PublicExam" element={<PublicExam />} />
+          <Route path="ExamResult" element={<ExamResult />} />
           <Route path="AddArticle" element={<AddArticle />} />
           <Route path="OngoingExamPage" element={<OngoingExamPage />} />
           <Route path="SearchArticle" element={<ArticleSearch />} />

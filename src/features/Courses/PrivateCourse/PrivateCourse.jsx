@@ -68,13 +68,13 @@ const PrivateCourse = () => {
       ),
       icon: <VideoLibrary />,
     },
-    {
-      label: "Course Settings",
-      content: (
-        <CourseSettings courseData={courseData} accessToken={accessToken} />
-      ),
-      icon: <Settings />,
-    },
+    // {
+    //   label: "Course Settings",
+    //   content: (
+    //     <CourseSettings courseData={courseData} accessToken={accessToken} />
+    //   ),
+    //   icon: <Settings />,
+    // },
     {
       label: "Enrolled Students",
       content: enrolledStudents.length ? (

@@ -1,86 +1,75 @@
 import React, { useState } from "react";
 import {
   Box,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
   Typography,
+  IconButton,
   Button,
+  Modal,
+  TextField,
+  Divider,
+  FormControl,
   List,
   ListItem,
   ListItemText,
-  IconButton,
-  Card,
-  CardContent,
-  CardMedia,
-  Divider,
 } from "@mui/material";
-import { Delete, CloudUpload } from "@mui/icons-material";
+import { PlayArrow, Delete, Edit } from "@mui/icons-material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-// Mock Data
 const mockVideos = [
   {
-    video_id: "1",
-    sort_number: 1,
+    id: 1,
     title: "Introduction to React",
-    video_address: "https://www.w3schools.com/html/mov_bbb.mp4", // Placeholder video URL
+    description: "Learn the basics of React in this introductory course.",
+    thumbnail: "https://via.placeholder.com/150",
+    url: "https://example.com/video1",
+    sortNumber: 1,
   },
   {
-    video_id: "2",
-    sort_number: 2,
-    title: "JavaScript ES6 Features",
-    video_address: "https://www.w3schools.com/html/movie.mp4", // Placeholder video URL
+    id: 2,
+    title: "Advanced React Patterns",
+    description: "Master advanced React patterns and state management.",
+    thumbnail: "https://via.placeholder.com/150",
+    url: "https://example.com/video2",
+    sortNumber: 2,
   },
   {
-    video_id: "3",
-    sort_number: 3,
-    title: "Building REST APIs with Node.js",
-    video_address: "https://www.w3schools.com/html/mov_bbb.mp4", // Placeholder video URL
+    id: 3,
+    title: "React Hooks Deep Dive",
+    description: "Understand React Hooks with practical examples.",
+    thumbnail: "https://via.placeholder.com/150",
+    url: "https://example.com/video3",
+    sortNumber: 3,
   },
   {
-    video_id: "4",
-    sort_number: 4,
-    title: "CSS Flexbox Layout",
-    video_address: "https://www.w3schools.com/html/movie.mp4", // Placeholder video URL
-  },
-  {
-    video_id: "5",
-    sort_number: 5,
-    title: "Version Control with Git and GitHub",
-    video_address: "https://www.w3schools.com/html/mov_bbb.mp4", // Placeholder video URL
-  },
-  {
-    video_id: "6",
-    sort_number: 6,
-    title: "Database Design with MySQL",
-    video_address: "https://www.w3schools.com/html/movie.mp4", // Placeholder video URL
-  },
-  {
-    video_id: "7",
-    sort_number: 7,
-    title: "TypeScript: A Supercharged JavaScript",
-    video_address: "https://www.w3schools.com/html/mov_bbb.mp4", // Placeholder video URL
-  },
-  {
-    video_id: "8",
-    sort_number: 8,
-    title: "Responsive Web Design with CSS Grid",
-    video_address: "https://www.w3schools.com/html/movie.mp4", // Placeholder video URL
-  },
-  {
-    video_id: "9",
-    sort_number: 9,
-    title: "Real-Time Applications with WebSockets",
-    video_address: "https://www.w3schools.com/html/mov_bbb.mp4", // Placeholder video URL
-  },
-  {
-    video_id: "10",
-    sort_number: 10,
-    title: "Introduction to Firebase for Backend Development",
-    video_address: "https://www.w3schools.com/html/movie.mp4", // Placeholder video URL
+    id: 4,
+    title: "React and TypeScript",
+    description: "Build robust React apps using TypeScript.",
+    thumbnail: "https://via.placeholder.com/150",
+    url: "https://example.com/video4",
+    sortNumber: 4,
   },
 ];
 
 const CourseContent = () => {
   const [videos, setVideos] = useState(mockVideos);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingVideo, setEditingVideo] = useState(null);
+
+  const handlePlayVideo = (videoUrl) => {
+    window.open(videoUrl, "_blank"); // Open video in a new tab or modal
+  };
+
+  const handleDelete = (videoId) => {
+    setVideos(videos.filter((video) => video.id !== videoId));
+  };
+
+  const handleUpload = () => {
+    console.log("Upload a new video");
+  };
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
@@ -89,129 +78,220 @@ const CourseContent = () => {
     const [movedVideo] = reorderedVideos.splice(result.source.index, 1);
     reorderedVideos.splice(result.destination.index, 0, movedVideo);
 
-    const updatedVideos = reorderedVideos.map((video, index) => ({
-      ...video,
-      sort_number: index + 1,
-    }));
+    // Update sort numbers
+    reorderedVideos.forEach((video, index) => {
+      video.sortNumber = index + 1;
+    });
+
+    setVideos(reorderedVideos);
+  };
+
+  const handleEdit = (video) => {
+    setEditingVideo(video);
+    setIsModalOpen(true);
+  };
+
+  const handleSave = () => {
+    const updatedVideos = videos.map((video) =>
+      video.id === editingVideo.id ? editingVideo : video
+    );
     setVideos(updatedVideos);
-  };
-
-  const handleDelete = (video_id) => {
-    setVideos(videos.filter((video) => video.video_id !== video_id));
-  };
-
-  const handleUpload = () => {
-    const newVideo = {
-      video_id: `${videos.length + 1}`,
-      sort_number: videos.length + 1,
-      title: `New Video ${videos.length + 1}`,
-      video_address: "https://www.example.com/new-video.mp4", // Replace with actual upload logic
-    };
-    setVideos([...videos, newVideo]);
+    setIsModalOpen(false);
+    setEditingVideo(null);
   };
 
   return (
-    <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Course Content
+    <Box>
+      <Typography variant="h6" gutterBottom>
+        Course Videos
       </Typography>
-
-      {/* Button aligned to the right for large screens, centered for small screens */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: { xs: "center", md: "flex-end" }, // Center for small screens, right for larger ones
-          mb: 3,
-        }}
-      >
-        <Button
-          variant="contained"
-          startIcon={<CloudUpload />}
-          onClick={handleUpload}
-          sx={{
-            bgcolor: "#378CE7",
-            "&:hover": { bgcolor: "#67C6E3" },
-          }}
-        >
-          Upload New Video
-        </Button>
-      </Box>
-
-      {/* Drag and Drop Videos List */}
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="videos">
           {(provided) => (
-            <List
+            <Grid
+              container
+              spacing={3}
               {...provided.droppableProps}
               ref={provided.innerRef}
-              sx={{ padding: 0 }}
             >
               {videos.map((video, index) => (
                 <Draggable
-                  key={video.video_id}
-                  draggableId={video.video_id}
+                  key={video.id}
+                  draggableId={String(video.id)}
                   index={index}
                 >
                   {(provided) => (
-                    <ListItem
+                    <Grid
+                      item
+                      xs={12}
+                      sm={6}
+                      md={4}
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      sx={{
-                        mb: 2,
-                        "&:hover": {
-                          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                        },
-                        flexDirection: { xs: "column", md: "row" }, // Stack items vertically on small screens
-                        justifyContent: "space-between", // Aligns content on larger screens
-                      }}
                     >
-                      <Card
-                        sx={{ width: "100%", boxShadow: 2, borderRadius: 2 }}
-                      >
+                      <Card>
                         <CardMedia
-                          component="video"
-                          controls
-                          src={video.video_address}
-                          sx={{
-                            height: { xs: 150, md: 200 }, // Adjust video size based on screen size
-                            borderTopLeftRadius: 2,
-                            borderTopRightRadius: 2,
-                          }}
+                          component="img"
+                          height="140"
+                          image={video.thumbnail}
+                          alt={video.title}
+                          sx={{ cursor: "pointer" }}
+                          onClick={() => handlePlayVideo(video.url)}
                         />
                         <CardContent>
-                          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                            {`${video.sort_number}. ${video.title}`}
+                          <Typography
+                            variant="subtitle1"
+                            component="div"
+                            sx={{ cursor: "pointer" }}
+                            onClick={() => handlePlayVideo(video.url)}
+                          >
+                            {video.title}
                           </Typography>
-                          <ListItemText
-                            secondary={video.video_address}
-                            sx={{ color: "text.secondary" }}
-                          />
+                          <Typography variant="body2" color="text.secondary">
+                            {video.description}
+                          </Typography>
                           <Box
-                            sx={{ display: "flex", justifyContent: "flex-end" }}
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              mt: 1,
+                            }}
                           >
                             <IconButton
-                              edge="end"
+                              aria-label="play"
+                              color="primary"
+                              onClick={() => handlePlayVideo(video.url)}
+                            >
+                              <PlayArrow />
+                            </IconButton>
+                            <IconButton
+                              aria-label="edit"
+                              color="info"
+                              onClick={() => handleEdit(video)}
+                            >
+                              <Edit />
+                            </IconButton>
+                            <IconButton
+                              aria-label="delete"
                               color="error"
-                              onClick={() => handleDelete(video.video_id)}
-                              sx={{
-                                "&:hover": { bgcolor: "rgba(255, 0, 0, 0.1)" },
-                              }}
+                              onClick={() => handleDelete(video.id)}
                             >
                               <Delete />
                             </IconButton>
                           </Box>
                         </CardContent>
                       </Card>
-                    </ListItem>
+                    </Grid>
                   )}
                 </Draggable>
               ))}
               {provided.placeholder}
-            </List>
+            </Grid>
           )}
         </Droppable>
       </DragDropContext>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleUpload}
+        sx={{ mt: 3 }}
+      >
+        Upload New Video
+      </Button>
+
+      {/* Edit Modal */}
+      <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 450,
+            bgcolor: "background.paper",
+            p: 4,
+            borderRadius: 2,
+            boxShadow: 3,
+          }}
+        >
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{ fontWeight: 600, color: "#5356FF" }}
+          >
+            Edit Video
+          </Typography>
+          <Divider sx={{ mb: 3, borderColor: "#DFF5FF" }} />
+          <FormControl fullWidth margin="normal">
+            <TextField
+              label="Title"
+              value={editingVideo?.title || ""}
+              onChange={(e) =>
+                setEditingVideo({ ...editingVideo, title: e.target.value })
+              }
+              fullWidth
+              variant="outlined"
+              required
+              error={!editingVideo?.title}
+              helperText={!editingVideo?.title ? "Title is required" : ""}
+              sx={{
+                mb: 3,
+                "& .MuiInputLabel-root": { color: "#378CE7" },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": { borderColor: "#67C6E3" },
+                  "&:hover fieldset": { borderColor: "#5356FF" },
+                },
+              }}
+            />
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <TextField
+              label="Description"
+              value={editingVideo?.description || ""}
+              onChange={(e) =>
+                setEditingVideo({
+                  ...editingVideo,
+                  description: e.target.value,
+                })
+              }
+              fullWidth
+              variant="outlined"
+              required
+              error={!editingVideo?.description}
+              helperText={
+                !editingVideo?.description ? "Description is required" : ""
+              }
+              multiline
+              rows={4}
+              sx={{
+                mb: 3,
+                "& .MuiInputLabel-root": { color: "#378CE7" },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": { borderColor: "#67C6E3" },
+                  "&:hover fieldset": { borderColor: "#5356FF" },
+                },
+              }}
+            />
+          </FormControl>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            fullWidth
+            sx={{
+              mt: 3,
+              padding: "12px 0",
+              backgroundColor: "#378CE7",
+              "&:hover": { backgroundColor: "#67C6E3" },
+              fontWeight: "bold",
+              boxShadow: 2,
+            }}
+          >
+            Save Changes
+          </Button>
+        </Box>
+      </Modal>
     </Box>
   );
 };
