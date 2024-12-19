@@ -237,7 +237,7 @@ function ExamsTab() {
                   <School sx={{ fontSize: "1.2rem", color: "#FF9800" }} />
                 </ListItemIcon>
                 <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
-                  Intermediate
+                Medium
                 </Typography>
               </MenuItem>
               <MenuItem value="advanced">
