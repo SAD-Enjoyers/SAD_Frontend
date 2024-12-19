@@ -13,6 +13,8 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,8 +43,17 @@ function Login() {
    // Reset errors
    setUsernameError(false);
    setPasswordError(false);
+  //  setErrorMessage("");
 
    // Frontend validation checks
+   if (!username && !password) {
+    setUsernameError(true);
+    setPasswordError(true);
+    setErrorMessage("Both fields are required.");
+    return;
+  }
+
+
    if (!username) {
      setUsernameError(true);
      setErrorMessage("Username is required");
@@ -74,6 +85,16 @@ function Login() {
 
       const responseData = await response.json();
 
+     
+      // Map of error messages
+      const errorMessages = {
+        "Invalid username or password":
+          "The username or password you entered is incorrect.",
+        "User not found": "No account found with this username.",
+        "Account locked": "Your account is locked. Please contact support.",
+      };
+
+
       // Handle backend response
       if (response.ok) {
         // Successfully logged in, redirect to home page
@@ -81,7 +102,8 @@ function Login() {
         // alert("Login successful!");
         localStorage.setItem("token", responseData.data.token);
         localStorage.setItem("role", responseData.data.role);
-        navigate("/");
+        toast.success("Login successful! Redirecting to homepage...");
+        setTimeout(() => navigate("/"), 2000); // Redirect after 2 seconds
       } else {
         setErrorMessage(
           responseData.message || "Login failed. Please try again."
@@ -199,13 +221,7 @@ function Login() {
           </Link>
         </Typography>
       </Box>
-
-      {/* <Snackbar
-        open={Boolean(errorMessage)}
-        autoHideDuration={6000}
-        onClose={() => setErrorMessage("")}
-        message={errorMessage}
-      /> */}
+      <ToastContainer position="top-center" autoClose={5000} hideProgressBar closeOnClick pauseOnFocusLoss draggable pauseOnHover />
     </Container>
   );
 }
