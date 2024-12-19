@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import {
   Box,
   TextField,
@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
-import Mokdata from "./examData.json";
 import { motion } from "framer-motion";
 import {
   School,
