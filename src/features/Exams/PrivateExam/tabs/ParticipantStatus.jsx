@@ -20,65 +20,8 @@ import {
   HourglassEmpty as HourglassEmptyIcon,
 } from "@mui/icons-material";
 
-// Mock participants data
-const participants = [
-  {
-    name: "John Doe",
-    score: 90,
-    grade: "A",
-    answeredRight: 45,
-    answeredWrong: 5,
-    notAnswered: 0,
-    image: "",
-  },
-  {
-    name: "Jane Smith",
-    score: 85,
-    grade: "B",
-    answeredRight: 40,
-    answeredWrong: 10,
-    notAnswered: 0,
-    image: "",
-  },
-  {
-    name: "Tom Brown",
-    score: 75,
-    grade: "C",
-    answeredRight: 30,
-    answeredWrong: 15,
-    notAnswered: 0,
-    image: "",
-  },
-  {
-    name: "Emily White",
-    score: 88,
-    grade: "B",
-    answeredRight: 44,
-    answeredWrong: 6,
-    notAnswered: 0,
-    image: "",
-  },
-  {
-    name: "Michael Lee",
-    score: 95,
-    grade: "A",
-    answeredRight: 48,
-    answeredWrong: 2,
-    notAnswered: 0,
-    image: "",
-  },
-  {
-    name: "Sarah Johnson",
-    score: 92,
-    grade: "A",
-    answeredRight: 47,
-    answeredWrong: 3,
-    notAnswered: 0,
-    image: "",
-  },
-];
-
-const ParticipantStatus = () => {
+const ParticipantStatus = ({ examData, accessToken }) => {
+  const [participants, setParticipants] = useState([]);
   const [filteredParticipants, setFilteredParticipants] = useState([]);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("score");
@@ -87,11 +30,40 @@ const ParticipantStatus = () => {
   const itemsPerPage = 6;
 
   useEffect(() => {
-    // Simulate loading state
-    setTimeout(() => {
-      setFilteredParticipants(participants);
-      setLoading(false);
-    }, 1000);
+    const fetchParticipants = async () => {
+      try {
+        const response = await fetch(
+          `/api/v1/exam/participants/${examData.serviceId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const data = await response.json();
+        if (data.status === "success") {
+          const formattedParticipants = data.data.map((p) => ({
+            id: p.userId,
+            name: p.firstName,
+            image: p.image || "/placeholder.jpg",
+            score: p.examResult?.examScore || 0,
+            grade: p.examResult?.passed || "N/A",
+            answeredRight: p.examResult?.rightAnswers || 0,
+            answeredWrong: p.examResult?.wrongAnswers || 0,
+            notAnswered: p.examResult?.emptyAnswers || 0,
+          }));
+          setParticipants(formattedParticipants);
+          setFilteredParticipants(formattedParticipants);
+        }
+      } catch (error) {
+        console.error("Error fetching participants:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchParticipants();
   }, []);
 
   useEffect(() => {
@@ -104,7 +76,7 @@ const ParticipantStatus = () => {
       result.sort((a, b) => a.name.localeCompare(b.name));
     }
     setFilteredParticipants(result);
-  }, [search, sortBy]);
+  }, [search, sortBy, participants]);
 
   const handlePagination = (event, value) => setCurrentPage(value);
 
@@ -173,8 +145,8 @@ const ParticipantStatus = () => {
       </Box>
 
       <Grid container spacing={4}>
-        {paginatedParticipants.map((participant, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
+        {paginatedParticipants.map((participant) => (
+          <Grid item xs={12} sm={6} md={4} key={participant.id}>
             <Card
               sx={{
                 display: "flex",

@@ -69,13 +69,8 @@ const PrivateExam = () => {
     },
     {
       label: "Participant Status",
-      content: participants.length ? (
-        <ParticipantStatus
-          participants={participants}
-          accessToken={accessToken}
-        />
-      ) : (
-        <Box>No participants yet.</Box>
+      content: (
+        <ParticipantStatus examData={examData} accessToken={accessToken} />
       ),
       icon: <People />,
     },

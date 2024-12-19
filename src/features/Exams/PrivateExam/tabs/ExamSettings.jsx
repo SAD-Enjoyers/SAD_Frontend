@@ -33,7 +33,8 @@ const ExamSettings = ({ examData, accessToken }) => {
   const [newImage, setNewImage] = useState(null); // New image file
   const [isUploading, setIsUploading] = useState(false); // Uploading state
   const [uploadedImage, setUploadedImage] = useState(examData.image); // Updated image state
-
+  accessToken =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InRlc3QyIiwiaWF0IjoxNzM0NjI4MDY2LCJleHAiOjE3MzQ2MzUyNjZ9.f0qG3hD_v3GDZFXFTlhihX1LtV202hsB3X-B0b5QaK8";
   // Editable exam data states
   const [description, setDescription] = useState(examData.description);
   const [level, setLevel] = useState(examData.level);
@@ -95,6 +96,7 @@ const ExamSettings = ({ examData, accessToken }) => {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",
+            "x-role": localStorage.getItem("role"),
           },
         }
       );
@@ -107,7 +109,8 @@ const ExamSettings = ({ examData, accessToken }) => {
 
       // Extract and prepare the updated parameters
       const updatedExamData = {
-        serviceId: examData.serviceId,
+        serviceId: parseFloat(examData.serviceId),
+        name: examData.name,
         description,
         level,
         price: parseFloat(price), // Ensure price is a number
@@ -121,10 +124,11 @@ const ExamSettings = ({ examData, accessToken }) => {
 
       console.log("updatedExamData:", JSON.stringify(updatedExamData, null, 2));
       // Send updated exam data to the backend
-      await axios.post("/api/v1/exam/edit-exam", updatedExamData, {
+      await axios.put("/api/v1/exam/edit-exam", updatedExamData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
+          "x-role": localStorage.getItem("role"),
         },
       });
 
@@ -150,6 +154,7 @@ const ExamSettings = ({ examData, accessToken }) => {
 
       const updatedExamData = {
         serviceId: examData.serviceId,
+        name: examData.name,
         description,
         level,
         price: parseFloat(price),
@@ -163,10 +168,11 @@ const ExamSettings = ({ examData, accessToken }) => {
 
       console.log("updatedExamData:", JSON.stringify(updatedExamData, null, 2));
 
-      await axios.post("/api/v1/exam/edit-exam", updatedExamData, {
+      await axios.put("/api/v1/exam/edit-exam", updatedExamData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
+          "x-role": localStorage.getItem("role"),
         },
       });
 
