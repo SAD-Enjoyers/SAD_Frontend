@@ -151,6 +151,13 @@ const CourseContent = () => {
                           <Typography variant="body2" color="text.secondary">
                             {video.description}
                           </Typography>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ mt: 1 }}
+                          >
+                            Order: {video.sortNumber}
+                          </Typography>
                           <Box
                             sx={{
                               display: "flex",
