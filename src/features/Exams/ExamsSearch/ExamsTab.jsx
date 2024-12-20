@@ -40,34 +40,43 @@ function ExamsTab() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
 
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch("/api/v1/common/categories");
-      if (!response.ok) {
-        throw new Error("Failed to fetch categories");
-      }
-      const data = await response.json();
-      setCategories(data.data.categoryList || []);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
-
+  // const fetchCategories = async () => {
+  //   try {
+  //     const response = await fetch("/api/v1/common/categories");
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch categories");
+  //     }
+  //     const data = await response.json();
+  //     setCategories(data.data.categoryList || []);
+  //   } catch (error) {
+  //     console.error("Error fetching categories:", error);
+  //   }
+  // };
+  useEffect(() => {
   const fetchExams = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/v1/exams");
+      // Build Query Parameters
+      // const params = new URLSearchParams();
+      // if (searchTerm) params.append("search", searchTerm);
+      // if (selectedSubjects.length > 0) params.append("tags", selectedSubjects.join(","));
+      // if (selectedLevel) params.append("level", selectedLevel);
+      // if (sortOrder.criterion) params.append("sort", `${sortOrder.criterion}-${sortOrder.direction}`);
+      
+      const response = await fetch(`/api/v1/exam?${params.toString()}`, {
+        method: "GET", // Explicitly set the method
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch exams");
       }
       const data = await response.json();
       const transformedExams = data.data.result.map((exam) => ({
-        id: exam.examId,
-        name: exam.examName,
+        id: exam.serviceId, // Adjust according to your API response
+        name: exam.name,
         description: exam.examDescription,
         subjects: [exam.tag1, exam.tag2, exam.tag3].filter(Boolean),
         score: exam.score,
-        writer: exam.creatorName,
+        writer: exam.userId, 
         numberOfVoters: exam.numberOfVoters,
       }));
 
@@ -79,17 +88,17 @@ function ExamsTab() {
     }
   };
 
-  useEffect(() => {
-    fetchCategories();
+ 
+    // fetchCategories();
     fetchExams();
-  }, []);
+  }, [searchTerm, selectedSubjects, selectedLevel, sortOrder]);
 
   const handleSearch = (event) => setSearchTerm(event.target.value);
 
-  // const handleSearchSubmit = () => {
-  //   setLoading(true);
-  //   setTimeout(() => setLoading(false), 1500);
-  // }; //
+  const handleSearchSubmit = () => {
+    setLoading(true);
+    setTimeout(() => setLoading(false), 1500);
+  }; //
 
   const handleSubjectChange = (event) => {
     const selected = event.target.value;
@@ -169,8 +178,9 @@ function ExamsTab() {
             variant="outlined"
             placeholder="Search exams..."
             value={searchTerm}
-            onChange={(event) => event.key === "Enter" && handleSearchSubmit()}
-            onKeyDown={handleKeyPress}
+            onChange={handleSearch}
+            onKeyDown={(event) => event.key === "Enter" && handleSearchSubmit()}
+            // onKeyDown={handleKeyPress}
             fullWidth
             InputProps={{
               endAdornment: (
@@ -221,14 +231,63 @@ function ExamsTab() {
               renderValue={(selected) => selected.join(", ")}
             >
               {categories.map((category) => (
-                <MenuItem key={category.id} value={category.name}>
-                  <FilterList sx={{ marginRight: "8px" }} /> {category.name}
+                <MenuItem key={category.id} value={category.category}>
+                 
+                 <Checkbox
+                    checked={selectedSubjects.includes(category.category)}
+                    sx={{
+                      color: "#378CE7",
+                      "&.Mui-checked": {
+                        color: "#378CE7",
+                      },
+                    }}
+                  />
+                  <ListItemText primary={category.category} />
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
         </Grid>
-
+        {/* Sort By Filter */}
+        <Grid item xs={12} sm={4}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Sort By</InputLabel>
+            <Select
+              value={`${sortOrder.criterion}-${sortOrder.direction}`}
+              onChange={handleSortChange}
+              label="Sort By"
+              sx={{
+                backgroundColor: "#f5f5f5", // Light background for Select box
+                borderRadius: "8px",
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#ddd", // Lighter border color
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#4A90E2", // Hover effect with blue border
+                },
+              }}
+            >
+              <MenuItem value="score-asc">
+                <Sort sx={{ marginRight: "8px" }} /> Score (Low to High)
+              </MenuItem>
+              <MenuItem value="score-desc">
+                <Sort sx={{ marginRight: "8px" }} /> Score (High to Low)
+              </MenuItem>
+              <MenuItem value="name-asc">
+                <SortByAlpha sx={{ marginRight: "8px" }} /> Name (A to Z)
+              </MenuItem>
+              <MenuItem value="name-desc">
+                <SortByAlpha sx={{ marginRight: "8px" }} /> Name (Z to A)
+              </MenuItem>
+              <MenuItem value="voters-asc">
+                <Sort sx={{ marginRight: "8px" }} /> Voters (Low to High)
+              </MenuItem>
+              <MenuItem value="voters-desc">
+                <Sort sx={{ marginRight: "8px" }} /> Voters (High to Low)
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
         {/* Filter by Level */}
         <Grid item xs={12} sm={4}>
           <FormControl fullWidth variant="outlined">
@@ -309,12 +368,20 @@ function ExamsTab() {
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
               label="Items Per Page"
+              sx={{
+                backgroundColor: "#f5f5f5", // Light background for Select box
+                borderRadius: "8px",
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#ddd", // Lighter border color
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#4A90E2", // Hover effect with blue border
+                },
+              }}
             >
-              <MenuItem value={6}>6</MenuItem>
-              <MenuItem value={9}>9</MenuItem>
               <MenuItem value={12}>12</MenuItem>
-              <MenuItem value={15}>15</MenuItem>
-              <MenuItem value={30}>30</MenuItem>
+              <MenuItem value={24}>24</MenuItem>
+              <MenuItem value={36}>36</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -422,8 +489,22 @@ function ExamsTab() {
                     "& .MuiRating-iconFilled": { color: "#ffcc00" },
                   }}
                 />
+             {/* Display number of voters */}
+             <Typography
+                  variant="body2"
+                  sx={{
+                    color: "#6c757d",
+                    fontWeight: "bold",
+                    fontSize: "0.9rem",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <PeopleIcon sx={{ marginRight: "5px", fontSize: "1rem" }} />
+                  {exam.numberOfVoters} Voters
+                </Typography>
 
-                {/* Level Icon */}
+                {/* Level Icon
                 <Box
                   sx={{
                     display: "flex",
@@ -453,7 +534,7 @@ function ExamsTab() {
                         exam.level.slice(1)
                       : "Not Specified"}
                   </Typography>
-                </Box>
+                </Box> */}
 
                 {/* Writer Name with Motion Effects */}
                 <motion.div
