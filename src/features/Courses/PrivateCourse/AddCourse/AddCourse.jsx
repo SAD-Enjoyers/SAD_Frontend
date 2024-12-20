@@ -132,4 +132,12 @@ import {
       </form>
     </Container>
   );
+  const handleCategoryChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedCategories(
+      typeof value === "string" ? value.split(",") : value
+    );
+  };
   
