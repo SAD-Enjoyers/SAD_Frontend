@@ -55,38 +55,24 @@ function ExamsTab() {
   };
 
 
-    const fetchExams = async () => {
-      setLoading(true); 
-      try {
-       
-        const params = new URLSearchParams({
-          sort: `${sortOrder.criterion}-${sortOrder.direction}`, 
-          search: searchTerm, 
-          tags: selectedSubjects.join(","), 
-          level: selectedLevel, 
-        });
-  
-        
-        const response = await fetch(`/api/v1/exam?${params}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch exams"); 
-        }
-  
-        
-        const data = await response.json();
-  
-       
-        const transformedExams = data.data.result.map((exam) => ({
-          id: exam.serviceId,
-          name: exam.name,
-          description: exam.description,
-          subjects: [exam.tag1, exam.tag2, exam.tag3].filter(Boolean),
-          level: exam.level,
-          score: exam.score,
-          price: exam.price,
-          numberOfVoters: exam.numberOfVoters,
-          image: exam.image,
-        }));
+  // تابع برای دریافت امتحانات
+  const fetchExams = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/v1/exams"); // تغییر API به exams
+      if (!response.ok) {
+        throw new Error("Failed to fetch exams");
+      }
+      const data = await response.json();
+      const transformedExams = data.data.result.map((exam) => ({
+        id: exam.examId, // تغییر به examId
+        name: exam.examName, // تغییر به examName
+        description: exam.examDescription, // توصیف امتحان
+        subjects: [exam.tag1, exam.tag2, exam.tag3].filter(Boolean),
+        score: exam.score,
+        writer: exam.creatorName, // نام نویسنده یا خالق امتحان
+        numberOfVoters: exam.numberOfVoters,
+      }));
   
         
         setExams(transformedExams);
