@@ -31,16 +31,30 @@ function ExamsTab() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
+  const [categories, setCategories] = useState([]); // Categories for filter
   const [selectedLevel, setSelectedLevel] = useState("");
-
   const [sortOrder, setSortOrder] = useState({
+
     criterion: "",
     direction: "asc",
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
 
-    
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("/api/v1/common/categories");
+      if (!response.ok) {
+        throw new Error("Failed to fetch categories");
+      }
+      const data = await response.json();
+      setCategories(data.data.categoryList || []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+
     const fetchExams = async () => {
       setLoading(true); 
       try {
@@ -126,46 +140,46 @@ function ExamsTab() {
     setCurrentPage(1);
   };
 
-  const filteredQuestions = questions
-    .filter((question) => {
-      const matchesSearchTerm = question.name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-      const matchesSubjects =
-        selectedSubjects.length === 0 ||
-        selectedSubjects.every((subject) =>
-          question.subjects.includes(subject)
-        );
-      const matchesLevel = selectedLevel
-        ? question.level === selectedLevel
-        : true;
+  // const filteredQuestions = questions
+  //   .filter((question) => {
+  //     const matchesSearchTerm = question.name
+  //       .toLowerCase()
+  //       .includes(searchTerm.toLowerCase());
+  //     const matchesSubjects =
+  //       selectedSubjects.length === 0 ||
+  //       selectedSubjects.every((subject) =>
+  //         question.subjects.includes(subject)
+  //       );
+  //     const matchesLevel = selectedLevel
+  //       ? question.level === selectedLevel
+  //       : true;
 
-      return matchesSearchTerm && matchesSubjects && matchesLevel;
-    })
-    .sort((a, b) => {
-      const { criterion, direction } = sortOrder;
-      if (criterion === "score") {
-        return direction === "asc" ? a.score - b.score : b.score - a.score;
-      }
-      if (criterion === "name") {
-        return direction === "asc"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
-      }
-      if (criterion === "writer") {
-        return direction === "asc"
-          ? a.writer.localeCompare(b.writer)
-          : b.writer.localeCompare(a.writer);
-      }
-      return 0;
-    });
+  //     return matchesSearchTerm && matchesSubjects && matchesLevel;
+  //   })
+  //   .sort((a, b) => {
+  //     const { criterion, direction } = sortOrder;
+  //     if (criterion === "score") {
+  //       return direction === "asc" ? a.score - b.score : b.score - a.score;
+  //     }
+  //     if (criterion === "name") {
+  //       return direction === "asc"
+  //         ? a.name.localeCompare(b.name)
+  //         : b.name.localeCompare(a.name);
+  //     }
+  //     if (criterion === "writer") {
+  //       return direction === "asc"
+  //         ? a.writer.localeCompare(b.writer)
+  //         : b.writer.localeCompare(a.writer);
+  //     }
+  //     return 0;
+  //   });
 
   // const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
   // const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentQuestions = filteredQuestions.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  // const currentQuestions = filteredQuestions.slice(
+  //   startIndex,
+  //   startIndex + itemsPerPage
+  // );
 
   return (
     <Box
