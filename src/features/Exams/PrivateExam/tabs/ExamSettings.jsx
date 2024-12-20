@@ -33,7 +33,7 @@ const ExamSettings = ({ examData, accessToken }) => {
   const [name, setName] = useState(examData.name); // New state for the exam name
   const [newImage, setNewImage] = useState(null); // New image file
   const [isUploading, setIsUploading] = useState(false); // Uploading state
-  const [uploadedImage, setUploadedImage] = useState(examData.fileName); // Updated image state
+  const [uploadedImage, setUploadedImage] = useState(examData.image); // Updated image state
   // Editable exam data states
   const [description, setDescription] = useState(examData.description);
   const [level, setLevel] = useState(examData.level);
@@ -115,7 +115,7 @@ const ExamSettings = ({ examData, accessToken }) => {
         level,
         price: parseFloat(price), // Ensure price is a number
         activityStatus,
-        fileName: newImageName,
+        image: newImageName,
         tag1,
         tag2,
         tag3,
@@ -160,13 +160,13 @@ const ExamSettings = ({ examData, accessToken }) => {
         price: parseFloat(price),
         activityStatus,
         // image:examData.image;
-        fileName: examData.fileName,
+        image: examData.image,
         tag1: updatedTags[0],
         tag2: updatedTags[1],
         tag3: updatedTags[2],
         examDuration: parseFloat(examDuration),
       };
-      console.log(examData.fileName);
+      console.log(examData.image);
 
       console.log("updatedExamData:", JSON.stringify(updatedExamData, null, 2));
 
@@ -231,9 +231,9 @@ const ExamSettings = ({ examData, accessToken }) => {
           >
             <ImageIcon sx={{ marginRight: 1 }} /> Current Image:
           </Typography>
-          {examData.fileName ? (
+          {examData.image ? (
             <Avatar
-              src={`/api/v1/uploads/service-images/${examData.fileName}`}
+              src={`/api/v1/uploads/service-images/${examData.image}`}
               alt="Exam Image"
               sx={{ width: 200, height: 200, marginBottom: 2, boxShadow: 3 }}
             />
