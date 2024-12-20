@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState,useEffectوuseMemo } from "react";
 import {
   Box,
   TextField,
@@ -95,7 +95,7 @@ function ExamsTab() {
   const handleSearchSubmit = () => {
     setLoading(true);
     setTimeout(() => setLoading(false), 1500);
-  };
+  };//
 
 
   const handleSubjectChange = (event) => {
@@ -231,24 +231,7 @@ function ExamsTab() {
               label="Subjects"
               renderValue={(selected) => selected.join(", ")}
             >
-              <MenuItem value="JavaScript">
-                <FilterList sx={{ marginRight: "8px" }} /> JavaScript
-              </MenuItem>
-              <MenuItem value="Frontend">
-                <FilterList sx={{ marginRight: "8px" }} /> Frontend
-              </MenuItem>
-              <MenuItem value="Backend">
-                <FilterList sx={{ marginRight: "8px" }} /> Backend
-              </MenuItem>
-              <MenuItem value="AI">
-                <FilterList sx={{ marginRight: "8px" }} /> AI
-              </MenuItem>
-              <MenuItem value="Data Science">
-                <FilterList sx={{ marginRight: "8px" }} /> Data Science
-              </MenuItem>
-              <MenuItem value="Python">
-                <FilterList sx={{ marginRight: "8px" }} /> Python
-              </MenuItem>
+     
             </Select>
           </FormControl>
         </Grid>
