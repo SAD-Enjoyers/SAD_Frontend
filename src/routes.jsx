@@ -24,6 +24,7 @@ import ValetPage from "./features/Valet/ValetPage.jsx";
 import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 import PrivateCourse from "./features/Courses/PrivateCourse/PrivateCourse.jsx";
 import Comments from "./common/Comments/CommentSection.jsx";
+import AddCourse from "./features/Courses/PrivateCourse/AddCourse/AddCourse.jsx";
 function AppRoutes() {
   return (
     <Router>
@@ -54,6 +55,7 @@ function AppRoutes() {
           <Route path="ValetPage" element={<ValetPage />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
           <Route path="Comments" element={<Comments />} />
+          <Route path=" AddCourse" element={< AddCourse />} />
         </Route>
       </Routes>
     </Router>
