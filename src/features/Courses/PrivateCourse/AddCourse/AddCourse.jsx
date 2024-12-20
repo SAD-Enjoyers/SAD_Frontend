@@ -39,4 +39,40 @@ import {
     const [uploadProgress, setUploadProgress] = useState(0);
     const [errors, setErrors] = useState({});
   }
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+  
+    const newErrors = {};
+    if (!courseName.trim()) newErrors.courseName = "Course name is required.";
+    if (!description.trim()) newErrors.description = "Description is required.";
+    if (!price) {
+      newErrors.price = "Price is required.";
+    } else if (price < 0) {
+      newErrors.price = "Price cannot be negative.";
+    }
+    if (!durationHours || durationHours < 0) {
+      newErrors.duration = "Duration must be a positive value.";
+    }
+    if (!level) newErrors.level = "Level is required.";
+    if (selectedCategories.length === 0)
+      newErrors.categories = "At least one category must be selected.";
+    if (!image) newErrors.image = "Course image is required.";
+    if (!video) newErrors.video = "Course video is required.";
+  
+    setErrors(newErrors);
+  
+    if (Object.keys(newErrors).length === 0) {
+      console.log({
+        courseName,
+        description,
+        price,
+        duration: durationHours,
+        level,
+        selectedCategories,
+        image,
+        video,
+      });
+      alert("Course added successfully!");
+    }
+  };
   
