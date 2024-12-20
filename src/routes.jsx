@@ -5,7 +5,6 @@ import Login from "./features/Auth/Login/Login.jsx";
 import Fpass from "./features/Auth/ForgetPassword/forgotPassword.jsx";
 import PrivateProfile from "./features/PrivateProfile/PrivateProfile.jsx";
 import Layout from "./common/Layout.jsx";
-import MakeExam from "./features/MakeExam/MakeExam.jsx";
 import ExamPreview from "./features/Exams/ExamPreview/ExamPreview.jsx";
 import PublicExam from "./features/Exams/PublicExam/PublicExam.jsx";
 import ExamResult from "./features/Exams/PublicExam/ExamResult.jsx";
@@ -15,13 +14,15 @@ import PrivateExam from "./features/Exams/PrivateExam/PrivateExam.jsx";
 import QuestionBank from "./features/Exams/PrivateExam/tabs/QuestionBank.jsx";
 import ChangePassword from "./features/Auth/ChangePassword/ChangePassword.jsx";
 import QuestionPage from "./features/Exams/QuestionPage/QuestionPage";
-import ImageUpload from "./features/MakeExam/components/ImageUpload.jsx";
 import TermsAndConditions from "./features/Auth/TermsAndConditions/TermsAndConditions.jsx";
 import OngoingExamPage from "./features/Exams/OngoingExamPage/OngoingExamPage.jsx";
 import AddArticle from "./features/Articles/AddArticle/AddArticle.jsx";
 import ArticleSearch from "./features/Articles/SearchArticle/SearchArticle.jsx";
 import ValetPage from "./features/Valet/ValetPage.jsx";
 import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
+import PublicCourse from "./features/Courses/PublicCourse/PublicCourse.jsx";
+import MakeExam from "./features/Exams/MakeExam/MakeExam.jsx";
+import ImageUpload from "./features/Exams/MakeExam/components/ImageUpload.jsx";
 import PrivateCourse from "./features/Courses/PrivateCourse/PrivateCourse.jsx";
 import Comments from "./common/Comments/CommentSection.jsx";
 function AppRoutes() {
@@ -53,6 +54,7 @@ function AppRoutes() {
           <Route path="SearchArticle" element={<ArticleSearch />} />
           <Route path="ValetPage" element={<ValetPage />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
+          <Route path="PublicCourse" element={<PublicCourse />} />
           <Route path="Comments" element={<Comments />} />
         </Route>
       </Routes>
