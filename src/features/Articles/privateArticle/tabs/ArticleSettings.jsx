@@ -17,22 +17,21 @@ import {
   ListItemText,
 } from "@mui/material";
 
-const ExamSettings = ({ examData, accessToken }) => {
+const ArticleSettings = ({ articleData, accessToken }) => {
   const [newImage, setNewImage] = useState(null); // New image file
   const [isUploading, setIsUploading] = useState(false); // Uploading state
-  const [uploadedImage, setUploadedImage] = useState(examData?.image || ''); // Updated image state
+  const [uploadedImage, setUploadedImage] = useState(articleData.image); // Updated image state
 
-  // Editable exam data states
-  const [description, setDescription] = useState(examData?.description || '');
-  const [level, setLevel] = useState(examData?.level || '');
-  const [price, setPrice] = useState(examData?.price || '');
+  // Editable article data states
+  const [name, setName] = useState(articleData.name);
+  const [description, setDescription] = useState(articleData.description);
+  const [level, setLevel] = useState(articleData.level);
+  const [price, setPrice] = useState(articleData.price);
   const [activityStatus, setActivityStatus] = useState("Active");
-  const [examDuration, setExamDuration] = useState(35);
 
-  // Editable tags states
-  const [tag1, setTag1] = useState(examData?.tag1 || '');
-  const [tag2, setTag2] = useState(examData?.tag2 || '');
-  const [tag3, setTag3] = useState(examData?.tag3 || '');
+  const [tag1, setTag1] = useState(articleData.tag1);
+  const [tag2, setTag2] = useState(articleData.tag2);
+  const [tag3, setTag3] = useState(articleData.tag3);
 
   // Categories fetched from the API
   const [categories, setCategories] = useState([]);
@@ -51,15 +50,35 @@ const ExamSettings = ({ examData, accessToken }) => {
       }
     };
 
+    // Initialize selectedTags with existing examData tags
+    setSelectedTags(
+      [articleData.tag1, articleData.tag2, articleData.tag3].filter(Boolean) // Filter out null or undefined tags
+    );
+
     fetchCategories();
-  }, []);
+  }, [articleData]);
+
+
+
+
+
+  const handleTagChange = (event) => {
+    const { value } = event.target;
+
+    // Ensure selected tags are unique and limited to 3
+    if (value.length <= 3) {
+      setSelectedTags(value);
+    } else {
+      alert("You can only select up to 3 tags.");
+    }
+  };
 
   // Handle new image selection
   const handleImageChange = (e) => {
     setNewImage(e.target.files[0]);
   };
 
-  // Upload new image and update exam data
+  // Upload new image and update article data
   const uploadNewImage = async () => {
     if (!newImage) return;
 
@@ -71,53 +90,46 @@ const ExamSettings = ({ examData, accessToken }) => {
 
       // Upload the new image
       const response = await axios.post(
-        "/api/v1/educational-service/upload-image",
+        "/api/v1/educational-service/upload-fileName",
         formData,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",
+            "x-role": localStorage.getItem("role"),
           },
         }
       );
 
       const newImageName = response.data.data.image; // Get the new image name
-      // Log the previous and new image names to the console
-      console.log("Previous Image:", uploadedImage);
-      console.log("New Image:", newImageName);
       setUploadedImage(newImageName);
 
-      // Log the previous and new image names
-      console.log("Previous Image:", uploadedImage);
-      console.log("New Image:", newImageName);
-
-      // Extract and prepare the updated parameters
-      const updatedExamData = {
-        serviceId: examData.serviceId,
+      // Extract and prepare the updated article data
+      const updatedArticleData = {
+        articleId: articleData.articleId,
+        title,
         description,
-        level,
-        price: parseFloat(price), // Ensure price is a number
-        activityStatus,
-        image: newImageName,
         tag1,
         tag2,
         tag3,
-        examDuration,
+        activityStatus,
+        price: parseFloat(price),
+        level,
+        image: newImageName,
       };
-      console.log("updatedExamData:", JSON.stringify(updatedExamData, null, 2));
 
-      // Send updated exam data to the backend
-      await axios.post("/api/v1/exam/edit-exam", updatedExamData, {
+      // Send updated article data to the backend
+      await axios.post("/api/v1/article/edit-article", updatedArticleData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
       });
 
-      alert("Image updated and exam data saved successfully!");
+      alert("Image updated and article data saved successfully!");
     } catch (error) {
-      console.error("Error updating image or exam data:", error);
-      alert("Failed to update image or exam data.");
+      console.error("Error updating image or article data:", error);
+      alert("Failed to update image or article data.");
     } finally {
       setIsUploading(false);
       setNewImage(null);
@@ -125,62 +137,45 @@ const ExamSettings = ({ examData, accessToken }) => {
   };
 
   // Handle form data changes
-
   const handleSaveChanges = async () => {
     try {
-      const updatedExamData = {
-        serviceId: examData.serviceId,
-        description,
-        level,
-        price: parseFloat(price), // Ensure price is a number
-        activityStatus,
-        image: uploadedImage,
-        tag1: selectedTags[0] || null, // Set tag1, tag2, tag3 to null if not selected
-        tag2: selectedTags[1] || null,
-        tag3: selectedTags[2] || null,
-        examDuration,
-      };
-      console.log("updatedExamData:", JSON.stringify(updatedExamData, null, 2));
 
-      await axios.post("/api/v1/exam/edit-exam", updatedExamData, {
+      // Map selected tags to tag1, tag2, tag3, and fill with null for unselected tags
+      const updatedTags = [
+        selectedTags[0] || null, // First tag or null
+        selectedTags[1] || null, // Second tag or null
+        selectedTags[2] || null, // Third tag or null
+      ];
+
+      const updatedArticleData = {
+        articleId: articleData.articleId,
+        title,
+        description,
+        tag1: updatedTags[0],
+        tag2: updatedTags[1],
+        tag3: updatedTags[2],
+        activityStatus,
+        price: parseFloat(price),
+        image: uploadedImage,
+      };
+
+      await axios.post("/api/v1/article/edit-article", updatedArticleData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
+          "x-role": localStorage.getItem("role"),
         },
       });
 
-      alert("Exam data updated successfully!");
+      alert("Article data updated successfully!");
+      setSelectedTags(selectedTags);
     } catch (error) {
-      console.error("Error updating exam data:", error);
-      alert("Failed to update exam data.");
-    }
-  };
-  const handleTagChange = (event) => {
-    const { value } = event.target;
-
-    // Limit the selected tags to a maximum of 3
-    if (value.length <= 3) {
-      // If user selects 1 or 2 tags, set unselected tags to null
-      if (value.length === 1) {
-        setTag2(null);
-        setTag3(null);
-      } else if (value.length === 2) {
-        setTag3(null);
-      } else {
-        // If all 3 tags are selected, set the tags accordingly
-        setTag1(value[0]);
-        setTag2(value[1] || null);
-        setTag3(value[2] || null);
-      }
-
-      setSelectedTags(value); // Update selected tags
-    } else {
-      alert("You can only select up to 3 tags.");
+      console.error("Error updating article data:", error);
+      alert("Failed to update article data.");
     }
   };
 
   return (
-    // Inside the return function
     <Grid container spacing={2}>
       {/* Image and Description in a row layout */}
       <Grid item xs={12} container spacing={2} alignItems="center">
@@ -188,8 +183,8 @@ const ExamSettings = ({ examData, accessToken }) => {
           <Typography variant="h6">Current Image:</Typography>
           {uploadedImage ? (
             <Avatar
-              src={`/api/v1/uploads/service-images/${uploadedImage}`}
-              alt="Exam Image"
+              src={uploadedImage}
+              alt="Article Image"
               sx={{ width: 200, height: 200, marginBottom: 2 }}
             />
           ) : (
@@ -208,7 +203,15 @@ const ExamSettings = ({ examData, accessToken }) => {
         </Grid>
 
         <Grid item xs={12} sm={8}>
-          <Typography variant="h6">Exam Description:</Typography>
+          <Typography variant="h6">Article Name:</Typography>
+          <TextField
+            fullWidth
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            variant="outlined"
+            sx={{ marginBottom: 2 }}
+          />
+          <Typography variant="h6">Article Description:</Typography>
           <TextField
             fullWidth
             value={description}
@@ -221,21 +224,49 @@ const ExamSettings = ({ examData, accessToken }) => {
         </Grid>
       </Grid>
 
-      {/* Editable Exam Data */}
       <Grid item xs={12} sm={6}>
         <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          Level:
+          Activity Status:
         </Typography>
         <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
-          <InputLabel>Level</InputLabel>
+          <InputLabel>Activity Status</InputLabel>
           <Select
-            value={level}
-            onChange={(e) => setLevel(e.target.value)}
-            label="Level"
+            value={activityStatus}
+            onChange={(e) => setActivityStatus(e.target.value)}
+            label="Activity Status"
           >
-            <MenuItem value="Beginner">Beginner</MenuItem>
-            <MenuItem value="Medium">Medium</MenuItem>
-            <MenuItem value="Advanced">Advanced</MenuItem>
+            <MenuItem value="Active">Active</MenuItem>
+            <MenuItem value="Inactive">Inactive</MenuItem>
+          </Select>
+        </FormControl>
+      </Grid>
+
+      {/* Editable Article Data */}
+      {/* Tags */}
+      <Grid item xs={12}>
+        <Typography variant="body1" sx={{ fontWeight: "500", marginBottom: 1 }}>
+          <LocalOfferIcon sx={{ marginRight: 1, color: "#0288D1" }} /> Tags:
+        </Typography>
+        <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
+          <InputLabel>Tags</InputLabel>
+          <Select
+            multiple
+            value={selectedTags}
+            onChange={handleTagChange}
+            renderValue={(selected) => selected.join(", ")}
+            MenuProps={{
+              PaperProps: { style: { maxHeight: 200, overflow: "auto" } },
+            }}
+            sx={inputStyles}
+          >
+            {categories.map((category) => (
+              <MenuItem key={category.categoryId} value={category.category}>
+                <Checkbox
+                  checked={selectedTags.indexOf(category.category) > -1}
+                />
+                <ListItemText primary={category.category} />
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
       </Grid>
@@ -256,56 +287,18 @@ const ExamSettings = ({ examData, accessToken }) => {
 
       <Grid item xs={12} sm={6}>
         <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          Activity Status:
+          Level:
         </Typography>
         <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
-          <InputLabel>Activity Status</InputLabel>
+          <InputLabel>Level</InputLabel>
           <Select
-            value={activityStatus}
-            onChange={(e) => setActivityStatus(e.target.value)}
-            label="Activity Status"
+            value={level}
+            onChange={(e) => setLevel(e.target.value)}
+            label="Level"
           >
-            <MenuItem value="Active">Active</MenuItem>
-            <MenuItem value="Inactive">Inactive</MenuItem>
-          </Select>
-        </FormControl>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          Exam Duration:
-        </Typography>
-        <TextField
-          fullWidth
-          type="number"
-          value={examDuration}
-          onChange={(e) => setExamDuration(e.target.value)}
-          variant="outlined"
-          sx={{ marginBottom: 2 }}
-        />
-      </Grid>
-
-      {/* Tags Section */}
-      <Grid item xs={12}>
-        <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          Tags:
-        </Typography>
-        <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
-          <InputLabel>Tags</InputLabel>
-          <Select
-            multiple
-            value={selectedTags}
-            onChange={handleTagChange}
-            renderValue={(selected) => selected.join(", ")}
-          >
-            {categories.map((category) => (
-              <MenuItem key={category.categoryId} value={category.category}>
-                <Checkbox
-                  checked={selectedTags.indexOf(category.category) > -1}
-                />
-                <ListItemText primary={category.category} />
-              </MenuItem>
-            ))}
+            <MenuItem value="Beginner">Beginner</MenuItem>
+            <MenuItem value="Medium">Medium</MenuItem>
+            <MenuItem value="Advanced">Advanced</MenuItem>
           </Select>
         </FormControl>
       </Grid>
@@ -325,4 +318,4 @@ const ExamSettings = ({ examData, accessToken }) => {
   );
 };
 
-export default ExamSettings;
+export default ArticleSettings;
