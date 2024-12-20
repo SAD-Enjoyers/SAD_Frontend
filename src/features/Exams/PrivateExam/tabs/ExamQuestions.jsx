@@ -9,6 +9,7 @@ import {
   IconButton,
   DialogContent,
   DialogActions,
+  Alert, // Import Alert
 } from "@mui/material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -52,6 +53,7 @@ const ExamQuestions = (examData) => {
         if (!response.ok) {
           throw new Error(`Error ${response.status}: ${responseData.message}`);
         }
+        console.log("Response Data:", JSON.stringify(responseData, null, 2));
 
         setQuestions(responseData.data || []);
       } catch (error) {
@@ -83,8 +85,7 @@ const ExamQuestions = (examData) => {
   const handleOnDragEnd = async ({ source, destination }) => {
     if (!destination || source.index === destination.index) return;
 
-    // Reorder questions locally
-    const startIndex = page * itemsPerPage; // Starting index for this page
+    const startIndex = page * itemsPerPage;
     const sourceIndex = startIndex + source.index;
     const destinationIndex = startIndex + destination.index;
 
@@ -92,30 +93,14 @@ const ExamQuestions = (examData) => {
     const [removed] = reordered.splice(sourceIndex, 1);
     reordered.splice(destinationIndex, 0, removed);
 
-    // Update the sort numbers based on the new order
     const updatedOrders = reordered.map((q, index) => ({
-      questionId: q.Question?.question_id, // Safe access
+      questionId: q.Question?.question_id,
       sortNumber: index + 1,
     }));
 
-    // Update state to reflect new order
     setQuestions(reordered);
 
-    // Log the payload as JSON
-    console.log(
-      "Updated Order Payload:",
-      JSON.stringify(
-        {
-          serviceId: examData.examData.serviceId,
-          reorderedQuestions: updatedOrders,
-        },
-        null,
-        2
-      )
-    );
-
     try {
-      // Send the updated order to the backend
       const response = await fetch(`/api/v1/exam/reorder-questions`, {
         method: "PUT",
         headers: {
@@ -127,8 +112,6 @@ const ExamQuestions = (examData) => {
           reorderedQuestions: updatedOrders,
         }),
       });
-      console.log(examData.examData.serviceId);
-      console.log(updatedOrders);
 
       if (!response.ok) {
         throw new Error("Failed to update question order.");
@@ -149,14 +132,13 @@ const ExamQuestions = (examData) => {
     setQuestionToDelete(id);
     setOpenDialog(true);
   };
+
   const confirmDelete = async () => {
     try {
-      // Get the question that is about to be deleted
       const questionToDeleteData = questions.find(
         (question) => question.Question.question_id === questionToDelete
       );
 
-      // Ensure the question exists
       if (!questionToDeleteData) {
         setSnackbarMessage("Question not found.");
         setSeverity("error");
@@ -164,20 +146,11 @@ const ExamQuestions = (examData) => {
         return;
       }
 
-      // Log the full question data to inspect its structure
-      console.log(JSON.stringify(questionToDeleteData, null, 2));
+      const { question_id } = questionToDeleteData.Question;
+      const { sort_number } = questionToDeleteData;
+      console.log(questionToDeleteData);
+      console.log(question_id, sort_number, examData.examData.serviceId);
 
-      // Extract the values from the correct structure
-      const { question_id, sort_number, service_id } = questionToDeleteData; // Note sort_number is at the top level
-      const { question_id: questionId } = questionToDeleteData.Question; // The question_id is inside Question object
-      const { serviceId } = examData.examData; // Get the serviceId from the examData
-
-      // Log values to verify the extraction
-      console.log("Sort number:", sort_number);
-      console.log("Question ID:", questionId);
-      console.log("Service ID:", serviceId);
-
-      // Send a request to the backend to delete the question
       const response = await fetch(`/api/v1/exam/delete-question`, {
         method: "DELETE",
         headers: {
@@ -185,9 +158,9 @@ const ExamQuestions = (examData) => {
           Authorization: `Bearer ${examData.accessToken}`,
         },
         body: JSON.stringify({
-          questionId: questionId, // The ID of the question inside the Question object
-          serviceId: serviceId, // The service ID for the exam
-          sortNumber: sort_number, // The sort number from the top-level object
+          questionId: question_id,
+          serviceId: examData.examData.serviceId,
+          sortNumber: sort_number,
         }),
       });
 
@@ -195,7 +168,6 @@ const ExamQuestions = (examData) => {
         throw new Error("Failed to delete question on the backend.");
       }
 
-      // After successfully deleting from the backend, update the state
       setQuestions((prev) =>
         prev.filter((q) => q.Question.question_id !== questionToDelete)
       );
@@ -208,7 +180,6 @@ const ExamQuestions = (examData) => {
       setSeverity("error");
       setOpenSnackbar(true);
     } finally {
-      // Close the delete confirmation dialog
       setOpenDialog(false);
       setQuestionToDelete(null);
     }
@@ -229,7 +200,7 @@ const ExamQuestions = (examData) => {
         <Typography variant="h4">My Exam Questions</Typography>
         <Button
           variant="contained"
-          onClick={() => navigate("/QuestionBank", { state: { examData } })} // Navigate to QuestionBank with examData
+          onClick={() => navigate("/QuestionBank", { state: { examData } })}
         >
           Add Questions
         </Button>
@@ -292,7 +263,6 @@ const ExamQuestions = (examData) => {
         </DragDropContext>
       )}
 
-      {/* Dialog for delete confirmation */}
       <Dialog open={openDialog} onClose={cancelDelete}>
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
@@ -308,13 +278,20 @@ const ExamQuestions = (examData) => {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar for messages */}
       <Snackbar
         open={openSnackbar}
-        autoHideDuration={4000}
+        autoHideDuration={3000}
         onClose={handleCloseSnackbar}
-        message={snackbarMessage}
-      />
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
