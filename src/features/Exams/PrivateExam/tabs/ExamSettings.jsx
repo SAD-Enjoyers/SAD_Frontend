@@ -33,9 +33,10 @@ const ExamSettings = ({ examData, accessToken }) => {
   const [newImage, setNewImage] = useState(null); // New image file
   const [isUploading, setIsUploading] = useState(false); // Uploading state
   const [uploadedImage, setUploadedImage] = useState(examData.image); // Updated image state
-  accessToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InRlc3QyIiwiaWF0IjoxNzM0NjI4MDY2LCJleHAiOjE3MzQ2MzUyNjZ9.f0qG3hD_v3GDZFXFTlhihX1LtV202hsB3X-B0b5QaK8";
+  // accessToken =
+  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InRlc3QyIiwiaWF0IjoxNzM0NjI4MDY2LCJleHAiOjE3MzQ2MzUyNjZ9.f0qG3hD_v3GDZFXFTlhihX1LtV202hsB3X-B0b5QaK8";
   // Editable exam data states
+  const [name, setName] = useState(examData.name);
   const [description, setDescription] = useState(examData.description);
   const [level, setLevel] = useState(examData.level);
   const [price, setPrice] = useState(examData.price);
@@ -50,6 +51,22 @@ const ExamSettings = ({ examData, accessToken }) => {
   // Categories fetched from the API
   const [categories, setCategories] = useState([]);
   const [selectedTags, setSelectedTags] = useState([tag1, tag2, tag3]);
+
+  // Common styles
+  const inputStyles = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px",
+    },
+  };
+
+  const buttonStyles = {
+    padding: "12px 24px",
+    width: "100%",
+    backgroundColor: "#5356FF",
+    "&:hover": {
+      backgroundColor: "#378CE7",
+    },
+  };
 
   // Fetch categories from the API
   useEffect(() => {
@@ -109,8 +126,8 @@ const ExamSettings = ({ examData, accessToken }) => {
 
       // Extract and prepare the updated parameters
       const updatedExamData = {
-        serviceId: parseFloat(examData.serviceId),
-        name: examData.name,
+        serviceId: examData.serviceId,
+        name,
         description,
         level,
         price: parseFloat(price), // Ensure price is a number
@@ -154,7 +171,7 @@ const ExamSettings = ({ examData, accessToken }) => {
 
       const updatedExamData = {
         serviceId: examData.serviceId,
-        name: examData.name,
+        name,
         description,
         level,
         price: parseFloat(price),
@@ -197,48 +214,62 @@ const ExamSettings = ({ examData, accessToken }) => {
 
   return (
     <Grid container spacing={3}>
-      {/* Image and Description in a row layout */}
-      <Grid item xs={12} container spacing={3} alignItems="center">
-        <Grid item xs={12} sm={4}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 1 }}>
-            <ImageIcon sx={{ marginRight: 1, color: "#378CE7" }} /> Current
-            Image:
-          </Typography>
-          {uploadedImage ? (
-            <Avatar
-              src={`/api/v1/uploads/service-images/${uploadedImage}`}
-              alt="Exam Image"
-              sx={{ width: 200, height: 200, marginBottom: 2, boxShadow: 3 }}
-            />
-          ) : (
-            <CircularProgress size={50} sx={{ marginBottom: 2 }} />
-          )}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            style={{ marginBottom: "12px" }}
+      {/* Image Upload Section */}
+      <Grid item xs={12} sm={4}>
+        <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 1 }}>
+          <ImageIcon sx={{ marginRight: 1, color: "#378CE7" }} /> Current Image:
+        </Typography>
+        {uploadedImage ? (
+          <Avatar
+            src={uploadedImage}
+            alt="Exam Image"
+            sx={{ width: 200, height: 200, marginBottom: 2, boxShadow: 3 }}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={uploadNewImage}
-            sx={{
-              marginTop: 2,
-              width: "100%",
-              backgroundColor: "#378CE7",
-              "&:hover": {
-                backgroundColor: "#67C6E3",
-              },
-            }}
-            disabled={isUploading || !newImage}
+        ) : (
+          <CircularProgress size={50} sx={{ marginBottom: 2 }} />
+        )}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          style={{ marginBottom: "12px" }}
+        />
+        <Button
+          variant="contained"
+          onClick={uploadNewImage}
+          sx={buttonStyles}
+          disabled={isUploading || !newImage}
+        >
+          {isUploading ? "Uploading..." : "Upload & Save Image"}
+        </Button>
+      </Grid>
+
+      {/* Editable Fields */}
+      <Grid item xs={12} sm={8} container spacing={3}>
+        {/* Exam Name */}
+        <Grid item xs={12}>
+          <Typography
+            variant="body1"
+            sx={{ fontWeight: "500", marginBottom: 1 }}
           >
-            {isUploading ? "Uploading..." : "Upload & Save Image"}
-          </Button>
+            <DescriptionIcon sx={{ marginRight: 1, color: "#67C6E3" }} /> Exam
+            Name:
+          </Typography>
+          <TextField
+            fullWidth
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            variant="outlined"
+            sx={{ marginBottom: 2, ...inputStyles }}
+          />
         </Grid>
 
-        <Grid item xs={12} sm={8}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 1 }}>
+        {/* Exam Description */}
+        <Grid item xs={12}>
+          <Typography
+            variant="body1"
+            sx={{ fontWeight: "500", marginBottom: 1 }}
+          >
             <DescriptionIcon sx={{ marginRight: 1, color: "#67C6E3" }} /> Exam
             Description:
           </Typography>
@@ -249,61 +280,55 @@ const ExamSettings = ({ examData, accessToken }) => {
             variant="outlined"
             multiline
             rows={4}
-            sx={{
-              marginBottom: 2,
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "10px",
-              },
-            }}
+            sx={{ marginBottom: 2, ...inputStyles }}
+          />
+        </Grid>
+
+        {/* Level */}
+        <Grid item xs={12} sm={6}>
+          <Typography
+            variant="body1"
+            sx={{ fontWeight: "500", marginBottom: 1 }}
+          >
+            <GradeIcon sx={{ marginRight: 1, color: "#5356FF" }} /> Level:
+          </Typography>
+          <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
+            <InputLabel>Level</InputLabel>
+            <Select
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
+              label="Level"
+              sx={inputStyles}
+            >
+              <MenuItem value="Beginner">Beginner</MenuItem>
+              <MenuItem value="Medium">Medium</MenuItem>
+              <MenuItem value="Advanced">Advanced</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+
+        {/* Price */}
+        <Grid item xs={12} sm={6}>
+          <Typography
+            variant="body1"
+            sx={{ fontWeight: "500", marginBottom: 1 }}
+          >
+            <AttachMoneyIcon sx={{ marginRight: 1, color: "#FFAB00" }} /> Price:
+          </Typography>
+          <TextField
+            fullWidth
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            variant="outlined"
+            sx={{ marginBottom: 2, ...inputStyles }}
           />
         </Grid>
       </Grid>
 
-      {/* Editable Exam Data */}
+      {/* Additional Settings */}
       <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
-          <GradeIcon sx={{ marginRight: 1, color: "#5356FF" }} /> Level:
-        </Typography>
-        <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
-          <InputLabel>Level</InputLabel>
-          <Select
-            value={level}
-            onChange={(e) => setLevel(e.target.value)}
-            label="Level"
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "10px",
-              },
-            }}
-          >
-            <MenuItem value="Beginner">Beginner</MenuItem>
-            <MenuItem value="Medium">Medium</MenuItem>
-            <MenuItem value="Advanced">Advanced</MenuItem>
-          </Select>
-        </FormControl>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
-          <AttachMoneyIcon sx={{ marginRight: 1, color: "#FFAB00" }} /> Price:
-        </Typography>
-        <TextField
-          fullWidth
-          type="number"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          variant="outlined"
-          sx={{
-            marginBottom: 2,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "10px",
-            },
-          }}
-        />
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
+        <Typography variant="body1" sx={{ fontWeight: "500", marginBottom: 1 }}>
           <TimelapseIcon sx={{ marginRight: 1, color: "#F9A825" }} /> Activity
           Status:
         </Typography>
@@ -313,11 +338,7 @@ const ExamSettings = ({ examData, accessToken }) => {
             value={activityStatus}
             onChange={(e) => setActivityStatus(e.target.value)}
             label="Activity Status"
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "10px",
-              },
-            }}
+            sx={inputStyles}
           >
             <MenuItem value="Active">Active</MenuItem>
             <MenuItem value="Inactive">Inactive</MenuItem>
@@ -326,7 +347,7 @@ const ExamSettings = ({ examData, accessToken }) => {
       </Grid>
 
       <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
+        <Typography variant="body1" sx={{ fontWeight: "500", marginBottom: 1 }}>
           <TimelapseIcon sx={{ marginRight: 1, color: "#F9A825" }} /> Exam
           Duration:
         </Typography>
@@ -336,18 +357,13 @@ const ExamSettings = ({ examData, accessToken }) => {
           value={examDuration}
           onChange={(e) => setExamDuration(e.target.value)}
           variant="outlined"
-          sx={{
-            marginBottom: 2,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "10px",
-            },
-          }}
+          sx={{ marginBottom: 2, ...inputStyles }}
         />
       </Grid>
 
-      {/* Tags Section */}
+      {/* Tags */}
       <Grid item xs={12}>
-        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
+        <Typography variant="body1" sx={{ fontWeight: "500", marginBottom: 1 }}>
           <LocalOfferIcon sx={{ marginRight: 1, color: "#0288D1" }} /> Tags:
         </Typography>
         <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
@@ -358,18 +374,9 @@ const ExamSettings = ({ examData, accessToken }) => {
             onChange={handleTagChange}
             renderValue={(selected) => selected.join(", ")}
             MenuProps={{
-              PaperProps: {
-                style: {
-                  maxHeight: 200,
-                  overflow: "auto",
-                },
-              },
+              PaperProps: { style: { maxHeight: 200, overflow: "auto" } },
             }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "10px",
-              },
-            }}
+            sx={inputStyles}
           >
             {categories.map((category) => (
               <MenuItem key={category.categoryId} value={category.category}>
@@ -389,14 +396,7 @@ const ExamSettings = ({ examData, accessToken }) => {
           variant="contained"
           color="secondary"
           onClick={handleSaveChanges}
-          sx={{
-            padding: "12px 24px",
-            width: "100%",
-            backgroundColor: "#5356FF",
-            "&:hover": {
-              backgroundColor: "#378CE7",
-            },
-          }}
+          sx={buttonStyles}
         >
           <SaveIcon sx={{ marginRight: 1, color: "#FFFFFF" }} /> Save Changes
         </Button>
