@@ -55,22 +55,22 @@ function ExamsTab() {
   };
 
 
-  // تابع برای دریافت امتحانات
+  
   const fetchExams = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/v1/exams"); // تغییر API به exams
+      const response = await fetch("/api/v1/exams"); 
       if (!response.ok) {
         throw new Error("Failed to fetch exams");
       }
       const data = await response.json();
       const transformedExams = data.data.result.map((exam) => ({
-        id: exam.examId, // تغییر به examId
-        name: exam.examName, // تغییر به examName
-        description: exam.examDescription, // توصیف امتحان
+        id: exam.examId, 
+        name: exam.examName, 
+        description: exam.examDescription, 
         subjects: [exam.tag1, exam.tag2, exam.tag3].filter(Boolean),
         score: exam.score,
-        writer: exam.creatorName, // نام نویسنده یا خالق امتحان
+        writer: exam.creatorName, 
         numberOfVoters: exam.numberOfVoters,
       }));
   
@@ -85,8 +85,9 @@ function ExamsTab() {
   
     
     useEffect(() => {
-      fetchExams(); 
-    }, [searchTerm, selectedSubjects, selectedLevel, sortOrder]); 
+      fetchCategories();
+      fetchExams();
+    }, []);
   
     
     const totalPages = Math.ceil(exams.length / itemsPerPage);
