@@ -45,6 +45,7 @@ const videos = [
 export default function PublicCourse() {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [videoDurations, setVideoDurations] = useState({});
+  const [selectedVideoId, setSelectedVideoId] = useState(null);
 
   useEffect(() => {
     videos.forEach((video) => {
@@ -59,13 +60,14 @@ export default function PublicCourse() {
     });
   }, []);
 
-  const handleVideoChange = (src) => {
+  const handleVideoChange = (src, id) => {
     const videoElement = document.querySelector("video");
     if (videoElement) {
       videoElement.pause();
       videoElement.currentTime = 0;
     }
     setSelectedVideo(src);
+    setSelectedVideoId(id);
   };
 
   const formatTime = (time) => {
@@ -123,15 +125,15 @@ export default function PublicCourse() {
                 marginBottom: 1,
                 borderRadius: 2,
                 backgroundColor:
-                  video.src === selectedVideo ? "#67C6E3" : "transparent",
+                  video.id === selectedVideoId ? "#67C6E3" : "transparent",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                 cursor: "pointer",
                 "&:hover": {
                   backgroundColor:
-                    video.src === selectedVideo ? "#67C6E3" : "#DFF5FF",
+                    video.id === selectedVideoId ? "#67C6E3" : "#DFF5FF",
                 },
               }}
-              onClick={() => handleVideoChange(video.src)}
+              onClick={() => handleVideoChange(video.src, video.id)}
             >
               {/* متن در سمت چپ */}
               <Box sx={{ flexGrow: 1 }}>
