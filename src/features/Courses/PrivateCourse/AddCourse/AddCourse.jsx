@@ -100,4 +100,36 @@ import {
       }, 200);
     }
   };
+  return (
+    <Container>
+      <form onSubmit={handleFormSubmit}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <TextField
+              label="Course Name"
+              variant="outlined"
+              fullWidth
+              value={courseName}
+              onChange={(e) => setCourseName(e.target.value)}
+              error={!!errors.courseName}
+              helperText={errors.courseName}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Description"
+              variant="outlined"
+              fullWidth
+              multiline
+              rows={4}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              error={!!errors.description}
+              helperText={errors.description}
+            />
+          </Grid>
+        </Grid>
+      </form>
+    </Container>
+  );
   
