@@ -140,4 +140,13 @@ import {
       typeof value === "string" ? value.split(",") : value
     );
   };
-  
+  <Grid item xs={12} textAlign="center">
+  <Button
+    type="submit"
+    variant="contained"
+    color="primary"
+    sx={{ padding: "10px 50px", backgroundColor: "#0056b3" }}
+  >
+    Add Course
+  </Button>
+</Grid>
