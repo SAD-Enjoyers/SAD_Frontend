@@ -35,7 +35,6 @@ const ExamSettings = ({ examData, accessToken }) => {
   const [isUploading, setIsUploading] = useState(false); // Uploading state
   const [uploadedImage, setUploadedImage] = useState(examData.fileName); // Updated image state
   // Editable exam data states
-  const [name, setName] = useState(examData.name);
   const [description, setDescription] = useState(examData.description);
   const [level, setLevel] = useState(examData.level);
   const [price, setPrice] = useState(examData.price);
@@ -50,22 +49,6 @@ const ExamSettings = ({ examData, accessToken }) => {
   // Categories fetched from the API
   const [categories, setCategories] = useState([]);
   const [selectedTags, setSelectedTags] = useState([tag1, tag2, tag3]);
-
-  // Common styles
-  const inputStyles = {
-    "& .MuiOutlinedInput-root": {
-      borderRadius: "10px",
-    },
-  };
-
-  const buttonStyles = {
-    padding: "12px 24px",
-    width: "100%",
-    backgroundColor: "#5356FF",
-    "&:hover": {
-      backgroundColor: "#378CE7",
-    },
-  };
 
   // Fetch categories from the API
   useEffect(() => {
@@ -308,6 +291,7 @@ const ExamSettings = ({ examData, accessToken }) => {
             }}
           />
         </Grid>
+      </Grid>
 
       {/* Editable Exam Data */}
       {[
@@ -385,7 +369,7 @@ const ExamSettings = ({ examData, accessToken }) => {
         </Grid>
       ))}
 
-      {/* Tags */}
+      {/* Tags Section */}
       <Grid item xs={12}>
         <Typography
           variant="body1"
@@ -401,9 +385,18 @@ const ExamSettings = ({ examData, accessToken }) => {
             onChange={handleTagChange}
             renderValue={(selected) => selected.join(", ")}
             MenuProps={{
-              PaperProps: { style: { maxHeight: 200, overflow: "auto" } },
+              PaperProps: {
+                style: {
+                  maxHeight: 200,
+                  overflow: "auto",
+                },
+              },
             }}
-            sx={inputStyles}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+            }}
           >
             {categories.map((category) => (
               <MenuItem key={category.categoryId} value={category.category}>
@@ -423,7 +416,14 @@ const ExamSettings = ({ examData, accessToken }) => {
           variant="contained"
           color="secondary"
           onClick={handleSaveChanges}
-          sx={buttonStyles}
+          sx={{
+            padding: "12px 24px",
+            width: "100%",
+            backgroundColor: "#5356FF",
+            "&:hover": {
+              backgroundColor: "#378CE7",
+            },
+          }}
         >
           <SaveIcon sx={{ marginRight: 1, color: "#FFFFFF" }} /> Save Changes
         </Button>
