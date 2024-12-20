@@ -128,13 +128,39 @@ function ExamPreview() {
     fetchExamData();
   }, [serviceId]);
 
-  const handlePurchase = useCallback(() => {
+  const handlePurchase = useCallback(async () => {
     setPurchaseLoading(true);
-    setPurchased(true);
-    alert("Thank you for purchasing the exam! Questions are now unlocked.");
-    localStorage.setItem("examData", JSON.stringify(examData)); // Save to localStorage
-    navigate("/PublicExam", { state: { examData } });
-  }, [examData, navigate]);
+    try {
+      const response = await fetch("/api/v1/educational-service/register", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          // localStorage.getItem("token")
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ serviceId }), // Send the `serviceId` to the backend
+      });
+
+      if (!response.ok) {
+        const responseData = await response.json();
+        alert(`Failed to register the exam: ${responseData.message}`);
+        setPurchaseLoading(false);
+        return;
+      }
+
+      const responseData = await response.json();
+      setPurchased(true); // Mark the exam as purchased
+      alert("Thank you for purchasing the exam! Questions are now unlocked.");
+      localStorage.setItem("examData", JSON.stringify(examData)); // Save to localStorage
+      navigate("/PublicExam", { state: { examData } });
+    } catch (error) {
+      alert(
+        "An error occurred while processing your purchase. Please try again."
+      );
+    } finally {
+      setPurchaseLoading(false);
+    }
+  }, [examData, navigate, serviceId]);
 
   const handleAddComment = useCallback(() => {
     if (!newComment.name || !newComment.comment.trim()) {
@@ -294,12 +320,17 @@ function ExamPreview() {
                       fullWidth
                       startIcon={<ShoppingCartIcon />}
                       onClick={handlePurchase}
+                      disabled={purchaseLoading} // Disable the button while loading
                       sx={{
-                        maxWidth: "300px", // Set a max width similar to the image
-                        marginBottom: "16px", // Add spacing between button and price
+                        maxWidth: "300px",
+                        marginBottom: "16px",
                       }}
                     >
-                      Buy The Exam
+                      {purchaseLoading ? (
+                        <CircularProgress size={24} color="inherit" />
+                      ) : (
+                        "Buy The Exam"
+                      )}
                     </ButtonStyled>
                   </>
                 )}

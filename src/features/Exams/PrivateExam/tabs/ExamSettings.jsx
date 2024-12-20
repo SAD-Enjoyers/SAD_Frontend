@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import TitleIcon from "@mui/icons-material/Title";
 
 // Material-UI components
 import {
@@ -101,7 +102,9 @@ const ExamSettings = ({ examData, accessToken }) => {
         }
       );
 
-      const newImageName = response.data.data.image; // Get the new image name
+      const newImageName = response.data.data.fileName;
+      console.log(response);
+      // Get the new image name
       // Log the previous and new image names to the console
       console.log("Previous Image:", uploadedImage);
       console.log("New Image:", newImageName);
@@ -199,76 +202,77 @@ const ExamSettings = ({ examData, accessToken }) => {
 
   return (
     <Grid container spacing={3}>
-      {/* Exam Name Section */}
-      <Grid item xs={12}>
+      {/* Image Section */}
+      <Grid item xs={12} sm={4}>
         <Typography
-          variant="body1"
-          sx={{ marginBottom: 1, fontWeight: "600", color: "#5356FF" }}
+          variant="h6"
+          sx={{ fontWeight: "bold", marginBottom: 1, color: "#378CE7" }}
         >
-          Exam Name:
+          <ImageIcon sx={{ marginRight: 1 }} /> Current Image:
         </Typography>
-        <TextField
-          fullWidth
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          variant="outlined"
-          placeholder="Enter exam name"
-          sx={{
-            marginBottom: 2,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "10px",
-            },
+        {examData.image ? (
+          <Avatar
+            src={`/api/v1/uploads/service-images/${examData.image}`}
+            alt="Exam Image"
+            sx={{ width: 200, height: 200, marginBottom: 2, boxShadow: 3 }}
+          />
+        ) : (
+          <CircularProgress size={50} sx={{ marginBottom: 2 }} />
+        )}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          style={{
+            display: "block",
+            marginBottom: "12px",
+            fontSize: "14px",
           }}
         />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={uploadNewImage}
+          sx={{
+            marginTop: 2,
+            width: "100%",
+            backgroundColor: "#378CE7",
+            "&:hover": {
+              backgroundColor: "#67C6E3",
+            },
+          }}
+          disabled={isUploading || !newImage}
+        >
+          {isUploading ? "Uploading..." : "Upload & Save Image"}
+        </Button>
       </Grid>
 
-      {/* Image and Description Section */}
-      <Grid item xs={12} container spacing={3} alignItems="flex-start">
-        <Grid item xs={12} sm={4}>
+      {/* Exam Name and Description Section */}
+      <Grid item xs={12} sm={8} container spacing={2}>
+        <Grid item xs={12}>
           <Typography
-            variant="h6"
-            sx={{ fontWeight: "bold", marginBottom: 1, color: "#378CE7" }}
+            variant="body1"
+            sx={{ marginBottom: 1, fontWeight: "bold", color: "#67C6E3" }}
           >
-            <ImageIcon sx={{ marginRight: 1 }} /> Current Image:
+            <TitleIcon sx={{ marginRight: 1 }} />
+            Exam Name:
           </Typography>
-          {examData.image ? (
-            <Avatar
-              src={`/api/v1/uploads/service-images/${examData.image}`}
-              alt="Exam Image"
-              sx={{ width: 200, height: 200, marginBottom: 2, boxShadow: 3 }}
-            />
-          ) : (
-            <CircularProgress size={50} sx={{ marginBottom: 2 }} />
-          )}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            style={{
-              display: "block",
-              marginBottom: "12px",
-              fontSize: "14px",
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={uploadNewImage}
+          <TextField
+            fullWidth
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            variant="outlined"
+            placeholder="Enter exam name"
             sx={{
-              marginTop: 2,
-              width: "100%",
-              backgroundColor: "#378CE7",
-              "&:hover": {
-                backgroundColor: "#67C6E3",
+              marginBottom: 2,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
               },
             }}
-            disabled={isUploading || !newImage}
-          >
-            {isUploading ? "Uploading..." : "Upload & Save Image"}
-          </Button>
+          />
         </Grid>
 
-        <Grid item xs={12} sm={8}>
+        <Grid item xs={12}>
           <Typography
             variant="h6"
             sx={{ fontWeight: "bold", marginBottom: 1, color: "#67C6E3" }}
