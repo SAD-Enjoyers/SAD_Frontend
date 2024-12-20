@@ -1,4 +1,4 @@
-import { useState,useEffectوuseMemo } from "react";
+import { useState, useEffectوuseMemo } from "react";
 import {
   Box,
   TextField,
@@ -34,7 +34,6 @@ function ExamsTab() {
   const [categories, setCategories] = useState([]); // Categories for filter
   const [selectedLevel, setSelectedLevel] = useState("");
   const [sortOrder, setSortOrder] = useState({
-
     criterion: "",
     direction: "asc",
   });
@@ -54,49 +53,43 @@ function ExamsTab() {
     }
   };
 
-
-  
   const fetchExams = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/v1/exams"); 
+      const response = await fetch("/api/v1/exams");
       if (!response.ok) {
         throw new Error("Failed to fetch exams");
       }
       const data = await response.json();
       const transformedExams = data.data.result.map((exam) => ({
-        id: exam.examId, 
-        name: exam.examName, 
-        description: exam.examDescription, 
+        id: exam.examId,
+        name: exam.examName,
+        description: exam.examDescription,
         subjects: [exam.tag1, exam.tag2, exam.tag3].filter(Boolean),
         score: exam.score,
-        writer: exam.creatorName, 
+        writer: exam.creatorName,
         numberOfVoters: exam.numberOfVoters,
       }));
-  
-        
-        setExams(transformedExams);
-      } catch (error) {
-        console.error("Error fetching exams:", error); 
-      } finally {
-        setLoading(false); 
-      }
-    };
-  
-    
-    useEffect(() => {
-      fetchCategories();
-      fetchExams();
-    }, []);
-  
-    
+
+      setExams(transformedExams);
+    } catch (error) {
+      console.error("Error fetching exams:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+    fetchExams();
+  }, []);
+
   const handleSearch = (event) => setSearchTerm(event.target.value);
 
-  const handleSearchSubmit = () => {
-    setLoading(true);
-    setTimeout(() => setLoading(false), 1500);
-  };//
-
+  // const handleSearchSubmit = () => {
+  //   setLoading(true);
+  //   setTimeout(() => setLoading(false), 1500);
+  // }; //
 
   const handleSubjectChange = (event) => {
     const selected = event.target.value;
@@ -125,9 +118,7 @@ function ExamsTab() {
           .includes(searchTerm.toLowerCase());
         const matchesSubjects =
           selectedSubjects.length === 0 ||
-          selectedSubjects.every((subject) =>
-            exam.subjects.includes(subject)
-          );
+          selectedSubjects.every((subject) => exam.subjects.includes(subject));
         return matchesSearchTerm && matchesSubjects;
       })
       .sort((a, b) => {
@@ -156,9 +147,7 @@ function ExamsTab() {
 
   const totalPages = Math.ceil(filteredExams.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentExams = filteredExams.slice(
-    startIndex,
-    startIndex + itemsPerPage
+  const currentExams = filteredExams.slice(startIndex,startIndex + itemsPerPage
   );
 
   return (
@@ -178,9 +167,9 @@ function ExamsTab() {
         <Grid item xs={12} sm={8} md={9}>
           <TextField
             variant="outlined"
-            placeholder="Search questions..."
+            placeholder="Search exams..."
             value={searchTerm}
-            onChange={handleSearch}
+            onChange={(event) => event.key === "Enter" && handleSearchSubmit()}
             onKeyDown={handleKeyPress}
             fullWidth
             InputProps={{
@@ -231,7 +220,11 @@ function ExamsTab() {
               label="Subjects"
               renderValue={(selected) => selected.join(", ")}
             >
-     
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.name}>
+                  <FilterList sx={{ marginRight: "8px" }} /> {category.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
@@ -268,7 +261,7 @@ function ExamsTab() {
                   <School sx={{ fontSize: "1.2rem", color: "#FF9800" }} />
                 </ListItemIcon>
                 <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
-                Medium
+                  Medium
                 </Typography>
               </MenuItem>
               <MenuItem value="advanced">
@@ -329,8 +322,8 @@ function ExamsTab() {
 
       {/* Display Results */}
       <Grid container spacing={3} sx={{ marginTop: "20px" }}>
-        {currentQuestions.map((question) => (
-          <Grid item xs={12} key={question.id}>
+        {currentExams.map((exam) => (
+          <Grid item xs={12} key={exam.id}>
             <Box
               sx={{
                 display: "flex",
@@ -349,7 +342,7 @@ function ExamsTab() {
                 boxSizing: "border-box",
               }}
             >
-              {/* Question Title */}
+              {/* Exam Title */}
               <Typography
                 variant="h6"
                 sx={{
@@ -361,14 +354,14 @@ function ExamsTab() {
                 }}
               >
                 <Link
-                  to={`/question/${question.id}`}
+                  to={`/exam/${exam.id}`}
                   style={{ textDecoration: "none" }}
                 >
-                  {question.name}
+                  {exam.name}
                 </Link>
               </Typography>
 
-              {/* Question Description */}
+              {/* Exam Description */}
               <Typography
                 variant="body2"
                 color="text.secondary"
@@ -378,7 +371,7 @@ function ExamsTab() {
                   lineHeight: "1.5",
                 }}
               >
-                {question.text.split(" ").slice(0, 15).join(" ")}...
+                {exam.text.split(" ").slice(0, 15).join(" ")}...
               </Typography>
 
               {/* Subjects */}
@@ -390,7 +383,7 @@ function ExamsTab() {
                   marginBottom: "15px", // Space before the next section
                 }}
               >
-                {question.subjects.map((subject, index) => (
+                {exam.subjects.map((subject, index) => (
                   <Chip
                     key={index}
                     label={subject}
@@ -421,7 +414,7 @@ function ExamsTab() {
                 {/* Score */}
                 <Rating
                   name="score"
-                  value={question.score}
+                  value={exam.score}
                   max={5}
                   readOnly
                   sx={{
@@ -455,9 +448,9 @@ function ExamsTab() {
                       fontSize: "0.9rem",
                     }}
                   >
-                    {question.level
-                      ? question.level.charAt(0).toUpperCase() +
-                        question.level.slice(1)
+                    {exam.level
+                      ? exam.level.charAt(0).toUpperCase() +
+                        exam.level.slice(1)
                       : "Not Specified"}
                   </Typography>
                 </Box>
@@ -477,13 +470,13 @@ function ExamsTab() {
                     }}
                   >
                     <Link
-                      to={`/profile/${question.writerId}`}
+                      to={`/profile/${exam.writerId}`}
                       style={{
                         color: "#6c757d",
                         textDecoration: "none",
                       }}
                     >
-                      {question.writer}
+                      {exam.writer}
                     </Link>
                   </Typography>
                 </motion.div>
