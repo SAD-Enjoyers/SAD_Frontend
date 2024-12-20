@@ -154,12 +154,12 @@ function ExamsTab() {
       });
   }, [searchTerm, selectedSubjects, exams, sortOrder]);
 
-  // const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
-  // const startIndex = (currentPage - 1) * itemsPerPage;
-  // const currentQuestions = filteredQuestions.slice(
-  //   startIndex,
-  //   startIndex + itemsPerPage
-  // );
+  const totalPages = Math.ceil(filteredExams.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentExams = filteredExams.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   return (
     <Box
