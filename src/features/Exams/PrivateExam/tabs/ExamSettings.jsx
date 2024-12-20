@@ -30,11 +30,10 @@ import {
 } from "@mui/icons-material";
 
 const ExamSettings = ({ examData, accessToken }) => {
+  const [name, setName] = useState(examData.name); // New state for the exam name
   const [newImage, setNewImage] = useState(null); // New image file
   const [isUploading, setIsUploading] = useState(false); // Uploading state
-  const [uploadedImage, setUploadedImage] = useState(examData.image); // Updated image state
-  accessToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InRlc3QyIiwiaWF0IjoxNzM0NjI4MDY2LCJleHAiOjE3MzQ2MzUyNjZ9.f0qG3hD_v3GDZFXFTlhihX1LtV202hsB3X-B0b5QaK8";
+  const [uploadedImage, setUploadedImage] = useState(examData.fileName); // Updated image state
   // Editable exam data states
   const [description, setDescription] = useState(examData.description);
   const [level, setLevel] = useState(examData.level);
@@ -84,6 +83,7 @@ const ExamSettings = ({ examData, accessToken }) => {
 
     const formData = new FormData();
     formData.append("image", newImage);
+    console.log(examData);
 
     try {
       setIsUploading(true);
@@ -110,12 +110,12 @@ const ExamSettings = ({ examData, accessToken }) => {
       // Extract and prepare the updated parameters
       const updatedExamData = {
         serviceId: parseFloat(examData.serviceId),
-        name: examData.name,
+        name: name,
         description,
         level,
         price: parseFloat(price), // Ensure price is a number
         activityStatus,
-        image: newImageName,
+        fileName: newImageName,
         tag1,
         tag2,
         tag3,
@@ -154,17 +154,19 @@ const ExamSettings = ({ examData, accessToken }) => {
 
       const updatedExamData = {
         serviceId: examData.serviceId,
-        name: examData.name,
+        name: name,
         description,
         level,
         price: parseFloat(price),
         activityStatus,
-        image: uploadedImage,
+        // image:examData.image;
+        fileName: examData.fileName,
         tag1: updatedTags[0],
         tag2: updatedTags[1],
         tag3: updatedTags[2],
         examDuration: parseFloat(examDuration),
       };
+      console.log(examData.fileName);
 
       console.log("updatedExamData:", JSON.stringify(updatedExamData, null, 2));
 
@@ -197,16 +199,41 @@ const ExamSettings = ({ examData, accessToken }) => {
 
   return (
     <Grid container spacing={3}>
-      {/* Image and Description in a row layout */}
-      <Grid item xs={12} container spacing={3} alignItems="center">
+      {/* Exam Name Section */}
+      <Grid item xs={12}>
+        <Typography
+          variant="body1"
+          sx={{ marginBottom: 1, fontWeight: "600", color: "#5356FF" }}
+        >
+          Exam Name:
+        </Typography>
+        <TextField
+          fullWidth
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          variant="outlined"
+          placeholder="Enter exam name"
+          sx={{
+            marginBottom: 2,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "10px",
+            },
+          }}
+        />
+      </Grid>
+
+      {/* Image and Description Section */}
+      <Grid item xs={12} container spacing={3} alignItems="flex-start">
         <Grid item xs={12} sm={4}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 1 }}>
-            <ImageIcon sx={{ marginRight: 1, color: "#378CE7" }} /> Current
-            Image:
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: "bold", marginBottom: 1, color: "#378CE7" }}
+          >
+            <ImageIcon sx={{ marginRight: 1 }} /> Current Image:
           </Typography>
-          {uploadedImage ? (
+          {examData.fileName ? (
             <Avatar
-              src={`/api/v1/uploads/service-images/${uploadedImage}`}
+              src={`/api/v1/uploads/service-images/${examData.fileName}`}
               alt="Exam Image"
               sx={{ width: 200, height: 200, marginBottom: 2, boxShadow: 3 }}
             />
@@ -217,7 +244,11 @@ const ExamSettings = ({ examData, accessToken }) => {
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            style={{ marginBottom: "12px" }}
+            style={{
+              display: "block",
+              marginBottom: "12px",
+              fontSize: "14px",
+            }}
           />
           <Button
             variant="contained"
@@ -238,9 +269,11 @@ const ExamSettings = ({ examData, accessToken }) => {
         </Grid>
 
         <Grid item xs={12} sm={8}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 1 }}>
-            <DescriptionIcon sx={{ marginRight: 1, color: "#67C6E3" }} /> Exam
-            Description:
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: "bold", marginBottom: 1, color: "#67C6E3" }}
+          >
+            <DescriptionIcon sx={{ marginRight: 1 }} /> Exam Description:
           </Typography>
           <TextField
             fullWidth
@@ -249,6 +282,7 @@ const ExamSettings = ({ examData, accessToken }) => {
             variant="outlined"
             multiline
             rows={4}
+            placeholder="Enter a brief description"
             sx={{
               marginBottom: 2,
               "& .MuiOutlinedInput-root": {
@@ -260,95 +294,88 @@ const ExamSettings = ({ examData, accessToken }) => {
       </Grid>
 
       {/* Editable Exam Data */}
-      <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
-          <GradeIcon sx={{ marginRight: 1, color: "#5356FF" }} /> Level:
-        </Typography>
-        <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
-          <InputLabel>Level</InputLabel>
-          <Select
-            value={level}
-            onChange={(e) => setLevel(e.target.value)}
-            label="Level"
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "10px",
-              },
-            }}
+      {[
+        {
+          label: "Level",
+          icon: <GradeIcon sx={{ marginRight: 1, color: "#5356FF" }} />,
+          value: level,
+          onChange: setLevel,
+          options: ["Beginner", "Medium", "Advanced"],
+        },
+        {
+          label: "Price",
+          icon: <AttachMoneyIcon sx={{ marginRight: 1, color: "#FFAB00" }} />,
+          value: price,
+          onChange: setPrice,
+          type: "number",
+        },
+        {
+          label: "Activity Status",
+          icon: <TimelapseIcon sx={{ marginRight: 1, color: "#F9A825" }} />,
+          value: activityStatus,
+          onChange: setActivityStatus,
+          options: ["Active", "Inactive"],
+        },
+        {
+          label: "Exam Duration",
+          icon: <TimelapseIcon sx={{ marginRight: 1, color: "#F9A825" }} />,
+          value: examDuration,
+          onChange: setExamDuration,
+          type: "number",
+        },
+      ].map((field, index) => (
+        <Grid item xs={12} sm={6} key={index}>
+          <Typography
+            variant="body1"
+            sx={{ marginBottom: 1, fontWeight: "600", color: "#5356FF" }}
           >
-            <MenuItem value="Beginner">Beginner</MenuItem>
-            <MenuItem value="Medium">Medium</MenuItem>
-            <MenuItem value="Advanced">Advanced</MenuItem>
-          </Select>
-        </FormControl>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
-          <AttachMoneyIcon sx={{ marginRight: 1, color: "#FFAB00" }} /> Price:
-        </Typography>
-        <TextField
-          fullWidth
-          type="number"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          variant="outlined"
-          sx={{
-            marginBottom: 2,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "10px",
-            },
-          }}
-        />
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
-          <TimelapseIcon sx={{ marginRight: 1, color: "#F9A825" }} /> Activity
-          Status:
-        </Typography>
-        <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
-          <InputLabel>Activity Status</InputLabel>
-          <Select
-            value={activityStatus}
-            onChange={(e) => setActivityStatus(e.target.value)}
-            label="Activity Status"
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "10px",
-              },
-            }}
-          >
-            <MenuItem value="Active">Active</MenuItem>
-            <MenuItem value="Inactive">Inactive</MenuItem>
-          </Select>
-        </FormControl>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
-          <TimelapseIcon sx={{ marginRight: 1, color: "#F9A825" }} /> Exam
-          Duration:
-        </Typography>
-        <TextField
-          fullWidth
-          type="number"
-          value={examDuration}
-          onChange={(e) => setExamDuration(e.target.value)}
-          variant="outlined"
-          sx={{
-            marginBottom: 2,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "10px",
-            },
-          }}
-        />
-      </Grid>
+            {field.icon} {field.label}:
+          </Typography>
+          {field.options ? (
+            <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
+              <InputLabel>{field.label}</InputLabel>
+              <Select
+                value={field.value}
+                onChange={(e) => field.onChange(e.target.value)}
+                label={field.label}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "10px",
+                  },
+                }}
+              >
+                {field.options.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          ) : (
+            <TextField
+              fullWidth
+              type={field.type || "text"}
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
+              variant="outlined"
+              sx={{
+                marginBottom: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "10px",
+                },
+              }}
+            />
+          )}
+        </Grid>
+      ))}
 
       {/* Tags Section */}
       <Grid item xs={12}>
-        <Typography variant="body1" sx={{ marginBottom: 1, fontWeight: "500" }}>
-          <LocalOfferIcon sx={{ marginRight: 1, color: "#0288D1" }} /> Tags:
+        <Typography
+          variant="body1"
+          sx={{ marginBottom: 1, fontWeight: "600", color: "#0288D1" }}
+        >
+          <LocalOfferIcon sx={{ marginRight: 1 }} /> Tags:
         </Typography>
         <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
           <InputLabel>Tags</InputLabel>
