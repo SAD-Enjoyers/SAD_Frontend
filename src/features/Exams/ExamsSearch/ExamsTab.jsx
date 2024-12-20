@@ -90,13 +90,6 @@ function ExamsTab() {
     }, []);
   
     
-    const totalPages = Math.ceil(exams.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentExams = exams.slice(
-      startIndex,
-      startIndex + itemsPerPage
-    );
-
   const handleSearch = (event) => setSearchTerm(event.target.value);
 
   const handleSearchSubmit = () => {
@@ -104,9 +97,6 @@ function ExamsTab() {
     setTimeout(() => setLoading(false), 1500);
   };
 
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") handleSearchSubmit();
-  };
 
   const handleSubjectChange = (event) => {
     const selected = event.target.value;
@@ -127,39 +117,42 @@ function ExamsTab() {
     setCurrentPage(1);
   };
 
-  // const filteredQuestions = questions
-  //   .filter((question) => {
-  //     const matchesSearchTerm = question.name
-  //       .toLowerCase()
-  //       .includes(searchTerm.toLowerCase());
-  //     const matchesSubjects =
-  //       selectedSubjects.length === 0 ||
-  //       selectedSubjects.every((subject) =>
-  //         question.subjects.includes(subject)
-  //       );
-  //     const matchesLevel = selectedLevel
-  //       ? question.level === selectedLevel
-  //       : true;
-
-  //     return matchesSearchTerm && matchesSubjects && matchesLevel;
-  //   })
-  //   .sort((a, b) => {
-  //     const { criterion, direction } = sortOrder;
-  //     if (criterion === "score") {
-  //       return direction === "asc" ? a.score - b.score : b.score - a.score;
-  //     }
-  //     if (criterion === "name") {
-  //       return direction === "asc"
-  //         ? a.name.localeCompare(b.name)
-  //         : b.name.localeCompare(a.name);
-  //     }
-  //     if (criterion === "writer") {
-  //       return direction === "asc"
-  //         ? a.writer.localeCompare(b.writer)
-  //         : b.writer.localeCompare(a.writer);
-  //     }
-  //     return 0;
-  //   });
+  const filteredExams = useMemo(() => {
+    return exams
+      .filter((exam) => {
+        const matchesSearchTerm = exam.name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+        const matchesSubjects =
+          selectedSubjects.length === 0 ||
+          selectedSubjects.every((subject) =>
+            exam.subjects.includes(subject)
+          );
+        return matchesSearchTerm && matchesSubjects;
+      })
+      .sort((a, b) => {
+        const { criterion, direction } = sortOrder;
+        if (criterion === "score") {
+          return direction === "asc" ? a.score - b.score : b.score - a.score;
+        }
+        if (criterion === "voters") {
+          return direction === "asc"
+            ? a.numberOfVoters - b.numberOfVoters
+            : b.numberOfVoters - a.numberOfVoters;
+        }
+        if (criterion === "name") {
+          return direction === "asc"
+            ? a.name.localeCompare(b.name)
+            : b.name.localeCompare(a.name);
+        }
+        if (criterion === "writer") {
+          return direction === "asc"
+            ? a.writer.localeCompare(b.writer)
+            : b.writer.localeCompare(a.writer);
+        }
+        return 0;
+      });
+  }, [searchTerm, selectedSubjects, exams, sortOrder]);
 
   // const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
   // const startIndex = (currentPage - 1) * itemsPerPage;
