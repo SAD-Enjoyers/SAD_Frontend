@@ -75,4 +75,14 @@ import {
       alert("Course added successfully!");
     }
   };
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === "image/jpeg") {
+      setImage(file);
+      setPreviewImage(URL.createObjectURL(file));
+    } else {
+      alert("Only JPEG images are allowed.");
+    }
+  };
+  
   
