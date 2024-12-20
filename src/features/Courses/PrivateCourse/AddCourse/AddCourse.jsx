@@ -85,4 +85,19 @@ import {
     }
   };
   
+  const handleVideoUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setVideo(file);
+      const interval = setInterval(() => {
+        setUploadProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return prev + 10;
+        });
+      }, 200);
+    }
+  };
   
