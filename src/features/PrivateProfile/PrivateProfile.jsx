@@ -233,7 +233,7 @@ export default function PrivateProfile() {
               gap={3}
             >
               <StyledButton link="make_exam">add exam</StyledButton>
-              <StyledButton link="">add courses</StyledButton>
+              <StyledButton link="AddCourse">add courses</StyledButton>
               <StyledButton link="AddArticle">add article</StyledButton>
               <StyledButton link="">review profile</StyledButton>
             </Box>

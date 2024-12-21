@@ -36,6 +36,24 @@ export default function ReviewComponent(props) {
       author: "",
     },
   ];
+  const Data2 = [
+    {
+      imageURL: "/images/exam.png",
+      name: "typescript",
+      price: "10",
+      description: " Learn TypeScript",
+      score: "0.00",
+      author: "creator",
+    },
+    {
+      imageURL: "/images/exam.png",
+      name: "typescript",
+      price: "10",
+      description: " Learn TypeScript",
+      score: "0.00",
+      author: "",
+    },
+  ];
   const Condition = (item) => {
     if (props.section === "My Exams") {
       if (item.type === "member") {
@@ -49,6 +67,13 @@ export default function ReviewComponent(props) {
         navigate("/PrivateCourse");
       } else {
         navigate("/PublicCourse");
+      }
+    }
+    if (props.section == "My Articles") {
+      if (item.author == "creator") {
+        navigate("/PrivateArticle");
+      } else {
+        navigate("/PublicArticle");
       }
     }
   };
@@ -112,9 +137,16 @@ export default function ReviewComponent(props) {
     if (props.section === "My Courses") {
       setData(Data);
     }
-    if (props.section === "My Exams" || props.section === "My Articles") {
+    // if (props.section === "My Exams" || props.section === "My Articles") {
+    //   console.log(props.Services);
+    //   fetchExamData(props.Services);
+    // }
+    if (props.section === "My Exams") {
       console.log(props.Services);
       fetchExamData(props.Services);
+    }
+    if (props.section === "My Articles") {
+      setData(Data2);
     }
   }, [props.section]);
 
