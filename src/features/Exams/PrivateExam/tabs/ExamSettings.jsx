@@ -16,6 +16,8 @@ import {
   Select,
   MenuItem,
   Checkbox,
+  Snackbar,
+  Alert,
   ListItemText,
 } from "@mui/material";
 
@@ -36,6 +38,10 @@ const ExamSettings = ({ examData, accessToken }) => {
   const [isUploading, setIsUploading] = useState(false); // Uploading state
   const [uploadedImage, setUploadedImage] = useState(examData.image); // Updated image state
   // Editable exam data states
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success"); // 'success' or 'error'
+
   const [description, setDescription] = useState(examData.description);
   const [level, setLevel] = useState(examData.level);
   const [price, setPrice] = useState(examData.price);
@@ -77,8 +83,6 @@ const ExamSettings = ({ examData, accessToken }) => {
   const handleImageChange = (e) => {
     setNewImage(e.target.files[0]);
   };
-
-  // Upload new image and update exam data
   const uploadNewImage = async () => {
     if (!newImage) return;
 
@@ -104,19 +108,14 @@ const ExamSettings = ({ examData, accessToken }) => {
 
       const newImageName = response.data.data.fileName;
       console.log(response);
-      // Get the new image name
-      // Log the previous and new image names to the console
-      console.log("Previous Image:", uploadedImage);
-      console.log("New Image:", newImageName);
       setUploadedImage(newImageName);
 
-      // Extract and prepare the updated parameters
       const updatedExamData = {
         serviceId: parseFloat(examData.serviceId),
         name: name,
         description,
         level,
-        price: parseFloat(price), // Ensure price is a number
+        price: parseFloat(price),
         activityStatus,
         image: newImageName,
         tag1,
@@ -125,8 +124,6 @@ const ExamSettings = ({ examData, accessToken }) => {
         examDuration,
       };
 
-      console.log("updatedExamData:", JSON.stringify(updatedExamData, null, 2));
-      // Send updated exam data to the backend
       await axios.put("/api/v1/exam/edit-exam", updatedExamData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -135,10 +132,17 @@ const ExamSettings = ({ examData, accessToken }) => {
         },
       });
 
-      alert("Image updated and exam data saved successfully!");
+      // Show success snackbar
+      setSnackbarMessage("Image updated and exam data saved successfully!");
+      setSeverity("success");
+      setOpenSnackbar(true);
     } catch (error) {
       console.error("Error updating image or exam data:", error);
-      alert("Failed to update image or exam data.");
+
+      // Show error snackbar
+      setSnackbarMessage("Failed to update image or exam data.");
+      setSeverity("error");
+      setOpenSnackbar(true);
     } finally {
       setIsUploading(false);
       setNewImage(null);
@@ -148,11 +152,10 @@ const ExamSettings = ({ examData, accessToken }) => {
   // Handle form data changes
   const handleSaveChanges = async () => {
     try {
-      // Map selected tags to tag1, tag2, tag3, and fill with null for unselected tags
       const updatedTags = [
-        selectedTags[0] || null, // First tag or null
-        selectedTags[1] || null, // Second tag or null
-        selectedTags[2] || null, // Third tag or null
+        selectedTags[0] || null,
+        selectedTags[1] || null,
+        selectedTags[2] || null,
       ];
 
       const updatedExamData = {
@@ -162,16 +165,12 @@ const ExamSettings = ({ examData, accessToken }) => {
         level,
         price: parseFloat(price),
         activityStatus,
-        // image:examData.image;
         image: examData.image,
         tag1: updatedTags[0],
         tag2: updatedTags[1],
         tag3: updatedTags[2],
         examDuration: parseFloat(examDuration),
       };
-      console.log(examData.image);
-
-      console.log("updatedExamData:", JSON.stringify(updatedExamData, null, 2));
 
       await axios.put("/api/v1/exam/edit-exam", updatedExamData, {
         headers: {
@@ -181,11 +180,19 @@ const ExamSettings = ({ examData, accessToken }) => {
         },
       });
 
-      alert("Exam data updated successfully!");
+      // Show success snackbar
+      setSnackbarMessage("Exam data updated successfully!");
+      setSeverity("success");
+      setOpenSnackbar(true);
+
       setSelectedTags(selectedTags); // Update state to reflect saved tags
     } catch (error) {
       console.error("Error updating exam data:", error);
-      alert("Failed to update exam data.");
+
+      // Show error snackbar
+      setSnackbarMessage("Failed to update exam data.");
+      setSeverity("error");
+      setOpenSnackbar(true);
     }
   };
 
@@ -432,6 +439,20 @@ const ExamSettings = ({ examData, accessToken }) => {
           <SaveIcon sx={{ marginRight: 1, color: "#FFFFFF" }} /> Save Changes
         </Button>
       </Grid>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };

@@ -7,6 +7,8 @@ import {
   Button,
   Rating,
   Chip,
+  Snackbar,
+  Alert,
   CircularProgress,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
@@ -93,6 +95,9 @@ function ExamPreview() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [purchased, setPurchased] = useState(false);
   const [purchaseLoading, setPurchaseLoading] = useState(false);
+  // const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success"); // Can be "success" or "error"
 
   useEffect(() => {
     const fetchExamData = async () => {
@@ -117,6 +122,8 @@ function ExamPreview() {
         }
 
         const responseData = await response.json();
+        console.log("Response Data:", JSON.stringify(responseData, null, 2));
+
         setExamData(responseData.data.Exam);
       } catch (error) {
         setErrorMessage("An unexpected error occurred. Please try again.");
@@ -135,7 +142,6 @@ function ExamPreview() {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
-          // localStorage.getItem("token")
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ serviceId }), // Send the `serviceId` to the backend
@@ -143,20 +149,30 @@ function ExamPreview() {
 
       if (!response.ok) {
         const responseData = await response.json();
-        alert(`Failed to register the exam: ${responseData.message}`);
+        setSnackbarMessage(
+          `Failed to register the exam: ${responseData.message}`
+        );
+        setSeverity("error");
+        setOpenSnackbar(true);
         setPurchaseLoading(false);
         return;
       }
 
       const responseData = await response.json();
       setPurchased(true); // Mark the exam as purchased
-      alert("Thank you for purchasing the exam! Questions are now unlocked.");
+      setSnackbarMessage(
+        "Thank you for purchasing the exam! Questions are now unlocked."
+      );
+      setSeverity("success");
+      setOpenSnackbar(true);
       localStorage.setItem("examData", JSON.stringify(examData)); // Save to localStorage
       navigate("/PublicExam", { state: { examData } });
     } catch (error) {
-      alert(
+      setSnackbarMessage(
         "An error occurred while processing your purchase. Please try again."
       );
+      setSeverity("error");
+      setOpenSnackbar(true);
     } finally {
       setPurchaseLoading(false);
     }
@@ -346,6 +362,21 @@ function ExamPreview() {
             </Typography>
           </CommentSection>
         </Box>
+        {/* Snackbar for success/error message */}
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={3000}
+          onClose={() => setOpenSnackbar(false)}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={() => setOpenSnackbar(false)}
+            severity={severity}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </Box>
     )
   );
