@@ -1,68 +1,75 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Box, Typography, TextField, Grid, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar } from '@mui/material';
-import { Alert } from '@mui/lab';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import {
+  Button,
+  Box,
+  Typography,
+  TextField,
+  Grid,
+  Card,
+  CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Snackbar,
+} from "@mui/material";
+import { Alert } from "@mui/lab";
+import axios from "axios";
 
 const WalletPage = () => {
-
   const [accountInfo, setAccountInfo] = useState(null);
   const [transactions, setTransactions] = useState([]);
-  const [transactionAmount, setTransactionAmount] = useState('');
-  const [newCardNumber, setNewCardNumber] = useState('');
+  const [transactionAmount, setTransactionAmount] = useState("");
+  const [newCardNumber, setNewCardNumber] = useState("");
   const [openCardDialog, setOpenCardDialog] = useState(false);
 
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
     const fetchAccountInformation = async () => {
-
-      const apiUrl1 = '/api/v1/profile/wallet'; // Replace with your API URL
+      const apiUrl1 = "/api/v1/profile/wallet"; // Replace with your API URL
 
       // Make the GET request
-      axios.get(apiUrl1,
-        {
+      axios
+        .get(apiUrl1, {
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'x-role': localStorage.getItem('role'),
-          }
-        },)
-        .then(response => {
-
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "x-role": localStorage.getItem("role"),
+          },
+        })
+        .then((response) => {
           if (response?.data?.data) {
             setAccountInfo(response.data.data);
           } else {
-            throw new Error('No account data');
+            throw new Error("No account data");
           }
-        }).catch(error => {
-          console.error('Error fetching account information:', error);
-          setSnackbarMessage('Failed to load account information.');
-          setSnackbarSeverity('error');
-          setOpenSnackbar(true);
         })
+        .catch((error) => {
+          console.error("Error fetching account information:", error);
+          setSnackbarMessage("Failed to load account information.");
+          setSnackbarSeverity("error");
+          setOpenSnackbar(true);
+        });
     };
 
     const fetchTransactions = async () => {
-
       // URL of the API endpoint
-      const apiUrl = '/api/v1/profile/transactions'; // Replace with your API URL
+      const apiUrl = "/api/v1/profile/transactions"; // Replace with your API URL
 
       // Make the GET request
-      axios.get(apiUrl,
-        {
+      axios
+        .get(apiUrl, {
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'x-role': localStorage.getItem('role'),
-          }
-        },)
-        .then(async response => {
-
-
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "x-role": localStorage.getItem("role"),
+          },
+        })
+        .then(async (response) => {
           if (response?.data?.data) {
-
             const transformedTransactions = response.data.data.map((tx) => ({
               amount: tx.volume,
               date: tx.time,
@@ -70,15 +77,15 @@ const WalletPage = () => {
             }));
             setTransactions(transformedTransactions);
           } else {
-            throw new Error('No transactions data');
+            throw new Error("No transactions data");
           }
         })
-        .catch(error => {
-          console.error('Error fetching transactions:', error);
-          setSnackbarMessage('Failed to load transactions.');
-          setSnackbarSeverity('error');
+        .catch((error) => {
+          console.error("Error fetching transactions:", error);
+          setSnackbarMessage("Failed to load transactions.");
+          setSnackbarSeverity("error");
           setOpenSnackbar(true);
-        })
+        });
     };
 
     // Function to format the date
@@ -88,59 +95,55 @@ const WalletPage = () => {
     };
 
     // Update the date in each object
-    const updatedDataList = transactions.map(item => ({
+    const updatedDataList = transactions.map((item) => ({
       ...item,
-      date: formatDate(item.date)
+      date: formatDate(item.date),
     }));
 
-    console.log(updatedDataList)
+    console.log(updatedDataList);
     // Set the updated data list
-
-
 
     fetchAccountInformation();
     fetchTransactions();
     setTransactions(updatedDataList);
-    console.log(transactions)
+    console.log(transactions);
   }, []);
 
   // Function to fix the date format
-
-
-
 
   const handleDeposit = async () => {
     const amount = parseFloat(transactionAmount);
     if (amount > 0) {
       try {
-        const response = await axios.post('/api/v1/profile/deposit',
+        const response = await axios.post(
+          "/api/v1/profile/deposit",
           { amount: amount },
           {
             headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-              'x-role': localStorage.getItem('role'),
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "x-role": localStorage.getItem("role"),
             },
           }
         );
 
         if (response.status === 200) {
-          setSnackbarMessage('Deposit successful!');
-          setSnackbarSeverity('success');
+          setSnackbarMessage("Deposit successful!");
+          setSnackbarSeverity("success");
         } else {
-          throw new Error('Deposit failed');
+          throw new Error("Deposit failed");
         }
       } catch (error) {
-        console.error('Deposit error:', error);
-        setSnackbarMessage('Failed to deposit. Please try again.');
-        setSnackbarSeverity('error');
+        console.error("Deposit error:", error);
+        setSnackbarMessage("Failed to deposit. Please try again.");
+        setSnackbarSeverity("error");
       } finally {
         setOpenSnackbar(true);
-        setTransactionAmount('');
+        setTransactionAmount("");
       }
     } else {
-      setSnackbarMessage('Please enter a valid deposit amount.');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("Please enter a valid deposit amount.");
+      setSnackbarSeverity("error");
       setOpenSnackbar(true);
     }
   };
@@ -149,7 +152,7 @@ const WalletPage = () => {
     const amount = parseFloat(transactionAmount);
     if (amount > 0 && amount <= (accountInfo?.balance || 0)) {
       try {
-        const response = await fetch('/api/v1/profile/withdraw', {
+        const response = await fetch("/api/v1/profile/withdraw", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -160,22 +163,22 @@ const WalletPage = () => {
         });
 
         if (response.status === 200) {
-          setSnackbarMessage('Withdrawal successful!');
-          setSnackbarSeverity('success');
+          setSnackbarMessage("Withdrawal successful!");
+          setSnackbarSeverity("success");
         } else {
-          throw new Error('Withdrawal failed');
+          throw new Error("Withdrawal failed");
         }
       } catch (error) {
-        console.error('Withdrawal error:', error);
-        setSnackbarMessage('Failed to withdraw. Please try again.');
-        setSnackbarSeverity('error');
+        console.error("Withdrawal error:", error);
+        setSnackbarMessage("Failed to withdraw. Please try again.");
+        setSnackbarSeverity("error");
       } finally {
         setOpenSnackbar(true);
-        setTransactionAmount('');
+        setTransactionAmount("");
       }
     } else {
-      setSnackbarMessage('Insufficient balance or invalid withdrawal amount.');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("Insufficient balance or invalid withdrawal amount.");
+      setSnackbarSeverity("error");
       setOpenSnackbar(true);
     }
   };
@@ -183,64 +186,82 @@ const WalletPage = () => {
   const handleAddCard = async () => {
     if (newCardNumber.length === 16 && /^\d+$/.test(newCardNumber)) {
       try {
-        const response = await axios.post('/api/v1/profile/cardNumber',
+        const response = await axios.post(
+          "/api/v1/profile/cardNumber",
           { cardNumber: newCardNumber },
           {
             headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-              'x-role': localStorage.getItem('role'),
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "x-role": localStorage.getItem("role"),
             },
           }
         );
 
         if (response.status === 200) {
-          setSnackbarMessage('Card number updated successfully!');
-          setSnackbarSeverity('success');
+          setSnackbarMessage("Card number updated successfully!");
+          setSnackbarSeverity("success");
           window.location.reload();
         } else {
-          throw new Error('Failed to update card number');
+          throw new Error("Failed to update card number");
         }
       } catch (error) {
-        console.error('Card update error:', error);
-        setSnackbarMessage('Failed to update card number. Please try again.');
-        setSnackbarSeverity('error');
+        console.error("Card update error:", error);
+        setSnackbarMessage("Failed to update card number. Please try again.");
+        setSnackbarSeverity("error");
       } finally {
         setOpenSnackbar(true);
         setOpenCardDialog(false);
-        setNewCardNumber('');
+        setNewCardNumber("");
       }
     } else {
-      setSnackbarMessage('Please enter a valid 16-digit card number.');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("Please enter a valid 16-digit card number.");
+      setSnackbarSeverity("error");
       setOpenSnackbar(true);
     }
   };
 
   return (
-    <Box sx={{ width: '100%', margin: '100px 475px', padding: 3, maxWidth: 500, textAlign: 'center' }}>
+    <Box
+      sx={{
+        width: "100%",
+        margin: "0 auto",
+        padding: 3,
+        maxWidth: 500,
+        textAlign: "center",
+        mt: 30,
+      }}
+    >
       {/* Account Information Section */}
       <Card sx={{ marginBottom: 2 }}>
         <CardContent>
           <Typography variant="h5" sx={{ marginBottom: 1 }}>
             Account Information
           </Typography>
-          <Grid >
+          <Grid>
             <Grid item xs={12} sm={7}>
-              <Typography variant="body1">Card Number: {accountInfo?.cardNumber || 'N/A'}</Typography>
+              <Typography variant="body1">
+                Card Number: {accountInfo?.cardNumber || "N/A"}
+              </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Typography variant="body1">Balance: ${accountInfo?.balance || '0.00'}</Typography>
+              <Typography variant="body1">
+                Balance: ${accountInfo?.balance || "0.00"}
+              </Typography>
             </Grid>
           </Grid>
-          <Button variant="contained" color="primary" onClick={() => setOpenCardDialog(true)}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setOpenCardDialog(true)}
+          >
             Add Card Number
           </Button>
         </CardContent>
       </Card>
 
       {/* Deposit and Withdraw Section */}
-      <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
+      <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
         <TextField
           label="Amount"
           type="number"
@@ -263,15 +284,27 @@ const WalletPage = () => {
           <Typography variant="h5">Transaction History</Typography>
           <Box sx={{ marginTop: 2 }}>
             <Grid container spacing={1}>
-              <Grid item xs={4}><Typography variant="body1">Amount</Typography></Grid>
-              <Grid item xs={4}><Typography variant="body1">Date</Typography></Grid>
-              <Grid item xs={4}><Typography variant="body1">Type</Typography></Grid>
+              <Grid item xs={4}>
+                <Typography variant="body1">Amount</Typography>
+              </Grid>
+              <Grid item xs={4}>
+                <Typography variant="body1">Date</Typography>
+              </Grid>
+              <Grid item xs={4}>
+                <Typography variant="body1">Type</Typography>
+              </Grid>
             </Grid>
             {transactions.map((transaction, index) => (
               <Grid container spacing={1} key={index} sx={{ marginTop: 1 }}>
-                <Grid item xs={4}><Typography variant="body2">${transaction.amount}</Typography></Grid>
-                <Grid item xs={4}><Typography variant="body2">{transaction.date}</Typography></Grid>
-                <Grid item xs={4}><Typography variant="body2">{transaction.type}</Typography></Grid>
+                <Grid item xs={4}>
+                  <Typography variant="body2">${transaction.amount}</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography variant="body2">{transaction.date}</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography variant="body2">{transaction.type}</Typography>
+                </Grid>
               </Grid>
             ))}
           </Box>
@@ -280,7 +313,7 @@ const WalletPage = () => {
 
       {/* Dialog for adding a card number */}
       <Dialog open={openCardDialog} onClose={() => setOpenCardDialog(false)}>
-        <DialogContent sx={{ padding: '20px 20px 0px 20px' }}>
+        <DialogContent sx={{ padding: "20px 20px 0px 20px" }}>
           <TextField
             label="New Card Number"
             value={newCardNumber}
@@ -305,9 +338,13 @@ const WalletPage = () => {
         open={openSnackbar}
         autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>
