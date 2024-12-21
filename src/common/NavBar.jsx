@@ -156,7 +156,7 @@ export default function NavBar() {
             </MenuItem>
             <MenuItem
               onClick={() => {
-                navigate("/ValetPage");
+                navigate("/WalletPage");
               }}
             >
               Wallet

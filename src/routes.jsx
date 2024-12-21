@@ -55,7 +55,6 @@ function AppRoutes() {
           <Route path="AddArticle" element={<AddArticle />} />
           <Route path="OngoingExamPage" element={<OngoingExamPage />} />
           <Route path="SearchArticle" element={<ArticleSearch />} />
-          <Route path="ValetPage" element={<ValetPage />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
           <Route path="PublicCourse" element={<PublicCourse />} />
           <Route path="Comments" element={<Comments />} />
