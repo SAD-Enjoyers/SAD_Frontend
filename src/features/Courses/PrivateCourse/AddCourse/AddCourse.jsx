@@ -20,24 +20,19 @@ import {
 } from "@mui/material";
 import { Image, Close, Warning } from "@mui/icons-material";
 
-  import React, { useState } from "react";
+  
   export default function AddCourse() {
     const [courseName, setCourseName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState("");
-    const [durationHours, setDurationHours] = useState("");
+    const [duration, setDuration] = useState("");
     const [level, setLevel] = useState("");
-    const [categories, setCategories] = useState([
-      { id: 1, name: "Math" },
-      { id: 2, name: "Science" },
-      { id: 3, name: "Programming" },
-    ]);
-    const [selectedCategories, setSelectedCategories] = useState([]);
     const [image, setImage] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
-    const [video, setVideo] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [errors, setErrors] = useState({});
+    const [openDialog, setOpenDialog] = useState(false); // State for dialog
+    const [successMessage, setSuccessMessage] = useState(""); // Success message state
   }
   const handleFormSubmit = (event) => {
     event.preventDefault();
@@ -45,34 +40,21 @@ import { Image, Close, Warning } from "@mui/icons-material";
     const newErrors = {};
     if (!courseName.trim()) newErrors.courseName = "Course name is required.";
     if (!description.trim()) newErrors.description = "Description is required.";
-    if (!price) {
-      newErrors.price = "Price is required.";
-    } else if (price < 0) {
-      newErrors.price = "Price cannot be negative.";
+    if (!price || price <= 0) newErrors.price = "Valid price is required";
+    if (!duration || duration <= 0)
+      newErrors.duration = "Valid duration is required";
+    if (!level) newErrors.level = "Level is required";
+
+    // Ensure that either image is uploaded
+    if (!image) {
+      newErrors.media = "Please upload an image";
     }
-    if (!durationHours || durationHours < 0) {
-      newErrors.duration = "Duration must be a positive value.";
-    }
-    if (!level) newErrors.level = "Level is required.";
-    if (selectedCategories.length === 0)
-      newErrors.categories = "At least one category must be selected.";
-    if (!image) newErrors.image = "Course image is required.";
-    if (!video) newErrors.video = "Course video is required.";
-  
+
     setErrors(newErrors);
-  
+
     if (Object.keys(newErrors).length === 0) {
-      console.log({
-        courseName,
-        description,
-        price,
-        duration: durationHours,
-        level,
-        selectedCategories,
-        image,
-        video,
-      });
-      alert("Course added successfully!");
+      // If no errors, open confirmation dialog
+      setOpenDialog(true);
     }
   };
   const handleImageUpload = (event) => {
