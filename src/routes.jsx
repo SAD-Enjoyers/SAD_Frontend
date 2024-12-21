@@ -21,7 +21,8 @@ import AddArticle from "./features/Articles/AddArticle/AddArticle.jsx";
 import ArticleSearch from "./features/Articles/SearchArticle/SearchArticle.jsx";
 import WalletPage from "./features/Wallet/Wallet.jsx";
 import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
-import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx";
+import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
+import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx"
 function AppRoutes() {
   return (
     <Router>
@@ -47,8 +48,9 @@ function AppRoutes() {
           <Route path="AddArticle" element={<AddArticle />} />
           <Route path="OngoingExamPage" element={<OngoingExamPage />} />
           <Route path="SearchArticle" element={<ArticleSearch />} />
-          <Route path="WalletPage" element={<WalletPage />}/>
+          <Route path="WalletPage" element={<WalletPage />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
+          <Route path="PublicArticle" element={<PublicArticle />} />
           <Route path="PrivateArticle/:serviceId" element={<PrivateArticle />} />
         </Route>
       </Routes>
