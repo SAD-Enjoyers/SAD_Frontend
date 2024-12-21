@@ -47,6 +47,7 @@ function AppRoutes() {
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
           <Route path="PrivateExam/:serviceId" element={<PrivateExam />} />
           <Route path="PrivateCourse" element={<PrivateCourse />} />
+          <Route path="PublicCourse" element={<PublicCourse />} />
           <Route path="PublicExam" element={<PublicExam />} />
           <Route path="ExamResult" element={<ExamResult />} />
           <Route path="AddArticle" element={<AddArticle />} />
@@ -54,7 +55,6 @@ function AppRoutes() {
           <Route path="SearchArticle" element={<ArticleSearch />} />
           <Route path="ValetPage" element={<ValetPage />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
-          <Route path="PublicCourse" element={<PublicCourse />} />
           <Route path="Comments" element={<Comments />} />
         </Route>
       </Routes>

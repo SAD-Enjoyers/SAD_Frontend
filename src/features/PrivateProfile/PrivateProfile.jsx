@@ -237,8 +237,9 @@ export default function PrivateProfile() {
               alignItems="center"
               gap={3}
             >
-              <StyledButton link="make_exam">make exam</StyledButton>
+              <StyledButton link="make_exam">add exam</StyledButton>
               <StyledButton link="">add courses</StyledButton>
+              <StyledButton link="">add article</StyledButton>
               <StyledButton link="">review profile</StyledButton>
             </Box>
           </Grid2>

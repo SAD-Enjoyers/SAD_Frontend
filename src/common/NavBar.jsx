@@ -23,7 +23,7 @@ export default function NavBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const pages = ["articles", "courses", "questions", "exams", "users"];
   const addresses = [
-    "/ArticleSearch",
+    "/SearchArticle",
     "/",
     "/QuestionSearch",
     "/ExamSearch",
@@ -154,7 +154,14 @@ export default function NavBar() {
             >
               Profile
             </MenuItem>
-            <MenuItem onClick={handleClose}>Wallet</MenuItem>
+            <MenuItem
+              onClick={() => {
+                navigate("/ValetPage");
+              }}
+            >
+              Wallet
+            </MenuItem>
+
             <MenuItem
               onClick={() => {
                 localStorage.removeItem("token");
