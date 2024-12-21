@@ -1,25 +1,25 @@
+import React, { useState } from "react";
 import {
-    Box,
-    Button,
-    Container,
-    Grid,
-    TextField,
-    Typography,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    Checkbox,
-    ListItemText,
-    FormHelperText,
-    CircularProgress,
-  } from "@mui/material";
-  import {
-    MonetizationOn,
-    AccessTime,
-    School,
-    UploadFile,
-  } from "@mui/icons-material";
+  Box,
+  Button,
+  Container,
+  Grid,
+  TextField,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
+  IconButton,
+  InputAdornment,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
+import { Image, Close, Warning } from "@mui/icons-material";
+
   import React, { useState } from "react";
   export default function AddCourse() {
     const [courseName, setCourseName] = useState("");
