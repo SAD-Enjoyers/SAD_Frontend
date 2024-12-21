@@ -140,10 +140,8 @@ const mockData = {
   articleData: {
     serviceId: 123,
     title: "Mock Article Title",
-    content: "This is the content of the article. It can include text, images, etc.",
-    author: "Jane Doe",
+    description: "This is the content of the article. It can include text, images, etc.",
     publishedDate: "2024-12-21",
-    tags: ["Tech", "JavaScript", "React"],
     comments: [
       {
         author: "John Smith",

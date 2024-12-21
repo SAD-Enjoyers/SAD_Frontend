@@ -62,6 +62,10 @@ const ArticleSettings = ({ articleData, accessToken }) => {
     };
 
     // Initialize selectedTags with existing examData tags
+    // setSelectedTags(
+    //   [articleData.tag1, articleData.tag2, articleData.tag3, ''].filter(Boolean) // Filter out null or undefined tags
+    // );
+
     setSelectedTags(
       [tag1, tag2, tag3].filter(Boolean) // Filter out null or undefined tags
     );
@@ -268,7 +272,7 @@ const ArticleSettings = ({ articleData, accessToken }) => {
             MenuProps={{
               PaperProps: { style: { maxHeight: 200, overflow: "auto" } },
             }}
-
+            
           >
             {categories.map((category) => (
               <MenuItem key={category.categoryId} value={category.category}>
