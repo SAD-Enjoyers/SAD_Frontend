@@ -31,13 +31,20 @@ const OngoingExamPage = () => {
 
   // دریافت داده‌های آزمون از سمت سرور
   useEffect(() => {
+
     const startExam = async () => {
       try {
         const serviceId = 1; // آی‌دی سرویس به عنوان مثال
-        const response = await fetch(`/api/v1/exam/start-exam/${serviceId}`, {
+        const token = localStorage.getItem("examToken");
+        if (!token) {
+          throw new Error("Exam token is missing. Please login or start the exam again.");
+        }
+
+        const response = await fetch(`/api/v1/exam/start-exam/${serviceId}}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -127,10 +134,12 @@ const OngoingExamPage = () => {
     }));
 
     try {
+       const token = localStorage.getItem("examToken");
       const response = await fetch("/api/v1/exam/end-exam", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${examToken}`,
         },
         body: JSON.stringify({
           examToken, // ارسال توکن آزمون
