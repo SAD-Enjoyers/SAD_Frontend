@@ -19,8 +19,10 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useParams } from "react-router-dom";
 
 function QuestionPage() {
+  const { questionId } = useParams();
   const [question, setQuestion] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,7 +36,7 @@ function QuestionPage() {
     const fetchQuestion = async () => {
       try {
         const urlParams = new URLSearchParams(window.location.search);
-        const questionId = urlParams.get("questionId") || "19"; // Default to 19 for testing
+        const questionId = urlParams.get("questionId") ;
 
         const response = await fetch(`/api/v1/questions/get-question?questionId=${questionId}`, {
           method: "GET",

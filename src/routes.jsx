@@ -44,7 +44,7 @@ function AppRoutes() {
           <Route path="QuestionSearch" element={<QuestionSearch />} />
           <Route path="ExamSearch" element={<ExamSearch />} />
           <Route path="changepassword" element={<ChangePassword />} />
-          <Route path="QuestionPage/:serviceId" element={<QuestionPage />} />
+          <Route path="QuestionPage/:questionId" element={<QuestionPage />} />
           <Route path="image" element={<ImageUpload />} />
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
           <Route path="PrivateExam/:serviceId" element={<PrivateExam />} />
