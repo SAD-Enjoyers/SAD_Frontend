@@ -18,13 +18,15 @@ import TermsAndConditions from "./features/Auth/TermsAndConditions/TermsAndCondi
 import OngoingExamPage from "./features/Exams/OngoingExamPage/OngoingExamPage.jsx";
 import AddArticle from "./features/Articles/AddArticle/AddArticle.jsx";
 import ArticleSearch from "./features/Articles/SearchArticle/SearchArticle.jsx";
-import ValetPage from "./features/Valet/ValetPage.jsx";
-import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 import PublicCourse from "./features/Courses/PublicCourse/PublicCourse.jsx";
 import MakeExam from "./features/Exams/MakeExam/MakeExam.jsx";
 import ImageUpload from "./features/Exams/MakeExam/components/ImageUpload.jsx";
 import PrivateCourse from "./features/Courses/PrivateCourse/PrivateCourse.jsx";
 import Comments from "./common/Comments/CommentSection.jsx";
+import WalletPage from "./features/PrivateProfile/Wallet/Wallet.jsx";
+import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
+import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
+import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx";
 function AppRoutes() {
   return (
     <Router>
@@ -47,15 +49,22 @@ function AppRoutes() {
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
           <Route path="PrivateExam/:serviceId" element={<PrivateExam />} />
           <Route path="PrivateCourse" element={<PrivateCourse />} />
+          <Route path="PublicCourse" element={<PublicCourse />} />
           <Route path="PublicExam" element={<PublicExam />} />
           <Route path="ExamResult" element={<ExamResult />} />
           <Route path="AddArticle" element={<AddArticle />} />
           <Route path="OngoingExamPage" element={<OngoingExamPage />} />
           <Route path="SearchArticle" element={<ArticleSearch />} />
-          <Route path="ValetPage" element={<ValetPage />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
           <Route path="PublicCourse" element={<PublicCourse />} />
           <Route path="Comments" element={<Comments />} />
+          <Route path="WalletPage" element={<WalletPage />} />
+          <Route path="AddQuestion" element={<AddQuestion />} />
+          <Route path="PublicArticle" element={<PublicArticle />} />
+          <Route
+            path="PrivateArticle/:serviceId"
+            element={<PrivateArticle />}
+          />
         </Route>
       </Routes>
     </Router>

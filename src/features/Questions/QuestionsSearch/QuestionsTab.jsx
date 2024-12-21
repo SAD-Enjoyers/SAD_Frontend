@@ -23,50 +23,50 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import PeopleIcon from "@mui/icons-material/People";
 
-// Reusable Category Filter Component
-const CategoryFilter = ({ categories, selectedSubjects, onSubjectChange }) => (
-  <FormControl fullWidth variant="outlined">
-    <InputLabel>Categories</InputLabel>
-    <Select
-      multiple
-      value={selectedSubjects}
-      onChange={onSubjectChange}
-      renderValue={(selected) => selected.join(", ")}
-      sx={{ backgroundColor: "#f5f5f5" }}
-    >
-      {categories.map((category) => (
-        <MenuItem key={category.categoryId} value={category.category}>
-          <Checkbox checked={selectedSubjects.includes(category.category)} />
-          <ListItemText primary={category.category} />
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-);
+// // Reusable Category Filter Component
+// const CategoryFilter = ({ categories, selectedSubjects, onSubjectChange }) => (
+//   <FormControl fullWidth variant="outlined">
+//     <InputLabel>Categories</InputLabel>
+//     <Select
+//       multiple
+//       value={selectedSubjects}
+//       onChange={onSubjectChange}
+//       renderValue={(selected) => selected.join(", ")}
+//       sx={{ backgroundColor: "#f5f5f5" }}
+//     >
+//       {categories.map((category) => (
+//         <MenuItem key={category.categoryId} value={category.category}>
+//           <Checkbox checked={selectedSubjects.includes(category.category)} />
+//           <ListItemText primary={category.category} />
+//         </MenuItem>
+//       ))}
+//     </Select>
+//   </FormControl>
+// );
 
-// Reusable Sort By Component
-const SortBy = ({ sortOrder, onSortChange }) => (
-  <FormControl fullWidth variant="outlined">
-    <InputLabel>Sort By</InputLabel>
-    <Select
-      value={`${sortOrder.criterion}-${sortOrder.direction}`}
-      onChange={onSortChange}
-    >
-      <MenuItem value="score-asc">
-        <Sort sx={{ marginRight: "8px" }} /> Score (Low to High)
-      </MenuItem>
-      <MenuItem value="score-desc">
-        <Sort sx={{ marginRight: "8px" }} /> Score (High to Low)
-      </MenuItem>
-      <MenuItem value="name-asc">
-        <SortByAlpha sx={{ marginRight: "8px" }} /> Name (A to Z)
-      </MenuItem>
-      <MenuItem value="name-desc">
-        <SortByAlpha sx={{ marginRight: "8px" }} /> Name (Z to A)
-      </MenuItem>
-    </Select>
-  </FormControl>
-);
+// // Reusable Sort By Component
+// const SortBy = ({ sortOrder, onSortChange }) => (
+//   <FormControl fullWidth variant="outlined">
+//     <InputLabel>Sort By</InputLabel>
+//     <Select
+//       value={`${sortOrder.criterion}-${sortOrder.direction}`}
+//       onChange={onSortChange}
+//     >
+//       <MenuItem value="score-asc">
+//         <Sort sx={{ marginRight: "8px" }} /> Score (Low to High)
+//       </MenuItem>
+//       <MenuItem value="score-desc">
+//         <Sort sx={{ marginRight: "8px" }} /> Score (High to Low)
+//       </MenuItem>
+//       <MenuItem value="name-asc">
+//         <SortByAlpha sx={{ marginRight: "8px" }} /> Name (A to Z)
+//       </MenuItem>
+//       <MenuItem value="name-desc">
+//         <SortByAlpha sx={{ marginRight: "8px" }} /> Name (Z to A)
+//       </MenuItem>
+//     </Select>
+//   </FormControl>
+// );
 
 function QuestionsTab() {
   const [searchTerm, setSearchTerm] = useState("");

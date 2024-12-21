@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Box,
   TextField,
@@ -12,6 +12,8 @@ import {
   Chip,
   Rating,
   Pagination,
+  Checkbox,
+  ListItemText,
   ListItemIcon,
   Grid,
 } from "@mui/material";
@@ -26,13 +28,15 @@ import {
   Sort,
   SortByAlpha,
 } from "@mui/icons-material";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function ExamsTab() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [categories, setCategories] = useState([]); // Categories for filter
   const [selectedSubjects, setSelectedSubjects] = useState([]);
-  const [selectedLevel, setSelectedLevel] = useState("");
-
   const [sortOrder, setSortOrder] = useState({
     criterion: "",
     direction: "asc",
@@ -40,17 +44,58 @@ function ExamsTab() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
 
-  const questions = Mokdata;
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("/api/v1/common/categories");
+        setCategories(response.data.data.categoryList || []);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    const fetchQuestions = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("/api/v1/exam");
+        const transformedQuestions = response.data.data.result.map((exam) => ({
+          id: exam.serviceId,
+          name: exam.name,
+          text: exam.description,
+          subjects: [exam.tag1, exam.tag2, exam.tag3].filter(Boolean),
+          tag1: exam.tag1,
+          tag2: exam.tag2,
+          tag3: exam.tag3,
+          level: exam.level,
+          price: exam.price,
+          score: exam.score,
+          writer: exam.userId,
+          numberOfVoters: exam.numberOfVoters, // Add number of voters here
+        }));
+        console.log("Response Data:", JSON.stringify(response, null, 2));
+        setQuestions(transformedQuestions);
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+    fetchQuestions();
+  }, []);
+
+  const navigate = useNavigate();
+
+  // const handleQuestionClick = (serviceId) => {
+  //   navigate(`/ExamPreview/${serviceId}`);
+  // };
 
   const handleSearch = (event) => setSearchTerm(event.target.value);
 
   const handleSearchSubmit = () => {
     setLoading(true);
     setTimeout(() => setLoading(false), 1500);
-  };
-
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") handleSearchSubmit();
   };
 
   const handleSubjectChange = (event) => {
@@ -72,39 +117,44 @@ function ExamsTab() {
     setCurrentPage(1);
   };
 
-  const filteredQuestions = questions
-    .filter((question) => {
-      const matchesSearchTerm = question.name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-      const matchesSubjects =
-        selectedSubjects.length === 0 ||
-        selectedSubjects.every((subject) =>
-          question.subjects.includes(subject)
-        );
-      const matchesLevel = selectedLevel
-        ? question.level === selectedLevel
-        : true;
+  // Memoized filtering and sorting logic
+  const filteredQuestions = useMemo(() => {
+    return questions
+      .filter((question) => {
+        const matchesSearchTerm = question.name
+          ? question.name.toLowerCase().includes(searchTerm.toLowerCase())
+          : false;
+        const matchesSubjects =
+          selectedSubjects.length === 0 ||
+          selectedSubjects.every((subject) =>
+            question.subjects.includes(subject)
+          );
+        return matchesSearchTerm && matchesSubjects;
+      })
 
-      return matchesSearchTerm && matchesSubjects && matchesLevel;
-    })
-    .sort((a, b) => {
-      const { criterion, direction } = sortOrder;
-      if (criterion === "score") {
-        return direction === "asc" ? a.score - b.score : b.score - a.score;
-      }
-      if (criterion === "name") {
-        return direction === "asc"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
-      }
-      if (criterion === "writer") {
-        return direction === "asc"
-          ? a.writer.localeCompare(b.writer)
-          : b.writer.localeCompare(a.writer);
-      }
-      return 0;
-    });
+      .sort((a, b) => {
+        const { criterion, direction } = sortOrder;
+        if (criterion === "score") {
+          return direction === "asc" ? a.score - b.score : b.score - a.score;
+        }
+        if (criterion === "voters") {
+          return direction === "asc"
+            ? a.numberOfVoters - b.numberOfVoters
+            : b.numberOfVoters - a.numberOfVoters;
+        }
+        if (criterion === "name") {
+          return direction === "asc"
+            ? a.name.localeCompare(b.name)
+            : b.name.localeCompare(a.name);
+        }
+        if (criterion === "writer") {
+          return direction === "asc"
+            ? a.writer.localeCompare(b.writer)
+            : b.writer.localeCompare(a.writer);
+        }
+        return 0;
+      });
+  }, [searchTerm, selectedSubjects, questions, sortOrder]);
 
   const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -126,14 +176,16 @@ function ExamsTab() {
         boxShadow: "0 8px 16px rgba(0, 0, 0, 0.1)", // Soft shadows for a floating effect
       }}
     >
+      {/* Search and Sort Filters */}
       <Grid container spacing={3} sx={{ marginTop: "30px" }}>
+        {/* Search */}
         <Grid item xs={12} sm={8} md={9}>
           <TextField
             variant="outlined"
             placeholder="Search questions..."
             value={searchTerm}
             onChange={handleSearch}
-            onKeyDown={handleKeyPress}
+            onKeyDown={(event) => event.key === "Enter" && handleSearchSubmit()}
             fullWidth
             InputProps={{
               endAdornment: (
@@ -145,7 +197,7 @@ function ExamsTab() {
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "8px",
-                backgroundColor: "#fff", // Added white background for input fields
+                backgroundColor: "#fff",
               },
             }}
           />
@@ -157,9 +209,9 @@ function ExamsTab() {
             disabled={loading}
             fullWidth
             sx={{
-              backgroundColor: "#4A90E2", // Accent color
+              backgroundColor: "#4A90E2",
               color: "#fff",
-              borderRadius: "8px", // Rounded button
+              borderRadius: "8px",
               "&:hover": { backgroundColor: "#357ABD" },
               padding: "10px",
             }}
@@ -169,7 +221,6 @@ function ExamsTab() {
         </Grid>
       </Grid>
 
-      {/* Filter Options */}
       <Grid container spacing={3} sx={{ marginTop: "30px" }}>
         {/* Filter by Subjects */}
         <Grid item xs={12} sm={4}>
@@ -182,72 +233,43 @@ function ExamsTab() {
               onChange={handleSubjectChange}
               label="Subjects"
               renderValue={(selected) => selected.join(", ")}
+              sx={{
+                backgroundColor: "#ffffff",
+                borderRadius: "8px",
+                borderColor: "#E0E0E0",
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#E0E0E0",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#378CE7",
+                },
+                "& .MuiSelect-icon": {
+                  color: "#378CE7",
+                },
+              }}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 200, // Limit height
+                    overflow: "auto", // Enable scrolling
+                  },
+                },
+              }}
             >
-              <MenuItem value="JavaScript">
-                <FilterList sx={{ marginRight: "8px" }} /> JavaScript
-              </MenuItem>
-              <MenuItem value="Frontend">
-                <FilterList sx={{ marginRight: "8px" }} /> Frontend
-              </MenuItem>
-              <MenuItem value="Backend">
-                <FilterList sx={{ marginRight: "8px" }} /> Backend
-              </MenuItem>
-              <MenuItem value="AI">
-                <FilterList sx={{ marginRight: "8px" }} /> AI
-              </MenuItem>
-              <MenuItem value="Data Science">
-                <FilterList sx={{ marginRight: "8px" }} /> Data Science
-              </MenuItem>
-              <MenuItem value="Python">
-                <FilterList sx={{ marginRight: "8px" }} /> Python
-              </MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-
-        {/* Filter by Level */}
-        <Grid item xs={12} sm={4}>
-          <FormControl fullWidth variant="outlined">
-            <InputLabel>Level</InputLabel>
-            <Select
-              value={selectedLevel}
-              onChange={(event) => setSelectedLevel(event.target.value)}
-              label="Level"
-            >
-              <MenuItem value="">
-                <ListItemIcon>
-                  <SchoolOutlined
-                    sx={{ fontSize: "1.2rem", color: "#6c757d" }}
+              {categories.map((category) => (
+                <MenuItem key={category.categoryId} value={category.category}>
+                  <Checkbox
+                    checked={selectedSubjects.includes(category.category)}
+                    sx={{
+                      color: "#378CE7",
+                      "&.Mui-checked": {
+                        color: "#378CE7",
+                      },
+                    }}
                   />
-                </ListItemIcon>
-                <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
-                  All Levels
-                </Typography>
-              </MenuItem>
-              <MenuItem value="beginner">
-                <ListItemIcon>
-                  <School sx={{ fontSize: "1.2rem", color: "#4CAF50" }} />
-                </ListItemIcon>
-                <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
-                  Beginner
-                </Typography>
-              </MenuItem>
-              <MenuItem value="intermediate">
-                <ListItemIcon>
-                  <School sx={{ fontSize: "1.2rem", color: "#FF9800" }} />
-                </ListItemIcon>
-                <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
-                  Intermediate
-                </Typography>
-              </MenuItem>
-              <MenuItem value="advanced">
-                <ListItemIcon>
-                  <School sx={{ fontSize: "1.2rem", color: "#F44336" }} />
-                </ListItemIcon>
-                <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
-                  Advanced
-                </Typography>
-              </MenuItem>
+                  <ListItemText primary={category.category} />
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
@@ -330,7 +352,7 @@ function ExamsTab() {
                 }}
               >
                 <Link
-                  to={`/question/${question.id}`}
+                  to={`/ExamPreview/${question.id}`}
                   style={{ textDecoration: "none" }}
                 >
                   {question.name}
@@ -407,13 +429,13 @@ function ExamsTab() {
                     gap: "5px",
                   }}
                 >
-                  {question.level === "beginner" && (
+                  {question.level === "Beginner" && (
                     <School sx={{ fontSize: "1.5rem", color: "#4CAF50" }} />
                   )}
-                  {question.level === "intermediate" && (
+                  {question.level === "Medium" && (
                     <School sx={{ fontSize: "1.5rem", color: "#FF9800" }} />
                   )}
-                  {question.level === "advanced" && (
+                  {question.level === "Advanced" && (
                     <School sx={{ fontSize: "1.5rem", color: "#F44336" }} />
                   )}
                   <Typography
