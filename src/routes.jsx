@@ -27,6 +27,7 @@ import WalletPage from "./features/PrivateProfile/Wallet/Wallet.jsx";
 import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
 import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx";
+import AddCourse from "./features/Courses/PrivateCourse/AddCourse/AddCourse.jsx";
 function AppRoutes() {
   return (
     <Router>
@@ -65,6 +66,7 @@ function AppRoutes() {
             path="PrivateArticle/:serviceId"
             element={<PrivateArticle />}
           />
+          <Route path="AddCourse" element={< AddCourse />} />
         </Route>
       </Routes>
     </Router>
