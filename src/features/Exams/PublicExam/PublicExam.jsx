@@ -199,7 +199,7 @@ function PublicExam() {
     );
   }
   return (
-    (
+    examData && (
       <Box
         sx={{
           display: "flex",
