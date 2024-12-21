@@ -119,7 +119,7 @@ const ArticleSettings = ({ articleData, accessToken }) => {
       };
 
       // Send updated article data to the backend
-      await axios.post("/api/v1/article/edit-article", updatedArticleData, {
+      await axios.put("/api/v1/article/edit-article", updatedArticleData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
@@ -159,7 +159,7 @@ const ArticleSettings = ({ articleData, accessToken }) => {
         image: uploadedImage,
       };
 
-      await axios.post("/api/v1/article/edit-article", updatedArticleData, {
+      await axios.put("/api/v1/article/edit-article", updatedArticleData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",

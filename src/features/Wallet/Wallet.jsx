@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Box, Typography, TextField, Grid, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar } from '@mui/material';
-import { Alert } from '@mui/lab'; 
-import axios from 'axios'; 
+import { Alert } from '@mui/lab';
+import axios from 'axios';
 
 const WalletPage = () => {
 
@@ -17,70 +17,104 @@ const WalletPage = () => {
 
   useEffect(() => {
     const fetchAccountInformation = async () => {
-      try {
-        const response = await fetch('/api/v1/profile/wallet', {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "x-role": localStorage.getItem("role"),
-          },
-        });
 
-        const data = await response.json();
-        if (data?.data?.result) {
-          setAccountInfo(data.data.result);
-        } else {
-          throw new Error('No account data');
-        }
-      } catch (error) {
-        console.error('Error fetching account information:', error);
-        setSnackbarMessage('Failed to load account information.');
-        setSnackbarSeverity('error');
-        setOpenSnackbar(true);
-      }
+      const apiUrl1 = '/api/v1/profile/wallet'; // Replace with your API URL
+
+      // Make the GET request
+      axios.get(apiUrl1,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'x-role': localStorage.getItem('role'),
+          }
+        },)
+        .then(response => {
+
+          if (response?.data?.data) {
+            setAccountInfo(response.data.data);
+          } else {
+            throw new Error('No account data');
+          }
+        }).catch(error => {
+          console.error('Error fetching account information:', error);
+          setSnackbarMessage('Failed to load account information.');
+          setSnackbarSeverity('error');
+          setOpenSnackbar(true);
+        })
     };
 
     const fetchTransactions = async () => {
-      try {
-        const response = await fetch('/api/v1/profile/transactions', {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "x-role": localStorage.getItem("role"),
-          },
-        });
 
-        const data = await response.json();
-        if (data?.data?.result) {
-          const transformedTransactions = data.data.result.map((tx) => ({
-            amount: tx.volume,
-            date: tx.time,
-            type: tx.type,
-          }));
-          setTransactions(transformedTransactions);
-        } else {
-          throw new Error('No transactions data');
-        }
-      } catch (error) {
-        console.error('Error fetching transactions:', error);
-        setSnackbarMessage('Failed to load transactions.');
-        setSnackbarSeverity('error');
-        setOpenSnackbar(true);
-      }
+      // URL of the API endpoint
+      const apiUrl = '/api/v1/profile/transactions'; // Replace with your API URL
+
+      // Make the GET request
+      axios.get(apiUrl,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'x-role': localStorage.getItem('role'),
+          }
+        },)
+        .then(async response => {
+
+
+          if (response?.data?.data) {
+
+            const transformedTransactions = response.data.data.map((tx) => ({
+              amount: tx.volume,
+              date: tx.time,
+              type: tx.type,
+            }));
+            setTransactions(transformedTransactions);
+          } else {
+            throw new Error('No transactions data');
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching transactions:', error);
+          setSnackbarMessage('Failed to load transactions.');
+          setSnackbarSeverity('error');
+          setOpenSnackbar(true);
+        })
     };
+
+    // Function to format the date
+    const formatDate = (dateStr) => {
+      const date = new Date(dateStr); // Create Date object from the string
+      return date.toLocaleString(); // Or format as needed
+    };
+
+    // Update the date in each object
+    const updatedDataList = transactions.map(item => ({
+      ...item,
+      date: formatDate(item.date)
+    }));
+
+    console.log(updatedDataList)
+    // Set the updated data list
+
+
 
     fetchAccountInformation();
     fetchTransactions();
+    setTransactions(updatedDataList);
+    console.log(transactions)
   }, []);
+
+  // Function to fix the date format
+
+
+
 
   const handleDeposit = async () => {
     const amount = parseFloat(transactionAmount);
     if (amount > 0) {
       try {
-        const response = await axios.post('/api/v1/profile/deposit', 
-          { balance: amount },
+        const response = await axios.post('/api/v1/profile/deposit',
+          { amount: amount },
           {
             headers: {
               'Content-Type': 'application/json',
@@ -122,7 +156,7 @@ const WalletPage = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
             "x-role": localStorage.getItem("role"),
           },
-          body: JSON.stringify({ balance: amount }),
+          body: JSON.stringify({ amount: amount }),
         });
 
         if (response.status === 200) {
@@ -149,7 +183,7 @@ const WalletPage = () => {
   const handleAddCard = async () => {
     if (newCardNumber.length === 16 && /^\d+$/.test(newCardNumber)) {
       try {
-        const response = await axios.post('/api/v1/profile/cardNumber', 
+        const response = await axios.post('/api/v1/profile/cardNumber',
           { cardNumber: newCardNumber },
           {
             headers: {
@@ -163,6 +197,7 @@ const WalletPage = () => {
         if (response.status === 200) {
           setSnackbarMessage('Card number updated successfully!');
           setSnackbarSeverity('success');
+          window.location.reload();
         } else {
           throw new Error('Failed to update card number');
         }
@@ -190,8 +225,8 @@ const WalletPage = () => {
           <Typography variant="h5" sx={{ marginBottom: 1 }}>
             Account Information
           </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+          <Grid >
+            <Grid item xs={12} sm={7}>
               <Typography variant="body1">Card Number: {accountInfo?.cardNumber || 'N/A'}</Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -228,15 +263,15 @@ const WalletPage = () => {
           <Typography variant="h5">Transaction History</Typography>
           <Box sx={{ marginTop: 2 }}>
             <Grid container spacing={1}>
-              <Grid item xs={3}><Typography variant="body1">Amount</Typography></Grid>
-              <Grid item xs={3}><Typography variant="body1">Date</Typography></Grid>
-              <Grid item xs={3}><Typography variant="body1">Type</Typography></Grid>
+              <Grid item xs={4}><Typography variant="body1">Amount</Typography></Grid>
+              <Grid item xs={4}><Typography variant="body1">Date</Typography></Grid>
+              <Grid item xs={4}><Typography variant="body1">Type</Typography></Grid>
             </Grid>
             {transactions.map((transaction, index) => (
               <Grid container spacing={1} key={index} sx={{ marginTop: 1 }}>
-                <Grid item xs={3}><Typography variant="body2">${transaction.amount}</Typography></Grid>
-                <Grid item xs={3}><Typography variant="body2">{transaction.date}</Typography></Grid>
-                <Grid item xs={3}><Typography variant="body2">{transaction.type}</Typography></Grid>
+                <Grid item xs={4}><Typography variant="body2">${transaction.amount}</Typography></Grid>
+                <Grid item xs={4}><Typography variant="body2">{transaction.date}</Typography></Grid>
+                <Grid item xs={4}><Typography variant="body2">{transaction.type}</Typography></Grid>
               </Grid>
             ))}
           </Box>
@@ -252,7 +287,7 @@ const WalletPage = () => {
             onChange={(e) => setNewCardNumber(e.target.value)}
             variant="outlined"
             fullWidth
-            inputProps={{ maxLength: 16 }} 
+            inputProps={{ maxLength: 16 }}
           />
         </DialogContent>
         <DialogActions>
