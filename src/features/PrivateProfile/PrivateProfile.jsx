@@ -226,7 +226,7 @@ export default function PrivateProfile() {
       <Container maxWidth="lg">
         <Grid2 container spacing={2} mt={11}>
           {/* Sidebar */}
-          <Grid2 item size={3}>
+          <Grid2 size={3}>
             <Box
               sx={{
                 position: "sticky",
@@ -237,20 +237,14 @@ export default function PrivateProfile() {
               alignItems="center"
               gap={3}
             >
-              <StyledButton link="AddQuestions">add question</StyledButton>
-              {/* <StyledButton link="">bank question</StyledButton> */}
               <StyledButton link="make_exam">make exam</StyledButton>
-              {/* <StyledButton link="private_exam_page">
-                private exam page
-              </StyledButton>
-              <StyledButton link="ExamPreview">Exam Preview</StyledButton> */}
               <StyledButton link="">add courses</StyledButton>
               <StyledButton link="">review profile</StyledButton>
             </Box>
           </Grid2>
 
           {/* Main Profile Section */}
-          <Grid2 item size={9}>
+          <Grid2 size={9}>
             <Card
               sx={{
                 p: 2,
@@ -308,9 +302,13 @@ export default function PrivateProfile() {
               </Box>
             </Card>
 
-            <ReviewComponent section="My Exams" />
+            <ReviewComponent section="My Exams" Services="exam" />
             <ReviewComponent section="My Courses" style_ml="20px" />
-            <ReviewComponent section="My Articles" style_ml="0px" />
+            <ReviewComponent
+              section="My Articles"
+              style_ml="0px"
+              Services="article"
+            />
 
             {/* Edit Profile Dialog */}
             {open && (

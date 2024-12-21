@@ -9,9 +9,9 @@ export default function ReviewComponent(props) {
   const navigate = useNavigate();
 
   // توابع
-  const fetchExamData = async () => {
+  const fetchExamData = async (Services) => {
     try {
-      const response = await fetch("/api/v1/profile/exam-list", {
+      const response = await fetch(`/api/v1/profile/${Services}-list`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -33,7 +33,6 @@ export default function ReviewComponent(props) {
           if (!item.image) {
             return { ...item, imageURL: null }; // یا هر مقدار پیش‌فرض دلخواه
           }
-          // console.log(`${item.image}`);
 
           const imageResponse = await fetch(
             `/api/v1/uploads/service-images/${item.image}`,
@@ -63,16 +62,11 @@ export default function ReviewComponent(props) {
   };
   // اجرا در بارگذاری اولیه
   useEffect(() => {
-    if (props.section === "My Exams") {
-      fetchExamData();
+    if (props.section === "My Exams" || props.section === "My Articles") {
+      console.log(props.Services);
+      fetchExamData(props.Services);
     }
   }, [props.section]);
-
-  // مدیریت رنگ پس‌زمینه
-  const handleViewAllClick = () => {
-    setBgColor("#E3F2FD"); // تغییر رنگ پس‌زمینه به آبی روشن
-    window.location.href = "/full-exam-reviews";
-  };
 
   // کامپوننت بازگشتی
   return (
@@ -230,11 +224,6 @@ export default function ReviewComponent(props) {
                   </Box>
                 ))}
               </Grid2>
-              <Box sx={{ textAlign: "center", mt: "30px" }}>
-                <Button className="buttonMakeExam" variant="outlined">
-                  make Exam
-                </Button>
-              </Box>
             </Box>
           </Card>
         </Box>

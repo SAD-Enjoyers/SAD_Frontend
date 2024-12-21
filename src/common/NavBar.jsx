@@ -21,8 +21,14 @@ export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const pages = ["blogs", "courses", "questions", "users"];
-  const addresses = ["/", "/", "/QuestionSearch", "/"];
+  const pages = ["articles", "courses", "questions", "exams", "users"];
+  const addresses = [
+    "/ArticleSearch",
+    "/",
+    "/QuestionSearch",
+    "/ExamSearch",
+    "/",
+  ];
   const navigate = useNavigate();
   // const location = useLocation();
 
