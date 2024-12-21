@@ -19,6 +19,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { Image, Close, Warning } from "@mui/icons-material";
+import { Alert } from "@mui/material";  // این خط را اضافه کنید
+
 
   
   export default function AddCourse() {
@@ -35,7 +37,7 @@ import { Image, Close, Warning } from "@mui/icons-material";
     const [successMessage, setSuccessMessage] = useState(""); // Success message state
  
   const handleFormSubmit = (e) => {
-    event.preventDefault();
+    e.preventDefault();
   
     const newErrors = {};
     if (!courseName.trim()) newErrors.courseName = "Course name is required.";
@@ -91,7 +93,7 @@ import { Image, Close, Warning } from "@mui/icons-material";
         <Typography variant="h4" align="center" color="primary" gutterBottom>
           Add New Course
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleFormSubmit}>
           <Grid container spacing={2}>
             {/* Image Upload */}
             <Grid item xs={12}>
