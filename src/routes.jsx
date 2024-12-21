@@ -55,7 +55,7 @@ function AppRoutes() {
           <Route path="ValetPage" element={<ValetPage />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
           <Route path="Comments" element={<Comments />} />
-          <Route path=" AddCourse" element={< AddCourse />} />
+          <Route path="AddCourse" element={< AddCourse />} />
         </Route>
       </Routes>
     </Router>

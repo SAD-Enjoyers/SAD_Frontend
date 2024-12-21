@@ -30,7 +30,6 @@ import { Alert } from "@mui/material";  // این خط را اضافه کنید
     const [duration, setDuration] = useState("");
     const [level, setLevel] = useState("");
     const [image, setImage] = useState(null);
-    const [previewImage, setPreviewImage] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [errors, setErrors] = useState({});
     const [openDialog, setOpenDialog] = useState(false); // State for dialog
@@ -78,8 +77,8 @@ import { Alert } from "@mui/material";  // این خط را اضافه کنید
     <Container
       maxWidth="sm"
       sx={{
-        marginTop: 5,
-        marginBottom: 5,
+        marginTop: 13,
+        marginBottom: 7,
       }}
     >
       <Box
