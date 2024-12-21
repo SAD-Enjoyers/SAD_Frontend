@@ -35,8 +35,8 @@ function QuestionPage() {
   useEffect(() => {
     const fetchQuestion = async () => {
       try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const questionId = urlParams.get("questionId") ;
+        // const urlParams = new URLSearchParams(window.location.search);
+        // const questionId = urlParams.get("questionId") ;
 
         const response = await fetch(`/api/v1/questions/get-question?questionId=${questionId}`, {
           method: "GET",
