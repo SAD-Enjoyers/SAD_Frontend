@@ -26,7 +26,7 @@ import Comments from "./common/Comments/CommentSection.jsx";
 import WalletPage from "./features/PrivateProfile/Wallet/Wallet.jsx";
 import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
-import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx"
+import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx";
 function AppRoutes() {
   return (
     <Router>
@@ -49,17 +49,22 @@ function AppRoutes() {
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
           <Route path="PrivateExam/:serviceId" element={<PrivateExam />} />
           <Route path="PrivateCourse" element={<PrivateCourse />} />
+          <Route path="PublicCourse" element={<PublicCourse />} />
           <Route path="PublicExam" element={<PublicExam />} />
           <Route path="ExamResult" element={<ExamResult />} />
           <Route path="AddArticle" element={<AddArticle />} />
           <Route path="OngoingExamPage" element={<OngoingExamPage />} />
           <Route path="SearchArticle" element={<ArticleSearch />} />
+          <Route path="AddQuestion" element={<AddQuestion />} />
           <Route path="PublicCourse" element={<PublicCourse />} />
           <Route path="Comments" element={<Comments />} />
           <Route path="WalletPage" element={<WalletPage />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
           <Route path="PublicArticle" element={<PublicArticle />} />
-          <Route path="PrivateArticle/:serviceId" element={<PrivateArticle />} />
+          <Route
+            path="PrivateArticle/:serviceId"
+            element={<PrivateArticle />}
+          />
         </Route>
       </Routes>
     </Router>
