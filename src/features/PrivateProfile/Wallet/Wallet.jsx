@@ -130,6 +130,9 @@ const WalletPage = () => {
         if (response.status === 200) {
           setSnackbarMessage("Deposit successful!");
           setSnackbarSeverity("success");
+          setSnackbarMessage("Deposit successful!");
+          setSnackbarSeverity("success");
+          window.location.reload();
         } else {
           throw new Error("Deposit failed");
         }
