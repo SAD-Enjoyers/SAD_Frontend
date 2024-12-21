@@ -334,7 +334,7 @@ function PublicExam() {
                   alt="Exam Preview"
                   style={{
                     width: "100%",
-                    maxWidth: "500px", // Adjusted maxWidth to make the image smaller
+                    maxWidth: "280px", // Adjusted maxWidth to make the image smaller
                     height: "auto",
                     borderRadius: "8px",
                     marginBottom: "16px",
