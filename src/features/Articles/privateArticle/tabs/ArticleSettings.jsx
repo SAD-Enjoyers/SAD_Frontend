@@ -90,7 +90,7 @@ const ArticleSettings = ({ articleData, accessToken }) => {
 
       // Upload the new image
       const response = await axios.post(
-        "/api/v1/educational-service/upload-fileName",
+        "/api/v1/educational-service/upload-image",
         formData,
         {
           headers: {
@@ -101,12 +101,12 @@ const ArticleSettings = ({ articleData, accessToken }) => {
         }
       );
 
-      const newImageName = response.data.data.image; // Get the new image name
+      const newImageName = response.data.data.fileName; // Get the new image name
       setUploadedImage(newImageName);
 
       // Extract and prepare the updated article data
       const updatedArticleData = {
-        articleId: articleData.articleId,
+        serviceId: parseFloat(articleData.serviceId),
         title,
         description,
         tag1,
@@ -148,7 +148,7 @@ const ArticleSettings = ({ articleData, accessToken }) => {
       ];
 
       const updatedArticleData = {
-        articleId: articleData.articleId,
+        serviceId: articleData.serviceId,
         title,
         description,
         tag1: updatedTags[0],
