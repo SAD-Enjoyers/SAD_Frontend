@@ -28,20 +28,29 @@ const fadeIn = keyframes`
 `;
 
 const AddArticle = () => {
-  const [formData, setFormData] = useState({
-    title: "",
-    author: "",
-    content: "",
-    date: "",
-  });
+  const [value, setValue] = useState();
+  const [maxMembers, setMaxMembers] = useState(10);
+  const [price, setPrice] = useState(10);
+  const [minScore, setMinScore] = useState(50);
+  const [examName, setExamName] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+  const [selectedSubjects, setSelectedSubjects] = useState([]);
+  const navigate = useNavigate();
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageName, setImageName] = useState("");
+  const [previewImage, setPreviewImage] = useState(null);
+  const [imageNameUrl, setImageNameurl] = useState("");
+  const [isFormValid, setIsFormValid] = useState(false);
 
-  const [errors, setErrors] = useState({});
-  const [showPreview, setShowPreview] = useState(false);
-
-  const handleChange = (field, value) => {
-    setFormData({ ...formData, [field]: value });
-    setErrors({ ...errors, [field]: "" });
-  };
+  const [examNameError, setExamNameError] = useState("");
+  const [selectedLevelError, setSelectedLevelError] = useState("");
+  const [selectedSubjectsError, setSelectedSubjectsError] = useState("");
+  const [timeError, setTimeError] = useState("");
+  const [priceError, setPriceError] = useState("");
+  const [minScoreError, setMinScoreError] = useState("");
 
   const validateFields = () => {
     const newErrors = {};
