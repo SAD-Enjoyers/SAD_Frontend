@@ -7,6 +7,8 @@ import {
   Button,
   Rating,
   Chip,
+  Snackbar,
+  Alert,
   CircularProgress,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
@@ -93,6 +95,9 @@ function ExamPreview() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [purchased, setPurchased] = useState(false);
   const [purchaseLoading, setPurchaseLoading] = useState(false);
+  // const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success"); // Can be "success" or "error"
 
   useEffect(() => {
     const fetchExamData = async () => {
@@ -117,6 +122,8 @@ function ExamPreview() {
         }
 
         const responseData = await response.json();
+        console.log("Response Data:", JSON.stringify(responseData, null, 2));
+
         setExamData(responseData.data.Exam);
       } catch (error) {
         setErrorMessage("An unexpected error occurred. Please try again.");
@@ -128,13 +135,48 @@ function ExamPreview() {
     fetchExamData();
   }, [serviceId]);
 
-  const handlePurchase = useCallback(() => {
+  const handlePurchase = useCallback(async () => {
     setPurchaseLoading(true);
-    setPurchased(true);
-    alert("Thank you for purchasing the exam! Questions are now unlocked.");
-    localStorage.setItem("examData", JSON.stringify(examData)); // Save to localStorage
-    navigate("/PublicExam", { state: { examData } });
-  }, [examData, navigate]);
+    try {
+      const response = await fetch("/api/v1/educational-service/register", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ serviceId }), // Send the `serviceId` to the backend
+      });
+
+      if (!response.ok) {
+        const responseData = await response.json();
+        setSnackbarMessage(
+          `Failed to register the exam: ${responseData.message}`
+        );
+        setSeverity("error");
+        setOpenSnackbar(true);
+        setPurchaseLoading(false);
+        return;
+      }
+
+      const responseData = await response.json();
+      setPurchased(true); // Mark the exam as purchased
+      setSnackbarMessage(
+        "Thank you for purchasing the exam! Questions are now unlocked."
+      );
+      setSeverity("success");
+      setOpenSnackbar(true);
+      localStorage.setItem("examData", JSON.stringify(examData)); // Save to localStorage
+      navigate("/PublicExam", { state: { examData } });
+    } catch (error) {
+      setSnackbarMessage(
+        "An error occurred while processing your purchase. Please try again."
+      );
+      setSeverity("error");
+      setOpenSnackbar(true);
+    } finally {
+      setPurchaseLoading(false);
+    }
+  }, [examData, navigate, serviceId]);
 
   const handleAddComment = useCallback(() => {
     if (!newComment.name || !newComment.comment.trim()) {
@@ -294,12 +336,17 @@ function ExamPreview() {
                       fullWidth
                       startIcon={<ShoppingCartIcon />}
                       onClick={handlePurchase}
+                      disabled={purchaseLoading} // Disable the button while loading
                       sx={{
-                        maxWidth: "300px", // Set a max width similar to the image
-                        marginBottom: "16px", // Add spacing between button and price
+                        maxWidth: "300px",
+                        marginBottom: "16px",
                       }}
                     >
-                      Buy The Exam
+                      {purchaseLoading ? (
+                        <CircularProgress size={24} color="inherit" />
+                      ) : (
+                        "Buy The Exam"
+                      )}
                     </ButtonStyled>
                   </>
                 )}
@@ -315,6 +362,21 @@ function ExamPreview() {
             </Typography>
           </CommentSection>
         </Box>
+        {/* Snackbar for success/error message */}
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={3000}
+          onClose={() => setOpenSnackbar(false)}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={() => setOpenSnackbar(false)}
+            severity={severity}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </Box>
     )
   );
