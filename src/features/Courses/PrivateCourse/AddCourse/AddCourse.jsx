@@ -57,31 +57,22 @@ import { Image, Close, Warning } from "@mui/icons-material";
       setOpenDialog(true);
     }
   };
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file && file.type === "image/jpeg") {
+  const handleDialogClose = (confirm) => {
+    if (confirm) {
+      setSuccessMessage("Course added successfully!"); // Set success message
+    }
+    setOpenDialog(false); // Close the dialog
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith("image/")) {
       setImage(file);
-      setPreviewImage(URL.createObjectURL(file));
     } else {
-      alert("Only JPEG images are allowed.");
+      alert("Please select a valid image");
     }
   };
   
-  const handleVideoUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setVideo(file);
-      const interval = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            return 100;
-          }
-          return prev + 10;
-        });
-      }, 200);
-    }
-  };
   return (
     <Container>
       <form onSubmit={handleFormSubmit}>
