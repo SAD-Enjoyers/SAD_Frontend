@@ -127,6 +127,7 @@ const WalletPage = () => {
         if (response.status === 200) {
           setSnackbarMessage('Deposit successful!');
           setSnackbarSeverity('success');
+          window.location.reload();
         } else {
           throw new Error('Deposit failed');
         }
@@ -162,6 +163,7 @@ const WalletPage = () => {
         if (response.status === 200) {
           setSnackbarMessage('Withdrawal successful!');
           setSnackbarSeverity('success');
+          window.location.reload();
         } else {
           throw new Error('Withdrawal failed');
         }
