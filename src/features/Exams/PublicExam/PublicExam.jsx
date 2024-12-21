@@ -251,7 +251,7 @@ function PublicExam() {
         }}
       >
         <Box sx={{ maxWidth: 950, width: "100%", paddingX: 4 }}>
-          <CustomCard>
+          <CustomCard sx={{ maxWidth: 800, margin: "0 auto" }}>
             <Grid2 container spacing={4}>
               <Grid2 item xs={12} md={8}>
                 <Title>{examData.name}</Title>
@@ -334,7 +334,7 @@ function PublicExam() {
                   alt="Exam Preview"
                   style={{
                     width: "100%",
-                    maxWidth: "300px", // Adjusted maxWidth to make the image smaller
+                    maxWidth: "500px", // Adjusted maxWidth to make the image smaller
                     height: "auto",
                     borderRadius: "8px",
                     marginBottom: "16px",
