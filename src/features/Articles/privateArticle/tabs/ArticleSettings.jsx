@@ -17,21 +17,32 @@ import {
   ListItemText,
 } from "@mui/material";
 
+// Material-UI icons
+import {
+  Image as ImageIcon,
+  Description as DescriptionIcon,
+  Grade as GradeIcon,
+  AttachMoney as AttachMoneyIcon,
+  Timelapse as TimelapseIcon,
+  LocalOffer as LocalOfferIcon,
+  Save as SaveIcon,
+} from "@mui/icons-material";
+
 const ArticleSettings = ({ articleData, accessToken }) => {
   const [newImage, setNewImage] = useState(null); // New image file
   const [isUploading, setIsUploading] = useState(false); // Uploading state
-  const [uploadedImage, setUploadedImage] = useState(articleData.image); // Updated image state
+  const [uploadedImage, setUploadedImage] = useState(articleData?.image || ''); // Updated image state
 
   // Editable article data states
-  const [name, setName] = useState(articleData.name);
-  const [description, setDescription] = useState(articleData.description);
-  const [level, setLevel] = useState(articleData.level);
-  const [price, setPrice] = useState(articleData.price);
+  const [name, setName] = useState(articleData?.name || '');
+  const [description, setDescription] = useState(articleData?.description || '');
+  const [level, setLevel] = useState(articleData?.level || '');
+  const [price, setPrice] = useState(articleData?.price || '');
   const [activityStatus, setActivityStatus] = useState("Active");
 
-  const [tag1, setTag1] = useState(articleData.tag1);
-  const [tag2, setTag2] = useState(articleData.tag2);
-  const [tag3, setTag3] = useState(articleData.tag3);
+  const [tag1, setTag1] = useState(articleData?.tag1 || '');
+  const [tag2, setTag2] = useState(articleData?.tag2 || '');
+  const [tag3, setTag3] = useState(articleData?.tag3 || '');
 
   // Categories fetched from the API
   const [categories, setCategories] = useState([]);
@@ -52,7 +63,7 @@ const ArticleSettings = ({ articleData, accessToken }) => {
 
     // Initialize selectedTags with existing examData tags
     setSelectedTags(
-      [articleData.tag1, articleData.tag2, articleData.tag3].filter(Boolean) // Filter out null or undefined tags
+      [tag1, tag2, tag3].filter(Boolean) // Filter out null or undefined tags
     );
 
     fetchCategories();
@@ -257,7 +268,7 @@ const ArticleSettings = ({ articleData, accessToken }) => {
             MenuProps={{
               PaperProps: { style: { maxHeight: 200, overflow: "auto" } },
             }}
-            sx={inputStyles}
+
           >
             {categories.map((category) => (
               <MenuItem key={category.categoryId} value={category.category}>

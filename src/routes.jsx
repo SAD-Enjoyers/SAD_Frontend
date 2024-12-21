@@ -62,7 +62,7 @@ function AppRoutes() {
           <Route path="AddQuestion" element={<AddQuestion />} />
           <Route path="PublicArticle" element={<PublicArticle />} />
           <Route
-            path="PrivateArticle/:serviceId"
+            path="PrivateArticle"
             element={<PrivateArticle />}
           />
         </Route>
