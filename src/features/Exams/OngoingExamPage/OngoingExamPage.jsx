@@ -19,7 +19,8 @@ import {
 } from "@mui/material";
 import { Warning, Clear } from "@mui/icons-material";
 
-const OngoingExamPage = () => {
+const OngoingExamPage = ({examData}) => {
+  
   const [progress, setProgress] = useState(0);
   const [selectedOption, setSelectedOption] = useState({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -34,7 +35,7 @@ const OngoingExamPage = () => {
 
     const startExam = async () => {
       try {
-        const serviceId = 1; // آی‌دی سرویس به عنوان مثال
+        const serviceId = examData.serviceId; // آی‌دی سرویس به عنوان مثال
         const token = localStorage.getItem("examToken");
         if (!token) {
           throw new Error("Exam token is missing. Please login or start the exam again.");
