@@ -8,6 +8,7 @@ import {
   Stack,
   Pagination,
   Snackbar,
+  Alert,
   Avatar,
   Box,
   Divider,
@@ -20,6 +21,7 @@ const CommentSection = ({ serviceId }) => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const token = localStorage.getItem("token");
 
@@ -57,6 +59,7 @@ const CommentSection = ({ serviceId }) => {
       const response = await axiosInstance.post("/add-comment", payload);
       setNewComment("");
       fetchComments(); // Refresh comments after posting
+      setSuccessMessage("Comment posted successfully!");
     } catch (error) {
       console.error("Error adding comment:", error);
       setErrorMessage("Failed to post comment. Please try again.");
@@ -132,10 +135,32 @@ const CommentSection = ({ serviceId }) => {
       {/* Error Message Snackbar */}
       <Snackbar
         open={Boolean(errorMessage)}
-        message={errorMessage}
         autoHideDuration={6000}
         onClose={() => setErrorMessage("")}
-      />
+      >
+        <Alert
+          onClose={() => setErrorMessage("")}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
+
+      {/* Success Message Snackbar */}
+      <Snackbar
+        open={Boolean(successMessage)}
+        autoHideDuration={6000}
+        onClose={() => setSuccessMessage("")}
+      >
+        <Alert
+          onClose={() => setSuccessMessage("")}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Card>
   );
 };

@@ -3,6 +3,8 @@ import {
   Box,
   Typography,
   List,
+  Snackbar,
+  Alert,
   ListItem,
   ListItemAvatar,
   ListItemText,
@@ -125,6 +127,9 @@ function PublicExam() {
   const [examResult, setExamResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [examData2, setExamData] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
 
   useEffect(() => {
     const fetchExamData = async () => {
@@ -198,7 +203,16 @@ function PublicExam() {
   const handleStartExam = () => {
     // Simulate navigating to the exam page
     console.log("Starting the exam...");
+    const isSuccess = Math.random() > 0.5; // Random success or failure for demonstration
 
+    if (isSuccess) {
+      setSnackbarMessage("Successfully started the exam!");
+      setSeverity("success");
+    } else {
+      setSnackbarMessage("Failed to start the exam. Try again.");
+      setSeverity("error");
+    }
+    setOpenSnackbar(true);
     // Pass the result and exam data to the current page
     navigate("/OngoingExamPage", {
       state: {
@@ -206,6 +220,10 @@ function PublicExam() {
         examData,
       },
     }); // Simulate a 2-second delay for the exam process
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   if (loading) {
@@ -529,6 +547,22 @@ function PublicExam() {
               </CustomCard>
             </Grid2>
           </Grid2>
+
+          {/* Snackbar for success or error message */}
+          <Snackbar
+            open={openSnackbar}
+            autoHideDuration={3000}
+            onClose={handleCloseSnackbar}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          >
+            <Alert
+              onClose={handleCloseSnackbar}
+              severity={severity}
+              sx={{ width: "100%" }}
+            >
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
 
           {/* Comments and Exam Result */}
           <Box sx={{ padding: { xs: 2, sm: 4 } }}>
