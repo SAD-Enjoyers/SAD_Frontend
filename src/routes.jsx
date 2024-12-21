@@ -23,7 +23,7 @@ import MakeExam from "./features/Exams/MakeExam/MakeExam.jsx";
 import ImageUpload from "./features/Exams/MakeExam/components/ImageUpload.jsx";
 import PrivateCourse from "./features/Courses/PrivateCourse/PrivateCourse.jsx";
 import Comments from "./common/Comments/CommentSection.jsx";
-import WalletPage from "./features/Wallet/Wallet.jsx";
+import WalletPage from "./features/PrivateProfile/Wallet/Wallet.jsx";
 import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
 import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx"
