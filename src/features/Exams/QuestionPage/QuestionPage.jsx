@@ -113,23 +113,32 @@ function QuestionPage() {
   const handleRatingChange = async (event, newValue) => {
     if (newValue !== null) {
       try {
+        // گرفتن توکن احراز از localStorage
+        const token = localStorage.getItem("authToken");
+  
+        if (!token) {
+          throw new Error("User is not authenticated. Token is missing.");
+        }
+  
         const response = await fetch("/api/v1/questions/score-submission", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": token, // استفاده از توکن ذخیره‌شده
+            "x-role": "user", // نقش کاربر
           },
           body: JSON.stringify({
             questionId: question.id,
             scored: newValue,
           }),
         });
-
+  
         if (!response.ok) {
           throw new Error("Failed to submit rating");
         }
-
+  
         const data = await response.json();
-
+  
         if (data.status === "success") {
           setQuestion((prevQuestion) => ({
             ...prevQuestion,
@@ -144,6 +153,7 @@ function QuestionPage() {
       }
     }
   };
+  
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
