@@ -18,9 +18,11 @@ import {
   Alert,
 } from "@mui/material";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Use useNavigate hook instead of Navigate component
+import { useNavigate } from "react-router-dom"; // Correctly use useNavigate hook
 
 function AddQuestion() {
+  const navigate = useNavigate(); // Place useNavigate at the top
+
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [question, setQuestion] = useState({
     questionName: "",
@@ -94,7 +96,16 @@ function AddQuestion() {
   }, []);
 
   const handleChangeAddButton = async () => {
-    var [tag1, tag2, tag3] = [...selectedSubjects];
+    if (!question.questionName || !question.question || !options.option1 || !options.option2 || !options.option3 || !options.option4 || !rightAnswer || selectedSubjects.length === 0) {
+      setSnackbar({
+        open: true,
+        message: "Please fill in all the fields.",
+        severity: "error",
+      });
+      return;
+    }
+
+    const [tag1, tag2, tag3] = selectedSubjects;
     try {
       const response = await fetch("/api/v1/questions/add-question", {
         method: "POST",
@@ -130,7 +141,7 @@ function AddQuestion() {
         message: "Question added successfully!",
         severity: "success",
       });
-      useNavigate("/QuestionBank"); // Redirect after successful form submission
+      // navigate("/QuestionBank"); // Correct navigation after form submission
     } catch (error) {
       console.error(error);
       setSnackbar({
@@ -179,29 +190,16 @@ function AddQuestion() {
 
           {/* Right Answer */}
           <Box textAlign={"center"}>
-            <Typography mb="20px" mt={"20px"}>
-              Right Answer
-            </Typography>
+            <Typography mb="20px" mt={"20px"}>Right Answer</Typography>
             <ToggleButtonGroup color="primary" value={rightAnswer} exclusive onChange={handleChangeRightAnswer} aria-label="Right Answer" sx={{ mb: "40px" }}>
               {["1", "2", "3", "4"].map((value) => (
-                <ToggleButton
-                  key={value}
-                  value={value}
-                  sx={{
-                    backgroundColor: rightAnswer === value ? "#387CE7" : "inherit",
-                    color: rightAnswer === value ? "white" : "inherit",
-                    "&:hover": {
-                      backgroundColor: "#387CE7",
-                      color: "white",
-                    },
-                  }}
-                >
+                <ToggleButton key={value} value={value}>
                   {value}
                 </ToggleButton>
               ))}
             </ToggleButtonGroup>
 
-            {/* Subjects (Moved to the bottom) */}
+            {/* Subjects */}
             <FormControl fullWidth variant="outlined">
               <InputLabel>Subjects</InputLabel>
               <Select
@@ -210,48 +208,10 @@ function AddQuestion() {
                 onChange={handleSubjectChange}
                 label="Subjects"
                 renderValue={(selected) => selected.join(", ")}
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: 200, // Set the maximum height for the dropdown
-                      overflowY: 'auto', // Allow scrolling in the dropdown if it's too long
-                    },
-                  },
-                  anchorOrigin: {
-                    vertical: "bottom",  // Align the dropdown below the select field
-                    horizontal: "center",
-                  },
-                  transformOrigin: {
-                    vertical: "top", // Transform the menu to appear below
-                    horizontal: "center",
-                  },
-                }}
-                sx={{
-                  backgroundColor: "#ffffff",
-                  borderRadius: "8px",
-                  borderColor: "#E0E0E0",
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#E0E0E0",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#378CE7",
-                  },
-                  "& .MuiSelect-icon": {
-                    color: "#378CE7",
-                  },
-                }}
               >
                 {categories.map((category) => (
                   <MenuItem key={category.categoryId} value={category.category}>
-                    <Checkbox
-                      checked={selectedSubjects.includes(category.category)}
-                      sx={{
-                        color: "#378CE7",
-                        "&.Mui-checked": {
-                          color: "#378CE7",
-                        },
-                      }}
-                    />
+                    <Checkbox checked={selectedSubjects.includes(category.category)} />
                     <ListItemText primary={category.category} />
                   </MenuItem>
                 ))}
@@ -274,10 +234,7 @@ function AddQuestion() {
         onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert
-          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-          severity={snackbar.severity}
-        >
+        <Alert onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))} severity={snackbar.severity}>
           {snackbar.message}
         </Alert>
       </Snackbar>
