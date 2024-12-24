@@ -34,14 +34,18 @@ const OngoingExamPage = ({examData}) => {
   useEffect(() => {
 
     const startExam = async () => {
-      try {
-        const serviceId = examData.serviceId; // آی‌دی سرویس به عنوان مثال
+      // try {
+        const serviceId = 1 //examData.serviceId; // آی‌دی سرویس به عنوان مثال
         const token = localStorage.getItem("examToken");
+        // const token = localStorage.getItem("token");
+
+        console.log(serviceId);
+        console.log(token);
         if (!token) {
           throw new Error("Exam token is missing. Please login or start the exam again.");
         }
 
-        const response = await fetch(`/api/v1/exam/start-exam/${serviceId}}`, {
+        const response = await fetch(`/api/v1/exam/start-exam/${serviceId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -71,16 +75,16 @@ const OngoingExamPage = ({examData}) => {
         } else {
           throw new Error("Unexpected response format.");
         }
-      } catch (error) {
-        console.error("Error starting exam:", error);
-        alert("Failed to fetch exam data.");
-      } finally {
-        setLoading(false);
-      }
+      // } catch (error) {
+      //   console.error("Error starting exam:", error);
+      //   alert("Failed to fetch exam data.");
+      // } finally {
+      //   setLoading(false);
+      // }
     };
 
     startExam();
-  }, []);
+  }, [examData]);
 
   // تایمر برای شمارش معکوس زمان آزمون
   useEffect(() => {
