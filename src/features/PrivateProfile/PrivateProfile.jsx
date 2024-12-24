@@ -43,11 +43,6 @@ export default function PrivateProfile() {
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
   const handleSave = () => {
     console.log("Updated Profile Data:", formData);
     setOpen(false);
@@ -238,8 +233,8 @@ export default function PrivateProfile() {
               gap={3}
             >
               <StyledButton link="make_exam">add exam</StyledButton>
-              <StyledButton link="">add courses</StyledButton>
-              <StyledButton link="">add article</StyledButton>
+              <StyledButton link="AddCourse">add courses</StyledButton>
+              <StyledButton link="AddArticle">add article</StyledButton>
               <StyledButton link="">review profile</StyledButton>
             </Box>
           </Grid2>
@@ -347,7 +342,7 @@ export default function PrivateProfile() {
                     label="First Name"
                     name="firstName"
                     value={formData.firstName}
-                    onChange={handleInputChange}
+                    // onChange={}
                     margin="normal"
                   />
                   <TextField
@@ -355,7 +350,7 @@ export default function PrivateProfile() {
                     label="Last Name"
                     name="lastName"
                     value={formData.lastName}
-                    onChange={handleInputChange}
+                    // onChange={}
                     margin="normal"
                   />
                   <TextField
@@ -363,7 +358,7 @@ export default function PrivateProfile() {
                     label="Username"
                     name="userName"
                     value={formData.userName}
-                    onChange={handleInputChange}
+                    // onChange={}
                     margin="normal"
                   />
                   <TextField
@@ -371,9 +366,34 @@ export default function PrivateProfile() {
                     label="Email"
                     name="email"
                     value={formData.email}
-                    onChange={handleInputChange}
+                    // onChange={}
                     margin="normal"
                   />
+                  <Box
+                    component="form"
+                    sx={{ "& .MuiTextField-root": { m: 1, width: "25ch" } }}
+                    noValidate
+                    autoComplete="off"
+                    display={"flex"}
+                    gap={1}
+                    marginTop={"10px"}
+                  >
+                    {" "}
+                    <TextField
+                      id="outlined-multiline-static"
+                      label="address"
+                      multiline
+                      rows={2}
+                      defaultValue="Default Value"
+                    />
+                    <TextField
+                      id="outlined-multiline-static"
+                      label="description"
+                      multiline
+                      rows={2}
+                      defaultValue="Default Value"
+                    />
+                  </Box>
                   <Box display="flex" justifyContent="flex-end" mt={2}>
                     <Button
                       variant="outlined"

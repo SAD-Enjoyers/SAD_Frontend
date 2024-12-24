@@ -15,7 +15,7 @@ const videos = [
   {
     id: "video2",
     title: "compile-ts-code",
-    src: "/videos/1.mp4",
+    src: "/videos/2.mp4",
     thumbnail: "/thumbnails/image.png",
     author: "author1",
   },
@@ -29,7 +29,7 @@ const videos = [
   {
     id: "video4",
     title: "number-dataType",
-    src: "/videos/1.mp4",
+    src: "/videos/2.mp4",
     thumbnail: "/thumbnails/image.png",
     author: "author1",
   },
@@ -43,9 +43,9 @@ const videos = [
 ];
 
 export default function PublicCourse() {
-  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [selectedVideo, setSelectedVideo] = useState(videos[0]?.src || null);
+  const [selectedVideoId, setSelectedVideoId] = useState(videos[0]?.id || null);
   const [videoDurations, setVideoDurations] = useState({});
-  const [selectedVideoId, setSelectedVideoId] = useState(null);
 
   useEffect(() => {
     videos.forEach((video) => {
@@ -75,7 +75,6 @@ export default function PublicCourse() {
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
-
   return (
     <Grid2
       container
@@ -243,8 +242,11 @@ export default function PublicCourse() {
                 مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
               </video>
             </Box>
-            <Box sx={{ mt: 2, textAlign: "right" }}>
-              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+            <Box sx={{ mt: 2, textAlign: "center" }}>
+              <Typography
+                variant="h5"
+                sx={{ fontWeight: "bold", fontSize: "35px" }}
+              >
                 {videos.find((video) => video.src === selectedVideo)?.title}
               </Typography>
               <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
@@ -277,7 +279,7 @@ export default function PublicCourse() {
           </>
         ) : (
           <Typography variant="h5" color="textSecondary">
-            لطفاً یک ویدیو انتخاب کنید.
+            please select a video
           </Typography>
         )}
       </Grid2>

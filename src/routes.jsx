@@ -27,6 +27,7 @@ import WalletPage from "./features/PrivateProfile/Wallet/Wallet.jsx";
 import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
 import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx";
+import AddCourse from "./features/Courses/PrivateCourse/AddCourse/AddCourse.jsx";
 function AppRoutes() {
   return (
     <Router>
@@ -44,7 +45,7 @@ function AppRoutes() {
           <Route path="QuestionSearch" element={<QuestionSearch />} />
           <Route path="ExamSearch" element={<ExamSearch />} />
           <Route path="changepassword" element={<ChangePassword />} />
-          <Route path="QuestionPage" element={<QuestionPage />} />
+          <Route path="QuestionPage/:questionId" element={<QuestionPage />} />
           <Route path="image" element={<ImageUpload />} />
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
           <Route path="PrivateExam/:serviceId" element={<PrivateExam />} />
@@ -62,9 +63,10 @@ function AppRoutes() {
           <Route path="AddQuestion" element={<AddQuestion />} />
           <Route path="PublicArticle" element={<PublicArticle />} />
           <Route
-            path="PrivateArticle/:serviceId"
+            path="PrivateArticle"
             element={<PrivateArticle />}
           />
+          <Route path="AddCourse" element={< AddCourse />} />
         </Route>
       </Routes>
     </Router>

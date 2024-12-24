@@ -136,6 +136,34 @@
 // export default PrivateArticle;
 
 
+const mockData = {
+  articleData: {
+    serviceId: 123,
+    title: "Mock Article Title",
+    description: "This is the content of the article. It can include text, images, etc.",
+    publishedDate: "2024-12-21",
+    comments: [
+      {
+        author: "John Smith",
+        comment: "Great article!",
+        date: "2024-12-21",
+      },
+      {
+        author: "Alice Brown",
+        comment: "Very informative, thanks for sharing!",
+        date: "2024-12-22",
+      },
+    ],
+  },
+  selectedTab: 0, // Default selected tab index (e.g., Article Content)
+};
+
+// You can mock the localStorage to simulate the behavior of storing articleData and selectedTab
+localStorage.setItem("articleData", JSON.stringify(mockData.articleData));
+localStorage.setItem("selectedTab", mockData.selectedTab);
+
+
+
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -195,17 +223,17 @@ const PrivateArticle = () => {
   const tabContent = [
     {
       label: "Article Content",
-      content: <ArticleContent articleData={articleData} accessToken={accessToken} />,
+      content: <ArticleContent  />,
       icon: <Article />,
     },
     {
       label: "Article Settings",
-      content: <ArticleSettings articleData={articleData} accessToken={accessToken} />,
+      content: <ArticleSettings  />,
       icon: <Settings />,
     },
     {
       label: "Comment Section",
-      content: <CommentSection accessToken={accessToken} />,
+      content: <CommentSection  />,
       icon: <Comment />,
     },
   ];
