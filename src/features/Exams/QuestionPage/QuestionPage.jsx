@@ -113,19 +113,24 @@ function QuestionPage() {
   const handleRatingChange = async (event, newValue) => {
     if (newValue !== null) {
       try {
-        // گرفتن توکن احراز از localStorage
-        const token = localStorage.getItem("authToken");
+        // Retrieve the token (the same key used at login)
+        const token = localStorage.getItem("token");
   
         if (!token) {
           throw new Error("User is not authenticated. Token is missing.");
         }
   
+        // Optionally, get the user role
+        const role = localStorage.getItem("role") || "user";
+  
+        // If you are using a proxy, "/api/v1/..." is fine.
+        // Otherwise, use the full URL: "http://localhost:3000/api/v1/..."
         const response = await fetch("/api/v1/questions/score-submission", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": token, // استفاده از توکن ذخیره‌شده
-            "x-role": "user", // نقش کاربر
+            "Authorization": `Bearer ${token}`,  // Include Bearer
+            "x-role": role,
           },
           body: JSON.stringify({
             questionId: question.id,
@@ -148,11 +153,14 @@ function QuestionPage() {
         } else {
           throw new Error("Unexpected response format");
         }
+  
       } catch (error) {
         console.error("Error submitting rating:", error);
       }
     }
   };
+  
+  
   
 
   const handleCloseDialog = () => {
@@ -312,7 +320,7 @@ function QuestionPage() {
               variant="body2"
               sx={{ marginTop: 1, color: "#5356FF" }}
             >
-              Current Rating: {question.rating.toFixed(1)}
+              Your Rating: {question.rating.toFixed(1)}
             </Typography>
             <Typography
               variant="body2"
