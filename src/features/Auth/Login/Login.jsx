@@ -13,6 +13,8 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,6 +22,8 @@ function Login() {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [usernameError, setUsernameError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   const navigate = useNavigate();
 
@@ -36,11 +40,31 @@ function Login() {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleLogin = async () => {
-    // Frontend validation checks
-    if (!username || !password) {
-      setErrorMessage("Username and password are required");
-      return;
-    }
+   // Reset errors
+   setUsernameError(false);
+   setPasswordError(false);
+  //  setErrorMessage("");
+
+   // Frontend validation checks
+   if (!username && !password) {
+    setUsernameError(true);
+    setPasswordError(true);
+    setErrorMessage("Both fields are required.");
+    return;
+  }
+
+
+   if (!username) {
+     setUsernameError(true);
+     setErrorMessage("Username is required");
+     return;
+   }
+
+   if (!password) {
+     setPasswordError(true);
+     setErrorMessage("Password is required");
+     return;
+   }
 
     setLoading(true);
 
@@ -61,14 +85,25 @@ function Login() {
 
       const responseData = await response.json();
 
+     
+      // Map of error messages
+      const errorMessages = {
+        "Invalid username or password":
+          "The username or password you entered is incorrect.",
+        "User not found": "No account found with this username.",
+        "Account locked": "Your account is locked. Please contact support.",
+      };
+
+
       // Handle backend response
       if (response.ok) {
         // Successfully logged in, redirect to home page
-        console;
-        alert("Login successful!");
+        // console;
+        // alert("Login successful!");
         localStorage.setItem("token", responseData.data.token);
         localStorage.setItem("role", responseData.data.role);
-        navigate("/");
+        toast.success("Login successful! Redirecting to homepage...");
+        setTimeout(() => navigate("/"), 2000); // Redirect after 2 seconds
       } else {
         setErrorMessage(
           responseData.message || "Login failed. Please try again."
@@ -106,6 +141,23 @@ function Login() {
         <Typography variant="h4" gutterBottom>
           Login
         </Typography>
+{/* Error Message Box */}
+<Box
+  sx={{
+    backgroundColor: "#fce4e4", // Light red background
+    color: "#d32f2f", // Dark red text
+    padding: "10px 20px",
+    borderRadius: "5px",
+    fontSize: "14px",
+    fontWeight: 500,
+    textAlign: "center",
+    marginBottom: "10px",
+    border: "1px solid #f8b6b6",
+    display: errorMessage ? "block" : "none", // Hide if no error
+  }}
+>
+  {errorMessage}
+</Box>
 
         <TextField
           fullWidth
@@ -114,6 +166,8 @@ function Login() {
           margin="normal"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          error={usernameError}
+          helperText={usernameError ? "Username is required" : ""}
         />
 
         <TextField
@@ -133,6 +187,8 @@ function Login() {
               </InputAdornment>
             ),
           }}
+          error={passwordError}
+          helperText={passwordError ? "Password is required" : ""}
         />
 
         <Typography variant="body2" sx={{ mt: 2, mb: 2 }}>
@@ -165,13 +221,7 @@ function Login() {
           </Link>
         </Typography>
       </Box>
-
-      <Snackbar
-        open={Boolean(errorMessage)}
-        autoHideDuration={6000}
-        onClose={() => setErrorMessage("")}
-        message={errorMessage}
-      />
+      <ToastContainer position="top-center" autoClose={5000} hideProgressBar closeOnClick pauseOnFocusLoss draggable pauseOnHover />
     </Container>
   );
 }

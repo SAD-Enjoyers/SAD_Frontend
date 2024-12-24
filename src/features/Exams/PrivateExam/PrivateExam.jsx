@@ -56,6 +56,7 @@ const PrivateExam = () => {
     if (savedTab) setSelectedTab(parseInt(savedTab, 10));
   }, []);
 
+  console.log("Response Data:", JSON.stringify(examData, null, 2));
   const tabContent = [
     {
       label: "Exam Questions",
@@ -69,13 +70,8 @@ const PrivateExam = () => {
     },
     {
       label: "Participant Status",
-      content: participants.length ? (
-        <ParticipantStatus
-          participants={participants}
-          accessToken={accessToken}
-        />
-      ) : (
-        <Box>No participants yet.</Box>
+      content: (
+        <ParticipantStatus examData={examData} accessToken={accessToken} />
       ),
       icon: <People />,
     },

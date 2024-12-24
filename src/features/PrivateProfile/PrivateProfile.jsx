@@ -43,11 +43,6 @@ export default function PrivateProfile() {
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
   const handleSave = () => {
     console.log("Updated Profile Data:", formData);
     setOpen(false);
@@ -226,7 +221,7 @@ export default function PrivateProfile() {
       <Container maxWidth="lg">
         <Grid2 container spacing={2} mt={11}>
           {/* Sidebar */}
-          <Grid2 item size={3}>
+          <Grid2 size={3}>
             <Box
               sx={{
                 position: "sticky",
@@ -237,20 +232,15 @@ export default function PrivateProfile() {
               alignItems="center"
               gap={3}
             >
-              <StyledButton link="AddQuestions">add question</StyledButton>
-              {/* <StyledButton link="">bank question</StyledButton> */}
-              <StyledButton link="make_exam">make exam</StyledButton>
-              {/* <StyledButton link="private_exam_page">
-                private exam page
-              </StyledButton>
-              <StyledButton link="ExamPreview">Exam Preview</StyledButton> */}
-              <StyledButton link="">add courses</StyledButton>
+              <StyledButton link="make_exam">add exam</StyledButton>
+              <StyledButton link="AddCourse">add courses</StyledButton>
+              <StyledButton link="AddArticle">add article</StyledButton>
               <StyledButton link="">review profile</StyledButton>
             </Box>
           </Grid2>
 
           {/* Main Profile Section */}
-          <Grid2 item size={9}>
+          <Grid2 size={9}>
             <Card
               sx={{
                 p: 2,
@@ -308,9 +298,13 @@ export default function PrivateProfile() {
               </Box>
             </Card>
 
-            <ReviewComponent section="My Exams" />
+            <ReviewComponent section="My Exams" Services="exam" />
             <ReviewComponent section="My Courses" style_ml="20px" />
-            <ReviewComponent section="My Articles" style_ml="0px" />
+            <ReviewComponent
+              section="My Articles"
+              style_ml="0px"
+              Services="article"
+            />
 
             {/* Edit Profile Dialog */}
             {open && (
@@ -348,7 +342,7 @@ export default function PrivateProfile() {
                     label="First Name"
                     name="firstName"
                     value={formData.firstName}
-                    onChange={handleInputChange}
+                    // onChange={}
                     margin="normal"
                   />
                   <TextField
@@ -356,7 +350,7 @@ export default function PrivateProfile() {
                     label="Last Name"
                     name="lastName"
                     value={formData.lastName}
-                    onChange={handleInputChange}
+                    // onChange={}
                     margin="normal"
                   />
                   <TextField
@@ -364,7 +358,7 @@ export default function PrivateProfile() {
                     label="Username"
                     name="userName"
                     value={formData.userName}
-                    onChange={handleInputChange}
+                    // onChange={}
                     margin="normal"
                   />
                   <TextField
@@ -372,9 +366,34 @@ export default function PrivateProfile() {
                     label="Email"
                     name="email"
                     value={formData.email}
-                    onChange={handleInputChange}
+                    // onChange={}
                     margin="normal"
                   />
+                  <Box
+                    component="form"
+                    sx={{ "& .MuiTextField-root": { m: 1, width: "25ch" } }}
+                    noValidate
+                    autoComplete="off"
+                    display={"flex"}
+                    gap={1}
+                    marginTop={"10px"}
+                  >
+                    {" "}
+                    <TextField
+                      id="outlined-multiline-static"
+                      label="address"
+                      multiline
+                      rows={2}
+                      defaultValue="Default Value"
+                    />
+                    <TextField
+                      id="outlined-multiline-static"
+                      label="description"
+                      multiline
+                      rows={2}
+                      defaultValue="Default Value"
+                    />
+                  </Box>
                   <Box display="flex" justifyContent="flex-end" mt={2}>
                     <Button
                       variant="outlined"

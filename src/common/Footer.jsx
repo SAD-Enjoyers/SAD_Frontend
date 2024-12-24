@@ -10,6 +10,7 @@ const Footer = () => {
         padding: "40px 0 20px",
         color: "#333",
         boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)",
+        mt: "200px", // اطمینان از چسبیدن به انتهای صفحه
       }}
     >
       <Container maxWidth="lg">

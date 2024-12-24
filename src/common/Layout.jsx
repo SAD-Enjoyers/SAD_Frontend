@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
 import NavBar from "./NavBar.jsx";
 import Footer from "./Footer.jsx";
+import { Box } from "@mui/material";
 
 export default function Layout() {
   const location = useLocation();
@@ -9,12 +10,22 @@ export default function Layout() {
   );
 
   return (
-    <>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh", // حداقل ارتفاع صفحه
+      }}
+    >
       {!hideNavBar && <NavBar />}
-      <main>
-        <Outlet />
-      </main>
+
+      <Box sx={{ flex: "1", padding: "16px" }}>
+        <main>
+          <Outlet />
+        </main>
+      </Box>
+
       {!hideNavBar && <Footer />}
-    </>
+    </Box>
   );
 }
