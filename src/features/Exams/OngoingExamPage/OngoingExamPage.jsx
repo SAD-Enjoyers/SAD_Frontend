@@ -16,6 +16,7 @@ import {
   DialogContent,
   DialogActions,
   Paper,
+  Snackbar,
 } from "@mui/material";
 import { Warning, Clear } from "@mui/icons-material";
 
@@ -32,11 +33,12 @@ const OngoingExamPage = ({examData}) => {
 
   useEffect(() => {
     const startExam = async () => {
-      const serviceId = examData?.serviceId || 1; 
+      const serviceId = examData?.serviceId;
       const token = localStorage.getItem("token"); 
   
       if (!token) {
-        alert("توکن آزمون موجود نیست. لطفاً وارد شوید.");
+        setSnackbarMessage("Authentication token is missing. Please login again.");
+        setSnackbarOpen(true);
         navigate("/login"); 
         return;
       }
@@ -52,7 +54,14 @@ const OngoingExamPage = ({examData}) => {
           },
         });
   
+    
         if (!response.ok) {
+          if (response.status === 403) {
+            setSnackbarMessage("You have already participated in this exam.");
+            setSnackbarOpen(true);
+            setTimeout(() => navigate("/exams"), 3000);
+            return;
+          }
           throw new Error("Failed to fetch exam data.");
         }
   
@@ -249,6 +258,21 @@ const OngoingExamPage = ({examData}) => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar
+    open={snackbarOpen}
+    autoHideDuration={3000} // مدت زمان نمایش پیام
+    onClose={() => setSnackbarOpen(false)} // بسته شدن Snackbar
+    message={snackbarMessage} // متن پیام
+    anchorOrigin={{ vertical: "top", horizontal: "center" }} // محل نمایش پیام
+    sx={{
+      "& .MuiSnackbarContent-root": {
+        bgcolor: "#4caf50", // رنگ پس‌زمینه پیام موفقیت
+        color: "#fff", // رنگ متن
+        fontSize: "16px", // اندازه متن
+        fontWeight: "bold", // ضخامت متن
+      },
+    }}
+  />
     </Box>
   );
 };
