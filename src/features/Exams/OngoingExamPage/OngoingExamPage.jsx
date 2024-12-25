@@ -24,69 +24,66 @@ const OngoingExamPage = ({examData}) => {
   const [progress, setProgress] = useState(0);
   const [selectedOption, setSelectedOption] = useState({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [timeRemaining, setTimeRemaining] = useState(0); // زمان باقیمانده آزمون
+  const [timeRemaining, setTimeRemaining] = useState(0); 
   const [openDialog, setOpenDialog] = useState(false);
-  const [questions, setQuestions] = useState([]); // سوالات از سمت بک‌اند
-  const [examToken, setExamToken] = useState(""); // توکن آزمون
+  const [questions, setQuestions] = useState([]); 
+  const [examToken, setExamToken] = useState(""); 
   const [loading, setLoading] = useState(true);
 
-  // دریافت داده‌های آزمون از سمت سرور
   useEffect(() => {
-
     const startExam = async () => {
-      // try {
-        const serviceId = 1 //examData.serviceId; // آی‌دی سرویس به عنوان مثال
-        const token = localStorage.getItem("examToken");
-        // const token = localStorage.getItem("token");
-
-        console.log(serviceId);
-        console.log(token);
-        if (!token) {
-          throw new Error("Exam token is missing. Please login or start the exam again.");
-        }
-
+      const serviceId = examData?.serviceId || 1; 
+      const token = localStorage.getItem("token"); 
+  
+      if (!token) {
+        alert("توکن آزمون موجود نیست. لطفاً وارد شوید.");
+        navigate("/login"); 
+        return;
+      }
+  
+      setLoading(true); // نمایش حالت بارگذاری
+  
+      try {
         const response = await fetch(`/api/v1/exam/start-exam/${serviceId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, 
           },
         });
-
+  
         if (!response.ok) {
           throw new Error("Failed to fetch exam data.");
         }
-
+  
         const data = await response.json();
-        console.log("Received Data:", data);
-
+        console.log("Received Data:", data); 
+  
         if (data.status === "success") {
+          // تبدیل سوالات به فرمت مناسب
           const fetchedQuestions = data.data.questions.map((q) => ({
             questionId: q.questionId,
             questionText: q.questionText,
-            options: [q.o1, q.o2, q.o3, q.o4], // تبدیل گزینه‌ها
+            options: [q.o1, q.o2, q.o3, q.o4],
           }));
-          setQuestions(fetchedQuestions);
-          setTimeRemaining(data.data.examDuration * 60); // تنظیم زمان
-          const token = data.data.examToken;
-          setExamToken(token); // ذخیره در state
-          localStorage.setItem("examToken", token); // ذخیره در localStorage
-          console.log("Exam token saved to localStorage:", token);
+  
+          setQuestions(fetchedQuestions); 
+          setTimeRemaining(data.data.examDuration * 60); 
         } else {
-          throw new Error("Unexpected response format.");
+          throw new Error(data.message || "Unexpected response format.");
         }
-      // } catch (error) {
-      //   console.error("Error starting exam:", error);
-      //   alert("Failed to fetch exam data.");
-      // } finally {
-      //   setLoading(false);
-      // }
+      } catch (error) {
+        console.error("Error starting exam:", error); 
+        alert(error.message || "Failed to start the exam."); 
+      } finally {
+        setLoading(false); 
+      }
     };
-
+  
     startExam();
-  }, [examData]);
+  }, [examData]); 
+  
 
-  // تایمر برای شمارش معکوس زمان آزمون
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeRemaining((prev) => (prev > 0 ? prev - 1 : 0));
@@ -95,7 +92,7 @@ const OngoingExamPage = ({examData}) => {
     return () => clearInterval(timer);
   }, []);
 
-  // تنظیم پیشرفت آزمون
+  
   useEffect(() => {
     setProgress(((currentQuestionIndex + 1) / questions.length) * 100);
   }, [currentQuestionIndex, questions.length]);
@@ -147,8 +144,8 @@ const OngoingExamPage = ({examData}) => {
           Authorization: `Bearer ${examToken}`,
         },
         body: JSON.stringify({
-          examToken, // ارسال توکن آزمون
-          answers, // ارسال پاسخ‌ها
+          examToken, 
+          answers, 
         }),
       });
 
