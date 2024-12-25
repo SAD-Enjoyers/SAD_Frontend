@@ -30,7 +30,9 @@ const OngoingExamPage = ({examData}) => {
   const [questions, setQuestions] = useState([]); 
   const [examToken, setExamToken] = useState(""); 
   const [loading, setLoading] = useState(true);
-
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  
   useEffect(() => {
     const startExam = async () => {
       const serviceId = examData?.serviceId;
