@@ -19,10 +19,13 @@ import {
   Snackbar,
 } from "@mui/material";
 import { Warning, Clear } from "@mui/icons-material";
+import { useNavigate, useParams } from "react-router-dom";
 
-const OngoingExamPage = ({examData}) => {
-  
+const OngoingExamPage = () => {
+  const { serviceId } = useParams(); // خواندن serviceId از پارامترهای URL
+  console.log("Service ID:", serviceId);
   const [progress, setProgress] = useState(0);
+  const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0); 
@@ -35,13 +38,18 @@ const OngoingExamPage = ({examData}) => {
   
   useEffect(() => {
     const startExam = async () => {
-      const serviceId = examData?.serviceId;
+      if (!serviceId) {
+        setSnackbarMessage("Service ID is missing. Please try again.");
+        setSnackbarOpen(true);
+        return;
+      }
+      // const serviceId = examData.serviceId;
       const token = localStorage.getItem("token"); 
   
       if (!token) {
         setSnackbarMessage("Authentication token is missing. Please login again.");
         setSnackbarOpen(true);
-        navigate("/login"); 
+        setTimeout(() => navigate("/login"), 3000);
         return;
       }
   
@@ -92,7 +100,7 @@ const OngoingExamPage = ({examData}) => {
     };
   
     startExam();
-  }, [examData]); 
+  }, [serviceId, navigate]); 
   
 
   useEffect(() => {
