@@ -19,12 +19,14 @@ import {
   Snackbar,
 } from "@mui/material";
 import { Warning, Clear } from "@mui/icons-material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const OngoingExamPage = () => {
-  const { serviceId } = useParams(); // خواندن serviceId از پارامترهای URL
+  // const { serviceId } = useParams(); // خواندن serviceId از پارامترهای URL
+  const location = useLocation();
+  const { examData } = location.state || {};
+  const serviceId = examData.serviceId;
   console.log("Service ID:", serviceId);
-  const [progress, setProgress] = useState(0);
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -38,12 +40,12 @@ const OngoingExamPage = () => {
   
   useEffect(() => {
     const startExam = async () => {
-      if (!serviceId) {
+      if (!examData || !examData.serviceId) {
         setSnackbarMessage("Service ID is missing. Please try again.");
         setSnackbarOpen(true);
         return;
       }
-      // const serviceId = examData.serviceId;
+      
       const token = localStorage.getItem("token"); 
   
       if (!token) {
@@ -56,7 +58,7 @@ const OngoingExamPage = () => {
       setLoading(true); // نمایش حالت بارگذاری
   
       try {
-        const response = await fetch(`/api/v1/exam/start-exam/${serviceId}`, {
+        const response = await fetch(`/api/v1/exam/start-exam/${examData.serviceId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -100,7 +102,7 @@ const OngoingExamPage = () => {
     };
   
     startExam();
-  }, [serviceId, navigate]); 
+  }, [examData, navigate]); 
   
 
   useEffect(() => {
