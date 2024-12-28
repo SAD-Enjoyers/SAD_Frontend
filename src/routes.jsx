@@ -14,7 +14,8 @@ import PrivateExam from "./features/Exams/PrivateExam/PrivateExam.jsx";
 import QuestionBank from "./features/Exams/PrivateExam/tabs/QuestionBank.jsx";
 import ChangePassword from "./features/Auth/ChangePassword/ChangePassword.jsx";
 import QuestionPage from "./features/Exams/QuestionPage/QuestionPage";
-import TermsAndConditions from "./features/Auth/TermsAndConditions/TermsAndConditions.jsx";
+import TermsAndConditions from "./features/resource/TermsAndConditions/TermsAndConditions.jsx";
+import QA from "./features/resource/QA/Qa.jsx";
 import OngoingExamPage from "./features/Exams/OngoingExamPage/OngoingExamPage.jsx";
 import AddArticle from "./features/Articles/AddArticle/AddArticle.jsx";
 import ArticleSearch from "./features/Articles/SearchArticle/SearchArticle.jsx";
@@ -48,6 +49,7 @@ function AppRoutes() {
           <Route path="QuestionPage/:questionId" element={<QuestionPage />} />
           <Route path="image" element={<ImageUpload />} />
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
+          <Route path="QA" element={<QA />} />
           <Route path="PrivateExam/:serviceId" element={<PrivateExam />} />
           <Route path="PrivateCourse" element={<PrivateCourse />} />
           <Route path="PublicCourse" element={<PublicCourse />} />
