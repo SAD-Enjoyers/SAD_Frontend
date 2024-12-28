@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { Alert } from "@mui/lab";
 import axios from "axios";
+import { blue } from "@mui/material/colors";
 
 const WalletPage = () => {
   const [accountInfo, setAccountInfo] = useState(null);
@@ -88,28 +89,9 @@ const WalletPage = () => {
         });
     };
 
-    // Function to format the date
-    const formatDate = (dateStr) => {
-      const date = new Date(dateStr); // Create Date object from the string
-      return date.toLocaleString(); // Or format as needed
-    };
-
-    // Update the date in each object
-    const updatedDataList = transactions.map((item) => ({
-      ...item,
-      date: formatDate(item.date),
-    }));
-
-    console.log(updatedDataList);
-    // Set the updated data list
-
     fetchAccountInformation();
     fetchTransactions();
-    setTransactions(updatedDataList);
-    console.log(transactions);
   }, []);
-
-  // Function to fix the date format
 
   const handleDeposit = async () => {
     const amount = parseFloat(transactionAmount);
@@ -128,8 +110,6 @@ const WalletPage = () => {
         );
 
         if (response.status === 200) {
-          setSnackbarMessage("Deposit successful!");
-          setSnackbarSeverity("success");
           setSnackbarMessage("Deposit successful!");
           setSnackbarSeverity("success");
           window.location.reload();
@@ -225,133 +205,138 @@ const WalletPage = () => {
   };
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        margin: "0 auto",
-        padding: 3,
-        maxWidth: 500,
-        textAlign: "center",
-        mt: 30,
-      }}
-    >
-      {/* Account Information Section */}
-      <Card sx={{ marginBottom: 2 }}>
-        <CardContent>
-          <Typography variant="h5" sx={{ marginBottom: 1 }}>
-            Account Information
-          </Typography>
-          <Grid>
-            <Grid item xs={12} sm={7}>
-              <Typography variant="body1">
-                Card Number: {accountInfo?.cardNumber || "N/A"}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="body1">
-                Balance: ${accountInfo?.balance || "0.00"}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setOpenCardDialog(true)}
-          >
-            Add Card Number
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Deposit and Withdraw Section */}
-      <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
-        <TextField
-          label="Amount"
-          type="number"
-          value={transactionAmount}
-          onChange={(e) => setTransactionAmount(e.target.value)}
-          variant="outlined"
-          fullWidth
-        />
-        <Button variant="contained" color="primary" onClick={handleDeposit}>
-          Deposit
-        </Button>
-        <Button variant="contained" color="secondary" onClick={handleWithdraw}>
-          Withdraw
-        </Button>
-      </Box>
-
-      {/* Transaction History Section */}
-      <Card>
-        <CardContent>
-          <Typography variant="h5">Transaction History</Typography>
-          <Box sx={{ marginTop: 2 }}>
-            <Grid container spacing={1}>
-              <Grid item xs={4}>
-                <Typography variant="body1">Amount</Typography>
+      <Box
+        sx={{
+          width: "100%",
+          margin: "0 auto",
+          padding: 3,
+          maxWidth: 500,
+          textAlign: "center",
+          mt: 5,
+          minHeight: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
+        {/* Account Information Section */}
+        <Card sx={{ marginBottom: 2, boxShadow: 4 }}>
+          <CardContent>
+            <Typography variant="h5" sx={{ marginBottom: 1 }}>
+              Account Information
+            </Typography>
+            <Grid>
+              <Grid item xs={12} sm={7}>
+                <Typography variant="body1">
+                  Card Number: {accountInfo?.cardNumber || "N/A"}
+                </Typography>
               </Grid>
-              <Grid item xs={4}>
-                <Typography variant="body1">Date</Typography>
-              </Grid>
-              <Grid item xs={4}>
-                <Typography variant="body1">Type</Typography>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body1">
+                  Balance: ${accountInfo?.balance || "0.00"}
+                </Typography>
               </Grid>
             </Grid>
-            {transactions.map((transaction, index) => (
-              <Grid container spacing={1} key={index} sx={{ marginTop: 1 }}>
-                <Grid item xs={4}>
-                  <Typography variant="body2">${transaction.amount}</Typography>
-                </Grid>
-                <Grid item xs={4}>
-                  <Typography variant="body2">{transaction.date}</Typography>
-                </Grid>
-                <Grid item xs={4}>
-                  <Typography variant="body2">{transaction.type}</Typography>
-                </Grid>
-              </Grid>
-            ))}
-          </Box>
-        </CardContent>
-      </Card>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setOpenCardDialog(true)}
+            >
+              Add Card Number
+            </Button>
+          </CardContent>
+        </Card>
 
-      {/* Dialog for adding a card number */}
-      <Dialog open={openCardDialog} onClose={() => setOpenCardDialog(false)}>
-        <DialogContent sx={{ padding: "20px 20px 0px 20px" }}>
+        {/* Deposit and Withdraw Section */}
+        <Box sx={{ display: "flex", gap: 1, marginBottom: 2 }}>
           <TextField
-            label="New Card Number"
-            value={newCardNumber}
-            onChange={(e) => setNewCardNumber(e.target.value)}
+            label="Amount"
+            type="number"
+            value={transactionAmount}
+            onChange={(e) => setTransactionAmount(e.target.value)}
+            sx={{ backgroundColor: "white", borderRadius: 1 }}
             variant="outlined"
             fullWidth
-            inputProps={{ maxLength: 16 }}
           />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenCardDialog(false)} color="secondary">
-            Cancel
+          <Button variant="contained" sx={{ backgroundColor: "green", borderRadius: 1 }} onClick={handleDeposit}>
+            Deposit
           </Button>
-          <Button onClick={handleAddCard} color="primary">
-            Add
+          <Button variant="contained" color="secondary" onClick={handleWithdraw}>
+            Withdraw
           </Button>
-        </DialogActions>
-      </Dialog>
+        </Box>
 
-      {/* Snackbar for feedback messages */}
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
+        {/* Transaction History Section */}
+        <Card sx={{ boxShadow: 4}}>
+          <CardContent>
+            <Typography variant="h5">Transaction History</Typography>
+            <Box sx={{ marginTop: 2}}>
+              <Grid container spacing={1}>
+                <Grid item xs={4}>
+                  <Typography variant="body1">Amount</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography variant="body1">Date</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography variant="body1">Type</Typography>
+                </Grid>
+              </Grid>
+              {transactions.map((transaction, index) => (
+                <Grid container spacing={1} key={index} sx={{ marginTop: 1 }}>
+                  <Grid item xs={4}>
+                    <Typography variant="body2">${transaction.amount}</Typography>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Typography variant="body2">{transaction.date}</Typography>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Typography variant="body2">{transaction.type}</Typography>
+                  </Grid>
+                </Grid>
+              ))}
+            </Box>
+          </CardContent>
+        </Card>
+
+        {/* Dialog for adding a card number */}
+        <Dialog open={openCardDialog} onClose={() => setOpenCardDialog(false)}>
+          <DialogContent sx={{ padding: "20px 20px 0px 20px" }}>
+            <TextField
+              label="New Card Number"
+              value={newCardNumber}
+              onChange={(e) => setNewCardNumber(e.target.value)}
+              variant="outlined"
+              fullWidth
+              inputProps={{ maxLength: 16 }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenCardDialog(false)} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={handleAddCard} color="primary">
+              Add
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Snackbar for feedback messages */}
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
           onClose={() => setOpenSnackbar(false)}
-          severity={snackbarSeverity}
-          sx={{ width: "100%" }}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-    </Box>
+          <Alert
+            onClose={() => setOpenSnackbar(false)}
+            severity={snackbarSeverity}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+      </Box>
   );
 };
 
