@@ -14,7 +14,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 const commonQuestions = [
   {
-    question: "How can I create and sell a course on this site?",
+    question: "How can I create and sell a course on this platform?",
     answer:
       'To create and sell a course, sign up, navigate to your dashboard, and use the "Add Course" feature to upload videos and set pricing. Once approved, your course will be live.',
   },
@@ -104,11 +104,14 @@ const QAPage = () => {
         flexDirection={{ xs: "column", sm: "row" }}
       >
         <HelpOutlineIcon
-          color="primary"
+          sx={{
+            color: "#378CE7",
+            mr: { sm: 2, xs: 0 },
+            mb: { xs: 1, sm: 0 },
+          }}
           fontSize="large"
-          sx={{ mr: { sm: 2, xs: 0 }, mb: { xs: 1, sm: 0 } }}
         />
-        <Typography variant="h4" fontWeight="bold" color="textPrimary">
+        <Typography variant="h4" fontWeight="bold" color="#333">
           Frequently Asked Questions
         </Typography>
       </Box>
@@ -123,14 +126,16 @@ const QAPage = () => {
                 boxShadow: "none",
                 border: 1,
                 borderColor: "grey.300",
+                bgcolor: "#F7F9FC", // light gray background for the accordion
               }}
             >
               <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
+                expandIcon={<ExpandMoreIcon sx={{ color: "#378CE7" }} />}
                 sx={{
                   fontWeight: "bold",
-                  bgcolor: "grey.100",
+                  bgcolor: "#F0F4F8", // soft gray for summary
                   px: 2,
+                  color: "#333", // darker text for question
                 }}
               >
                 <Typography variant="h6">{item.question}</Typography>
@@ -154,8 +159,12 @@ const QAPage = () => {
         sx={{ px: { xs: 2, sm: 0 } }}
       >
         For further inquiries, please contact our support team at{" "}
-        <Typography component="span" color="primary" fontWeight="bold">
+        <Typography component="span" color="#378CE7" fontWeight="bold">
           support@example.com
+        </Typography>{" "}
+        or call us at{" "}
+        <Typography component="span" color="#378CE7" fontWeight="bold">
+          +1 (800) 123-4567
         </Typography>
         .
       </Typography>
