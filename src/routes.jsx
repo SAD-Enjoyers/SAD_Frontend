@@ -29,6 +29,7 @@ import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 import PreviewArticle from "./features/Articles/publicArticle/publicArticle.jsx";
 import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx";
 import AddCourse from "./features/Courses/PrivateCourse/AddCourse/AddCourse.jsx";
+import CoursePreview from "./features/Courses/CoursePreview/CoursePreview.jsx";
 function AppRoutes() {
   return (
     <Router>
@@ -66,6 +67,7 @@ function AppRoutes() {
           <Route path="PreviewArticle" element={<PreviewArticle />} />
           <Route path="PrivateArticle" element={<PrivateArticle />} />
           <Route path="AddCourse" element={<AddCourse />} />
+          <Route path="CoursePreview" element={<CoursePreview />} />
         </Route>
       </Routes>
     </Router>
