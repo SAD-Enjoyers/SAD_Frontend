@@ -33,20 +33,23 @@ const OngoingExamPage = () => {
   const [timeRemaining, setTimeRemaining] = useState(0); 
   const [openDialog, setOpenDialog] = useState(false);
   const [questions, setQuestions] = useState([]); 
-  const [examToken, setExamToken] = useState(""); 
+  // const [examToken, setExamToken] = useState(""); 
   const [loading, setLoading] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   
   useEffect(() => {
+    console.log("useEffect is running...");
+    console.log("Service ID:", serviceId);
     const startExam = async () => {
-      if (!examData || !examData.serviceId) {
+      if (!serviceId) {
         setSnackbarMessage("Service ID is missing. Please try again.");
         setSnackbarOpen(true);
         return;
       }
       
       const token = localStorage.getItem("token"); 
+      console.log("Token:", token);
   
       if (!token) {
         setSnackbarMessage("Authentication token is missing. Please login again.");
@@ -54,11 +57,19 @@ const OngoingExamPage = () => {
         setTimeout(() => navigate("/login"), 3000);
         return;
       }
-  
-      setLoading(true); // نمایش حالت بارگذاری
-  
+    
+      // const storedExamToken = localStorage.getItem("examToken");
+      // if (storedExamToken) {
+      //   setSnackbarMessage("Exam already started!");
+      //   setSnackbarOpen(true);
+      //   setLoading(false); 
+      //   return;
+      // }
+
+      setLoading(true); 
       try {
-        const response = await fetch(`/api/v1/exam/start-exam/${examData.serviceId}`, {
+        console.log(`Sending GET request to /api/v1/exam/start-exam/${serviceId}`);
+        const response = await fetch(`/api/v1/exam/start-exam/${serviceId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -67,21 +78,21 @@ const OngoingExamPage = () => {
         });
   
     
+        console.log("Fetch response:", response);
         if (!response.ok) {
+          console.log("Response not OK. Status:", response.status);
           if (response.status === 403) {
-            setSnackbarMessage("You have already participated in this exam.");
+            setSnackbarMessage("You are not authorized to access this exam.");
             setSnackbarOpen(true);
-            setTimeout(() => navigate("/exams"), 3000);
             return;
           }
           throw new Error("Failed to fetch exam data.");
         }
-  
+
         const data = await response.json();
         console.log("Received Data:", data); 
   
         if (data.status === "success") {
-          // تبدیل سوالات به فرمت مناسب
           const fetchedQuestions = data.data.questions.map((q) => ({
             questionId: q.questionId,
             questionText: q.questionText,
@@ -90,6 +101,13 @@ const OngoingExamPage = () => {
   
           setQuestions(fetchedQuestions); 
           setTimeRemaining(data.data.examDuration * 60); 
+          localStorage.setItem("examToken", data.data.examToken);
+          console.log("Exam token saved:", data.data.examToken);
+
+          setSnackbarMessage("Exam started successfully!");
+          setSnackbarOpen(true);
+
+
         } else {
           throw new Error(data.message || "Unexpected response format.");
         }
@@ -102,7 +120,7 @@ const OngoingExamPage = () => {
     };
   
     startExam();
-  }, [examData, navigate]); 
+  }, [serviceId, navigate]); 
   
 
   useEffect(() => {
@@ -272,16 +290,16 @@ const OngoingExamPage = () => {
       </Dialog>
       <Snackbar
     open={snackbarOpen}
-    autoHideDuration={3000} // مدت زمان نمایش پیام
-    onClose={() => setSnackbarOpen(false)} // بسته شدن Snackbar
-    message={snackbarMessage} // متن پیام
-    anchorOrigin={{ vertical: "top", horizontal: "center" }} // محل نمایش پیام
+    autoHideDuration={3000} 
+    onClose={() => setSnackbarOpen(false)} 
+    message={snackbarMessage} 
+    anchorOrigin={{ vertical: "top", horizontal: "center" }} 
     sx={{
       "& .MuiSnackbarContent-root": {
-        bgcolor: "#4caf50", // رنگ پس‌زمینه پیام موفقیت
-        color: "#fff", // رنگ متن
-        fontSize: "16px", // اندازه متن
-        fontWeight: "bold", // ضخامت متن
+        bgcolor: "#4caf50", 
+        color: "#fff", 
+        fontSize: "16px", 
+        fontWeight: "bold", 
       },
     }}
   />
