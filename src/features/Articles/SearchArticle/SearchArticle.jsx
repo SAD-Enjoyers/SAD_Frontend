@@ -18,6 +18,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Sort, SortByAlpha } from "@mui/icons-material";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 // const articles = [
 //   {
@@ -446,7 +447,9 @@ function SearchAndFilterArticle() {
                   lineHeight: "1.4", // Adjust line height for better readability
                 }}
               >
-                {question.title}
+                <Link to={`/PreviewArticle`} style={{ textDecoration: "none" }}>
+                  {question.title}
+                </Link>
               </Typography>
 
               {/* Question Description */}

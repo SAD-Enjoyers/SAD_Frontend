@@ -145,7 +145,7 @@ const ParticipantStatus = () => {
       </Typography>
 
       {/* Search and Sorting */}
-      <Box
+      {/* <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
@@ -170,7 +170,7 @@ const ParticipantStatus = () => {
           <MenuItem value="score">Score</MenuItem>
           <MenuItem value="name">Name</MenuItem>
         </TextField>
-      </Box>
+      </Box> */}
 
       <Grid container spacing={4}>
         {paginatedParticipants.map((participant, index) => (
@@ -204,7 +204,7 @@ const ParticipantStatus = () => {
                 >
                   {participant.name}
                 </Typography>
-                <Divider sx={{ marginBottom: "16px" }} />
+                {/* <Divider sx={{ marginBottom: "16px" }} />
                 <Box
                   sx={{
                     display: "flex",
@@ -274,7 +274,7 @@ const ParticipantStatus = () => {
                   <Typography variant="body2" sx={{ fontSize: "0.85rem" }}>
                     <strong>Not Answered:</strong> {participant.notAnswered}
                   </Typography>
-                </Box>
+                </Box> */}
               </CardContent>
             </Card>
           </Grid>

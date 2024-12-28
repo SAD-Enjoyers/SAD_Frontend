@@ -235,6 +235,7 @@ export default function PrivateProfile() {
               <StyledButton link="make_exam">add exam</StyledButton>
               <StyledButton link="AddCourse">add courses</StyledButton>
               <StyledButton link="AddArticle">add article</StyledButton>
+              <StyledButton link="AddQuestion">add question</StyledButton>
               <StyledButton link="">review profile</StyledButton>
             </Box>
           </Grid2>

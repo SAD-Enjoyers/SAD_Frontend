@@ -14,7 +14,8 @@ import PrivateExam from "./features/Exams/PrivateExam/PrivateExam.jsx";
 import QuestionBank from "./features/Exams/PrivateExam/tabs/QuestionBank.jsx";
 import ChangePassword from "./features/Auth/ChangePassword/ChangePassword.jsx";
 import QuestionPage from "./features/Exams/QuestionPage/QuestionPage";
-import TermsAndConditions from "./features/Auth/TermsAndConditions/TermsAndConditions.jsx";
+import TermsAndConditions from "./features/resource/TermsAndConditions/TermsAndConditions.jsx";
+import QA from "./features/resource/QA/Qa.jsx";
 import OngoingExamPage from "./features/Exams/OngoingExamPage/OngoingExamPage.jsx";
 import AddArticle from "./features/Articles/AddArticle/AddArticle.jsx";
 import ArticleSearch from "./features/Articles/SearchArticle/SearchArticle.jsx";
@@ -25,9 +26,10 @@ import PrivateCourse from "./features/Courses/PrivateCourse/PrivateCourse.jsx";
 import Comments from "./common/Comments/CommentSection.jsx";
 import WalletPage from "./features/PrivateProfile/Wallet/Wallet.jsx";
 import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
-import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
+import PreviewArticle from "./features/Articles/publicArticle/publicArticle.jsx";
 import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx";
 import AddCourse from "./features/Courses/PrivateCourse/AddCourse/AddCourse.jsx";
+import CoursePreview from "./features/Courses/CoursePreview/CoursePreview.jsx";
 function AppRoutes() {
   return (
     <Router>
@@ -48,6 +50,7 @@ function AppRoutes() {
           <Route path="QuestionPage/:questionId" element={<QuestionPage />} />
           <Route path="image" element={<ImageUpload />} />
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
+          <Route path="QA" element={<QA />} />
           <Route path="PrivateExam/:serviceId" element={<PrivateExam />} />
           <Route path="PrivateCourse" element={<PrivateCourse />} />
           <Route path="PublicCourse" element={<PublicCourse />} />
@@ -61,12 +64,10 @@ function AppRoutes() {
           <Route path="Comments" element={<Comments />} />
           <Route path="WalletPage" element={<WalletPage />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
-          <Route path="PublicArticle" element={<PublicArticle />} />
-          <Route
-            path="PrivateArticle"
-            element={<PrivateArticle />}
-          />
-          <Route path="AddCourse" element={< AddCourse />} />
+          <Route path="PreviewArticle" element={<PreviewArticle />} />
+          <Route path="PrivateArticle" element={<PrivateArticle />} />
+          <Route path="AddCourse" element={<AddCourse />} />
+          <Route path="CoursePreview" element={<CoursePreview />} />
         </Route>
       </Routes>
     </Router>
