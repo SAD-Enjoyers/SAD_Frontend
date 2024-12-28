@@ -25,7 +25,7 @@ import PrivateCourse from "./features/Courses/PrivateCourse/PrivateCourse.jsx";
 import Comments from "./common/Comments/CommentSection.jsx";
 import WalletPage from "./features/PrivateProfile/Wallet/Wallet.jsx";
 import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
-import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
+import PreviewArticle from "./features/Articles/publicArticle/publicArticle.jsx";
 import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx";
 import AddCourse from "./features/Courses/PrivateCourse/AddCourse/AddCourse.jsx";
 function AppRoutes() {
@@ -61,12 +61,9 @@ function AppRoutes() {
           <Route path="Comments" element={<Comments />} />
           <Route path="WalletPage" element={<WalletPage />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
-          <Route path="PublicArticle" element={<PublicArticle />} />
-          <Route
-            path="PrivateArticle"
-            element={<PrivateArticle />}
-          />
-          <Route path="AddCourse" element={< AddCourse />} />
+          <Route path="PreviewArticle" element={<PreviewArticle />} />
+          <Route path="PrivateArticle" element={<PrivateArticle />} />
+          <Route path="AddCourse" element={<AddCourse />} />
         </Route>
       </Routes>
     </Router>
