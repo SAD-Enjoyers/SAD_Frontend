@@ -18,6 +18,107 @@ export default function ReviewComponent(props) {
   const [loading, setLoading] = useState(false);
   const [add, setAdd] = useState(0);
 
+  const MemoizedCard = memo(({ item, Condition }) => (
+    <Box key={item.id} display="flex" justifyContent="center">
+      <Card
+        sx={{
+          p: 1,
+          borderColor: "#378CE7",
+          width: "100%",
+          maxWidth: 250,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+          borderRadius: "10px",
+          boxShadow: 1,
+          transition: "transform 0.3s ease",
+          minWidth: { xs: 100, sm: 220, md: 220 },
+          "&:hover": {
+            transform: "scale(1.05)", // مقدار کمی بزرگ‌تر
+            boxShadow: 5, // سایه بیشتر برای تمایز
+          },
+        }}
+      >
+        <CardMedia
+          component="img"
+          image={item.imageURL ? item.imageURL : "/images/exam.png"}
+          alt="Review Image"
+          sx={{
+            borderRadius: "8px",
+            mb: 1,
+            width: { xs: "60px", sm: "100px", md: "100px" },
+            height: { xs: "60px", sm: "100px", md: "100px" },
+          }}
+        />
+        <Typography
+          variant="subtitle2"
+          component="div"
+          fontWeight={"bold"}
+          fontSize={"18px"}
+          gutterBottom
+        >
+          {item.name}
+        </Typography>
+        {/* <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          mb={0.5}
+                        >
+                          Price: {item.price}
+                        </Typography> */}
+        <Typography variant="body2" color="text.secondary" mb={0.5}>
+          Level: {item.level}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" mb={1}>
+          Score: {item.score}
+        </Typography>
+        {/* <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          textAlign="center"
+                          mb={1.5}
+                        >
+                          Description: {item.description}
+                        </Typography> */}
+        <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
+          <Box sx={{ margin: "0 auto" }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                Condition(item);
+              }}
+              sx={{
+                fontSize: "0.65rem",
+                borderRadius: "10%",
+                "&:hover": {
+                  backgroundColor: "#387CE7",
+                  color: "#fff",
+                },
+              }}
+            >
+              View Details
+            </Button>
+          </Box>
+
+          {item.type !== "member" && (
+            <CardMedia
+              component="img"
+              height="20px"
+              image="/images/exam.png"
+              alt="Review Image"
+              sx={{
+                borderRadius: "8px",
+                width: "20px",
+              }}
+            />
+          )}
+        </Box>
+      </Card>
+    </Box>
+  ));
+
   const Data = [
     {
       imageURL: "/images/exam.png",
@@ -213,115 +314,11 @@ export default function ReviewComponent(props) {
                   }}
                 >
                   {data.map((item, index) => (
-                    <Box key={index} display="flex" justifyContent="center">
-                      <Card
-                        sx={{
-                          p: 1,
-                          borderColor: "#378CE7",
-                          width: "100%",
-                          maxWidth: 250,
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          textAlign: "center",
-                          borderRadius: "10px",
-                          boxShadow: 1,
-                          transition: "transform 0.3s ease",
-                          minWidth: { xs: 100, sm: 220, md: 220 },
-                          "&:hover": {
-                            transform: "scale(1.05)", // مقدار کمی بزرگ‌تر
-                            boxShadow: 5, // سایه بیشتر برای تمایز
-                          },
-                        }}
-                      >
-                        <CardMedia
-                          component="img"
-                          image={
-                            item.imageURL ? item.imageURL : "/images/exam.png"
-                          }
-                          alt="Review Image"
-                          sx={{
-                            borderRadius: "8px",
-                            mb: 1,
-                            width: { xs: "60px", sm: "100px", md: "100px" },
-                            height: { xs: "60px", sm: "100px", md: "100px" },
-                          }}
-                        />
-                        <Typography
-                          variant="subtitle2"
-                          component="div"
-                          fontWeight={"bold"}
-                          fontSize={"18px"}
-                          gutterBottom
-                        >
-                          {item.name}
-                        </Typography>
-                        {/* <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          mb={0.5}
-                        >
-                          Price: {item.price}
-                        </Typography> */}
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          mb={0.5}
-                        >
-                          Level: {item.level}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          mb={1}
-                        >
-                          Score: {item.score}
-                        </Typography>
-                        {/* <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          textAlign="center"
-                          mb={1.5}
-                        >
-                          Description: {item.description}
-                        </Typography> */}
-                        <Box display="flex" gap={1} textAlign="center">
-                          <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={() => {
-                              Condition(item);
-                            }}
-                            sx={{
-                              fontSize: "0.65rem",
-                              padding: 0.6,
-                              borderRadius: "10%",
-                              "&:hover": {
-                                backgroundColor: "#387CE7",
-                                color: "#fff",
-                              },
-                            }}
-                          >
-                            View Details
-                          </Button>
-                          {item.type !== "member" ? (
-                            <CardMedia
-                              component="img"
-                              height="30px"
-                              image={"/images/exam.png"}
-                              alt="Review Image"
-                              sx={{
-                                borderRadius: "8px",
-                                mb: 1,
-                                width: { xs: "60px", sm: "30px", md: "40px" },
-                              }}
-                            />
-                          ) : (
-                            <></>
-                          )}
-                        </Box>
-                      </Card>
-                    </Box>
+                    <MemoizedCard
+                      key={index}
+                      item={item}
+                      Condition={Condition}
+                    />
                   ))}
                 </Grid2>
               </Box>

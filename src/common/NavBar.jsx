@@ -21,6 +21,7 @@ export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [imageProfile, setImageProfile] = useState("");
   const pages = ["articles", "courses", "questions", "exams", "users"];
   const addresses = [
     "/SearchArticle",
@@ -33,6 +34,7 @@ export default function NavBar() {
   // const location = useLocation();
 
   useEffect(() => {
+    setImageProfile(localStorage.getItem("imageProfile"));
     const token = localStorage.getItem("token");
     // if (!token) {
     fetch("/api/v1/profile/private-data", {
@@ -126,7 +128,11 @@ export default function NavBar() {
           >
             <Avatar
               alt="User Profile"
-              src="/images/profile.png"
+              src={
+                imageProfile
+                  ? `api/v1/uploads/profile-images/${imageProfile}`
+                  : "images/profile.png"
+              }
               sx={{ width: 40, height: 40 }}
             />
           </IconButton>

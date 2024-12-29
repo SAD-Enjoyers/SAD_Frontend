@@ -76,7 +76,7 @@ const PublicCourse = () => {
     <Box
       sx={{
         width: "100%",
-        maxWidth: "800px",
+        maxWidth: "1500px",
         margin: "50px auto",
         padding: "20px",
         backgroundColor: "#F9FAFB",
@@ -125,7 +125,15 @@ const PublicCourse = () => {
             <CircularProgress />
           </Box>
         ) : (
-          tabContent[selectedTab]?.content
+          // selectedTab == 1   => comments section
+          <Box
+            sx={{
+              width: selectedTab == 1 ? "800px" : "100%",
+              margin: "0 auto",
+            }}
+          >
+            {tabContent[selectedTab]?.content}
+          </Box>
         )}
       </Box>
     </Box>
