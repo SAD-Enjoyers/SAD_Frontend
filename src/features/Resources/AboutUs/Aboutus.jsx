@@ -176,3 +176,104 @@ const AboutUs = () => {
           </Grid>
         </Container>
       </Box>
+            {/* What We Do Section */}
+            <Box
+        sx={{
+          backgroundColor: "#67c6e3",
+          color: "#dff5ff",
+          py: 6,
+        }}
+      >
+        <Container>
+          <Grid container spacing={20}>
+            <Grid item xs={12} sm={6}>
+              <Typography
+                variant="h5"
+                sx={{ fontWeight: "bold", mb: 4,mt:8, color: "#378ce7" }}
+              >
+                WHAT WE DO
+              </Typography>
+              <Typography
+                variant="h5"
+                sx={{ mb: 4, mt: 8, color: "#dff5ff", fontWeight: "600" }}
+              >
+                New Strategies for Teacher Learning
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{   color: "black", 
+                  fontSize: "1rem", 
+                  lineHeight: "1.6", 
+                  fontWeight: "400", 
+                  textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)", }}
+              >
+              We provide innovative strategies that help teachers adapt to modern learning environments.
+              Our programs are designed to inspire creativity, engagement, and effectiveness in teaching methods.
+              </Typography>
+              <Typography
+                variant="h5"
+                sx={{ mb: 4, mt: 8, color: "#dff5ff", fontWeight: "600" }}
+              >
+                Professional Learning in Practice
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{   color: "black", 
+                  fontSize: "1rem", 
+                  lineHeight: "1.6", 
+                  fontWeight: "400", 
+                  textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)", }}
+              >
+            Transform theoretical knowledge into actionable practices with our hands-on learning sessions.
+             Empower educators to enhance their classroom performance and connect with students effectively.
+              </Typography>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Typography
+                variant="h5"
+                sx={{ fontWeight: "bold", mb: 4, mt:8, color: "#378ce7" }}
+              >
+                PROFESSIONAL LEARNING
+              </Typography>
+              <Typography
+                variant="h5"
+                sx={{ mb: 4, mt: 8, color: "#dff5ff", fontWeight: "600" }}
+              >
+                What Teachers Need to Know
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{   color: "black", 
+                  fontSize: "1rem", 
+                  lineHeight: "1.6", 
+                  fontWeight: "400", 
+                  textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)",}}
+              >
+          Stay ahead in the education field with our up-to-date resources and training.
+          We ensure that teachers are equipped with the latest knowledge and skills 
+          to meet evolving educational demands.
+              </Typography>
+              <Typography
+                variant="h5"
+                sx={{ mb: 4, mt: 8, color: "#dff5ff", fontWeight: "600" }}
+              >
+                The Good Design
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{     color: "black", 
+                  mb: 8,
+                  fontSize: "1rem", 
+                  lineHeight: "1.6", 
+                  fontWeight: "400", 
+                  textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)", }}
+              >
+              Explore the power of thoughtful design in education. 
+              From creating engaging lesson plans to designing impactful learning environments,
+              we help educators make every experience meaningful.
+              </Typography>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
