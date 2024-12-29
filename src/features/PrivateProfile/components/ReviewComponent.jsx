@@ -25,7 +25,7 @@ export default function ReviewComponent(props) {
       price: "10",
       description: " Learn TypeScript",
       score: "0.00",
-      author: "creator",
+      type: "creator",
     },
     {
       imageURL: "/images/exam.png",
@@ -33,27 +33,27 @@ export default function ReviewComponent(props) {
       price: "10",
       description: " Learn TypeScript",
       score: "0.00",
-      author: "",
+      type: "member",
     },
   ];
-  const Data2 = [
-    {
-      imageURL: "/images/exam.png",
-      name: "typescript",
-      price: "10",
-      description: " Learn TypeScript",
-      score: "0.00",
-      author: "creator",
-    },
-    {
-      imageURL: "/images/exam.png",
-      name: "typescript",
-      price: "10",
-      description: " Learn TypeScript",
-      score: "0.00",
-      author: "",
-    },
-  ];
+  // const Data2 = [
+  //   {
+  //     imageURL: "/images/exam.png",
+  //     name: "typescript",
+  //     price: "10",
+  //     description: " Learn TypeScript",
+  //     score: "0.00",
+  //     type: "creator",
+  //   },
+  //   {
+  //     imageURL: "/images/exam.png",
+  //     name: "typescript",
+  //     price: "10",
+  //     description: " Learn TypeScript",
+  //     score: "0.00",
+  //     type: "member",
+  //   },
+  // ];
   const Condition = (item) => {
     if (props.section === "My Exams") {
       if (item.type === "member") {
@@ -63,17 +63,17 @@ export default function ReviewComponent(props) {
       }
     }
     if (props.section == "My Courses") {
-      if (item.author == "creator") {
-        navigate("/PrivateCourse");
-      } else {
+      if (item.type === "member") {
         navigate("/PublicCourse");
+      } else {
+        navigate("/PrivateCourse");
       }
     }
     if (props.section == "My Articles") {
-      if (item.author == "creator") {
-        navigate("/PrivateArticle");
-      } else {
+      if (item.type === "member") {
         navigate("/PublicArticle");
+      } else {
+        navigate("/PrivateArticle");
       }
     }
   };
@@ -137,17 +137,17 @@ export default function ReviewComponent(props) {
     if (props.section === "My Courses") {
       setData(Data);
     }
-    // if (props.section === "My Exams" || props.section === "My Articles") {
-    //   console.log(props.Services);
-    //   fetchExamData(props.Services);
-    // }
-    if (props.section === "My Exams") {
+    if (props.section === "My Exams" || props.section === "My Articles") {
       console.log(props.Services);
       fetchExamData(props.Services);
     }
-    if (props.section === "My Articles") {
-      setData(Data2);
-    }
+    // if (props.section === "My Exams") {
+    //   console.log(props.Services);
+    //   fetchExamData(props.Services);
+    // }
+    // if (props.section === "My Articles") {
+    //   setData(Data2);
+    // }
   }, [props.section]);
 
   // کامپوننت بازگشتی
@@ -170,7 +170,7 @@ export default function ReviewComponent(props) {
               borderColor: "#378CE7",
               mb: 6,
               maxWidth: 600,
-              width: 600,
+              width: { sm: "400px", md: "600px" },
               mx: "auto",
               borderRadius: "4%",
               background: "#E3F2FD",
@@ -186,12 +186,12 @@ export default function ReviewComponent(props) {
               },
             }}
           >
-            {loading ? ( // نمایش لودینگ در صورت بارگذاری
+            {loading ? (
               <CircularProgress
                 sx={{
                   color: "#378CE7",
                   mt: 2,
-                  ml: "270px",
+                  ml: { sm: "180px", md: "270px" },
                 }}
               />
             ) : (
@@ -208,7 +208,7 @@ export default function ReviewComponent(props) {
                     overflow: "auto",
                     paddingBottom: "20px",
                     flexWrap: "nowrap",
-                    width: { xs: "220px", sm: "370px", md: "600px" },
+                    width: { xs: "220px", sm: "400px", md: "600px" },
                     flexShrink: 0,
                   }}
                 >
@@ -227,7 +227,7 @@ export default function ReviewComponent(props) {
                           borderRadius: "10px",
                           boxShadow: 1,
                           transition: "transform 0.3s ease",
-                          minWidth: { xs: 100, sm: 150, md: 220 },
+                          minWidth: { xs: 100, sm: 220, md: 220 },
                           "&:hover": {
                             transform: "scale(1.05)", // مقدار کمی بزرگ‌تر
                             boxShadow: 5, // سایه بیشتر برای تمایز
@@ -236,7 +236,6 @@ export default function ReviewComponent(props) {
                       >
                         <CardMedia
                           component="img"
-                          height="100"
                           image={
                             item.imageURL ? item.imageURL : "/images/exam.png"
                           }
@@ -251,17 +250,19 @@ export default function ReviewComponent(props) {
                         <Typography
                           variant="subtitle2"
                           component="div"
+                          fontWeight={"bold"}
+                          fontSize={"18px"}
                           gutterBottom
                         >
                           {item.name}
                         </Typography>
-                        <Typography
+                        {/* <Typography
                           variant="body2"
                           color="text.secondary"
                           mb={0.5}
                         >
                           Price: {item.price}
-                        </Typography>
+                        </Typography> */}
                         <Typography
                           variant="body2"
                           color="text.secondary"
@@ -276,40 +277,49 @@ export default function ReviewComponent(props) {
                         >
                           Score: {item.score}
                         </Typography>
-                        <Typography
+                        {/* <Typography
                           variant="caption"
                           color="text.secondary"
                           textAlign="center"
                           mb={1.5}
                         >
                           Description: {item.description}
-                        </Typography>
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          onClick={() => {
-                            Condition(item);
-                          }}
-                          sx={{
-                            fontSize: {
-                              xs: "0.65rem",
-                              sm: "0.75rem",
-                              md: "0.95rem",
-                            },
-                            padding: {
-                              xs: "2px 4px",
-                              sm: "3px 4px",
-                              md: "6px 12px",
-                            },
-                            borderRadius: "10%",
-                            "&:hover": {
-                              backgroundColor: "#387CE7",
-                              color: "#fff",
-                            },
-                          }}
-                        >
-                          View Details
-                        </Button>
+                        </Typography> */}
+                        <Box display="flex" gap={1} textAlign="center">
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => {
+                              Condition(item);
+                            }}
+                            sx={{
+                              fontSize: "0.65rem",
+                              padding: 0.6,
+                              borderRadius: "10%",
+                              "&:hover": {
+                                backgroundColor: "#387CE7",
+                                color: "#fff",
+                              },
+                            }}
+                          >
+                            View Details
+                          </Button>
+                          {item.type !== "member" ? (
+                            <CardMedia
+                              component="img"
+                              height="30px"
+                              image={"/images/exam.png"}
+                              alt="Review Image"
+                              sx={{
+                                borderRadius: "8px",
+                                mb: 1,
+                                width: { xs: "60px", sm: "30px", md: "40px" },
+                              }}
+                            />
+                          ) : (
+                            <></>
+                          )}
+                        </Box>
                       </Card>
                     </Box>
                   ))}

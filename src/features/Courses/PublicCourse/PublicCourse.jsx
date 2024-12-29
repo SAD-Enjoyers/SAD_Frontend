@@ -1,288 +1,135 @@
 import React, { useState, useEffect } from "react";
-import Grid2 from "@mui/material/Grid2";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import {
+  Box,
+  Tabs,
+  Tab,
+  CircularProgress,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import {
+  LibraryBooks,
+  Settings,
+  People,
+  Comment,
+  VideoLibrary,
+} from "@mui/icons-material";
+import { useLocation, useParams } from "react-router-dom"; // Import useLocation and useParams
+import Public from "./Tabs/Public";
 import CommentSection from "../../../common/Comments/CommentSection";
 
-const videos = [
-  {
-    id: "video1",
-    title: "install-ts",
-    src: "/videos/1.mp4",
-    thumbnail: "/thumbnails/image.png",
-    author: "author1",
-  },
-  {
-    id: "video2",
-    title: "compile-ts-code",
-    src: "/videos/2.mp4",
-    thumbnail: "/thumbnails/image.png",
-    author: "author1",
-  },
-  {
-    id: "video3",
-    title: "static-vs-dynamic-type",
-    src: "/videos/1.mp4",
-    thumbnail: "/thumbnails/image.png",
-    author: "author1",
-  },
-  {
-    id: "video4",
-    title: "number-dataType",
-    src: "/videos/2.mp4",
-    thumbnail: "/thumbnails/image.png",
-    author: "author1",
-  },
-  {
-    id: "video5",
-    title: "string-datatype",
-    src: "/videos/1.mp4",
-    thumbnail: "/thumbnails/image.png",
-    author: "author1",
-  },
-];
+const PublicCourse = () => {
+  const { courseId } = useParams(); // Extract courseId from URL
+  const location = useLocation(); // Get location state
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [enrolledStudents, setEnrolledStudents] = useState([]);
+  const [courseData, setCourseData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const accessToken = localStorage.getItem("token");
 
-export default function PublicCourse() {
-  const [selectedVideo, setSelectedVideo] = useState(videos[0]?.src || null);
-  const [selectedVideoId, setSelectedVideoId] = useState(videos[0]?.id || null);
-  const [videoDurations, setVideoDurations] = useState({});
+  const handleTabChange = (event, newValue) => {
+    setSelectedTab(newValue);
+    localStorage.setItem("selectedTab", newValue); // Save selected tab to localStorage
+  };
 
   useEffect(() => {
-    videos.forEach((video) => {
-      const videoElement = document.createElement("video");
-      videoElement.src = video.src;
-      videoElement.addEventListener("loadedmetadata", () => {
-        setVideoDurations((prev) => ({
-          ...prev,
-          [video.id]: formatTime(videoElement.duration),
-        }));
-      });
-    });
+    if (location.state && location.state.courseData) {
+      setCourseData(location.state.courseData);
+      setLoading(false);
+    } else {
+      const storedCourseData = JSON.parse(localStorage.getItem("courseData"));
+      if (
+        storedCourseData &&
+        storedCourseData.courseId === parseInt(courseId)
+      ) {
+        setCourseData(storedCourseData);
+        setLoading(false);
+      } else {
+        console.error("Course data not found or invalid courseId");
+        setLoading(false);
+      }
+    }
+  }, [location.state, courseId]);
+
+  useEffect(() => {
+    const savedTab = localStorage.getItem("selectedTab");
+    if (savedTab) setSelectedTab(parseInt(savedTab, 10));
   }, []);
 
-  const handleVideoChange = (src, id) => {
-    const videoElement = document.querySelector("video");
-    if (videoElement) {
-      videoElement.pause();
-      videoElement.currentTime = 0;
-    }
-    setSelectedVideo(src);
-    setSelectedVideoId(id);
-  };
+  const tabContent = [
+    {
+      label: "Enrolled Students",
+      content: <Public />,
 
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  };
+      icon: <VideoLibrary />,
+    },
+    {
+      label: "Comment Section",
+      content: <CommentSection serviceId={courseId} />,
+      icon: <Comment />,
+    },
+  ];
+
   return (
-    <Grid2
-      container
-      spacing={2}
-      sx={{ height: "100vh", padding: 2, mt: "80px", mb: "80px" }}
+    <Box
+      sx={{
+        width: "100%",
+        maxWidth: "800px",
+        margin: "50px auto",
+        padding: "20px",
+        backgroundColor: "#F9FAFB",
+        borderRadius: "12px",
+        boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.1)",
+      }}
     >
-      <Grid2 size={4}>
-        <Typography
-          variant="h6"
-          sx={{
-            pt: "20px",
-            textAlign: "center",
-            backgroundColor: "#f0f0f0",
-          }}
-        >
-          introduction to typescript
-        </Typography>
-        <Box
-          sx={{
-            backgroundColor: "#f0f0f0",
-            overflowY: "auto",
-            borderRadius: 2,
-            padding: 2,
-            height: "500px",
-            "&::-webkit-scrollbar": {
-              width: "10px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "#c0c0c0",
-              borderRadius: "3px",
-            },
-            "&::-webkit-scrollbar-thumb:hover": {
-              backgroundColor: "#a0a0a0",
-            },
-            "&::-webkit-scrollbar-track": {
-              backgroundColor: "#f0f0f0",
-            },
-          }}
-        >
-          {videos.map((video) => (
-            <Box
-              key={video.id}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                padding: 1,
-                marginBottom: 1,
-                borderRadius: 2,
-                backgroundColor:
-                  video.id === selectedVideoId ? "#67C6E3" : "transparent",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                cursor: "pointer",
-                "&:hover": {
-                  backgroundColor:
-                    video.id === selectedVideoId ? "#67C6E3" : "#DFF5FF",
-                },
-              }}
-              onClick={() => handleVideoChange(video.src, video.id)}
-            >
-              {/* متن در سمت چپ */}
-              <Box sx={{ flexGrow: 1 }}>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    textAlign: "left",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    fontSize: "1.4rem",
-                  }}
-                >
-                  {video.title}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: "#888",
-                    textAlign: "left",
-                    marginTop: "4px",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    fontSize: "1.1rem",
-                  }}
-                >
-                  {video.author}
-                </Typography>
-              </Box>
-
-              {/* تصویر در سمت راست */}
-              <Box
-                sx={{
-                  position: "relative",
-                  width: "90px",
-                  height: "90px",
-                  marginLeft: 2,
-                  borderRadius: "8px",
-                  overflow: "hidden",
-                }}
-              >
-                <Box
-                  component="img"
-                  src={video.thumbnail}
-                  alt={video.title}
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
-                />
-                <Typography
-                  variant="caption"
-                  sx={{
-                    position: "absolute",
-                    bottom: 4,
-                    right: 4,
-                    backgroundColor: "rgba(0, 0, 0, 0.7)",
-                    color: "#fff",
-                    padding: "2px 4px",
-                    borderRadius: "4px",
-                    fontSize: "0.8rem",
-                  }}
-                >
-                  {videoDurations[video.id] || "درحال بارگذاری..."}
-                </Typography>
-              </Box>
-            </Box>
-          ))}
-        </Box>
-      </Grid2>
-
-      <Grid2
-        size={8}
-        sx={{
-          alignItems: "center",
-          backgroundColor: "#f9f9f9",
-          borderRadius: 2,
-          padding: 2,
-          height: "auto", // اجازه به ارتفاع برای افزایش دینامیک
-          minHeight: "300px", // حداقل ارتفاع مناسب
-          maxHeight: "none", // جلوگیری از محدودیت ارتفاع
-        }}
+      <Box
+        sx={{ bgcolor: "#f4f4f4", display: "flex", justifyContent: "center" }}
       >
-        {selectedVideo ? (
-          <>
-            <Box
-              sx={{
-                width: "100%",
-                aspectRatio: "16 / 9",
-                overflow: "hidden",
-                borderRadius: "18px",
-              }}
-            >
-              <video
-                key={selectedVideo}
-                controls
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "fill",
-                }}
-              >
-                <source src={selectedVideo} type="video/mp4" />
-                مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
-              </video>
-            </Box>
-            <Box sx={{ mt: 2, textAlign: "center" }}>
-              <Typography
-                variant="h5"
-                sx={{ fontWeight: "bold", fontSize: "35px" }}
-              >
-                {videos.find((video) => video.src === selectedVideo)?.title}
-              </Typography>
-              <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                <Box
-                  component="img"
-                  src="/images/profile.png"
-                  alt="author"
-                  sx={{
-                    width: "40px",
-                    height: "40px",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                    ml: 1,
-                  }}
-                />
-                <Box>
-                  <Typography
-                    variant="body1"
-                    sx={{ fontWeight: "bold", ml: "20px" }}
-                  >
-                    {
-                      videos.find((video) => video.src === selectedVideo)
-                        ?.author
-                    }
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-            <CommentSection />
-          </>
+        <Tabs
+          value={selectedTab}
+          onChange={handleTabChange}
+          aria-label="Private Course Navigation Tabs"
+          variant={isMobile ? "scrollable" : "standard"}
+          sx={{
+            width: "100%",
+            borderBottom: 1,
+            borderColor: "divider",
+            paddingX: isMobile ? 1 : 0,
+          }}
+        >
+          {tabContent.map((tab, index) => (
+            <Tab
+              key={index}
+              label={isMobile ? "" : tab.label}
+              icon={tab.icon}
+              iconPosition="start"
+              aria-label={`Tab for ${tab.label}`}
+              sx={{ minWidth: isMobile ? 50 : 120, padding: isMobile ? 0 : 2 }}
+            />
+          ))}
+        </Tabs>
+      </Box>
+
+      <Box sx={{ flex: 1, p: 2, overflowY: "auto" }}>
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "200px",
+            }}
+          >
+            <CircularProgress />
+          </Box>
         ) : (
-          <Typography variant="h5" color="textSecondary">
-            please select a video
-          </Typography>
+          tabContent[selectedTab]?.content
         )}
-      </Grid2>
-    </Grid2>
+      </Box>
+    </Box>
   );
-}
+};
+
+export default PublicCourse;
