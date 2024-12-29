@@ -67,6 +67,7 @@ function AppRoutes() {
             element={<PrivateArticle />}
           />
           <Route path="AddCourse" element={< AddCourse />} />
+          <Route path="AboutUs" element={<AboutUs />} />
         </Route>
       </Routes>
     </Router>
