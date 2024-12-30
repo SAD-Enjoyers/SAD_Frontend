@@ -310,6 +310,18 @@ function QuestionPage() {
             >
               Total Votes: {question.ratingCount}
             </Typography>
+            {userRating !== null && (
+        <Typography
+          variant="body1"
+          sx={{
+            marginTop: 2,
+            color: "#4CAF50",
+            fontWeight: "bold",
+          }}
+        >
+          Your Rating: {userRating}
+        </Typography>
+      )}
           </Box>
         </Box>
       </Box>
