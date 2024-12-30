@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
-  AppBar,
-  Toolbar,
-  Typography,
   Box,
   Button,
-  Card,
-  CardContent,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
   Container,
   Dialog,
-  DialogTitle,
-  DialogContent,
   DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControlLabel,
   Paper,
+  Radio,
+  RadioGroup,
+  Typography,
   Snackbar,
-} from "@mui/material";
-import { Warning, Clear } from "@mui/icons-material";
-import { useNavigate, useLocation } from "react-router-dom";
+  Alert,
+  Tooltip,
+  IconButton,
+} from '@mui/material';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const OngoingExamPage = () => {
   // const { serviceId } = useParams(); // خواندن serviceId از پارامترهای URL
@@ -30,13 +31,18 @@ const OngoingExamPage = () => {
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  // const [selectedAnswers, setSelectedAnswers] = useState({});
   const [timeRemaining, setTimeRemaining] = useState(0); 
-  const [openDialog, setOpenDialog] = useState(false);
+  // const [openDialog, setOpenDialog] = useState(false);
+  const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
   const [questions, setQuestions] = useState([]); 
   // const [examToken, setExamToken] = useState(""); 
   const [loading, setLoading] = useState(true);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
+  // const [snackbarOpen, setSnackbarOpen] = useState(false);
+  // const [snackbarMessage, setSnackbarMessage] = useState("");
+  
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [markedQuestions, setMarkedQuestions] = useState([]);
   
   useEffect(() => {
     console.log("useEffect is running...");
@@ -132,9 +138,9 @@ const OngoingExamPage = () => {
   }, []);
 
   
-  useEffect(() => {
-    setProgress(((currentQuestionIndex + 1) / questions.length) * 100);
-  }, [currentQuestionIndex, questions.length]);
+  // useEffect(() => {
+  //   setProgress(((currentQuestionIndex + 1) / questions.length) * 100);
+  // }, [currentQuestionIndex, questions.length]);
 
   const handleOptionChange = (event) => {
     setSelectedOption({
@@ -173,6 +179,7 @@ const OngoingExamPage = () => {
       questionId: question.questionId,
       userAnswer: selectedOption[index] || null,
     }));
+    console.log(answers)
 
     try {
        const token = localStorage.getItem("examToken");
