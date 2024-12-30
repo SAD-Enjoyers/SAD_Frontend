@@ -388,3 +388,152 @@ const AboutUs = () => {
           </Grid>
         </Container>
       </Box>
+            {/* Meet The Team Section */}
+            <Box
+      sx={{
+        backgroundColor: "#67C6E3",
+        color: "#DFF5FF",
+        py: 6,
+        textAlign: "center",
+      }}
+    >
+      <Container>
+        <Typography
+          variant="h3"
+          sx={{
+            fontWeight: "bold",
+            mb: 8,
+            textShadow: "1px 1px 2px #378CE7",
+          }}
+        >
+          Meet The Team
+        </Typography>
+        <Grid container spacing={4} justifyContent="center">
+          {teamMembers.map((person, index) => (
+            <Grid item xs={12} md={6} key={index}>
+              <Box
+                sx={{
+                  backgroundColor: "#DFF5FF",
+                  color: "#378CE7",
+                  borderRadius: "16px",
+                  p: 4,
+                  textAlign: "center",
+                  boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                  transition: "transform 0.3s ease",
+                  "&:hover": {
+                    transform: "scale(1.05)",
+                    boxShadow: "0px 8px 10px rgba(0, 0, 0, 0.2)",
+                  },
+                }}
+              >
+                <Avatar
+                  sx={{
+                    width: 120,
+                    height: 120,
+                    fontSize: "40px",
+                    mx: "auto",
+                    mb: 2,
+                    bgcolor: "#378CE7",
+                    color: "#DFF5FF",
+                  }}
+                >
+                  {person.name.charAt(0)}
+                </Avatar>
+                <Typography variant="body2" sx={{ mb: 1, color: "black" }}>
+                  {person.role}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: "bold", mb: 2, color: "#378CE7" }}
+                >
+                  {person.name}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{color: "black", 
+                    fontSize: "1rem", 
+                    lineHeight: "1.6", 
+                    fontWeight: "400", 
+                    textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)", }}
+                >
+                  {person.description}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ mb: 3, color: "black", fontStyle: "italic" }}
+                >
+                  {person.bio}
+                </Typography>
+                <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+                  <Box
+                    component="a"
+                    href={person.socials.github}
+                    target="_blank"
+                    sx={{
+                      color: "#DFF5FF",
+                      backgroundColor: "#67C6E3",
+                      width: "40px",
+                      height: "40px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: "50%",
+                      transition: "background-color 0.3s ease",
+                      "&:hover": {
+                        backgroundColor: "#378CE7",
+                        color: "#DFF5FF",
+                      },
+                    }}
+                  >
+                    <GitHub fontSize="small" />
+                  </Box>
+                  <Box
+                    sx={{
+                      color: "#DFF5FF",
+                      backgroundColor: "#67C6E3",
+                      width: "40px",
+                      height: "40px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: "50%",
+                      transition: "background-color 0.3s ease",
+                      "&:hover": {
+                        backgroundColor: "#378CE7",
+                        color: "#DFF5FF",
+                      },
+                    }}
+                    onClick={(e) => handleEmailClick(e, person.socials.email)}
+                  >
+                    <Email fontSize="small" />
+                  </Box>
+                </Box>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+        {/* Popover for Email */}
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+        >
+          <Box
+            sx={{
+              p: 2,
+              backgroundColor: "#DFF5FF",
+              color: "black",
+              borderRadius: "8px",
+              boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Typography>Email: {selectedEmail}</Typography>
+          </Box>
+        </Popover>
+      </Container>
+    </Box>
+    
