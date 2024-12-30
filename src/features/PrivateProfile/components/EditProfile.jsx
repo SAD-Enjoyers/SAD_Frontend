@@ -5,11 +5,8 @@ export default function EditProfile({ closeState }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageName, setImageName] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
-
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
   const handleImageUpload = (event) => {
@@ -62,8 +59,8 @@ export default function EditProfile({ closeState }) {
     const formData = {};
     if (firstName) formData.firstName = firstName;
     if (lastName) formData.lastName = lastName;
-    if (userName) formData.userName = userName;
-    if (email) formData.email = email;
+    // if (userId) formData.userId = userId;
+    // if (email) formData.email = email;
     if (description) formData.description = description;
     if (image) formData.image = image;
     if (address) formData.address = address;
@@ -213,14 +210,14 @@ export default function EditProfile({ closeState }) {
               margin="normal"
             />
           </Grid2>
-          <Grid2 size={5}>
+          {/* <Grid2 size={5}>
             <TextField
               fullWidth
               label="Username"
               name="userName"
-              value={userName}
+              value={userId}
               onChange={(e) => {
-                setUserName(e.target.value);
+                setUserId(e.target.value);
               }}
               margin="normal"
             />
@@ -236,7 +233,7 @@ export default function EditProfile({ closeState }) {
               }}
               margin="normal"
             />
-          </Grid2>
+          </Grid2> */}
           <Box
             component="form"
             sx={{ "& .MuiTextField-root": { m: 1, width: "20.4ch" } }}

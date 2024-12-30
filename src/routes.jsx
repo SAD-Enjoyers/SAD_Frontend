@@ -31,6 +31,7 @@ import PrivateArticle from "./features/Articles/privateArticle/privateArticle.js
 import AddCourse from "./features/Courses/PrivateCourse/AddCourse/AddCourse.jsx";
 import CoursePreview from "./features/Courses/CoursePreview/CoursePreview.jsx";
 import AboutUs from "./features/Resources/AboutUs/Aboutus.jsx";
+import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
 
 function AppRoutes() {
   return (
@@ -59,7 +60,7 @@ function AppRoutes() {
           <Route path="PublicExam" element={<PublicExam />} />
           <Route path="ExamResult" element={<ExamResult />} />
           <Route path="AddArticle" element={<AddArticle />} />
-          <Route path="OngoingExamPage" element={< OngoingExamPage />} />
+          <Route path="OngoingExamPage" element={<OngoingExamPage />} />
           <Route path="SearchArticle" element={<ArticleSearch />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
           <Route path="PublicCourse" element={<PublicCourse />} />
@@ -72,13 +73,9 @@ function AppRoutes() {
           <Route path="CoursePreview" element={<CoursePreview />} />
 
           <Route path="PublicArticle" element={<PublicArticle />} />
-          <Route
-            path="PrivateArticle"
-            element={<PrivateArticle />}
-          />
-          <Route path="AddCourse" element={< AddCourse />} />
-          <Route path="AboutUs" element={< AboutUs/>} />
-
+          <Route path="PrivateArticle" element={<PrivateArticle />} />
+          <Route path="AddCourse" element={<AddCourse />} />
+          <Route path="AboutUs" element={<AboutUs />} />
         </Route>
       </Routes>
     </Router>
