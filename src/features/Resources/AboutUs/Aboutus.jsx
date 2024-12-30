@@ -536,4 +536,35 @@ const AboutUs = () => {
         </Popover>
       </Container>
     </Box>
-    
+          {/* Contact Us Section */}
+          <Box
+      id="contact-us"
+      sx={{
+        backgroundColor: "#F4F6F8",
+        color: "#333333",
+        py: 6,
+        textAlign: "center",
+        borderRadius: "12px",
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+        margin: "40px 0",
+      }}
+    >
+      <Container>
+        <Typography
+          variant="h3"
+          sx={{
+            fontWeight: "bold",
+            mb: 3,
+            color: "#378CE7",
+            textShadow: "1px 1px 2px #CCCCCC",
+          }}
+        >
+          Contact Us
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{ mb: 5, opacity: 0.9, fontSize: "1.2rem", color: "#555555" }}
+        >
+          We are here to assist you with any questions or feedback you may have. Feel free to connect with us using the following options.
+        </Typography>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 4, flexWrap: "wrap" }}>
