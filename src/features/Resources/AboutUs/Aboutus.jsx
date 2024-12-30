@@ -568,3 +568,76 @@ const AboutUs = () => {
           We are here to assist you with any questions or feedback you may have. Feel free to connect with us using the following options.
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "center", gap: 4, flexWrap: "wrap" }}>
+          {/* Email Section */}
+<Box
+  onClick={() => setShowEmail(!showEmail)} // تغییر وضعیت با هر کلیک
+  sx={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    backgroundColor: "linear-gradient(145deg, #FFE2E8, #FFD1D9)",
+    padding: "20px",
+    borderRadius: "12px",
+    boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.2)",
+    width: "250px",
+    textDecoration: "none",
+    transition: "transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease",
+    "&:hover": {
+      transform: "scale(1.05)",
+      boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)",
+      backgroundColor: "#FFD1D9",
+      cursor: "pointer",
+    },
+  }}
+>
+
+  {/* نمایش آیکون یا ایمیل */}
+  {!showEmail ? (
+    <>
+      <Email
+        fontSize="large"
+        sx={{
+          color: "#E1306C",
+          mb: 2,
+          transition: "color 0.3s ease",
+          "&:hover": { color: "#C2185B" },
+        }}
+      />
+      <Typography
+        variant="h6"
+        sx={{ fontWeight: "bold", mb: 1, color: "#333333" }}
+      >
+        Email Us
+      </Typography>
+      <Typography variant="body2" sx={{ color: "#555555" }}>
+        Click to reveal email
+      </Typography>
+    </>
+  ) : (
+    <>
+      <Typography
+        variant="h6"
+        sx={{ fontWeight: "bold", mb: 1, color: "#333333" }}
+      >
+        Contact Email
+      </Typography>
+      <Typography
+        variant="body2"
+        sx={{
+          color: "#E1306C",
+          fontWeight: "bold",
+          animation: "fade-in 0.5s ease-in-out",
+        }}
+      >
+        support@example.com
+      </Typography>
+    </>
+  )}
+</Box>
+
+
+
+
+
+
+</Box>
