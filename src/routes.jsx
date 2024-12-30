@@ -30,6 +30,8 @@ import PreviewArticle from "./features/Articles/publicArticle/publicArticle.jsx"
 import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx";
 import AddCourse from "./features/Courses/PrivateCourse/AddCourse/AddCourse.jsx";
 import CoursePreview from "./features/Courses/CoursePreview/CoursePreview.jsx";
+import AboutUs from "./features/Resources/AboutUs/Aboutus.jsx";
+
 function AppRoutes() {
   return (
     <Router>
@@ -68,6 +70,15 @@ function AppRoutes() {
           <Route path="PrivateArticle" element={<PrivateArticle />} />
           <Route path="AddCourse" element={<AddCourse />} />
           <Route path="CoursePreview" element={<CoursePreview />} />
+
+          <Route path="PublicArticle" element={<PublicArticle />} />
+          <Route
+            path="PrivateArticle"
+            element={<PrivateArticle />}
+          />
+          <Route path="AddCourse" element={< AddCourse />} />
+          <Route path="AboutUs" element={< AboutUs/>} />
+
         </Route>
       </Routes>
     </Router>
