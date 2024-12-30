@@ -28,6 +28,7 @@ import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
 import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx";
 import AddCourse from "./features/Courses/PrivateCourse/AddCourse/AddCourse.jsx";
+import AboutUs from "./features/Resources/AboutUs/Aboutus.jsx";
 function AppRoutes() {
   return (
     <Router>
@@ -67,7 +68,7 @@ function AppRoutes() {
             element={<PrivateArticle />}
           />
           <Route path="AddCourse" element={< AddCourse />} />
-          <Route path="AboutUs" element={<AboutUs />} />
+          <Route path="AboutUs" element={< AboutUs/>} />
         </Route>
       </Routes>
     </Router>

@@ -1,4 +1,3 @@
-// AboutUs.js
 import React from "react";
 import { useState } from "react";
 import {
@@ -9,7 +8,7 @@ import {
   Button,
   Avatar, Tooltip, Popover
 } from "@mui/material";
-import dswaminImage from "./assets/dswamin.png";
+import dswaminImage from "./Images/dswamin.png";
 import { Instagram, GitHub, Email,Phone } from "@mui/icons-material";
 
 const AboutUs = () => {
