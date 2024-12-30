@@ -5,7 +5,7 @@ import {
   Typography,
   Chip,
   Box,
-  Rating,
+  Rating as MuiRating,
   FormControl,
   RadioGroup,
   FormControlLabel,
@@ -29,8 +29,11 @@ function QuestionPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // Error message state
+  
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -139,7 +142,13 @@ function QuestionPage() {
         });
   
         if (!response.ok) {
-          throw new Error("Failed to submit rating");
+          const errorData = await response.json();
+          if (response.status === 403) {
+            setErrorMessage(errorData.message || "You have already submitted a rating.");
+          } else {
+            throw new Error("Failed to submit rating.");
+          }
+          return;
         }
   
         const data = await response.json();
@@ -149,13 +158,17 @@ function QuestionPage() {
             ...prevQuestion,
             rating: parseFloat(data.data.score),
             ratingCount: data.data.numberOfVoters,
+            
           }));
+          setSuccessMessage("Rating submitted successfully!");
+          setHasSubmitted(true);
         } else {
           throw new Error("Unexpected response format");
         }
   
       } catch (error) {
         console.error("Error submitting rating:", error);
+        setErrorMessage("Error submitting rating. Please try again.");
       }
     }
   };
@@ -305,26 +318,71 @@ function QuestionPage() {
               textAlign: "center",
             }}
           >
+     {/* Error Message */}
+     {errorMessage && (
+        <Typography
+          sx={{
+            backgroundColor: "#f8d7da",
+            color: "#721c24",
+            padding: "10px 20px",
+            borderRadius: "5px",
+            fontSize: "14px",
+            fontWeight: 500,
+            textAlign: "center",
+            border: "1px solid #f5c6cb",
+            marginBottom: "10px",
+          }}
+        >
+          {errorMessage}
+        </Typography>
+      )}
+
+      {/* Success Message */}
+      {successMessage && (
+        <Typography
+          sx={{
+            backgroundColor: "#d4edda",
+            color: "#155724",
+            padding: "10px 20px",
+            borderRadius: "5px",
+            fontSize: "14px",
+            fontWeight: 500,
+            textAlign: "center",
+            border: "1px solid #c3e6cb",
+            marginBottom: "10px",
+          }}
+        >
+          {successMessage}
+        </Typography>
+      )}
+
             <Typography variant="h6" gutterBottom>
               Rate this question
             </Typography>
-            <Rating
+            <MuiRating
               name={`rating-${question.id}`}
               value={question.rating}
               onChange={handleRatingChange}
               precision={0.5}
-              sx={{ color: "#5356FF", fontSize: "24px" }}
+              sx={{
+                color: "#FFD700",
+                fontSize: "48px",
+                cursor: hasSubmitted ? "not-allowed" : "pointer",
+                "& .MuiRating-iconEmpty": {
+                  color: "#FFD70066",
+                },
+              }}
             />
 
             <Typography
-              variant="body2"
-              sx={{ marginTop: 1, color: "#5356FF" }}
+              variant="body1"
+              sx={{  marginTop: 2, color: "#1E88E5", fontWeight: "bold" }}
             >
-              Your Rating: {question.rating.toFixed(1)}
+              Average Rating: {question.rating.toFixed(1)}
             </Typography>
             <Typography
-              variant="body2"
-              sx={{ marginTop: 1, color: "#5356FF" }}
+              variant="body1"
+              sx={{ marginTop: 1, color: "#1E88E5", fontWeight: "bold" }}
             >
               Total Votes: {question.ratingCount}
             </Typography>
