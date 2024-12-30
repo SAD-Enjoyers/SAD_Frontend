@@ -277,3 +277,114 @@ const AboutUs = () => {
           </Grid>
         </Container>
       </Box>
+            {/* Education Section */}
+            <Box
+        sx={{
+          backgroundColor: "#378CE7",
+          color: "#DFF5FF",
+          py: 6,
+          textAlign: "center",
+          boxShadow: "0px -4px 6px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Container>
+          <Typography
+            variant="h3"
+            sx={{
+              fontWeight: "bold",
+              mb: 2,
+              textShadow: "1px 1px 2px #67C6E3",
+            }}
+          >
+            Education and Learning
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{  color: "white", 
+              mb: 8,
+              fontSize: "1.2rem", 
+              lineHeight: "1.6", 
+              fontWeight: "400", 
+              textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)",  }}
+          >
+            Learning is something we do almost every day
+          </Typography>
+
+          <Grid container spacing={4}>
+            {[
+              {
+                id: "01",
+                title: "Teaching",
+                description: "Empower educators with the tools and techniques needed to inspire and engage students effectively.",
+              },
+              {
+                id: "02",
+                title: "Innovations",
+                description: "Explore cutting-edge ideas and practices designed to revolutionize teaching and learning.",
+              },
+              {
+                id: "03",
+                title: "Students",
+                description: "Foster a learning environment where students can thrive, grow, and reach their full potential.",
+              },
+              {
+                id: "04",
+                title: "Resources",
+                description: "Access comprehensive materials to support both educators and learners on their journey.",
+              },
+            ].map((item) => (
+              <Grid item xs={12} sm={6} md={3} key={item.id}>
+                <Box
+                  sx={{
+                    backgroundColor: "#DFF5FF",
+                    borderRadius: "8px",
+                    p: 4,
+                    textAlign: "center",
+                    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+                    },
+                  }}
+                >
+                  <Box
+                    sx={{
+                      backgroundColor: "#67C6E3",
+                      color: "white",
+                      width: "75px",
+                      height: "75px",
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontWeight: "bold",
+                      fontSize: "40px",
+                      margin: "0 auto 16px",
+                    }}
+                  >
+                    {item.id}
+                  </Box>
+                  <Typography
+                    variant="h6"
+                    sx={{ fontWeight: "bold", mb: 1, color: "black" }}
+                  >
+                    {item.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{   textAlign: "center",mt:4,
+                      color: "black", 
+                      fontSize: "0.9rem", 
+                      lineHeight: "1.6", 
+                      fontWeight: "400", 
+                      textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)",
+                     }}
+                  >
+                    {item.description}
+                  </Typography>
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
