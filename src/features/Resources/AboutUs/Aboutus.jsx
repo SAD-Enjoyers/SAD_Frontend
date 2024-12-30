@@ -636,8 +636,80 @@ const AboutUs = () => {
 </Box>
 
 
+          {/* GitHub Section */}
+          <Box
+            component="a"
+            href="https://github.com/SAD-Enjoyers"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              backgroundColor: "linear-gradient(145deg, #E3F2FD, #D1E9FF)",
+              padding: "20px",
+              borderRadius: "12px",
+              boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.2)",
+              width: "250px",
+              textDecoration: "none",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease",
+              "&:hover": {
+                transform: "scale(1.05)",
+                boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)",
+                backgroundColor: "#D1E9FF",
+              },
+            }}
+          >
+            <GitHub fontSize="large" sx={{ color: "#333333", mb: 2, transition: "color 0.3s ease", "&:hover": { color: "#000000" } }} />
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: "bold", mb: 1, color: "#333333" }}
+            >
+              GitHub
+            </Typography>
+            <Typography variant="body2" sx={{ color: "#555555" }}>
+              Check out our projects on GitHub.
+            </Typography>
+          </Box>
+
+          {/* Phone Section */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              backgroundColor: "linear-gradient(145deg, #E8F5E9, #D0F1D8)",
+              padding: "20px",
+              borderRadius: "12px",
+              boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.2)",
+              width: "250px",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease",
+              "&:hover": {
+                transform: "scale(1.05)",
+                boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)",
+                backgroundColor: "#D0F1D8",
+              },
+            }}
+          >
+            <Phone fontSize="large" sx={{ color: "#378CE7", mb: 2, transition: "color 0.3s ease", "&:hover": { color: "#1565C0" } }} />
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: "bold", mb: 1, color: "#333333" }}
+            >
+              Call Us
+            </Typography>
+            <Typography variant="body2" sx={{ color: "#555555" }}>
+              021-77889985
+            </Typography>
+          </Box>
+
+        </Box>
+      </Container>
+    </Box>
 
 
 
-
-</Box>
+    </Box>
+  );
+};
+export default AboutUs;
