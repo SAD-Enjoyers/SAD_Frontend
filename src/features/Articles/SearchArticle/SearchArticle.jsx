@@ -292,7 +292,7 @@ function SearchAndFilterArticle() {
         <Grid item xs={12} sm={8} md={9}>
           <TextField
             variant="outlined"
-            placeholder="Search questions..."
+            placeholder="Search Articles..."
             value={searchTerm}
             onChange={handleSearch}
             onKeyDown={(event) => event.key === "Enter" && handleSearchSubmit()}

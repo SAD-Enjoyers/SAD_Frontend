@@ -12,7 +12,7 @@ import {
   Avatar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import AdbIcon from "@mui/icons-material/Adb";
+import SchoolIcon from "@mui/icons-material/School";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 export default function NavBar() {
@@ -28,7 +28,7 @@ export default function NavBar() {
     "/",
     "/QuestionSearch",
     "/ExamSearch",
-    "/",
+    "/SearchUsers",
   ];
   const navigate = useNavigate();
   // const location = useLocation();
@@ -267,7 +267,6 @@ export default function NavBar() {
             </Menu>
           </Box>
 
-          {/* لوگو وسط در حالت موبایل و سمت چپ در حالت دسکتاپ */}
           <Box
             sx={{
               flexGrow: 5,
@@ -286,7 +285,7 @@ export default function NavBar() {
                   alignItems: "center",
                   fontFamily: "monospace",
                   fontWeight: 700,
-                  letterSpacing: ".3rem",
+                  letterSpacing: ".2rem",
                   color: "#378CE7",
                   textDecoration: "none",
                   "&:hover": {
@@ -294,12 +293,11 @@ export default function NavBar() {
                   },
                 }}
               >
-                <AdbIcon sx={{ mr: 0, color: "#378CE7" }} /> HOME
+                <SchoolIcon sx={{ mr: "10px", color: "#378CE7" }} /> TECHVERSE
               </Typography>
             </Link>
           </Box>
 
-          {/* صفحات در سمت راست در حالت دسکتاپ */}
           <Box
             sx={{
               display: { xs: "none", md: "flex" },

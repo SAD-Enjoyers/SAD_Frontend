@@ -32,6 +32,7 @@ import AddCourse from "./features/Courses/PrivateCourse/AddCourse/AddCourse.jsx"
 import CoursePreview from "./features/Courses/CoursePreview/CoursePreview.jsx";
 import AboutUs from "./features/Resources/AboutUs/Aboutus.jsx";
 import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
+import SearchUsers from "./features/Users/searchUsers/SearchUsers.jsx";
 
 function AppRoutes() {
   return (
@@ -71,7 +72,7 @@ function AppRoutes() {
           <Route path="PrivateArticle" element={<PrivateArticle />} />
           <Route path="AddCourse" element={<AddCourse />} />
           <Route path="CoursePreview" element={<CoursePreview />} />
-
+          <Route path="SearchUsers" element={<SearchUsers />} />
           <Route path="PublicArticle" element={<PublicArticle />} />
           <Route path="PrivateArticle" element={<PrivateArticle />} />
           <Route path="AddCourse" element={<AddCourse />} />
