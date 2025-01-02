@@ -7,68 +7,75 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import {
-  LibraryBooks,
-  Settings,
-  People,
-  Comment,
-  VideoLibrary,
-} from "@mui/icons-material";
-import { useLocation, useParams } from "react-router-dom"; // Import useLocation and useParams
-import Public from "./Tabs/Public";
-import CommentSection from "../../../common/Comments/CommentSection";
+import { LibraryBooks, Settings, Comment, Preview } from "@mui/icons-material";
+import InfoIcon from '@mui/icons-material/Info';
+import { useLocation, useParams } from "react-router-dom";
+import ArticleContent from "./tabs/ArticleContent"
+import ArticleSettings from "./tabs/ArticleSettings";
+import CommentSection from "./tabs/CommentSection";
 
-const PublicCourse = () => {
-  const { courseId } = useParams(); // Extract courseId from URL
+const PrivateArticle = () => {
+  const { articleId } = useParams(); // Extract articleId from URL
   const location = useLocation(); // Get location state
   const [selectedTab, setSelectedTab] = useState(0);
-  const [enrolledStudents, setEnrolledStudents] = useState([]);
-  const [courseData, setCourseData] = useState(null);
+  const [articleData, setArticleData] = useState(null);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const accessToken = localStorage.getItem("token");
 
+  // Handle tab changes and persist the selected tab
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
     localStorage.setItem("selectedTab", newValue); // Save selected tab to localStorage
   };
 
+  const handleContentSubmit = (data) => {
+    console.log("Received data:", data);
+    // Perform actions with the data
+  };
+  
+
   useEffect(() => {
-    if (location.state && location.state.courseData) {
-      setCourseData(location.state.courseData);
+    // First, check if articleData is passed via location state
+    if (location.state?.articleData) {
+      setArticleData(location.state.articleData);
       setLoading(false);
     } else {
-      const storedCourseData = JSON.parse(localStorage.getItem("courseData"));
-      if (
-        storedCourseData &&
-        storedCourseData.courseId === parseInt(courseId)
-      ) {
-        setCourseData(storedCourseData);
+      // Otherwise, try fetching the article data from localStorage
+      const storedArticleData = JSON.parse(localStorage.getItem("articleData"));
+      if (storedArticleData && storedArticleData.articleId === parseInt(articleId, 10)) {
+        setArticleData(storedArticleData);
         setLoading(false);
       } else {
-        console.error("Course data not found or invalid courseId");
+        // Handle the case if there's no matching articleData
+        console.error("Article data not found or invalid articleId");
         setLoading(false);
       }
     }
-  }, [location.state, courseId]);
+  }, [location.state, articleId]);
 
   useEffect(() => {
+    // Retrieve saved tab from localStorage
     const savedTab = localStorage.getItem("selectedTab");
     if (savedTab) setSelectedTab(parseInt(savedTab, 10));
   }, []);
 
   const tabContent = [
     {
-      label: "Enrolled Students",
-      content: <Public />,
-
-      icon: <VideoLibrary />,
+      label: "Article Contents",
+      content: <ArticleContent articleData={articleData} accessToken={accessToken} onContentSubmit={handleContentSubmit} />,
+      icon: <LibraryBooks />,
     },
     {
-      label: "Comment Section",
-      content: <CommentSection serviceId={courseId} />,
+      label: "Comments",
+      content: <CommentSection articleId={articleId} accessToken={accessToken} />,
       icon: <Comment />,
+    },
+    {
+      label: "Article Settings",
+      content: <ArticleSettings articleData={articleData} accessToken={accessToken} />,
+      icon: <Settings />,
     },
   ];
 
@@ -76,7 +83,7 @@ const PublicCourse = () => {
     <Box
       sx={{
         width: "100%",
-        maxWidth: "1500px",
+        maxWidth: "1400px",
         margin: "50px auto",
         padding: "20px",
         backgroundColor: "#F9FAFB",
@@ -84,13 +91,11 @@ const PublicCourse = () => {
         boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.1)",
       }}
     >
-      <Box
-        sx={{ bgcolor: "#f4f4f4", display: "flex", justifyContent: "center" }}
-      >
+      <Box sx={{ bgcolor: "#f4f4f4", display: "flex", justifyContent: "center" }}>
         <Tabs
           value={selectedTab}
           onChange={handleTabChange}
-          aria-label="Private Course Navigation Tabs"
+          aria-label="Private Article Navigation Tabs"
           variant={isMobile ? "scrollable" : "standard"}
           sx={{
             width: "100%",
@@ -125,19 +130,11 @@ const PublicCourse = () => {
             <CircularProgress />
           </Box>
         ) : (
-          // selectedTab == 1   => comments section
-          <Box
-            sx={{
-              width: selectedTab == 1 ? "800px" : "100%",
-              margin: "0 auto",
-            }}
-          >
-            {tabContent[selectedTab]?.content}
-          </Box>
+          tabContent[selectedTab]?.content
         )}
       </Box>
     </Box>
   );
 };
 
-export default PublicCourse;
+export default PrivateArticle;
