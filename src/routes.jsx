@@ -25,7 +25,7 @@ import ImageUpload from "./features/Exams/MakeExam/components/ImageUpload.jsx";
 import PrivateCourse from "./features/Courses/PrivateCourse/PrivateCourse.jsx";
 import Comments from "./common/Comments/CommentSection.jsx";
 import WalletPage from "./features/PrivateProfile/Wallet/Wallet.jsx";
-import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
+import AddQuestion from "./features/Questions/AddQuestion/AddQuestion.jsx";
 import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx";
 import AddCourse from "./features/Courses/PrivateCourse/AddCourse/AddCourse.jsx";
 import ArticlePreview from "./features/Articles/ArticlePreview/ArticlePreview.jsx";
@@ -33,6 +33,7 @@ import CoursePreview from "./features/Courses/CoursePreview/CoursePreview.jsx";
 import AboutUs from "./features/Resources/AboutUs/Aboutus.jsx";
 import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
 import SearchUsers from "./features/Users/searchUsers/SearchUsers.jsx";
+import SearchCourse from "./features/Courses/SearchCourse/SearchCourse.jsx"
 
 function AppRoutes() {
   return (
@@ -73,6 +74,7 @@ function AppRoutes() {
           <Route path="PrivateArticle/:serviceId" element={<PrivateArticle />} />
           <Route path="ArticlePreview/:serviceId" element={<ArticlePreview />} />
           <Route path="AboutUs" element={<AboutUs />} />
+          <Route path="SearchCourse" element={<SearchCourse />} />
         </Route>
       </Routes>
     </Router>

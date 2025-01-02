@@ -25,7 +25,7 @@ export default function NavBar() {
   const pages = ["articles", "courses", "questions", "exams", "users"];
   const addresses = [
     "/SearchArticle",
-    "/",
+    "/SearchCourse",
     "/QuestionSearch",
     "/ExamSearch",
     "/SearchUsers",

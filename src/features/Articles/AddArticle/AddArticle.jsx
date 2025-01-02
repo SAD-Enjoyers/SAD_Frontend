@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { School, SchoolOutlined } from "@mui/icons-material";
-import LoadingScreen from "../../PrivateProfile/components/Loading";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
