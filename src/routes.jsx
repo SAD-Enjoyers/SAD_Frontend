@@ -28,6 +28,7 @@ import AddQuestion from "./features/AddQuestion/AddQuestion.jsx";
 import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
 import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx";
 import AddCourse from "./features/Courses/PrivateCourse/AddCourse/AddCourse.jsx";
+import ArticlePreview from "./features/Articles/ArticlePreview/ArticlePreview.jsx";
 function AppRoutes() {
   return (
     <Router>
@@ -62,11 +63,10 @@ function AppRoutes() {
           <Route path="WalletPage" element={<WalletPage />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
           <Route path="PublicArticle" element={<PublicArticle />} />
-          <Route
-            path="PrivateArticle"
-            element={<PrivateArticle />}
-          />
+          <Route path="PrivateArticle/:serviceId" element={<PrivateArticle />} />
           <Route path="AddCourse" element={< AddCourse />} />
+          <Route path="ArticlePreview/:serviceId" element={<ArticlePreview />} />
+
         </Route>
       </Routes>
     </Router>
