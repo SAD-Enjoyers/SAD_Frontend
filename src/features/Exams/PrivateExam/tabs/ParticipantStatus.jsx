@@ -28,25 +28,29 @@ const ParticipantStatus = ({ examData, accessToken }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const itemsPerPage = 6;
-
   useEffect(() => {
     const fetchParticipants = async () => {
       try {
         const response = await fetch(
           `/api/v1/exam/participants/${examData.serviceId}`,
           {
+            method: "GET", // Specify the method here
             headers: {
               Authorization: `Bearer ${accessToken}`,
               "Content-Type": "application/json",
             },
           }
         );
-        // console.log(response);
-        console.log("erfannnnn");
 
-        console.log("Response Data:", JSON.stringify(response, null, 2));
+        // Log raw response details
+        console.log("Raw Response Object:", response);
 
+        // Parse JSON data
         const data = await response.json();
+
+        // Log parsed data
+        console.log("Parsed Response Data:", JSON.stringify(data, null, 2));
+
         if (data.status === "success") {
           const formattedParticipants = data.data.map((p) => ({
             id: p.userId,
@@ -58,6 +62,13 @@ const ParticipantStatus = ({ examData, accessToken }) => {
             answeredWrong: p.examResult?.wrongAnswers || 0,
             notAnswered: p.examResult?.emptyAnswers || "All",
           }));
+
+          // Log formatted participants
+          console.log(
+            "Formatted Participants:",
+            JSON.stringify(formattedParticipants, null, 2)
+          );
+
           setParticipants(formattedParticipants);
           setFilteredParticipants(formattedParticipants);
         }

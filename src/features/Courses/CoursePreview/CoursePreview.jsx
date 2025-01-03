@@ -134,12 +134,36 @@ function CoursePreview() {
     };
     fetchCourseData();
   }, [serviceId]); // Dependency on serviceId
-
   const handlePurchase = useCallback(async () => {
     setPurchaseLoading(true);
     try {
-      // Simulate a purchase action
-      setTimeout(() => {
+      const payload = { serviceId };
+      const headers = {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      };
+
+      // Log payload and headers
+      console.log("Request Payload:", payload);
+      console.log("Request Headers:", headers);
+
+      const response = await fetch("/api/v1/educational-service/register", {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+      });
+
+      // Check response and log
+      console.log("Response Status:", response.status);
+      console.log("Response Headers:", [...response.headers.entries()]);
+      const data = await response.json();
+      console.log("Response Data:", data);
+
+      if (!response.ok) {
+        throw new Error("Failed to process the purchase. Please try again.");
+      }
+
+      if (data.status === "success") {
         setPurchased(true);
         setSnackbarMessage(
           "Thank you for purchasing the course! Videos are now unlocked."
@@ -148,17 +172,20 @@ function CoursePreview() {
         setOpenSnackbar(true);
         localStorage.setItem("courseData", JSON.stringify(courseData)); // Save to localStorage
         navigate("/PublicCourse", { state: { courseData } });
-      }, 2000);
+      } else {
+        throw new Error(data.message || "Purchase failed");
+      }
     } catch (error) {
+      console.error("Error during purchase:", error);
       setSnackbarMessage(
-        "An error occurred while processing your purchase. Please try again."
+        error.message || "An error occurred while processing your purchase."
       );
       setSeverity("error");
       setOpenSnackbar(true);
     } finally {
       setPurchaseLoading(false);
     }
-  }, [courseData, navigate]);
+  }, [serviceId, courseData, navigate]);
 
   if (loading) {
     return (
