@@ -1,248 +1,291 @@
 import React, { useState } from "react";
 import {
-  Box,
   TextField,
-  Button,
+  Box,
   Typography,
-  Container,
+  Grid,
   Paper,
+  Divider,
+  IconButton,
+  Tooltip,
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Snackbar,
 } from "@mui/material";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { keyframes } from "@mui/system";
+import ReactMarkdown from "react-markdown";
+import { styled } from "@mui/system";
+import FormatBoldIcon from "@mui/icons-material/FormatBold";
+import FormatItalicIcon from "@mui/icons-material/FormatItalic";
+import LinkIcon from "@mui/icons-material/Link";
+import ImageIcon from "@mui/icons-material/Image";
+import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import HighlightIcon from "@mui/icons-material/HelpOutline";
+import TextIncreaseIcon from "@mui/icons-material/TextIncrease";
 
-// تعریف انیمیشن
-const fadeIn = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
+const StyledPreview = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(2),
+  backgroundColor: "#f9f9f9",
+  minHeight: "400px",
+  height: "100%",
+  overflowY: "auto",
+  border: `1px solid ${theme.palette.divider}`,
+  borderRadius: theme.shape.borderRadius,
+}));
+
+const Toolbar = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  gap: theme.spacing(1),
+  backgroundColor: "#f5f5f5",
+  padding: theme.spacing(1),
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+}));
 
 const AddArticle = () => {
-  const [value, setValue] = useState();
-  const [maxMembers, setMaxMembers] = useState(10);
-  const [price, setPrice] = useState(10);
-  const [minScore, setMinScore] = useState(50);
-  const [examName, setExamName] = useState("");
-  const [description, setDescription] = useState("");
-  const [selectedLevel, setSelectedLevel] = useState("");
-  const [categories, setCategories] = useState([]);
-  const [isLoading, setLoading] = useState(true);
-  const [selectedSubjects, setSelectedSubjects] = useState([]);
-  const navigate = useNavigate();
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imageName, setImageName] = useState("");
-  const [previewImage, setPreviewImage] = useState(null);
-  const [imageNameUrl, setImageNameurl] = useState("");
-  const [isFormValid, setIsFormValid] = useState(false);
+  const [markdown, setMarkdown] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openImageDialog, setOpenImageDialog] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [title, setTitle] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [author, setAuthor] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [error, setError] = useState(false);
 
-  const [examNameError, setExamNameError] = useState("");
-  const [selectedLevelError, setSelectedLevelError] = useState("");
-  const [selectedSubjectsError, setSelectedSubjectsError] = useState("");
-  const [timeError, setTimeError] = useState("");
-  const [priceError, setPriceError] = useState("");
-  const [minScoreError, setMinScoreError] = useState("");
-
-  const validateFields = () => {
-    const newErrors = {};
-    if (!formData.title) newErrors.title = "Title is required.";
-    if (!formData.author) newErrors.author = "Author name is required.";
-    if (!formData.date) newErrors.date = "Date is required.";
-    if (!formData.content || formData.content.trim() === "")
-      newErrors.content = "Article content cannot be empty.";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const handleInputChange = (event) => {
+    setMarkdown(event.target.value);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!validateFields()) return;
+  const handleInsert = (symbol) => {
+    const textarea = document.getElementById("markdown-editor");
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = markdown;
+    const before = text.substring(0, start);
+    const after = text.substring(end, text.length);
+    const selectedText = text.substring(start, end);
 
-    // پیام تایید با Toastify
-    toast.success("Article submitted successfully!", {
-      position: "top-center",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-
-    // تمیزکاری فرم
-    setFormData({
-      title: "",
-      author: "",
-      content: "",
-      date: "",
-    });
-    setShowPreview(false);
+    const formattedText = symbol.replace("TEXT", selectedText || "");
+    setMarkdown(before + formattedText + after);
   };
 
-  const handlePreview = () => {
-    if (validateFields()) setShowPreview(true);
+  const handleLinkInsert = () => {
+    handleInsert(`[TEXT](${linkUrl})`);
+    setOpenDialog(false);
+    setLinkUrl("");
+  };
+
+  const handleImageInsert = () => {
+    handleInsert(`![alt text](${imageUrl})`);
+    setOpenImageDialog(false);
+    setImageUrl("");
+  };
+
+  const handleFileInputChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        handleInsert(`![alt text](${reader.result})`);
+      };
+      reader.readAsDataURL(file);
+    }
+    setOpenImageDialog(false);
+  };
+
+  const handleConfirm = () => {
+    if (!title || !startTime || !author) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    console.log("Article added!", { title, author, startTime, markdown });
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
-    <Container maxWidth="md" sx={{ marginTop: 14, marginBottom: 14 }}>
-      <Paper
-        elevation={3}
-        sx={{ padding: 4, borderRadius: 4, animation: `${fadeIn} 0.5s ease-out` }}
-      >
-        <Typography variant="h4" align="center" gutterBottom>
-          Add New Article
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <Box sx={{ marginBottom: 3 }}>
-            <TextField
-              fullWidth
-              label="Title"
-              value={formData.title}
-              onChange={(e) => handleChange("title", e.target.value)}
-              error={!!errors.title}
-              helperText={errors.title}
-              sx={{
-                "& .MuiInputBase-root": {
-                  backgroundColor: "#f4f7fc",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-          </Box>
-          <Box sx={{ marginBottom: 3 }}>
-            <TextField
-              fullWidth
-              label="Author"
-              value={formData.author}
-              onChange={(e) => handleChange("author", e.target.value)}
-              error={!!errors.author}
-              helperText={errors.author}
-              sx={{
-                "& .MuiInputBase-root": {
-                  backgroundColor: "#f4f7fc",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-          </Box>
-          <Box sx={{ marginBottom: 3 }}>
-            <TextField
-              fullWidth
-              label="Date"
-              type="date"
-              value={formData.date}
-              onChange={(e) => handleChange("date", e.target.value)}
-              error={!!errors.date}
-              helperText={errors.date}
-              sx={{
-                "& .MuiInputBase-root": {
-                  backgroundColor: "#f4f7fc",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-          </Box>
-          <Box sx={{ marginBottom: 7 }}>
-            <Typography variant="h6" gutterBottom>
-              Content
-            </Typography>
-            <TextField
-              id="content-editor"
-              label="Write your article..."
-              multiline
-              rows={8} // تعداد خطوط اولیه
-              value={formData.content}
-              onChange={(e) => handleChange("content", e.target.value)}
-              placeholder="Write your article..."
-              variant="outlined"
-              error={!!errors.content} // نمایش خطا در صورت وجود
-              helperText={errors.content ? "This field is required." : ""}
-              sx={{
-                width: "100%",
-                maxWidth: "600px", // محدود کردن عرض
-                backgroundColor: "#f4f7fc",
-                borderRadius: "8px",
-                fontFamily: "'Roboto', sans-serif",
-              }}
-            />
-          </Box>
-          <Box display="flex" gap={2}>
-            <Button variant="outlined" onClick={handlePreview} fullWidth>
-              Preview
-            </Button>
-            <Button type="submit" variant="contained" fullWidth>
-              Submit
-            </Button>
-          </Box>
-        </form>
+    <Box sx={{ padding: 4 }}>
+      <Typography variant="h5" gutterBottom>
+        Add Article
+      </Typography>
 
-        {/* Preview Section - نمایش پریویو به صورت دیالوگ */}
-        <Dialog
-          open={showPreview}
-          onClose={() => setShowPreview(false)}
-          fullWidth
-          maxWidth="md"
-        >
-          <DialogTitle>Article Preview</DialogTitle>
-          <DialogContent>
-            <Box
-              sx={{
-                padding: 3,
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                backgroundColor: "#f9f9f9",
-              }}
-            >
-              {/* Right Section (Text) */}
-              <Box>
-                <Typography
-                  variant="h5"
-                  gutterBottom
-                  sx={{ fontWeight: "bold" }}
-                >
-                  {formData.title || "Untitled"}
-                </Typography>
-                <Typography
-                  variant="subtitle1"
-                  gutterBottom
-                  sx={{ color: "#555" }}
-                >
-                  By {formData.author || "Unknown"} - {formData.date || "No Date"}
-                </Typography>
-                <Box
-                  sx={{
-                    padding: 2,
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    backgroundColor: "#ffffff",
-                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                  }}
-                >
-                  {formData.content || "No content available."}
-                </Box>
-              </Box>
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setShowPreview(false)} color="primary">
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Paper>
-      <ToastContainer position="top-center" autoClose={3000} />
-    </Container>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Title"
+            fullWidth
+            variant="outlined"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            error={error && !title}
+            helperText={error && !title ? "Title is required" : ""}
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Date"
+            type="date"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            variant="outlined"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+            error={error && !startTime}
+            helperText={error && !startTime ? "Date is required" : ""}
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Author"
+            fullWidth
+            variant="outlined"
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+            error={error && !author}
+            helperText={error && !author ? "Author is required" : ""}
+          />
+        </Grid>
+      </Grid>
+
+      <Divider sx={{ marginY: 2 }} />
+
+      <Toolbar>
+        <Tooltip title="Help">
+          <IconButton onClick={() => handleInsert("?")}> <HighlightIcon /> </IconButton>
+        </Tooltip>
+        <Tooltip title="Horizontal Rule">
+          <IconButton onClick={() => handleInsert("---")}> <FormatQuoteIcon /> </IconButton>
+        </Tooltip>
+        <Tooltip title="Link">
+          <IconButton onClick={() => setOpenDialog(true)}> <LinkIcon /> </IconButton>
+        </Tooltip>
+        <Tooltip title="Image">
+          <IconButton onClick={() => setOpenImageDialog(true)}> <ImageIcon /> </IconButton>
+        </Tooltip>
+        <Tooltip title="Bulleted List">
+          <IconButton onClick={() => handleInsert("- TEXT\n")}> <FormatListBulletedIcon /> </IconButton>
+        </Tooltip>
+        <Tooltip title="Numbered List">
+          <IconButton onClick={() => handleInsert("1. TEXT\n")}> <FormatListNumberedIcon /> </IconButton>
+        </Tooltip>
+        <Tooltip title="Header">
+          <IconButton onClick={() => handleInsert("# TEXT")}> <TextIncreaseIcon /> </IconButton>
+        </Tooltip>
+        <Tooltip title="Italic">
+          <IconButton onClick={() => handleInsert("*TEXT*")}> <FormatItalicIcon /> </IconButton>
+        </Tooltip>
+        <Tooltip title="Bold">
+          <IconButton onClick={() => handleInsert("**TEXT**")}> <FormatBoldIcon /> </IconButton>
+        </Tooltip>
+      </Toolbar>
+
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={6}>
+          <TextField
+            id="markdown-editor"
+            label="Write your article in Markdown"
+            multiline
+            rows={12}
+            fullWidth
+            variant="outlined"
+            value={markdown}
+            onChange={handleInputChange}
+          />
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Typography variant="h6" gutterBottom>
+            Preview
+          </Typography>
+          <StyledPreview>
+            <ReactMarkdown>{markdown}</ReactMarkdown>
+          </StyledPreview>
+        </Grid>
+      </Grid>
+
+      <Divider sx={{ marginY: 2 }} />
+
+      <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
+        <Button variant="contained" color="success" onClick={handleConfirm}>
+          Submit
+        </Button>
+      </Box>
+
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Insert Link</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Enter URL (e.g., https://example.com)"
+            type="url"
+            fullWidth
+            variant="outlined"
+            value={linkUrl}
+            onChange={(e) => setLinkUrl(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} sx={{ color: "white", backgroundColor: "red" }}>
+            Cancel
+          </Button>
+          <Button onClick={handleLinkInsert} sx={{ color: "white", backgroundColor: "green" }}>
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openImageDialog} onClose={() => setOpenImageDialog(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Insert Image</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Enter Image URL (e.g., https://example.com/image.png)"
+            type="url"
+            fullWidth
+            variant="outlined"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+          />
+          <Divider sx={{ marginY: 2 }} />
+          <Button
+            variant="contained"
+            component="label"
+            fullWidth
+            sx={{ marginTop: 2 }}
+          >
+            Upload from System
+            <input type="file" hidden accept="image/*" onChange={handleFileInputChange} />
+          </Button>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenImageDialog(false)} sx={{ color: "white", backgroundColor: "red" }}>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        message={error ? "Please fill all required fields!" : "Article added successfully!"}
+        sx={{ backgroundColor: error ? "red" : "green" }}
+      />
+    </Box>
   );
 };
 
-export default AddArticle;
+export default AddArticle;;
