@@ -146,7 +146,7 @@ function ExamPreview() {
         },
         body: JSON.stringify({ serviceId }), // Send the `serviceId` to the backend
       });
-
+      console.log("HTTP Status Code: ", response.status);
       // Log the response before checking if it's ok
       const responseData = await response.json();
       console.log("Backend Response: ", responseData); // This will show the full response
