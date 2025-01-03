@@ -33,7 +33,7 @@ import CoursePreview from "./features/Courses/CoursePreview/CoursePreview.jsx";
 import AboutUs from "./features/Resources/AboutUs/Aboutus.jsx";
 import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
 import SearchUsers from "./features/Users/searchUsers/SearchUsers.jsx";
-import SearchCourse from "./features/Courses/SearchCourse/SearchCourse.jsx"
+import SearchCourse from "./features/Courses/SearchCourse/SearchCourse.jsx";
 
 function AppRoutes() {
   return (
@@ -68,11 +68,17 @@ function AppRoutes() {
           <Route path="WalletPage" element={<WalletPage />} />
           <Route path="AddQuestion" element={<AddQuestion />} />
           <Route path="AddCourse" element={<AddCourse />} />
-          <Route path="CoursePreview" element={<CoursePreview />} />
+          <Route path="CoursePreview/:serviceId" element={<CoursePreview />} />
           <Route path="SearchUsers" element={<SearchUsers />} />
           <Route path="PublicArticle" element={<PublicArticle />} />
-          <Route path="PrivateArticle/:serviceId" element={<PrivateArticle />} />
-          <Route path="ArticlePreview/:serviceId" element={<ArticlePreview />} />
+          <Route
+            path="PrivateArticle/:serviceId"
+            element={<PrivateArticle />}
+          />
+          <Route
+            path="ArticlePreview/:serviceId"
+            element={<ArticlePreview />}
+          />
           <Route path="AboutUs" element={<AboutUs />} />
           <Route path="SearchCourse" element={<SearchCourse />} />
         </Route>

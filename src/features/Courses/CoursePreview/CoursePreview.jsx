@@ -2,19 +2,20 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Typography,
-  Grid,
+  Grid2,
   Card,
   Button,
   Chip,
+  Rating,
   Snackbar,
   Alert,
   CircularProgress,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { styled } from "@mui/system";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import DefaultCourseImage from "../../../assets/images/default_course_image.jpg";
-
+import axios from "axios";
 // Palette colors
 const primaryGradient = ["#5356FF", "#378CE7", "#67C6E3", "#DFF5FF"];
 const levelColors = {
@@ -23,6 +24,14 @@ const levelColors = {
   Advanced: "#F44336",
 };
 
+const CommentSection = styled(Box)({
+  marginTop: 32,
+});
+
+const CommentsHeader = styled(Typography)({
+  fontWeight: "bold",
+  marginBottom: "16px",
+});
 const CustomCard = styled(Card)(({ theme }) => ({
   borderRadius: "12px",
   boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
@@ -91,6 +100,7 @@ const VideoItem = styled(Box)({
 });
 
 function CoursePreview() {
+  const { serviceId } = useParams();
   const navigate = useNavigate();
   const [courseData, setCourseData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -101,40 +111,29 @@ function CoursePreview() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [severity, setSeverity] = useState("success");
 
-  const mockCourseData = {
-    name: "React Development Course",
-    description:
-      "Learn how to build modern web applications with React, including hooks, state management, and more!",
-    level: "Intermediate",
-    price: 99.99,
-    image: "default_course_image.jpg",
-    videos: [
-      {
-        id: 1,
-        title: "Introduction to React",
-        url: "https://example.com/video1",
-      },
-      {
-        id: 2,
-        title: "Understanding Components",
-        url: "https://example.com/video2",
-      },
-      {
-        id: 3,
-        title: "State Management with Hooks",
-        url: "https://example.com/video3",
-      },
-    ],
-  };
-
   useEffect(() => {
-    // Simulate data fetching with mock data
-    setLoading(true);
-    setTimeout(() => {
-      setCourseData(mockCourseData);
-      setLoading(false);
-    }, 2000);
-  }, []);
+    const fetchCourseData = async () => {
+      try {
+        setLoading(true);
+        // Replace the mock data with API call
+        const response = await axios.get(`/api/v1/course/preview/${serviceId}`);
+        // console.log("Response Data:", JSON.stringify(response, null, 2));
+
+        if (response.data.status === "success") {
+          setCourseData(response.data.data.Course);
+        } else {
+          throw new Error(
+            response.data.message || "Failed to fetch course data"
+          );
+        }
+      } catch (error) {
+        setErrorMessage(error.message || "Something went wrong");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCourseData();
+  }, [serviceId]); // Dependency on serviceId
 
   const handlePurchase = useCallback(async () => {
     setPurchaseLoading(true);
@@ -194,7 +193,6 @@ function CoursePreview() {
       </Box>
     );
   }
-
   return (
     courseData && (
       <Box
@@ -208,8 +206,9 @@ function CoursePreview() {
       >
         <Box sx={{ maxWidth: 950, width: "100%", paddingX: 4 }}>
           <CustomCard>
-            <Grid container spacing={4}>
-              <Grid item xs={12} md={8}>
+            <Grid2 container spacing={4}>
+              {/* Left side: Course Details */}
+              <Grid2 item xs={12} md={8}>
                 <Title>{courseData.name}</Title>
                 <Chip
                   label={courseData.level}
@@ -220,27 +219,84 @@ function CoursePreview() {
                   }}
                 />
                 <SubTitle>{courseData.description}</SubTitle>
-                <Price>${courseData.price}</Price>
-              </Grid>
 
-              <Grid
+                <Rating
+                  value={
+                    typeof courseData.score === "number" ? courseData.score : 0
+                  }
+                  readOnly
+                  precision={0.5}
+                  sx={{ marginTop: 2 }}
+                />
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ marginTop: 1 }}
+                >
+                  Average User Rating:{" "}
+                  {typeof courseData.score === "number"
+                    ? courseData.score.toFixed(1)
+                    : "0"}{" "}
+                  / 5 ({courseData.numberOfVoters} votes)
+                </Typography>
+
+                <Box sx={{ marginTop: 2 }}>
+                  <Typography variant="body2" color="text.secondary">
+                    {courseData.tag1 && (
+                      <Chip label={courseData.tag1} sx={{ marginRight: 1 }} />
+                    )}
+                    {courseData.tag2 && (
+                      <Chip label={courseData.tag2} sx={{ marginRight: 1 }} />
+                    )}
+                    {courseData.tag3 && (
+                      <Chip label={courseData.tag3} sx={{ marginRight: 1 }} />
+                    )}
+                  </Typography>
+                </Box>
+                {/* <Typography variant="body2" sx={{ marginTop: 2 }}>
+                  <strong>Number of Videos:</strong> {courseData.numberOfVideos}
+                </Typography>
+                <Typography variant="body2" sx={{ marginTop: 1 }}>
+                  <strong>Members Enrolled:</strong>{" "}
+                  {courseData.numberOfMembers}
+                </Typography> */}
+
+                <Price
+                  sx={{
+                    fontSize: "1.4rem",
+                    fontWeight: "bold",
+                    color: "#00796b",
+                    marginTop: 2,
+                  }}
+                >
+                  Price: ${courseData.price}
+                </Price>
+              </Grid2>
+
+              {/* Right side: Image, Buy Button */}
+              <Grid2
                 item
                 xs={12}
                 md={4}
                 sx={{
                   display: "flex",
-                  flexDirection: "column",
+                  flexDirection: "column", // Align items vertically
                   alignItems: "center",
-                  justifyContent: "center",
+                  justifyContent: "center", // Center both image and button vertically
                   textAlign: "center",
                 }}
               >
                 <img
-                  src={DefaultCourseImage}
+                  src={
+                    // courseData.image
+                    //   ? `/api/v1/uploads/service-images/${courseData.image}`
+                    //   : DefaultCourseImage
+                    DefaultCourseImage
+                  }
                   alt="Course Preview"
                   style={{
                     width: "100%",
-                    maxWidth: "500px",
+                    maxWidth: "300px",
                     height: "auto",
                     borderRadius: "8px",
                     marginBottom: "16px",
@@ -255,43 +311,32 @@ function CoursePreview() {
                     startIcon={<ShoppingCartIcon />}
                     onClick={handlePurchase}
                     disabled={purchaseLoading}
+                    sx={{
+                      maxWidth: "300px",
+                      marginBottom: "16px",
+                    }}
                   >
                     {purchaseLoading ? (
                       <CircularProgress size={24} color="inherit" />
                     ) : (
-                      "Buy the Course"
+                      "Buy The Course"
                     )}
                   </ButtonStyled>
                 )}
-              </Grid>
-            </Grid>
+              </Grid2>
+            </Grid2>
           </CustomCard>
 
-          <VideoSection>
-            <VideosHeader variant="h6">Course Videos</VideosHeader>
-            {purchased ? (
-              courseData.videos.map((video) => (
-                <VideoItem key={video.id}>
-                  <Typography variant="body1">{video.title}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    <a
-                      href={video.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Watch Now
-                    </a>
-                  </Typography>
-                </VideoItem>
-              ))
-            ) : (
-              <Typography variant="body2">
-                Please purchase the course to access videos.
-              </Typography>
-            )}
-          </VideoSection>
-        </Box>
+          {/* Comment Section */}
+          <CommentSection>
+            <CommentsHeader variant="h6">Comments</CommentsHeader>
 
+            <Typography variant="body2">
+              Please purchase the course to leave a comment.
+            </Typography>
+          </CommentSection>
+        </Box>
+        {/* Snackbar for success/error message */}
         <Snackbar
           open={openSnackbar}
           autoHideDuration={3000}
