@@ -212,7 +212,11 @@ export default function PrivateProfile() {
             </Card>
 
             <ReviewComponent section="My Exams" Services="exam" />
-            <ReviewComponent section="My Courses" style_ml="20px" />
+            <ReviewComponent
+              section="My Courses"
+              style_ml="20px"
+              Services="course"
+            />
             <ReviewComponent
               section="My Articles"
               style_ml="0px"

@@ -9,102 +9,38 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import { useState } from "react";
 
-const mockUsers = [
-  {
-    id: 1,
-    image: "https://via.placeholder.com/150",
-    title: "John Doe",
-    description: "Frontend Developer at XYZ Company",
-  },
-  {
-    id: 2,
-    image: "https://via.placeholder.com/150",
-    title: "Jane Smith",
-    description: "Backend Developer at ABC Inc.",
-  },
-  {
-    id: 3,
-    image: "https://via.placeholder.com/150",
-    title: "Alice Green",
-    description: "UI/UX Designer at Creative Studio",
-  },
-  {
-    id: 4,
-    image: "https://via.placeholder.com/150",
-    title: "Michael Brown",
-    description: "DevOps Engineer at CloudNet",
-  },
-  {
-    id: 5,
-    image: "https://via.placeholder.com/150",
-    title: "Emily White",
-    description: "Data Scientist at Analytics Co.",
-  },
-  {
-    id: 6,
-    image: "https://via.placeholder.com/150",
-    title: "David Black",
-    description: "Full Stack Developer at Startup Hub",
-  },
-  {
-    id: 7,
-    image: "https://via.placeholder.com/150",
-    title: "Alice Green",
-    description: "UI/UX Designer at Creative Studio",
-  },
-  {
-    id: 8,
-    image: "https://via.placeholder.com/150",
-    title: "Michael Brown",
-    description: "DevOps Engineer at CloudNet",
-  },
-  {
-    id: 9,
-    image: "https://via.placeholder.com/150",
-    title: "Emily White",
-    description: "Data Scientist at Analytics Co.",
-  },
-  {
-    id: 10,
-    image: "https://via.placeholder.com/150",
-    title: "David Black",
-    description: "Full Stack Developer at Startup Hub",
-  },
-  {
-    id: 11,
-    image: "https://via.placeholder.com/150",
-    title: "Alice Green",
-    description: "UI/UX Designer at Creative Studio",
-  },
-  {
-    id: 12,
-    image: "https://via.placeholder.com/150",
-    title: "Michael Brown",
-    description: "DevOps Engineer at CloudNet",
-  },
-  {
-    id: 13,
-    image: "https://via.placeholder.com/150",
-    title: "Emily White",
-    description: "Data Scientist at Analytics Co.",
-  },
-  {
-    id: 14,
-    image: "https://via.placeholder.com/150",
-    title: "David Black",
-    description: "Full Stack Developer at Startup Hub",
-  },
-];
-
 function SearchUsers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6; // تعداد آیتم‌ها در هر صفحه
+  const [users, setUsers] = useState([]);
+  const itemsPerPage = 6;
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
     setCurrentPage(1); // بازگشت به صفحه اول هنگام جستجو
   };
+  useEffect(() => {
+    const fetchProfile = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("/api/v1/profile");
+        const transformedQuestions = response.data.data.result.map((q) => ({
+          userName: q.userName,
+          firstName: q.firstName,
+          lastName: q.lastName,
+          description: q.description,
+          image: q.image,
+        }));
+        setQuestions(transformedQuestions);
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handlePageChange = (event, value) => setCurrentPage(value);
 
@@ -186,7 +122,7 @@ function SearchUsers() {
                 }}
               />
               <Typography variant="h6" gutterBottom>
-                {user.title}
+                {user.firstName} {user.lastName}
               </Typography>
               <Typography variant="body2" color="textSecondary">
                 {user.description}
