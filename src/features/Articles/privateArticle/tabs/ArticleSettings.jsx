@@ -71,6 +71,7 @@ const ArticleSettings = ({ articleData, accessToken }) => {
     );
 
     fetchCategories();
+    console.log(articleData.image)
   }, [articleData]);
 
 
@@ -198,7 +199,7 @@ const ArticleSettings = ({ articleData, accessToken }) => {
           <Typography variant="h6">Current Image:</Typography>
           {uploadedImage ? (
             <Avatar
-              src={uploadedImage}
+              src={`/api/v1/uploads/service-images/${articleData.image}`}
               alt="Article Image"
               sx={{ width: 200, height: 200, marginBottom: 2 }}
             />

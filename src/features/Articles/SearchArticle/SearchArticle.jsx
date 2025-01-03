@@ -12,6 +12,8 @@ import {
   Chip,
   Grid,
   Rating,
+  Checkbox,
+  ListItemText,
   Pagination,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -140,14 +142,6 @@ import { Link } from "react-router-dom";
 //   },
 // ];
 
-const Categories = [
-  "All",
-  "Science",
-  "Technology",
-  "Mathematics",
-  "Literature",
-];
-
 function SearchAndFilterArticle() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
@@ -184,7 +178,7 @@ function SearchAndFilterArticle() {
               }
             }
             return {
-              id: index,
+              id: q.serviceId,
               writer: q.userId,
               title: q.name,
               content: q.description,
@@ -318,36 +312,34 @@ function SearchAndFilterArticle() {
       <Grid container spacing={3} sx={{ marginTop: "30px" }}>
         {/* Filter by Subjects */}
         <Grid item xs={12} sm={4}>
+          {/* Subjects */}
           <FormControl fullWidth variant="outlined">
-            <InputLabel>Subjects</InputLabel>
-            <Select
-              multiple
-              value={selectedSubjects}
-              onChange={handleSubjectChange}
-              label="Subjects"
-              renderValue={(selected) => selected.join(", ")}
-              sx={{
-                backgroundColor: "#ffffff",
-                borderRadius: "8px",
-                borderColor: "#E0E0E0",
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#E0E0E0",
-                },
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#378CE7",
-                },
-                "& .MuiSelect-icon": {
-                  color: "#378CE7",
-                },
-              }}
-            >
-              {Categories.map((category, index) => (
-                <MenuItem key={index} value={category}>
-                  {category}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              <InputLabel>Subjects</InputLabel>
+              <Select
+                multiple
+                value={selectedSubjects}
+                onChange={handleSubjectChange}
+                label="Subjects"
+                renderValue={(selected) => selected.join(", ")}
+                sx={{
+                  backgroundColor: "#f5f5f5",
+                  borderRadius: "8px",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#ddd",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#4A90E2",
+                  },
+                }}
+              >
+                {categories.map((category) => (
+                  <MenuItem key={category.categoryId} value={category.category} sx={{maxHeight:50}}>
+                    <Checkbox checked={selectedSubjects.includes(category.category)} />
+                    <ListItemText primary={category.category} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
         </Grid>
 
         {/* Sort By Filter */}
@@ -447,7 +439,7 @@ function SearchAndFilterArticle() {
                   lineHeight: "1.4", // Adjust line height for better readability
                 }}
               >
-                <Link to={`/PreviewArticle`} style={{ textDecoration: "none" }}>
+                <Link to={`/ArticlePreview/${question.id}`} style={{ textDecoration: "none" }}>
                   {question.title}
                 </Link>
               </Typography>
@@ -465,8 +457,8 @@ function SearchAndFilterArticle() {
                 {question.content.split(" ").slice(0, 15).join(" ")}...
               </Typography>
 
-              {/* Subjects */}
-              <Box
+               {/* Subjects */}
+               <Box
                 sx={{
                   display: "flex",
                   flexWrap: "wrap",
