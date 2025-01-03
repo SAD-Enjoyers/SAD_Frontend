@@ -7,7 +7,8 @@ import {
   Pagination,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function SearchUsers() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,21 +22,22 @@ function SearchUsers() {
   };
   useEffect(() => {
     const fetchProfile = async () => {
-      setLoading(true);
       try {
-        const response = await axios.get("/api/v1/profile");
+        const response = await axios.get(`/api/v1/profile/`);
         const transformedQuestions = response.data.data.result.map((q) => ({
           userName: q.userName,
           firstName: q.firstName,
           lastName: q.lastName,
           description: q.description,
-          image: q.image,
+          image:
+            q.image == "/api/public/defaultProfilePicture.jpg"
+              ? "/api/public/defaultProfilePicture.jpg"
+              : "/api/v1/uploads/profile-images/" + q.image,
         }));
-        setQuestions(transformedQuestions);
+        setUsers(transformedQuestions);
+        console.log(transformedQuestions);
       } catch (error) {
-        console.error("Error fetching questions:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching profiles:", error);
       }
     };
 
@@ -44,15 +46,12 @@ function SearchUsers() {
 
   const handlePageChange = (event, value) => setCurrentPage(value);
 
-  // فیلتر کاربران بر اساس متن جستجو
-  const filteredUsers = mockUsers.filter((user) =>
-    user.title.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter((user) =>
+    user.userName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // محاسبه تعداد صفحات
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
-  // تعیین کاربران صفحه جاری
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentUsers = filteredUsers.slice(
     startIndex,
@@ -72,7 +71,7 @@ function SearchUsers() {
           Articles
         </Typography>
       </div>
-      {/* فیلتر جستجو */}
+
       <Grid2 container spacing={3} sx={{ marginTop: "40px" }}>
         <Grid2 size={{ xs: 12, sm: 8, md: 9 }}>
           <TextField
@@ -98,10 +97,10 @@ function SearchUsers() {
           />
         </Grid2>
       </Grid2>
-      {/* نمایش کاربران */}
+
       <Grid2 container spacing={3} sx={{ mt: "50px", mb: "80px" }}>
-        {currentUsers.map((user) => (
-          <Grid2 size={{ s: 12, sm: 6, md: 4 }} key={user.id}>
+        {currentUsers.map((user, id) => (
+          <Grid2 size={{ s: 12, sm: 6, md: 4 }} key={id}>
             <Box
               sx={{
                 padding: "16px",
@@ -116,7 +115,7 @@ function SearchUsers() {
                 alt={user.title}
                 style={{
                   width: "100%",
-                  height: "auto",
+                  height: "180px",
                   borderRadius: "8px",
                   marginBottom: "12px",
                 }}
