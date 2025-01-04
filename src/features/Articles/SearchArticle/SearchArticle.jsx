@@ -145,7 +145,6 @@ import { Link } from "react-router-dom";
 function SearchAndFilterArticle() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [questions, setQuestions] = useState([]);
   const [categories, setCategories] = useState([]); // Categories for filter
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [sortOrder, setSortOrder] = useState({
@@ -286,7 +285,7 @@ function SearchAndFilterArticle() {
         <Grid item xs={12} sm={8} md={9}>
           <TextField
             variant="outlined"
-            placeholder="Search questions..."
+            placeholder="Search articles..."
             value={searchTerm}
             onChange={handleSearch}
             onKeyDown={(event) => event.key === "Enter" && handleSearchSubmit()}
@@ -314,32 +313,38 @@ function SearchAndFilterArticle() {
         <Grid item xs={12} sm={4}>
           {/* Subjects */}
           <FormControl fullWidth variant="outlined">
-              <InputLabel>Subjects</InputLabel>
-              <Select
-                multiple
-                value={selectedSubjects}
-                onChange={handleSubjectChange}
-                label="Subjects"
-                renderValue={(selected) => selected.join(", ")}
-                sx={{
-                  backgroundColor: "#f5f5f5",
-                  borderRadius: "8px",
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#ddd",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#4A90E2",
-                  },
-                }}
-              >
-                {categories.map((category) => (
-                  <MenuItem key={category.categoryId} value={category.category} sx={{maxHeight:50}}>
-                    <Checkbox checked={selectedSubjects.includes(category.category)} />
-                    <ListItemText primary={category.category} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <InputLabel>Subjects</InputLabel>
+            <Select
+              multiple
+              value={selectedSubjects}
+              onChange={handleSubjectChange}
+              label="Subjects"
+              renderValue={(selected) => selected.join(", ")}
+              sx={{
+                backgroundColor: "#f5f5f5",
+                borderRadius: "8px",
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#ddd",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#4A90E2",
+                },
+              }}
+            >
+              {categories.map((category) => (
+                <MenuItem
+                  key={category.categoryId}
+                  value={category.category}
+                  sx={{ maxHeight: 50 }}
+                >
+                  <Checkbox
+                    checked={selectedSubjects.includes(category.category)}
+                  />
+                  <ListItemText primary={category.category} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Grid>
 
         {/* Sort By Filter */}
@@ -439,7 +444,10 @@ function SearchAndFilterArticle() {
                   lineHeight: "1.4", // Adjust line height for better readability
                 }}
               >
-                <Link to={`/ArticlePreview/${question.id}`} style={{ textDecoration: "none" }}>
+                <Link
+                  to={`/ArticlePreview/${question.id}`}
+                  style={{ textDecoration: "none" }}
+                >
                   {question.title}
                 </Link>
               </Typography>
@@ -457,8 +465,8 @@ function SearchAndFilterArticle() {
                 {question.content.split(" ").slice(0, 15).join(" ")}...
               </Typography>
 
-               {/* Subjects */}
-               <Box
+              {/* Subjects */}
+              <Box
                 sx={{
                   display: "flex",
                   flexWrap: "wrap",
