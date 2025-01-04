@@ -146,9 +146,12 @@ function ExamPreview() {
         },
         body: JSON.stringify({ serviceId }), // Send the `serviceId` to the backend
       });
+      console.log("HTTP Status Code: ", response.status);
+      // Log the response before checking if it's ok
+      const responseData = await response.json();
+      console.log("Backend Response: ", responseData); // This will show the full response
 
       if (!response.ok) {
-        const responseData = await response.json();
         setSnackbarMessage(
           `Failed to register the exam: ${responseData.message}`
         );
@@ -158,7 +161,6 @@ function ExamPreview() {
         return;
       }
 
-      const responseData = await response.json();
       setPurchased(true); // Mark the exam as purchased
       setSnackbarMessage(
         "Thank you for purchasing the exam! Questions are now unlocked."
