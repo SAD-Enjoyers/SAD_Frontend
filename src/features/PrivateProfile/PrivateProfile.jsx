@@ -182,7 +182,6 @@ export default function PrivateProfile() {
 
                 {/* User Information */}
                 <CardContent sx={{ textAlign: "justify" }}>
-                  {console.log(formData)}
                   <Typography variant="h6" component="div">
                     Full Name: {formData.firstName + " " + formData.lastName}
                   </Typography>

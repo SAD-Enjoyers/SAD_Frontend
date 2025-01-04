@@ -162,7 +162,7 @@ export default function ReviewComponent(props) {
       }
 
       const responseData = await response.json();
-      console.log(response.status, responseData);
+      // console.log(response.status, responseData);
 
       // دریافت تصاویر و ذخیره در حافظه
       const fetchedData = await Promise.all(
