@@ -30,6 +30,7 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import DefaultExamImage from "../../../assets/images/default_exam_image.jpg";
 import ExamResult from "./ExamResult";
+import Comments from "../../../common/Comments/CommentSection";
 
 const primaryGradient = ["#5356FF", "#378CE7", "#67C6E3", "#DFF5FF"];
 const levelColors = {
@@ -122,7 +123,43 @@ function PublicExam() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [examResult, setExamResult] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [examData2, setExamData] = useState(null);
+
   useEffect(() => {
+    const fetchExamData = async () => {
+      setLoading(true);
+      setErrorMessage("");
+
+      try {
+        const response = await fetch(
+          `/api/v1/exam/preview?serviceId=${examData.serviceId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          const responseData = await response.json();
+          setErrorMessage(responseData.message || "Failed to fetch exam data.");
+          return;
+        }
+
+        const responseData = await response.json();
+        console.log("Response Data:", JSON.stringify(responseData, null, 2));
+
+        setExamData(responseData.data.Exam);
+      } catch (error) {
+        setErrorMessage("An unexpected error occurred. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExamData();
     // Check if exam results are available in location state
     if (location.state && location.state.examResult) {
       setExamResult(location.state.examResult);
@@ -142,6 +179,7 @@ function PublicExam() {
     }, 2000);
   }, [location.state, examData]);
 
+  console.log("Response Data:", JSON.stringify(examData, null, 2));
   const handleAddComment = () => {
     if (!newComment.name || !newComment.comment.trim()) {
       alert("Both name and comment are required.");
@@ -161,25 +199,13 @@ function PublicExam() {
     // Simulate navigating to the exam page
     console.log("Starting the exam...");
 
-    // Simulate an exam process
-    setTimeout(() => {
-      console.log("Exam completed!");
-
-      // Display an alert with the result
-      alert(
-        `Exam Done! Your Score: ${mockExamResult.score}, Status: ${
-          mockExamResult.passed ? "Passed" : "Failed"
-        }`
-      );
-
-      // Pass the result and exam data to the current page
-      navigate("/PublicExam", {
-        state: {
-          examResult: mockExamResult,
-          examData,
-        },
-      });
-    }, 2000); // Simulate a 2-second delay for the exam process
+    // Pass the result and exam data to the current page
+    navigate("/OngoingExamPage", {
+      state: {
+        // examResult: mockExamResult,
+        examData,
+      },
+    }); // Simulate a 2-second delay for the exam process
   };
 
   if (loading) {
@@ -198,6 +224,21 @@ function PublicExam() {
       </ErrorContainer>
     );
   }
+  if (errorMessage) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Typography color="error">{errorMessage}</Typography>
+        <Button onClick={() => setErrorMessage("")}>Retry</Button>
+      </Box>
+    );
+  }
   return (
     examData && (
       <Box
@@ -210,7 +251,7 @@ function PublicExam() {
         }}
       >
         <Box sx={{ maxWidth: 950, width: "100%", paddingX: 4 }}>
-          <CustomCard>
+          <CustomCard sx={{ maxWidth: 800, margin: "0 auto" }}>
             <Grid2 container spacing={4}>
               <Grid2 item xs={12} md={8}>
                 <Title>{examData.name}</Title>
@@ -224,10 +265,36 @@ function PublicExam() {
                 />
                 <SubTitle>{examData.description}</SubTitle>
 
+                {/* Tags Section */}
+                <Box sx={{ marginTop: 2 }}>
+                  <Typography variant="h6" sx={{ color: primaryGradient[0] }}>
+                    Tags
+                  </Typography>
+                  <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                    {examData.tag1 && (
+                      <Chip
+                        label={examData.tag1}
+                        sx={{ backgroundColor: "#FFEB3B", color: "#000" }}
+                      />
+                    )}
+                    {examData.tag2 && (
+                      <Chip
+                        label={examData.tag2}
+                        sx={{ backgroundColor: "#FF9800", color: "#fff" }}
+                      />
+                    )}
+                    {examData.tag3 && (
+                      <Chip
+                        label={examData.tag3}
+                        sx={{ backgroundColor: "#009688", color: "#fff" }}
+                      />
+                    )}
+                  </Box>
+                </Box>
+
+                {/* Rating and Average User Rating */}
                 <Rating
-                  value={
-                    typeof examData.score === "number" ? examData.score : 0
-                  }
+                  value={examData.score || 0}
                   readOnly
                   precision={0.5}
                   sx={{ marginTop: 2 }}
@@ -238,25 +305,11 @@ function PublicExam() {
                   sx={{ marginTop: 1 }}
                 >
                   Average User Rating:{" "}
-                  {typeof examData.score === "number"
+                  {typeof examData.score === "number" && !isNaN(examData.score)
                     ? examData.score.toFixed(1)
                     : "0"}{" "}
                   / 5
                 </Typography>
-
-                <Box sx={{ marginTop: 2 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    {examData.tag1 && (
-                      <Chip label={examData.tag1} sx={{ marginRight: 1 }} />
-                    )}
-                    {examData.tag2 && (
-                      <Chip label={examData.tag2} sx={{ marginRight: 1 }} />
-                    )}
-                    {examData.tag3 && (
-                      <Chip label={examData.tag3} sx={{ marginRight: 1 }} />
-                    )}
-                  </Typography>
-                </Box>
               </Grid2>
 
               <Grid2
@@ -265,26 +318,29 @@ function PublicExam() {
                 md={4}
                 sx={{
                   display: "flex",
-                  flexDirection: "column", // Align items vertically
+                  flexDirection: "column",
                   alignItems: "center",
-                  justifyContent: "center", // Center both image and button vertically
+                  justifyContent: "center",
                   textAlign: "center",
                 }}
               >
-                {/* Dynamically render image from the backend */}
-                {examData.image && (
-                  <img
-                    src={`/api/v1/uploads/service-images/${examData.image}`}
-                    alt="Exam Preview"
-                    style={{
-                      width: "100%", // Make it responsive
-                      maxWidth: "500px", // Set a maximum width for better scaling
-                      height: "auto",
-                      borderRadius: "8px",
-                      marginBottom: "16px", // Add space below the image
-                    }}
-                  />
-                )}
+                {/* Exam Image */}
+                <img
+                  src={
+                    examData.image
+                      ? `/api/v1/uploads/service-images/${examData.image}`
+                      : DefaultExamImage
+                  }
+                  alt="Exam Preview"
+                  style={{
+                    width: "100%",
+                    maxWidth: "500px", // Adjusted maxWidth to make the image smaller
+                    height: "auto",
+                    borderRadius: "8px",
+                    marginBottom: "16px",
+                  }}
+                />
+
                 {/* Start Exam Button */}
                 <ButtonStyled
                   variant="contained"
@@ -292,7 +348,9 @@ function PublicExam() {
                   onClick={handleStartExam}
                   sx={{
                     marginTop: 2,
-                    maxWidth: "300px", // Optional: limit button width
+                    maxWidth: "300px",
+                    fontSize: { xs: "1rem", sm: "1.2rem" },
+                    padding: { xs: "12px", sm: "15px" },
                   }}
                 >
                   Go to Exam
@@ -301,6 +359,7 @@ function PublicExam() {
             </Grid2>
           </CustomCard>
 
+          {/* Additional Information Section */}
           <Grid2
             container
             spacing={4}
@@ -318,7 +377,7 @@ function PublicExam() {
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
-                  height: "100%", // Ensuring it takes full height on mobile and centers
+                  height: "100%",
                 }}
               >
                 <AccessTimeIcon
@@ -342,7 +401,7 @@ function PublicExam() {
                   variant="body1"
                   sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
                 >
-                  {examData?.examDuration} min
+                  {examData2?.examDuration} min
                 </Typography>
               </CustomCard>
             </Grid2>
@@ -359,7 +418,7 @@ function PublicExam() {
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
-                  height: "100%", // Ensuring it takes full height on mobile and centers
+                  height: "100%",
                 }}
               >
                 <CheckCircleIcon
@@ -383,7 +442,7 @@ function PublicExam() {
                   variant="body1"
                   sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
                 >
-                  {examData?.minPassScore}%
+                  {examData2?.minPassScore}%
                 </Typography>
               </CustomCard>
             </Grid2>
@@ -400,7 +459,7 @@ function PublicExam() {
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
-                  height: "100%", // Ensuring it takes full height on mobile and centers
+                  height: "100%",
                 }}
               >
                 <QuizIcon
@@ -424,7 +483,7 @@ function PublicExam() {
                   variant="body1"
                   sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
                 >
-                  {examData?.numberOfQuestion}
+                  {examData2?.numberOfQuestion}
                 </Typography>
               </CustomCard>
             </Grid2>
@@ -441,7 +500,7 @@ function PublicExam() {
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
-                  height: "100%", // Ensuring it takes full height on mobile and centers
+                  height: "100%",
                 }}
               >
                 <PeopleIcon
@@ -465,12 +524,13 @@ function PublicExam() {
                   variant="body1"
                   sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
                 >
-                  {examData?.numberOfMembers}
+                  {examData2?.numberOfMembers}
                 </Typography>
               </CustomCard>
             </Grid2>
           </Grid2>
 
+          {/* Comments and Exam Result */}
           <Box sx={{ padding: { xs: 2, sm: 4 } }}>
             {examResult ? (
               <ExamResult examData={examData} />
@@ -484,7 +544,7 @@ function PublicExam() {
                   borderRadius: 2,
                   boxShadow: 3,
                   backgroundColor: "#f8f9fa",
-                  width: "100%", // Ensures full width on smaller screens
+                  width: "100%",
                 }}
               >
                 <Typography variant="h6" sx={{ color: "#5356FF" }}>
@@ -494,57 +554,10 @@ function PublicExam() {
             )}
           </Box>
 
+          {/* Comments Container */}
           <CommentsContainer>
             <SectionHeader>Comments</SectionHeader>
-
-            <TextField
-              label="Your Name"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={newComment.name}
-              onChange={(e) =>
-                setNewComment({ ...newComment, name: e.target.value })
-              }
-            />
-            <TextField
-              label="Your Comment"
-              variant="outlined"
-              fullWidth
-              multiline
-              rows={4}
-              margin="normal"
-              value={newComment.comment}
-              onChange={(e) =>
-                setNewComment({ ...newComment, comment: e.target.value })
-              }
-            />
-            <ButtonStyled
-              variant="contained"
-              fullWidth
-              onClick={handleAddComment}
-              disabled={!newComment.name || !newComment.comment.trim()}
-              startIcon={<CommentIcon />}
-            >
-              Add Comment
-            </ButtonStyled>
-
-            <List sx={{ marginTop: 2 }}>
-              {comments.map((comment) => (
-                <React.Fragment key={comment.id}>
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Avatar>{comment.name.charAt(0).toUpperCase()}</Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={comment.name}
-                      secondary={comment.comment}
-                    />
-                  </ListItem>
-                  <Divider />
-                </React.Fragment>
-              ))}
-            </List>
+            <Comments serviceId={examData.serviceId} />
           </CommentsContainer>
         </Box>
       </Box>

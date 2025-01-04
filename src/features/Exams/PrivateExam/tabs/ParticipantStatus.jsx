@@ -41,6 +41,11 @@ const ParticipantStatus = ({ examData, accessToken }) => {
             },
           }
         );
+        // console.log(response);
+        console.log("erfannnnn");
+
+        console.log("Response Data:", JSON.stringify(response, null, 2));
+
         const data = await response.json();
         if (data.status === "success") {
           const formattedParticipants = data.data.map((p) => ({
@@ -51,7 +56,7 @@ const ParticipantStatus = ({ examData, accessToken }) => {
             grade: p.examResult?.passed || "N/A",
             answeredRight: p.examResult?.rightAnswers || 0,
             answeredWrong: p.examResult?.wrongAnswers || 0,
-            notAnswered: p.examResult?.emptyAnswers || 0,
+            notAnswered: p.examResult?.emptyAnswers || "All",
           }));
           setParticipants(formattedParticipants);
           setFilteredParticipants(formattedParticipants);

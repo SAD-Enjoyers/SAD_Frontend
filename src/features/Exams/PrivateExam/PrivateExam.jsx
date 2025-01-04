@@ -56,6 +56,7 @@ const PrivateExam = () => {
     if (savedTab) setSelectedTab(parseInt(savedTab, 10));
   }, []);
 
+  console.log("Response Data:", JSON.stringify(examData, null, 2));
   const tabContent = [
     {
       label: "Exam Questions",

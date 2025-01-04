@@ -12,7 +12,7 @@ import {
   Avatar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import AdbIcon from "@mui/icons-material/Adb";
+import SchoolIcon from "@mui/icons-material/School";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 export default function NavBar() {
@@ -21,12 +21,20 @@ export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const pages = ["blogs", "courses", "questions", "users"];
-  const addresses = ["/", "/", "/QuestionSearch", "/"];
+  const [imageProfile, setImageProfile] = useState("");
+  const pages = ["articles", "courses", "questions", "exams", "users"];
+  const addresses = [
+    "/SearchArticle",
+    "/SearchCourse",
+    "/QuestionSearch",
+    "/ExamSearch",
+    "/SearchUsers",
+  ];
   const navigate = useNavigate();
   // const location = useLocation();
 
   useEffect(() => {
+    setImageProfile(localStorage.getItem("imageProfile"));
     const token = localStorage.getItem("token");
     // if (!token) {
     fetch("/api/v1/profile/private-data", {
@@ -120,7 +128,11 @@ export default function NavBar() {
           >
             <Avatar
               alt="User Profile"
-              src="/images/profile.png"
+              src={
+                imageProfile
+                  ? `api/v1/uploads/profile-images/${imageProfile}`
+                  : "images/profile.png"
+              }
               sx={{ width: 40, height: 40 }}
             />
           </IconButton>
@@ -148,7 +160,14 @@ export default function NavBar() {
             >
               Profile
             </MenuItem>
-            <MenuItem onClick={handleClose}>Wallet</MenuItem>
+            <MenuItem
+              onClick={() => {
+                navigate("/WalletPage");
+              }}
+            >
+              Wallet
+            </MenuItem>
+
             <MenuItem
               onClick={() => {
                 localStorage.removeItem("token");
@@ -248,7 +267,6 @@ export default function NavBar() {
             </Menu>
           </Box>
 
-          {/* لوگو وسط در حالت موبایل و سمت چپ در حالت دسکتاپ */}
           <Box
             sx={{
               flexGrow: 5,
@@ -267,7 +285,7 @@ export default function NavBar() {
                   alignItems: "center",
                   fontFamily: "monospace",
                   fontWeight: 700,
-                  letterSpacing: ".3rem",
+                  letterSpacing: ".2rem",
                   color: "#378CE7",
                   textDecoration: "none",
                   "&:hover": {
@@ -275,12 +293,11 @@ export default function NavBar() {
                   },
                 }}
               >
-                <AdbIcon sx={{ mr: 0, color: "#378CE7" }} /> HOME
+                <SchoolIcon sx={{ mr: "10px", color: "#378CE7" }} /> TECHVERSE
               </Typography>
             </Link>
           </Box>
 
-          {/* صفحات در سمت راست در حالت دسکتاپ */}
           <Box
             sx={{
               display: { xs: "none", md: "flex" },

@@ -7,6 +7,10 @@ import {
   Button,
   Stack,
   Pagination,
+  Snackbar,
+  Avatar,
+  Box,
+  Divider,
 } from "@mui/material";
 import axios from "axios";
 
@@ -15,11 +19,10 @@ const CommentSection = ({ serviceId }) => {
   const [newComment, setNewComment] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Retrieve token from localStorage
   const token = localStorage.getItem("token");
 
-  // Axios instance with token in the headers
   const axiosInstance = axios.create({
     baseURL: "/api/v1/educational-service",
     headers: {
@@ -27,20 +30,16 @@ const CommentSection = ({ serviceId }) => {
     },
   });
 
-  // Fetch comments based on page and serviceId
   const fetchComments = async () => {
     try {
-      console.log("Fetching comments..."); // Log start of fetch
       const response = await axiosInstance.get(
         `/comments/${serviceId}?page=${page}`
       );
-      console.log("Request URL:", `/comments/${serviceId}?page=${page}`);
-      console.log("Response Data:", JSON.stringify(response.data, null, 2));
-
       setComments(response.data.data);
-      setTotalPages(5); // Replace with total pages from response if available
+      setTotalPages(response.data.totalPages); // Adjust based on your response structure
     } catch (error) {
       console.error("Error fetching comments:", error);
+      setErrorMessage("Failed to load comments. Please try again later.");
     }
   };
 
@@ -48,7 +47,6 @@ const CommentSection = ({ serviceId }) => {
     fetchComments();
   }, [page]);
 
-  // Handle adding a new comment
   const handleAddComment = async () => {
     const payload = {
       serviceId: serviceId,
@@ -56,21 +54,18 @@ const CommentSection = ({ serviceId }) => {
     };
 
     try {
-      console.log("Sending comment payload:", JSON.stringify(payload, null, 2));
       const response = await axiosInstance.post("/add-comment", payload);
-      console.log("Response Data:", JSON.stringify(response.data, null, 2));
-
       setNewComment("");
-      fetchComments(); // Refresh comments
+      fetchComments(); // Refresh comments after posting
     } catch (error) {
       console.error("Error adding comment:", error);
+      setErrorMessage("Failed to post comment. Please try again.");
     }
   };
 
   return (
-    <Card sx={{ margin: 2, padding: 2 }}>
+    <Card sx={{ margin: 2, padding: 2, boxShadow: 3 }}>
       <CardContent>
-        {/* Add Comment */}
         <Typography variant="h6" gutterBottom>
           Add a Comment
         </Typography>
@@ -89,33 +84,43 @@ const CommentSection = ({ serviceId }) => {
           color="primary"
           onClick={handleAddComment}
           disabled={!newComment}
+          sx={{ mb: 2 }}
         >
           Post Comment
         </Button>
 
-        {/* List of Comments */}
         <Typography variant="h6" sx={{ mt: 4 }}>
           Comments
         </Typography>
         <Stack spacing={2} sx={{ mt: 2 }}>
           {comments.map((comment) => (
             <Card key={comment.commentId} variant="outlined" sx={{ p: 2 }}>
-              <Typography variant="subtitle2">
-                User: {comment.userId}
-              </Typography>
-              <Typography variant="body1">{comment.text}</Typography>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ mt: 1 }}
-              >
-                {new Date(comment.date).toLocaleString()}
-              </Typography>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Avatar sx={{ bgcolor: "primary.main" }}>
+                  {comment.userId.charAt(0).toUpperCase()}{" "}
+                  {/* Avatar initials */}
+                </Avatar>
+                <Box>
+                  <Typography variant="subtitle2" fontWeight="bold">
+                    {comment.userId} {/* Display username */}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mt: 1 }}>
+                    {comment.text}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ mt: 1 }}
+                  >
+                    {new Date(comment.date).toLocaleString()}
+                  </Typography>
+                </Box>
+              </Stack>
+              <Divider sx={{ my: 2 }} />
             </Card>
           ))}
         </Stack>
 
-        {/* Pagination */}
         <Pagination
           count={totalPages}
           page={page}
@@ -123,6 +128,14 @@ const CommentSection = ({ serviceId }) => {
           sx={{ mt: 3, display: "flex", justifyContent: "center" }}
         />
       </CardContent>
+
+      {/* Error Message Snackbar */}
+      <Snackbar
+        open={Boolean(errorMessage)}
+        message={errorMessage}
+        autoHideDuration={6000}
+        onClose={() => setErrorMessage("")}
+      />
     </Card>
   );
 };

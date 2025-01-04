@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import LoadingScreen from "./components/Loading.jsx";
+import LoadingScreen from "../../common/Loading.jsx";
 import {
   Box,
   Button,
@@ -8,13 +8,13 @@ import {
   Typography,
   Card,
   CardContent,
-  CardMedia,
   Avatar,
   TextField,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import ReviewComponent from "./components/ReviewComponent.jsx";
+import EditProfile from "./components/EditProfile.jsx";
 
 export default function PrivateProfile() {
   const navigate = useNavigate();
@@ -23,33 +23,15 @@ export default function PrivateProfile() {
   const [data, setData] = useState(false);
   const [token, setToken] = useState(false);
   const [open, setOpen] = useState(false);
+  const [imageProfile, setImageProfile] = useState("");
   const [formData, setFormData] = useState({
     firstName: " ",
     lastName: " ",
     userName: " ",
     email: " ",
   });
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imageName, setImageName] = useState("");
-  const [previewImage, setPreviewImage] = useState(null);
-  const [imageNameUrl, setImageNameurl] = useState("");
 
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setSelectedImage(file); // ذخیره فایل برای ارسال به سرور
-      setPreviewImage(URL.createObjectURL(file)); // پیش‌نمایش
-      setImageName(file.name);
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSave = () => {
-    console.log("Updated Profile Data:", formData);
+  const closeState = () => {
     setOpen(false);
   };
 
@@ -82,81 +64,8 @@ export default function PrivateProfile() {
       })
       .catch((err) => {
         setIsValid(false); // در صورت بروز خطا، وضعیت را به false تغییر دهید
-        setLoading(false); // حتی در صورت خطا نیز بارگذاری تمام می‌شود
+        setLoading(false);
       });
-  };
-  const ImageUpload = () => {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-
-          textAlign: "center",
-          margin: "0 auto",
-
-          gap: 2,
-          p: 3,
-          border: "1px solid #ddd",
-          borderRadius: 2,
-          width: 200,
-          mt: "30px",
-          mb: "20px",
-        }}
-      >
-        <Typography variant="h6">Upload an Image</Typography>
-        <Button variant="contained" component="label">
-          Choose Image
-          <input
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={handleImageUpload}
-          />
-        </Button>
-        {imageName && (
-          <TextField
-            value={imageName}
-            variant="outlined"
-            disabled
-            fullWidth
-            size="small"
-            label="Selected File"
-          />
-        )}
-        {previewImage && (
-          <Box
-            component="img"
-            src={previewImage}
-            alt="Uploaded Preview"
-            sx={{
-              maxWidth: "100%",
-              height: "auto",
-              borderRadius: 2,
-              boxShadow: 2,
-            }}
-          />
-        )}
-        {selectedImage && (
-          <Button variant="outlined" color="error" onClick={handleClear}>
-            Remove Image
-          </Button>
-        )}
-        {/* <Button
-          variant="contained"
-          color="primary"
-          onClick={submitImage}
-          disabled={!selectedImage}
-        >
-          Upload Image
-        </Button> */}
-      </Box>
-    );
-  };
-  const handleClear = () => {
-    setSelectedImage(null);
-    setPreviewImage(null);
-    setImageName("");
   };
 
   // dont repead yourself    dry
@@ -192,9 +101,9 @@ export default function PrivateProfile() {
       </Link>
     );
   };
-  // setToken(localStorage.getItem("token"));
 
   useEffect(() => {
+    setImageProfile(localStorage.getItem("imageProfile"));
     const token = localStorage.getItem("token");
 
     if (!token || !data) {
@@ -203,13 +112,6 @@ export default function PrivateProfile() {
       setLoading(false); // اگر توکن موجود باشد، بارگذاری تمام می‌شود
     }
   }, []);
-  // useEffect(() => {
-  //   if (!token || !data) {
-  //     fetchData(token);
-  //   } else {
-  //     setLoading(false); // اگر توکن موجود باشد، بارگذاری تمام می‌شود
-  //   }
-  // }, [token]);
 
   if (isLoading) {
     return <LoadingScreen />; // نمایش لودینگ
@@ -226,7 +128,7 @@ export default function PrivateProfile() {
       <Container maxWidth="lg">
         <Grid2 container spacing={2} mt={11}>
           {/* Sidebar */}
-          <Grid2 item size={3}>
+          <Grid2 size={3}>
             <Box
               sx={{
                 position: "sticky",
@@ -237,20 +139,16 @@ export default function PrivateProfile() {
               alignItems="center"
               gap={3}
             >
-              <StyledButton link="AddQuestions">add question</StyledButton>
-              {/* <StyledButton link="">bank question</StyledButton> */}
-              <StyledButton link="make_exam">make exam</StyledButton>
-              {/* <StyledButton link="private_exam_page">
-                private exam page
-              </StyledButton>
-              <StyledButton link="ExamPreview">Exam Preview</StyledButton> */}
-              <StyledButton link="">add courses</StyledButton>
+              <StyledButton link="make_exam">add exam</StyledButton>
+              <StyledButton link="AddCourse">add courses</StyledButton>
+              <StyledButton link="AddArticle">add article</StyledButton>
+              <StyledButton link="AddQuestion">add question</StyledButton>
               <StyledButton link="">review profile</StyledButton>
             </Box>
           </Grid2>
 
           {/* Main Profile Section */}
-          <Grid2 item size={9}>
+          <Grid2 size={9}>
             <Card
               sx={{
                 p: 2,
@@ -272,7 +170,11 @@ export default function PrivateProfile() {
                   <Box display="flex" justifyContent="center">
                     <Avatar
                       alt="User Name"
-                      src="images/profile.png"
+                      src={
+                        imageProfile
+                          ? `api/v1/uploads/profile-images/${imageProfile}`
+                          : "images/profile.png"
+                      }
                       sx={{ width: "150px", height: "150px" }}
                     />
                   </Box>
@@ -280,6 +182,7 @@ export default function PrivateProfile() {
 
                 {/* User Information */}
                 <CardContent sx={{ textAlign: "justify" }}>
+                  {console.log(formData)}
                   <Typography variant="h6" component="div">
                     Full Name: {formData.firstName + " " + formData.lastName}
                   </Typography>
@@ -308,93 +211,16 @@ export default function PrivateProfile() {
               </Box>
             </Card>
 
-            <ReviewComponent section="My Exams" />
+            <ReviewComponent section="My Exams" Services="exam" />
             <ReviewComponent section="My Courses" style_ml="20px" />
-            <ReviewComponent section="My Articles" style_ml="0px" />
+            <ReviewComponent
+              section="My Articles"
+              style_ml="0px"
+              Services="article"
+            />
 
             {/* Edit Profile Dialog */}
-            {open && (
-              <Box
-                sx={{
-                  position: "fixed",
-                  top: 0,
-                  left: 0,
-                  width: "100vw",
-                  height: "100vh",
-                  backgroundColor: "rgba(0, 0, 0, 0.5)",
-                  zIndex: 10,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                }}
-              >
-                <Card
-                  sx={{
-                    p: 4,
-                    width: "90%",
-                    maxWidth: 400,
-                    backgroundColor: "white",
-                    borderRadius: 2,
-                    boxShadow: 5,
-                  }}
-                >
-                  <ImageUpload />
-                  <Typography variant="h6" gutterBottom>
-                    Edit Profile
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    label="First Name"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Last Name"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Username"
-                    name="userName"
-                    value={formData.userName}
-                    onChange={handleInputChange}
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
-                    label="Email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    margin="normal"
-                  />
-                  <Box display="flex" justifyContent="flex-end" mt={2}>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setOpen(false)}
-                      sx={{ mr: 2 }}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleSave}
-                    >
-                      Save
-                    </Button>
-                  </Box>
-                </Card>
-              </Box>
-            )}
+            {open && <EditProfile closeState={closeState} />}
           </Grid2>
         </Grid2>
       </Container>
