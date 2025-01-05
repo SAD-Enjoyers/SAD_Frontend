@@ -77,8 +77,9 @@ export default function EditProfile({ closeState }) {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        alert("maked exam successfully");
+        alert("change profile successfully");
         closeState();
+        window.location.reload();
       })
       .catch((error) => {
         console.error("Error:", error);

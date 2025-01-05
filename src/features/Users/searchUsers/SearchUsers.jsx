@@ -7,116 +7,51 @@ import {
   Pagination,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { useState } from "react";
-
-const mockUsers = [
-  {
-    id: 1,
-    image: "https://via.placeholder.com/150",
-    title: "John Doe",
-    description: "Frontend Developer at XYZ Company",
-  },
-  {
-    id: 2,
-    image: "https://via.placeholder.com/150",
-    title: "Jane Smith",
-    description: "Backend Developer at ABC Inc.",
-  },
-  {
-    id: 3,
-    image: "https://via.placeholder.com/150",
-    title: "Alice Green",
-    description: "UI/UX Designer at Creative Studio",
-  },
-  {
-    id: 4,
-    image: "https://via.placeholder.com/150",
-    title: "Michael Brown",
-    description: "DevOps Engineer at CloudNet",
-  },
-  {
-    id: 5,
-    image: "https://via.placeholder.com/150",
-    title: "Emily White",
-    description: "Data Scientist at Analytics Co.",
-  },
-  {
-    id: 6,
-    image: "https://via.placeholder.com/150",
-    title: "David Black",
-    description: "Full Stack Developer at Startup Hub",
-  },
-  {
-    id: 7,
-    image: "https://via.placeholder.com/150",
-    title: "Alice Green",
-    description: "UI/UX Designer at Creative Studio",
-  },
-  {
-    id: 8,
-    image: "https://via.placeholder.com/150",
-    title: "Michael Brown",
-    description: "DevOps Engineer at CloudNet",
-  },
-  {
-    id: 9,
-    image: "https://via.placeholder.com/150",
-    title: "Emily White",
-    description: "Data Scientist at Analytics Co.",
-  },
-  {
-    id: 10,
-    image: "https://via.placeholder.com/150",
-    title: "David Black",
-    description: "Full Stack Developer at Startup Hub",
-  },
-  {
-    id: 11,
-    image: "https://via.placeholder.com/150",
-    title: "Alice Green",
-    description: "UI/UX Designer at Creative Studio",
-  },
-  {
-    id: 12,
-    image: "https://via.placeholder.com/150",
-    title: "Michael Brown",
-    description: "DevOps Engineer at CloudNet",
-  },
-  {
-    id: 13,
-    image: "https://via.placeholder.com/150",
-    title: "Emily White",
-    description: "Data Scientist at Analytics Co.",
-  },
-  {
-    id: 14,
-    image: "https://via.placeholder.com/150",
-    title: "David Black",
-    description: "Full Stack Developer at Startup Hub",
-  },
-];
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function SearchUsers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6; // تعداد آیتم‌ها در هر صفحه
+  const [users, setUsers] = useState([]);
+  const itemsPerPage = 6;
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
     setCurrentPage(1); // بازگشت به صفحه اول هنگام جستجو
   };
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get(`/api/v1/profile/`);
+        const transformedQuestions = response.data.data.result.map((q) => ({
+          userName: q.userName,
+          firstName: q.firstName,
+          lastName: q.lastName,
+          description: q.description,
+          image:
+            q.image == "/api/public/defaultProfilePicture.jpg"
+              ? "/api/public/defaultProfilePicture.jpg"
+              : "/api/v1/uploads/profile-images/" + q.image,
+        }));
+        setUsers(transformedQuestions);
+        console.log(transformedQuestions);
+      } catch (error) {
+        console.error("Error fetching profiles:", error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handlePageChange = (event, value) => setCurrentPage(value);
 
-  // فیلتر کاربران بر اساس متن جستجو
-  const filteredUsers = mockUsers.filter((user) =>
-    user.title.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter((user) =>
+    user.userName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // محاسبه تعداد صفحات
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
-  // تعیین کاربران صفحه جاری
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentUsers = filteredUsers.slice(
     startIndex,
@@ -127,7 +62,7 @@ function SearchUsers() {
     <Box
       sx={{
         minWidth: 500,
-        maxWidth: 900,
+        maxWidth: 1200,
         margin: "0 auto",
       }}
     >
@@ -136,8 +71,12 @@ function SearchUsers() {
           Articles
         </Typography>
       </div>
-      {/* فیلتر جستجو */}
-      <Grid2 container spacing={3} sx={{ marginTop: "40px" }}>
+
+      <Grid2
+        container
+        spacing={3}
+        sx={{ marginTop: "40px", display: "flex", justifyContent: "center" }}
+      >
         <Grid2 size={{ xs: 12, sm: 8, md: 9 }}>
           <TextField
             variant="outlined"
@@ -162,17 +101,22 @@ function SearchUsers() {
           />
         </Grid2>
       </Grid2>
-      {/* نمایش کاربران */}
+
       <Grid2 container spacing={3} sx={{ mt: "50px", mb: "80px" }}>
-        {currentUsers.map((user) => (
-          <Grid2 size={{ s: 12, sm: 6, md: 4 }} key={user.id}>
+        {currentUsers.map((user, id) => (
+          <Grid2 size={{ s: 12, sm: 6, md: 4 }} key={id}>
             <Box
               sx={{
-                padding: "16px",
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                textAlign: "center",
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                padding: 3,
+                border: "1px solid #e0e0e0",
+                borderRadius: "12px",
+                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+                backgroundColor: "#fff",
+                transition: "transform 0.2s, box-shadow 0.2s",
+                "&:hover": {
+                  transform: "scale(1.03)",
+                  boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.15)",
+                },
               }}
             >
               <img
@@ -180,17 +124,59 @@ function SearchUsers() {
                 alt={user.title}
                 style={{
                   width: "100%",
-                  height: "auto",
-                  borderRadius: "8px",
-                  marginBottom: "12px",
+                  height: "200px",
+                  objectFit: "cover",
+                  borderRadius: "12px",
+                  marginBottom: "16px",
                 }}
               />
-              <Typography variant="h6" gutterBottom>
-                {user.title}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {user.description}
-              </Typography>
+              <Grid2 container spacing={2} alignItems="center">
+                <Grid2 size={4}>
+                  <Typography
+                    variant="subtitle1"
+                    color="textSecondary"
+                    sx={{
+                      fontWeight: "bold",
+                      textAlign: "right",
+                    }}
+                  >
+                    User Name:
+                  </Typography>
+                </Grid2>
+                <Grid2 size={6}>
+                  <Typography variant="h6">{user.userName}</Typography>
+                </Grid2>
+
+                <Grid2 size={4}>
+                  <Typography
+                    variant="subtitle1"
+                    color="textSecondary"
+                    sx={{ fontWeight: "bold", textAlign: "right" }}
+                  >
+                    Full Name:
+                  </Typography>
+                </Grid2>
+                <Grid2 size={8}>
+                  <Typography variant="h6">
+                    {user.firstName} {user.lastName}
+                  </Typography>
+                </Grid2>
+
+                <Grid2 size={4}>
+                  <Typography
+                    variant="subtitle1"
+                    color="textSecondary"
+                    sx={{ fontWeight: "bold", textAlign: "right" }}
+                  >
+                    Description:
+                  </Typography>
+                </Grid2>
+                <Grid2 size={8}>
+                  <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
+                    {user.description}
+                  </Typography>
+                </Grid2>
+              </Grid2>
             </Box>
           </Grid2>
         ))}

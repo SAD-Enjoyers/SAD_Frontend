@@ -182,7 +182,6 @@ export default function PrivateProfile() {
 
                 {/* User Information */}
                 <CardContent sx={{ textAlign: "justify" }}>
-                  {console.log(formData)}
                   <Typography variant="h6" component="div">
                     Full Name: {formData.firstName + " " + formData.lastName}
                   </Typography>
@@ -212,7 +211,11 @@ export default function PrivateProfile() {
             </Card>
 
             <ReviewComponent section="My Exams" Services="exam" />
-            <ReviewComponent section="My Courses" style_ml="20px" />
+            <ReviewComponent
+              section="My Courses"
+              style_ml="20px"
+              Services="course"
+            />
             <ReviewComponent
               section="My Articles"
               style_ml="0px"

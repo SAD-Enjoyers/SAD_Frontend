@@ -60,27 +60,12 @@ export default function ReviewComponent(props) {
         >
           {item.name}
         </Typography>
-        {/* <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          mb={0.5}
-                        >
-                          Price: {item.price}
-                        </Typography> */}
         <Typography variant="body2" color="text.secondary" mb={0.5}>
           Level: {item.level}
         </Typography>
         <Typography variant="body2" color="text.secondary" mb={1}>
           Score: {item.score}
         </Typography>
-        {/* <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          textAlign="center"
-                          mb={1.5}
-                        >
-                          Description: {item.description}
-                        </Typography> */}
         <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
           <Box sx={{ margin: "0 auto" }}>
             <Button
@@ -119,25 +104,7 @@ export default function ReviewComponent(props) {
     </Box>
   ));
 
-  const Data = [
-    {
-      imageURL: "/images/exam.png",
-      name: "typescript",
-      price: "10",
-      description: " Learn TypeScript",
-      score: "0.00",
-      type: "creator",
-    },
-    {
-      imageURL: "/images/exam.png",
-      name: "typescript",
-      price: "10",
-      description: " Learn TypeScript",
-      score: "0.00",
-      type: "member",
-    },
-  ];
-  // const Data2 = [
+  // const Data = [
   //   {
   //     imageURL: "/images/exam.png",
   //     name: "typescript",
@@ -165,16 +132,17 @@ export default function ReviewComponent(props) {
     }
     if (props.section == "My Courses") {
       if (item.type === "member") {
-        navigate("/PublicCourse");
+        navigateToPublicCourse(item);
       } else {
-        navigate("/PrivateCourse");
+        console.log("2");
+        navigateToPrivateCourse(item);
       }
     }
     if (props.section == "My Articles") {
       if (item.type === "member") {
-        navigate("/PublicArticle");
+        navigateToPublicArticle(item);
       } else {
-        navigate("/PrivateArticle");
+        navigateToPrivateArticle(item);
       }
     }
   };
@@ -195,7 +163,7 @@ export default function ReviewComponent(props) {
       }
 
       const responseData = await response.json();
-      console.log(response.status, responseData);
+      // console.log(response.status, responseData);
 
       // دریافت تصاویر و ذخیره در حافظه
       const fetchedData = await Promise.all(
@@ -233,22 +201,37 @@ export default function ReviewComponent(props) {
     localStorage.setItem("examData", JSON.stringify(examData)); // Save to localStorage
     navigate(`/PrivateExam/${examData.serviceId}`, { state: { examData } });
   };
+
+  const navigateToPublicArticle = (articleData) => {
+    localStorage.setItem("articleData", JSON.stringify(articleData)); // Save to localStorage
+    navigate("/PublicArticle", { state: { articleData } });
+  };
+  const navigateToPrivateArticle = (articleData) => {
+    localStorage.setItem("articleData", JSON.stringify(articleData)); // Save to localStorage
+    navigate(`/PrivateArticle/${articleData.serviceId}`, {
+      state: { articleData },
+    });
+  };
+
+  const navigateToPublicCourse = (courseData) => {
+    localStorage.setItem("courseData", JSON.stringify(courseData)); // Save to localStorage
+    navigate("/PublicCourse", { state: { courseData } });
+  };
+  const navigateToPrivateCourse = (courseData) => {
+    localStorage.setItem("courseData", JSON.stringify(courseData)); // Save to localStorage
+    navigate(`/PrivateCourse/${courseData.serviceId}`, {
+      state: { courseData },
+    });
+  };
   // اجرا در بارگذاری اولیه
   useEffect(() => {
-    if (props.section === "My Courses") {
-      setData(Data);
-    }
-    if (props.section === "My Exams" || props.section === "My Articles") {
-      console.log(props.Services);
+    if (
+      props.section === "My Exams" ||
+      props.section === "My Articles" ||
+      props.section === "My Courses"
+    ) {
       fetchExamData(props.Services);
     }
-    // if (props.section === "My Exams") {
-    //   console.log(props.Services);
-    //   fetchExamData(props.Services);
-    // }
-    // if (props.section === "My Articles") {
-    //   setData(Data2);
-    // }
   }, [props.section]);
 
   // کامپوننت بازگشتی

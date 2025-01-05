@@ -54,11 +54,11 @@ const mockVideos = [
   },
 ];
 
-const CourseContent = () => {
+const CourseContent = (courseData) => {
   const [videos, setVideos] = useState(mockVideos);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingVideo, setEditingVideo] = useState(null);
-
+  console.log("Response Data:", JSON.stringify(courseData, null, 2));
   const handlePlayVideo = (videoUrl) => {
     window.open(videoUrl, "_blank"); // Open video in a new tab or modal
   };
