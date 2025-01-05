@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Tabs,
@@ -7,13 +7,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import {
-  LibraryBooks,
-  Settings,
-  People,
-  Comment,
-  VideoLibrary,
-} from "@mui/icons-material";
+import { Settings, People, Comment, VideoLibrary } from "@mui/icons-material";
 import { useLocation, useParams } from "react-router-dom"; // Import useLocation and useParams
 import CourseContent from "./tabs/CourseContent";
 import CourseSettings from "./tabs/CourseSettings";
@@ -24,7 +18,6 @@ const PrivateCourse = () => {
   const { serviceId } = useParams();
   const location = useLocation(); // Get location state
   const [selectedTab, setSelectedTab] = useState(0);
-  const [enrolledStudents, setEnrolledStudents] = useState([]);
   const [courseData, setCourseData] = useState(null);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
@@ -36,25 +29,64 @@ const PrivateCourse = () => {
     setSelectedTab(newValue);
     localStorage.setItem("selectedTab", newValue); // Save selected tab to localStorage
   };
-
   useEffect(() => {
-    if (location.state && location.state.courseData) {
-      setCourseData(location.state.courseData);
-      setLoading(false);
-    } else {
-      const storedCourseData = JSON.parse(localStorage.getItem("courseData"));
-      if (
-        storedCourseData &&
-        storedCourseData.courseId === parseInt(courseId)
-      ) {
-        setCourseData(storedCourseData);
-        setLoading(false);
-      } else {
-        console.error("Course data not found or invalid courseId");
+    const fetchCourseData = async () => {
+      try {
+        console.log("Fetching course data...");
+
+        const response = await fetch(`/api/v1/course/preview/${courseId}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        console.log("Fetch triggered. Response status:", response.status);
+
+        // Log raw response to ensure the request returns something
+        const responseText = await response.text();
+        console.log("Raw Response Text:", responseText);
+
+        if (!response.ok) {
+          console.log("Fetch failed. Status:", response.status);
+          throw new Error("Failed to fetch course data");
+        }
+
+        // Try parsing responseText manually
+        const result = JSON.parse(responseText);
+        console.log("API Response (Parsed):", result);
+
+        if (result.status === "success" && result.data) {
+          const fetchedCourseData = result.data.Course;
+          setCourseData(fetchedCourseData);
+          localStorage.setItem("courseData", JSON.stringify(fetchedCourseData));
+        } else {
+          throw new Error("Invalid course data");
+        }
+      } catch (error) {
+        console.error("Error fetching course data:", error);
+
+        // Fallback to location.state or localStorage
+        if (location.state && location.state.courseData) {
+          setCourseData(location.state.courseData);
+        } else {
+          const storedCourseData = JSON.parse(
+            localStorage.getItem("courseData")
+          );
+          if (storedCourseData) {
+            setCourseData(storedCourseData);
+          } else {
+            setCourseData(null); // No data available
+          }
+        }
+      } finally {
         setLoading(false);
       }
-    }
-  }, [location.state, courseId]);
+    };
+
+    // Always fetch course data
+    fetchCourseData();
+  }, [courseId, location.state]);
 
   useEffect(() => {
     const savedTab = localStorage.getItem("selectedTab");

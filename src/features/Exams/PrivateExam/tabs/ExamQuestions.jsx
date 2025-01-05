@@ -176,7 +176,7 @@ const ExamQuestions = (examData) => {
       setOpenSnackbar(true);
     } catch (error) {
       console.error("Error deleting question:", error);
-      setSnackbarMessage("Error deleting question. Please try again.");
+      setSnackbarMessage("Bad Network, Please try again later.");
       setSeverity("error");
       setOpenSnackbar(true);
     } finally {

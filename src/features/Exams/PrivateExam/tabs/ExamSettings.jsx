@@ -325,7 +325,7 @@ const ExamSettings = ({ examData, accessToken }) => {
           icon: <TimelapseIcon sx={{ marginRight: 1, color: "#F9A825" }} />,
           value: activityStatus,
           onChange: setActivityStatus,
-          options: ["Active", "Inactive"],
+          options: ["Active", "Passive"],
         },
         {
           label: "Exam Duration",
