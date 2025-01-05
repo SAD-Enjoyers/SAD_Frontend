@@ -31,8 +31,8 @@ import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
 import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx";
 import ArticlePreview from "./features/Articles/ArticlePreview/ArticlePreview.jsx";
 
-import TermsAndConditions from "./features/resource/TermsAndConditions/TermsAndConditions.jsx";
-import QA from "./features/resource/QA/Qa.jsx";
+import TermsAndConditions from "./features/Resources/TermsAndConditions/TermsAndConditions.jsx";
+import QA from "./features/Resources/QA/Qa.jsx";
 import AboutUs from "./features/Resources/AboutUs/Aboutus.jsx";
 
 import Comments from "./common/Comments/CommentSection.jsx";
@@ -78,7 +78,7 @@ function AppRoutes() {
 
           {/* Courses */}
           <Route path="PublicCourse" element={<PublicCourse />} />
-          <Route path="PrivateCourse" element={<PrivateCourse />} />
+          <Route path="PrivateCourse/:serviceId" element={<PrivateCourse />} />
           <Route path="AddCourse" element={<AddCourse />} />
           <Route path="CoursePreview/:serviceId" element={<CoursePreview />} />
           <Route path="SearchCourse" element={<SearchCourse />} />

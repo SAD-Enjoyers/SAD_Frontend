@@ -53,7 +53,7 @@ const ExamQuestions = (examData) => {
         if (!response.ok) {
           throw new Error(`Error ${response.status}: ${responseData.message}`);
         }
-        console.log("Response Data:", JSON.stringify(responseData, null, 2));
+        // console.log("Response Data:", JSON.stringify(responseData, null, 2));
 
         setQuestions(responseData.data || []);
       } catch (error) {
@@ -176,7 +176,7 @@ const ExamQuestions = (examData) => {
       setOpenSnackbar(true);
     } catch (error) {
       console.error("Error deleting question:", error);
-      setSnackbarMessage("Error deleting question. Please try again.");
+      setSnackbarMessage("Bad Network, Please try again later.");
       setSeverity("error");
       setOpenSnackbar(true);
     } finally {

@@ -18,7 +18,6 @@ const PrivateExam = () => {
   const { serviceId } = useParams(); // Extract serviceId from URL
   const location = useLocation(); // Get location state
   const [selectedTab, setSelectedTab] = useState(0);
-  const [participants, setParticipants] = useState([]);
   const [examData, setExamResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
@@ -30,25 +29,34 @@ const PrivateExam = () => {
     setSelectedTab(newValue);
     localStorage.setItem("selectedTab", newValue); // Save selected tab to localStorage
   };
-
   useEffect(() => {
-    // First, check if examData is passed via location state
-    if (location.state && location.state.examData) {
-      setExamResult(location.state.examData);
-      setLoading(false);
-    } else {
-      // Otherwise, try fetching the exam data from localStorage
-      const storedExamData = JSON.parse(localStorage.getItem("examData"));
-      if (storedExamData && storedExamData.serviceId === parseInt(serviceId)) {
-        setExamResult(storedExamData);
-        setLoading(false);
-      } else {
-        // Handle the case if there's no matching examData
-        console.error("Exam data not found or invalid serviceId");
-        setLoading(false);
+    // Always fetch the exam data from the API
+    const fetchExamData = async () => {
+      try {
+        const response = await fetch(`/api/v1/exam/${serviceId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "x-role": "user",
+          },
+        });
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+          setExamResult(result.data); // Update state
+          localStorage.setItem("examData", JSON.stringify(result.data)); // Save to localStorage
+        } else {
+          console.error("Failed to fetch exam data:", result.message);
+        }
+      } catch (error) {
+        console.error("API Error:", error);
+      } finally {
+        setLoading(false); // Stop loading spinner
       }
-    }
-  }, [location.state, serviceId]);
+    };
+
+    fetchExamData();
+  }, [serviceId, accessToken]);
 
   useEffect(() => {
     // Retrieve saved tab from localStorage

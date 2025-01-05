@@ -1,5 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
 import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Box,
   Grid,
   Card,
@@ -9,66 +14,157 @@ import {
   IconButton,
   Button,
   Modal,
+  Snackbar,
+  Alert,
   TextField,
   Divider,
   FormControl,
-  List,
-  ListItem,
-  ListItemText,
 } from "@mui/material";
 import { PlayArrow, Delete, Edit } from "@mui/icons-material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import axios from "axios";
+import {
+  Delete as DeleteIcon,
+  Cancel as CancelIcon,
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
-const mockVideos = [
-  {
-    id: 1,
-    title: "Introduction to React",
-    description: "Learn the basics of React in this introductory course.",
-    thumbnail: "https://via.placeholder.com/150",
-    url: "https://example.com/video1",
-    sortNumber: 1,
-  },
-  {
-    id: 2,
-    title: "Advanced React Patterns",
-    description: "Master advanced React patterns and state management.",
-    thumbnail: "https://via.placeholder.com/150",
-    url: "https://example.com/video2",
-    sortNumber: 2,
-  },
-  {
-    id: 3,
-    title: "React Hooks Deep Dive",
-    description: "Understand React Hooks with practical examples.",
-    thumbnail: "https://via.placeholder.com/150",
-    url: "https://example.com/video3",
-    sortNumber: 3,
-  },
-  {
-    id: 4,
-    title: "React and TypeScript",
-    description: "Build robust React apps using TypeScript.",
-    thumbnail: "https://via.placeholder.com/150",
-    url: "https://example.com/video4",
-    sortNumber: 4,
-  },
-];
+const CourseContent = ({ courseData, accessToken }) => {
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [severity, setSeverity] = useState("success"); // "success", "error", "warning", "info"
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
-const CourseContent = (courseData) => {
-  const [videos, setVideos] = useState(mockVideos);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [videoToDelete, setVideoToDelete] = useState(null); // Store the video to delete
+
+  const [videos, setVideos] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingVideo, setEditingVideo] = useState(null);
-  console.log("Response Data:", JSON.stringify(courseData, null, 2));
+  // console.log("Response Data:", JSON.stringify(courseData, null, 2));
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const response = await axios.get(
+          `/api/v1/course/play-list/${courseData.serviceId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`, // Add token to the Authorization header
+            },
+          }
+        );
+
+        // console.log(
+        //   "Raw Response Data:",
+        //   JSON.stringify(response.data, null, 2)
+        // );
+
+        // Extract the playlist and map it to match the expected format
+        const { playList } = response.data.data;
+
+        const formattedVideos = playList.map((video) => ({
+          id: video.video_id,
+          title: video.title,
+          description: video.v_description,
+          thumbnail: video.address
+            ? `/api/v1/uploads/service-images/${response.data.data.thumbnail}`
+            : null, // Replace with correct thumbnail path if needed
+          url: video.address, // Replace with correct video URL path if needed
+          sortNumber: video.sort_number,
+        }));
+
+        // console.log("Formatted Videos:", formattedVideos); // Log the formatted data
+
+        setVideos(formattedVideos); // Set the formatted data to state
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching videos:", error);
+        setIsError(true);
+        setIsLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, [courseData.serviceId, accessToken]);
+
   const handlePlayVideo = (videoUrl) => {
-    window.open(videoUrl, "_blank"); // Open video in a new tab or modal
+    // Open the video in a new tab/window
+    window.open(`/api/v1/uploads/course-video/${videoUrl}`, "_blank");
   };
 
-  const handleDelete = (videoId) => {
-    setVideos(videos.filter((video) => video.id !== videoId));
+  const handleDeleteClick = (video) => {
+    setVideoToDelete(video); // Store video data for deletion
+    setOpenConfirmDialog(true); // Open the confirmation dialog
   };
 
-  const handleUpload = () => {
-    console.log("Upload a new video");
+  const handleDelete = async (videoId, sortNumber) => {
+    try {
+      const payload = {
+        serviceId: courseData.serviceId, // Assuming courseData contains serviceId
+        videoId: videoId,
+        sortNumber: sortNumber,
+      };
+
+      // Send the request to delete the video
+      await axios.delete(`/api/v1/course/delete-video`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        data: payload, // Sending the payload as the body of the delete request
+      });
+
+      // Filter out the deleted video from the state
+      setVideos(videos.filter((video) => video.id !== videoId));
+
+      // Display success message
+      setSeverity("success");
+      setSnackbarMessage("Video deleted successfully!");
+      setOpenSnackbar(true);
+    } catch (error) {
+      console.error("Error deleting video:", error);
+
+      // Display error message
+      setSeverity("error");
+      setSnackbarMessage("Failed to delete video. Please try again.");
+      setOpenSnackbar(true);
+    }
+  };
+
+  const handleSaveReorder = async () => {
+    const reorderedVideos = videos.map((video) => ({
+      videoId: video.id,
+      sortNumber: video.sortNumber,
+    }));
+
+    const data = {
+      serviceId: courseData.serviceId, // Use the serviceId from your courseData
+      reorderedVideos,
+    };
+
+    try {
+      // Send PUT request to the backend to update video order
+      const response = await axios.put("/api/v1/course/reorder-video", data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Include the access token in the headers
+        },
+      });
+      console.log("Videos reordered successfully:", response.data);
+
+      // Show success message
+      setSnackbarMessage("Videos reordered successfully!");
+      setSeverity("success");
+      setOpenSnackbar(true);
+    } catch (error) {
+      console.error("Error reordering videos:", error);
+
+      // Show error message
+      setSnackbarMessage("Failed to reorder videos. Please try again.");
+      setSeverity("error");
+      setOpenSnackbar(true);
+    }
   };
 
   const handleDragEnd = (result) => {
@@ -84,20 +180,62 @@ const CourseContent = (courseData) => {
     });
 
     setVideos(reorderedVideos);
+
+    // Send the reordered videos to the backend
+    handleSaveReorder();
   };
 
+  if (isLoading) {
+    return <Typography>Loading videos...</Typography>;
+  }
+
+  if (isError) {
+    return (
+      <Typography>Error loading videos. Please try again later.</Typography>
+    );
+  }
+
+  const handleUpload = () => {
+    console.log("Upload a new video");
+  };
   const handleEdit = (video) => {
     setEditingVideo(video);
     setIsModalOpen(true);
   };
+  const handleSave = async () => {
+    try {
+      const payload = {
+        serviceId: courseData.serviceId,
+        videoId: editingVideo.id,
+        title: editingVideo.title,
+        description: editingVideo.description,
+      };
 
-  const handleSave = () => {
-    const updatedVideos = videos.map((video) =>
-      video.id === editingVideo.id ? editingVideo : video
-    );
-    setVideos(updatedVideos);
-    setIsModalOpen(false);
-    setEditingVideo(null);
+      await axios.put(`/api/v1/course/edit-video`, payload, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const updatedVideos = videos.map((video) =>
+        video.id === editingVideo.id ? editingVideo : video
+      );
+      setVideos(updatedVideos);
+      setIsModalOpen(false);
+      setEditingVideo(null);
+
+      // Display success message
+      setSeverity("success");
+      setSnackbarMessage("Video updated successfully!");
+      setOpenSnackbar(true);
+    } catch (error) {
+      console.error("Error updating video:", error);
+
+      // Display error message
+      setSeverity("error");
+      setSnackbarMessage("Failed to update video details. Please try again.");
+      setOpenSnackbar(true);
+    }
   };
 
   return (
@@ -137,8 +275,9 @@ const CourseContent = (courseData) => {
                           image={video.thumbnail}
                           alt={video.title}
                           sx={{ cursor: "pointer" }}
-                          onClick={() => handlePlayVideo(video.url)}
+                          onClick={() => handlePlayVideo(video.url)} // Open in a new window
                         />
+
                         <CardContent>
                           <Typography
                             variant="subtitle1"
@@ -182,7 +321,7 @@ const CourseContent = (courseData) => {
                             <IconButton
                               aria-label="delete"
                               color="error"
-                              onClick={() => handleDelete(video.id)}
+                              onClick={() => handleDeleteClick(video)} // Open confirmation dialog
                             >
                               <Delete />
                             </IconButton>
@@ -299,6 +438,49 @@ const CourseContent = (courseData) => {
           </Button>
         </Box>
       </Modal>
+      <Dialog
+        open={openConfirmDialog}
+        onClose={() => setOpenConfirmDialog(false)} // Close dialog when clicked outside
+      >
+        <DialogTitle>Are you sure you want to delete this video?</DialogTitle>
+        <DialogContent>
+          <Typography>Title: {videoToDelete?.title}</Typography>
+          <Typography>Description: {videoToDelete?.description}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpenConfirmDialog(false)} // Close dialog without deleting
+            color="primary"
+            startIcon={<CancelIcon />} // Add Cancel icon
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleDelete(videoToDelete.id, videoToDelete.sortNumber); // Proceed with deletion
+              setOpenConfirmDialog(false); // Close dialog
+            }}
+            color="error"
+            startIcon={<DeleteIcon />} // Add Delete icon
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
