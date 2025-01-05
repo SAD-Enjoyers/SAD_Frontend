@@ -21,7 +21,7 @@ import EnrolledStudents from "./tabs/EnrolledStudents";
 import Comments from "../../../common/Comments/CommentSection";
 
 const PrivateCourse = () => {
-  const { courseId } = useParams(); // Extract courseId from URL
+  const { serviceId } = useParams();
   const location = useLocation(); // Get location state
   const [selectedTab, setSelectedTab] = useState(0);
   const [enrolledStudents, setEnrolledStudents] = useState([]);
@@ -30,6 +30,7 @@ const PrivateCourse = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const accessToken = localStorage.getItem("token");
+  const courseId = serviceId;
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
