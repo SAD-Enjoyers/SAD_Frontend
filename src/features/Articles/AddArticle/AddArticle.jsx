@@ -342,7 +342,45 @@ export default function AddArticle() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const navigate = useNavigate();
+  
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    let isValid = true;
 
+    if (!coursename.trim()) {
+      setcourseNameError(" ");
+      isValid = false;
+    } else {
+      setcourseNameError("");
+    }
+
+    if (!selectedLevel) {
+      setSelectedLevelError(" ");
+      isValid = false;
+    } else {
+      setSelectedLevelError("");
+    }
+
+    if (selectedSubjects.length === 0) {
+      setSelectedSubjectsError(" ");
+      isValid = false;
+    } else {
+      setSelectedSubjectsError("");
+    }
+
+    if (!price) {
+      setPriceError(" ");
+      isValid = false;
+    } else {
+      setPriceError("");
+    }
+    // console.log(isValid);
+    if (isValid) {
+      console.log("Form submitted successfully.");
+      submitImage();
+      // Add form submission logic here
+    }
+  };
 
 
 
