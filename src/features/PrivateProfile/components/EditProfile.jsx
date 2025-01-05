@@ -79,7 +79,7 @@ export default function EditProfile({ closeState }) {
         console.log(data);
         alert("change profile successfully");
         closeState();
-        navigate("/PrivateProfile");
+        window.location.reload();
       })
       .catch((error) => {
         console.error("Error:", error);

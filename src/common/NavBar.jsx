@@ -35,30 +35,38 @@ export default function NavBar() {
 
   useEffect(() => {
     setImageProfile(localStorage.getItem("imageProfile"));
+
     const token = localStorage.getItem("token");
-    // if (!token) {
+    if (!token) {
+      setIsValid(false);
+      return;
+    }
+
     fetch("/api/v1/profile/private-data", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
         "x-role": localStorage.getItem("role"),
         "Content-Type": "application/json",
       },
     })
       .then((response) => {
         if (!response.ok) {
+          console.error(`Error: ${response.status} - ${response.statusText}`);
           setIsValid(false);
-        } else {
-          return response.json();
+          return null; // جلوگیری از ادامه پردازش
         }
+        return response.json();
       })
       .catch((err) => {
+        console.error("Fetch error:", err.message);
         setIsValid(false);
       })
       .then((profile) => {
-        localStorage.setItem("profile", profile);
+        if (profile) {
+          localStorage.setItem("profile", JSON.stringify(profile));
+        }
       });
-    // }
   }, []);
 
   const handleOpenNavMenu = (event) => {
@@ -77,11 +85,11 @@ export default function NavBar() {
     setAnchorEl(null);
   };
 
-  const handleLogOut = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    setIsValid(false);
-  };
+  // const handleLogOut = () => {
+  //   localStorage.removeItem("token");
+  //   localStorage.removeItem("role");
+  //   setIsValid(false);
+  // };
 
   const fetchData = () => {
     if (!isValid) {
