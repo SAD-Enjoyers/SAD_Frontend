@@ -45,7 +45,7 @@ const ExamSettings = ({ examData, accessToken }) => {
   const [description, setDescription] = useState(examData.description);
   const [level, setLevel] = useState(examData.level);
   const [price, setPrice] = useState(examData.price);
-  const [activityStatus, setActivityStatus] = useState("Active");
+  const [activityStatus, setActivityStatus] = useState(examData.activityStatus);
   const [examDuration, setExamDuration] = useState(35);
 
   // Editable tags states
