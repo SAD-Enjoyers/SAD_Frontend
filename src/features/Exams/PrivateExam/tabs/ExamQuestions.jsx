@@ -53,7 +53,7 @@ const ExamQuestions = (examData) => {
         if (!response.ok) {
           throw new Error(`Error ${response.status}: ${responseData.message}`);
         }
-        console.log("Response Data:", JSON.stringify(responseData, null, 2));
+        // console.log("Response Data:", JSON.stringify(responseData, null, 2));
 
         setQuestions(responseData.data || []);
       } catch (error) {
