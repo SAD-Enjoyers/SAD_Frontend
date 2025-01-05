@@ -349,7 +349,6 @@ export default function AddCourse() {
   const [imageError, setImageError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
 
- 
   const [selectedLevelError, setSelectedLevelError] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [courseNameError, setcourseNameError] = useState("");
@@ -361,6 +360,13 @@ export default function AddCourse() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const navigate = useNavigate();
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
@@ -387,8 +393,6 @@ export default function AddCourse() {
     } else {
       setDescriptionError("");
     }
-
-
 
     if (selectedSubjects.length === 0) {
       setSelectedSubjectsError(" ");
@@ -465,6 +469,8 @@ export default function AddCourse() {
     }
   };
   useEffect(() => {
+    // setSnackbarMessage("Test Message: Snackbar should be visible.");
+    // setOpenSnackbar(true);
     setLoading(true);
     const fetchCategories = async () => {
       try {
@@ -533,12 +539,12 @@ export default function AddCourse() {
         console.log(data);
         setSnackbarMessage("Course created successfully!");
         setOpenSnackbar(true);
-        navigate("/PrivateCourse");
+        navigate("/PrivateCourse/"+serviceId);
       })
       .catch((error) => {
         console.error("Error:", error);
-        // setSnackbarMessage("Failed to create course. Please try again.");
-        // setOpenSnackbar(true);
+        setSnackbarMessage("Failed to create course. Please try again.");
+        setOpenSnackbar(true);
       });
   };
 
@@ -561,7 +567,6 @@ export default function AddCourse() {
           "&:hover": {
             boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
             transform: "scale(1.02)",
-           
           },
         }}
       >
@@ -569,10 +574,12 @@ export default function AddCourse() {
           variant="h4"
           align="center"
           gutterBottom
-          sx={{       fontWeight: 700,
+          sx={{
+            fontWeight: 700,
             color: "#378ce7",
             mb: 4,
-            textTransform: "uppercase",}}
+            textTransform: "uppercase",
+          }}
         >
           Add New Course
         </Typography>
@@ -598,7 +605,6 @@ export default function AddCourse() {
                   } else {
                     setcourseNameError("");
                   }
-                  
                 }}
                 onBlur={() => {
                   if (coursename.trim() === "") {
@@ -823,83 +829,76 @@ export default function AddCourse() {
               />
             </Box> */}
 
-          
-  {/* Price */}
-  <Grid item xs={12} sm={6} md={4}>
-  <FormControl
-    fullWidth
-    variant="outlined"
-    error={!!priceError}
-    sx={{
-      backgroundColor: "#ffffff",
-      borderRadius: "8px",
-      "& .MuiOutlinedInput-notchedOutline": {
-        borderColor: "#E0E0E0", // رنگ حاشیه پیش‌فرض
-      },
-      "&:hover .MuiOutlinedInput-notchedOutline": {
-        borderColor: "#378CE7", // رنگ حاشیه هنگام هاور
-      },
-      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-        borderColor: "#378CE7", // رنگ حاشیه هنگام فوکوس
-      },
-    }}
-  >
-    <TextField
-      error={!!priceError}
-      type="number"
-      value={price}
-      onChange={(e) => {
-        const value = parseFloat(e.target.value);
-        if (value < 0) {
-          setPriceError("Price cannot be negative.");
-        } else {
-          setPrice(value);
-          setPriceError("");
-        }
-      }}
-      label="Price"
-      InputProps={{
-        endAdornment: (
-          <Typography
-            sx={{
-              color: "#378CE7",
-              fontWeight: "bold",
-              fontSize: "14px",
-              marginLeft: 1,
-            }}
-          >
-            $
-          </Typography>
-        ),
-      }}
-      helperText={
-        priceError ? priceError : "Enter a valid price (e.g., 10, 20.5)"
-      }
-      sx={{
-        "& .MuiOutlinedInput-root": {
-          borderRadius: "8px",
-          "& fieldset": {
-            borderColor: priceError ? "#FF0000" : "#E0E0E0", // حاشیه پیش‌فرض
-          },
-          "&:hover fieldset": {
-            borderColor: "#378CE7", // حاشیه هنگام هاور
-          },
-          "&.Mui-focused fieldset": {
-            borderColor: "#378CE7", // حاشیه هنگام فوکوس
-          },
-        },
-      }}
-    />
-  </FormControl>
-</Grid>
-
-
-
-
-
-
-
-
+            {/* Price */}
+            <Grid item xs={12} sm={6} md={4}>
+              <FormControl
+                fullWidth
+                variant="outlined"
+                error={!!priceError}
+                sx={{
+                  backgroundColor: "#ffffff",
+                  borderRadius: "8px",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#E0E0E0", // رنگ حاشیه پیش‌فرض
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#378CE7", // رنگ حاشیه هنگام هاور
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#378CE7", // رنگ حاشیه هنگام فوکوس
+                  },
+                }}
+              >
+                <TextField
+                  error={!!priceError}
+                  type="number"
+                  value={price}
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    if (value < 0) {
+                      setPriceError("Price cannot be negative.");
+                    } else {
+                      setPrice(value);
+                      setPriceError("");
+                    }
+                  }}
+                  label="Price"
+                  InputProps={{
+                    endAdornment: (
+                      <Typography
+                        sx={{
+                          color: "#378CE7",
+                          fontWeight: "bold",
+                          fontSize: "14px",
+                          marginLeft: 1,
+                        }}
+                      >
+                        $
+                      </Typography>
+                    ),
+                  }}
+                  helperText={
+                    priceError
+                      ? priceError
+                      : "Enter a valid price (e.g., 10, 20.5)"
+                  }
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "8px",
+                      "& fieldset": {
+                        borderColor: priceError ? "#FF0000" : "#E0E0E0", // حاشیه پیش‌فرض
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#378CE7", // حاشیه هنگام هاور
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#378CE7", // حاشیه هنگام فوکوس
+                      },
+                    },
+                  }}
+                />
+              </FormControl>
+            </Grid>
             {/* Upload Image */}
             <Box
               sx={{
@@ -912,16 +911,27 @@ export default function AddCourse() {
                 borderRadius: 2,
                 width: 300,
                 mt: "30px",
-                mb:"30px",
-                ml:"250px"
+                mb: "30px",
+                ml: "250px",
               }}
             >
-              <Typography variant="h6"
-               sx={{ color: "#378ce7", fontWeight: 600, textTransform: "uppercase" }}
-              >Upload an Image</Typography>
-              <Button variant="contained" component="label" sx={{
-                backgroundColor: "#378ce7"
-              }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  color: "#378ce7",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                }}
+              >
+                Upload an Image
+              </Typography>
+              <Button
+                variant="contained"
+                component="label"
+                sx={{
+                  backgroundColor: "#378ce7",
+                }}
+              >
                 Choose Image
                 <input
                   type="file"
@@ -959,24 +969,47 @@ export default function AddCourse() {
                 />
               )}
               {selectedImage && (
-                <Button variant="outlined" color="error" onClick={handleClear}
-                sx={{ mt: 2 }}
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={handleClear}
+                  sx={{ mt: 2 }}
                 >
                   Remove Image
                 </Button>
               )}
             </Box>
-
           </Grid>
 
           <Box textAlign="center" mt={3} mb={5}>
-            <Button type="submit" variant="contained"  sx={{
-                backgroundColor: "#378ce7"
-              }}>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                backgroundColor: "#378ce7",
+              }}
+            >
               Add Course
             </Button>
           </Box>
         </form>
+
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={1000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={
+              snackbarMessage.includes("successfully") ? "success" : "error"
+            }
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </Box>
     </Container>
   );
