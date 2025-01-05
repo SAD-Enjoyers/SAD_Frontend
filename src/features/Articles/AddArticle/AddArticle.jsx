@@ -391,7 +391,19 @@ export default function AddArticle() {
     }
   };
 
+  const handleClear = () => {
+    setSelectedImage(null);
+    setPreviewImage(null);
+    setImageName("");
+  };
 
+  const submitImage = async () => {
+    if (!selectedImage) {
+      setSnackbarMessage("Please select an image first!");
+      setOpenSnackbar(true);
+      return;
+    }
+    
 
 
 
