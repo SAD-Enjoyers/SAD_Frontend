@@ -725,4 +725,169 @@ export default function AddArticle() {
                 </FormControl>
               </Grid>
 
-
+            
+    {/* Price */}
+    <Grid item xs={12} sm={6} md={4}>
+    <FormControl
+      fullWidth
+      variant="outlined"
+      error={!!priceError}
+      sx={{
+        backgroundColor: "#ffffff",
+        borderRadius: "8px",
+        "& .MuiOutlinedInput-notchedOutline": {
+          borderColor: "#E0E0E0", // رنگ حاشیه پیش‌فرض
+        },
+        "&:hover .MuiOutlinedInput-notchedOutline": {
+          borderColor: "#378CE7", // رنگ حاشیه هنگام هاور
+        },
+        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+          borderColor: "#378CE7", // رنگ حاشیه هنگام فوکوس
+        },
+      }}
+    >
+      <TextField
+        error={!!priceError}
+        type="number"
+        value={price}
+        onChange={(e) => {
+          const value = parseFloat(e.target.value);
+          if (value < 0) {
+            setPriceError("Price cannot be negative.");
+          } else {
+            setPrice(value);
+            setPriceError("");
+          }
+        }}
+        label="Price"
+        InputProps={{
+          endAdornment: (
+            <Typography
+              sx={{
+                color: "#378CE7",
+                fontWeight: "bold",
+                fontSize: "14px",
+                marginLeft: 1,
+              }}
+            >
+              $
+            </Typography>
+          ),
+        }}
+        helperText={
+          priceError ? priceError : "Enter a valid price (e.g., 10, 20.5)"
+        }
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            borderRadius: "8px",
+            "& fieldset": {
+              borderColor: priceError ? "#FF0000" : "#E0E0E0", // حاشیه پیش‌فرض
+            },
+            "&:hover fieldset": {
+              borderColor: "#378CE7", // حاشیه هنگام هاور
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#378CE7", // حاشیه هنگام فوکوس
+            },
+          },
+        }}
+      />
+    </FormControl>
+  </Grid>
+  
+  
+  
+  
+  
+  
+  
+  
+              {/* Upload Image */}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 2,
+                  p: 2,
+                  border: "1px solid #378ce7",
+                  borderRadius: 2,
+                  width: 300,
+                  mt: "30px",
+                  mb:"30px",
+                  ml:"250px"
+                }}
+              >
+                <Typography variant="h6">Upload an Image</Typography>
+                <Button variant="contained" component="label" sx={{
+                  backgroundColor: "#378ce7"
+                }}>
+                  Choose Image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={handleImageUpload}
+                  />
+                </Button>
+                {imageName && (
+                  <TextField
+                    value={imageName}
+                    variant="outlined"
+                    disabled
+                    fullWidth
+                    size="small"
+                    label="Selected File"
+                  />
+                )}
+                {previewImage && (
+                  <Box
+                    component="img"
+                    src={previewImage}
+                    alt="Uploaded Preview"
+                    sx={{
+                      maxWidth: "100%",
+                      height: "auto",
+                      borderRadius: 2,
+                      boxShadow: 2,
+                    }}
+                  />
+                )}
+                {selectedImage && (
+                  <Button variant="outlined" color="error" onClick={handleClear}>
+                    Remove Image
+                  </Button>
+                )}
+              </Box>
+              {/* Submit Button */}
+              {/* <Grid item xs={12}>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  sx={{
+                    backgroundColor: "#378ce7",
+                    width: "100%",
+                    borderRadius: "8px",
+                    "&:hover": {
+                      backgroundColor: "#285e99",
+                    },
+                  }}
+                  disabled={isLoading}
+                >
+                  {isLoading ? <CircularProgress size={24} color="inherit" /> : "Submit Course"}
+                </Button>
+              </Grid> */}
+            </Grid>
+  
+            <Box textAlign="center" mt={3} mb={5}>
+              <Button type="submit" variant="contained"  sx={{
+                  backgroundColor: "#378ce7"
+                }}>
+                Add Course
+              </Button>
+            </Box>
+          </form>
+        </Box>
+      </Container>
+    );
+  }
