@@ -593,6 +593,136 @@ export default function AddArticle() {
                   }}
                 />
               </Grid>
-
+              {/* Level Selection with Icons */}
+              <Grid item xs={12} sm={6} md={4}>
+                <Box margin={"0 auto"} width={"100%"}>
+                  <FormControl
+                    fullWidth
+                    variant="outlined"
+                    error={!!selectedLevelError}
+                    // helperText={selectedLevelError}
+                  >
+                    <InputLabel>Level</InputLabel>
+                    <Select
+                      value={selectedLevel}
+                      onChange={(event) => {
+                        setSelectedLevel(event.target.value);
+                        setSelectedLevelError("");
+                      }}
+                      label="Level"
+                      sx={{
+                        backgroundColor: "#ffffff", // سفید بودن پس‌زمینه
+                        borderRadius: "8px", // گوشه‌های گرد
+                        borderColor: "#E0E0E0", // رنگ حاشیه
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#E0E0E0", // رنگ حاشیه روی حالت عادی
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#378CE7", // رنگ حاشیه روی هاور
+                        },
+                        "& .MuiSelect-icon": {
+                          color: "#378CE7", // رنگ آیکن
+                        },
+                      }}
+                    >
+                      <MenuItem value="">
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <SchoolOutlined
+                            sx={{ fontSize: "1.2rem", color: "#6c757d" }}
+                          />
+                          <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                            All Levels
+                          </Typography>
+                        </Box>
+                      </MenuItem>
+                      <MenuItem value="Beginner">
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <School sx={{ fontSize: "1.2rem", color: "#4CAF50" }} />
+  
+                          <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                            Beginner
+                          </Typography>
+                        </Box>
+                      </MenuItem>
+                      <MenuItem value="Medium">
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <School sx={{ fontSize: "1.2rem", color: "#FF9800" }} />
+                          <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                            Medium
+                          </Typography>
+                        </Box>
+                      </MenuItem>
+                      <MenuItem value="Advanced">
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <School sx={{ fontSize: "1.2rem", color: "#F44336" }} />
+                          <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                            Advanced
+                          </Typography>
+                        </Box>
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <FormControl
+                  fullWidth
+                  variant="outlined"
+                  error={!!selectedSubjectsError}
+                >
+                  <InputLabel>Subjects</InputLabel>
+  
+                  <Select
+                    multiple
+                    value={selectedSubjects}
+                    onChange={(e) => {
+                      handleSubjectChange(e);
+                      setSelectedSubjectsError("");
+                    }}
+                    label="Subjects"
+                    renderValue={(selected) => selected.join(", ")} // Comma-separated values
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 224, // حداکثر ارتفاع منو
+                          width: 250, // عرض منو
+                        },
+                      },
+                    }}
+                    sx={{
+                      backgroundColor: "#ffffff", // Clean white background
+                      borderRadius: "8px", // Rounded corners
+                      borderColor: "#E0E0E0", // Lighter border color
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#E0E0E0", // Light grey border color
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#378CE7", // Hover effect with blue border
+                      },
+                      "& .MuiSelect-icon": {
+                        color: "#378CE7", // Icon color matches theme
+                      },
+                    }}
+                  >
+                    {categories.map((category) => (
+                      <MenuItem
+                        key={category.categoryId}
+                        value={category.category}
+                      >
+                        <Checkbox
+                          checked={selectedSubjects.includes(category.category)}
+                          sx={{
+                            color: "#378CE7", // Checkbox icon color matches theme
+                            "&.Mui-checked": {
+                              color: "#378CE7", // Checked state color
+                            },
+                          }}
+                        />
+                        <ListItemText primary={category.category} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
 
 
