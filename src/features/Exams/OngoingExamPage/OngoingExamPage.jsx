@@ -203,6 +203,8 @@ const OngoingExamPage = () => {
         });
 
         if (!response.ok) {
+          toast.error(`HTTP error! status: ${response.status}`);
+
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
@@ -218,7 +220,7 @@ const OngoingExamPage = () => {
           2000
         ); // Redirect after 2 seconds
       } catch (error) {
-        console.error("Failed to fetch exam data:", error);
+        toast.error(`Failed to fetch exam data: ${error}`);
       }
     };
     fetchEndExam();

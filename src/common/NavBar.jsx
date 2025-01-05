@@ -65,6 +65,8 @@ export default function NavBar() {
       .then((profile) => {
         if (profile) {
           localStorage.setItem("profile", JSON.stringify(profile));
+          localStorage.setItem("imageProfile", profile.data.userData.image);
+          setImageProfile(profile.data.userData.image);
         }
       });
   }, []);
@@ -178,8 +180,7 @@ export default function NavBar() {
 
             <MenuItem
               onClick={() => {
-                localStorage.removeItem("token");
-                localStorage.removeItem("role");
+                localStorage.clear();
                 setIsValid(false);
                 navigate("/");
               }}
