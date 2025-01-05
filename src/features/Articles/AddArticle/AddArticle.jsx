@@ -435,7 +435,87 @@ export default function AddArticle() {
         setOpenSnackbar(true);
       }
     };
-
+    useEffect(() => {
+      setLoading(true);
+      const fetchCategories = async () => {
+        try {
+          const response = await axios.get("/api/v1/common/categories");
+          const fetchedCategories = response.data.data.categoryList || [];
+          setCategories(fetchedCategories);
+          setLoading(false);
+          localStorage.setItem("categoryList", JSON.stringify(fetchedCategories));
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+          setLoading(false);
+          navigate("/privateprofile");
+        }
+      };
+  
+      const storedCategoryList = localStorage.getItem("categoryList");
+      if (!storedCategoryList) {
+        fetchCategories();
+      } else {
+        try {
+          const parsedCategoryList = JSON.parse(storedCategoryList);
+          setCategories(parsedCategoryList);
+        } catch (error) {
+          console.error("Error parsing category list from localStorage:", error);
+          localStorage.removeItem("categoryList");
+        }
+        setLoading(false);
+      }
+    }, []);
+  
+    const handleSubjectChange = (event) => {
+      const selected = event.target.value;
+      if (selected.length <= 3) {
+        setSelectedSubjects(selected);
+      }
+    };
+  
+    const submitCourse = (image) => {
+      var [tag1, tag2, tag3] = [...selectedSubjects];
+  
+      const formData = {
+        name: coursename,
+        description,
+        level: selectedLevel,
+        activityStatus: "Active",
+        serviceType: "3",
+        price: parseInt(price),
+        image: image,
+        tag1,
+        tag2,
+        tag3,
+      };
+      console.log(formData);
+  
+      fetch("/api/v1/course/make-course", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "x-role": localStorage.getItem("role"),
+        },
+        body: JSON.stringify(formData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setSnackbarMessage("Course created successfully!");
+          setOpenSnackbar(true);
+          navigate("/PrivateCourse");
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          // setSnackbarMessage("Failed to create course. Please try again.");
+          // setOpenSnackbar(true);
+        });
+    };
+  
+    // if (isLoading) {
+    //   return <LoadingScreen />;
+    // }
 
 
 
