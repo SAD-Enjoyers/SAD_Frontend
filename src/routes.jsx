@@ -76,7 +76,7 @@ function AppRoutes() {
 
           {/* Courses */}
           <Route path="PublicCourse" element={<PublicCourse />} />
-          <Route path="PrivateCourse" element={<PrivateCourse />} />
+          <Route path="PrivateCourse/:serviceId" element={<PrivateCourse />} />
           <Route path="AddCourse" element={<AddCourse />} />
           <Route path="CoursePreview/:serviceId" element={<CoursePreview />} />
           <Route path="SearchCourse" element={<SearchCourse />} />
