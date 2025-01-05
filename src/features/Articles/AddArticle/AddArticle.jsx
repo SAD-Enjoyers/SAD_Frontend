@@ -342,7 +342,7 @@ export default function AddArticle() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const navigate = useNavigate();
-  
+
   const handleFormSubmit = (event) => {
     event.preventDefault();
     let isValid = true;
@@ -382,6 +382,14 @@ export default function AddArticle() {
     }
   };
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      setPreviewImage(URL.createObjectURL(file));
+      setImageName(file.name);
+    }
+  };
 
 
 
