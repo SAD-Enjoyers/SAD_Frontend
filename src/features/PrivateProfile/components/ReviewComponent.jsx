@@ -132,9 +132,9 @@ export default function ReviewComponent(props) {
     }
     if (props.section == "My Courses") {
       if (item.type === "member") {
-        navigate("/PublicCourse");
+        navigateToPublicCourse(item);
       } else {
-        navigate("/PrivateCourse");
+        navigateToPrivateCourse(item);
       }
     }
     if (props.section == "My Articles") {
@@ -208,6 +208,17 @@ export default function ReviewComponent(props) {
   const navigateToPrivateArticle = (articleData) => {
     localStorage.setItem("articleData", JSON.stringify(articleData)); // Save to localStorage
     navigate(`/PrivateArticle/${articleData.serviceId}`, {
+      state: { articleData },
+    });
+  };
+
+  const navigateToPublicCourse = (courseData) => {
+    localStorage.setItem("courseData", JSON.stringify(courseData)); // Save to localStorage
+    navigate("/PublicCourse", { state: { courseData } });
+  };
+  const navigateToPrivateCourse = (courseData) => {
+    localStorage.setItem("courseData", JSON.stringify(courseData)); // Save to localStorage
+    navigate(`/PrivateCourse/${courseData.serviceId}`, {
       state: { articleData },
     });
   };
