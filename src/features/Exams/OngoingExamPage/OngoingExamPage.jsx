@@ -17,12 +17,13 @@ import {
   Tooltip,
   IconButton,
 } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import ClearIcon from "@mui/icons-material/Clear";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 
 const QuestionsList = ({
   questions,
@@ -88,7 +89,8 @@ const OngoingExamPage = () => {
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [markedQuestions, setMarkedQuestions] = useState([]);
-
+  const [examToken, setExamToken] = useState("");
+  const navigate = useNavigate();
   // Fetch exam questions
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -108,6 +110,7 @@ const OngoingExamPage = () => {
 
         const data = await response.json();
         console.log(data);
+        setExamToken(data.data.examToken);
         setQuestions(data.data.questions);
         setRemainingTime(data.data.examDuration * 60);
       } catch (error) {
@@ -182,6 +185,43 @@ const OngoingExamPage = () => {
 
     // نمایش خروجی
     console.log(selectedOptions);
+
+    const fetchEndExam = async () => {
+      console.log(examToken);
+      try {
+        const response = await fetch("/api/v1/exam/end-exam", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "x-role": localStorage.getItem("role"),
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            examToken: examToken,
+            answers: selectedOptions,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const examData = await response.json();
+        toast.success("end exam successful! Redirecting to PublicExam...");
+        setTimeout(
+          () =>
+            navigate("/PublicExam", {
+              state: {
+                examData,
+              },
+            }),
+          2000
+        ); // Redirect after 2 seconds
+      } catch (error) {
+        console.error("Failed to fetch exam data:", error);
+      }
+    };
+    fetchEndExam();
   };
 
   const formatTime = (seconds) => {
@@ -311,6 +351,15 @@ const OngoingExamPage = () => {
           <Alert severity="success">Exam submitted successfully!</Alert>
         </Snackbar>
       </Container>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </Box>
   );
 };

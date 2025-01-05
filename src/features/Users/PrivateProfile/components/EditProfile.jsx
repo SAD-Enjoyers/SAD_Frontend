@@ -18,6 +18,7 @@ export default function EditProfile({ closeState }) {
   const [lastName, setLastName] = useState("");
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
+
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {

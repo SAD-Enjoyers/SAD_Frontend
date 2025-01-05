@@ -25,10 +25,10 @@ export default function PrivateProfile() {
   const [open, setOpen] = useState(false);
   const [imageProfile, setImageProfile] = useState("");
   const [formData, setFormData] = useState({
-    firstName: " ",
-    lastName: " ",
-    userName: " ",
-    email: " ",
+    firstName: "",
+    lastName: "",
+    userName: "",
+    email: "",
   });
 
   const closeState = () => {
@@ -69,7 +69,7 @@ export default function PrivateProfile() {
   };
 
   // dont repead yourself    dry
-  const StyledButton = ({ link, children }) => {
+  const StyledButton = ({ link, children, onClick }) => {
     if (!link) {
       link = "";
     }
@@ -95,6 +95,7 @@ export default function PrivateProfile() {
               color: "#fff",
             },
           }}
+          onClick={onClick} // انتقال onClick به دکمه داخلی
         >
           {children}
         </Button>
@@ -143,7 +144,19 @@ export default function PrivateProfile() {
               <StyledButton link="AddCourse">add courses</StyledButton>
               <StyledButton link="AddArticle">add article</StyledButton>
               <StyledButton link="AddQuestion">add question</StyledButton>
-              <StyledButton link="">review profile</StyledButton>
+              {formData?.userName && (
+                <StyledButton
+                  link={`PublicUsers/${formData.userName}`}
+                  onClick={() => {
+                    localStorage.setItem(
+                      "userImage",
+                      `/api/v1/uploads/profile-images/${imageProfile}`
+                    );
+                  }}
+                >
+                  Review Profile
+                </StyledButton>
+              )}
             </Box>
           </Grid2>
 
