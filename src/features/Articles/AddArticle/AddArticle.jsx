@@ -403,8 +403,38 @@ export default function AddArticle() {
       setOpenSnackbar(true);
       return;
     }
-    
 
+      const validImageTypes = ["image/jpeg", "image/png"];
+      if (!validImageTypes.includes(selectedImage.type)) {
+        alert("Only image files (jpeg, png) are allowed!");
+        return;
+      }
+  
+      const formData = new FormData();
+      formData.append("image", selectedImage);
+  
+      try {
+        const response = await fetch("/api/v1/educational-service/upload-image", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "x-role": localStorage.getItem("role"),
+          },
+          body: formData,
+        });
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+  
+        const data = await response.json();
+        submitCourse(data.data.fileName);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        setSnackbarMessage("Failed to upload image. Please try again.");
+        setOpenSnackbar(true);
+      }
+    };
 
 
 
