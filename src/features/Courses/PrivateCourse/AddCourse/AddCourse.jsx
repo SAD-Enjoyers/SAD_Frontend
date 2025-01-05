@@ -550,7 +550,6 @@ export default function AddCourse() {
           "&:hover": {
             boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
             transform: "scale(1.02)",
-           
           },
         }}
       >
@@ -558,7 +557,7 @@ export default function AddCourse() {
           variant="h4"
           align="center"
           gutterBottom
-          sx={{ fontWeight: 600, color: "#333" , mb:4,}}
+          sx={{ fontWeight: 600, color: "#333", mb: 4 }}
         >
           Add New Course
         </Typography>
@@ -786,82 +785,76 @@ export default function AddCourse() {
               />
             </Box> */}
 
-          
-  {/* Price */}
-  <Grid item xs={12} sm={6} md={4}>
-  <FormControl
-    fullWidth
-    variant="outlined"
-    error={!!priceError}
-    sx={{
-      backgroundColor: "#ffffff",
-      borderRadius: "8px",
-      "& .MuiOutlinedInput-notchedOutline": {
-        borderColor: "#E0E0E0", // رنگ حاشیه پیش‌فرض
-      },
-      "&:hover .MuiOutlinedInput-notchedOutline": {
-        borderColor: "#378CE7", // رنگ حاشیه هنگام هاور
-      },
-      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-        borderColor: "#378CE7", // رنگ حاشیه هنگام فوکوس
-      },
-    }}
-  >
-    <TextField
-      error={!!priceError}
-      type="number"
-      value={price}
-      onChange={(e) => {
-        const value = parseFloat(e.target.value);
-        if (value < 0) {
-          setPriceError("Price cannot be negative.");
-        } else {
-          setPrice(value);
-          setPriceError("");
-        }
-      }}
-      label="Price"
-      InputProps={{
-        endAdornment: (
-          <Typography
-            sx={{
-              color: "#378CE7",
-              fontWeight: "bold",
-              fontSize: "14px",
-              marginLeft: 1,
-            }}
-          >
-            $
-          </Typography>
-        ),
-      }}
-      helperText={
-        priceError ? priceError : "Enter a valid price (e.g., 10, 20.5)"
-      }
-      sx={{
-        "& .MuiOutlinedInput-root": {
-          borderRadius: "8px",
-          "& fieldset": {
-            borderColor: priceError ? "#FF0000" : "#E0E0E0", // حاشیه پیش‌فرض
-          },
-          "&:hover fieldset": {
-            borderColor: "#378CE7", // حاشیه هنگام هاور
-          },
-          "&.Mui-focused fieldset": {
-            borderColor: "#378CE7", // حاشیه هنگام فوکوس
-          },
-        },
-      }}
-    />
-  </FormControl>
-</Grid>
-
-
-
-
-
-
-
+            {/* Price */}
+            <Grid item xs={12} sm={6} md={4}>
+              <FormControl
+                fullWidth
+                variant="outlined"
+                error={!!priceError}
+                sx={{
+                  backgroundColor: "#ffffff",
+                  borderRadius: "8px",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#E0E0E0", // رنگ حاشیه پیش‌فرض
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#378CE7", // رنگ حاشیه هنگام هاور
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#378CE7", // رنگ حاشیه هنگام فوکوس
+                  },
+                }}
+              >
+                <TextField
+                  error={!!priceError}
+                  type="number"
+                  value={price}
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    if (value < 0) {
+                      setPriceError("Price cannot be negative.");
+                    } else {
+                      setPrice(value);
+                      setPriceError("");
+                    }
+                  }}
+                  label="Price"
+                  InputProps={{
+                    endAdornment: (
+                      <Typography
+                        sx={{
+                          color: "#378CE7",
+                          fontWeight: "bold",
+                          fontSize: "14px",
+                          marginLeft: 1,
+                        }}
+                      >
+                        $
+                      </Typography>
+                    ),
+                  }}
+                  helperText={
+                    priceError
+                      ? priceError
+                      : "Enter a valid price (e.g., 10, 20.5)"
+                  }
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "8px",
+                      "& fieldset": {
+                        borderColor: priceError ? "#FF0000" : "#E0E0E0", // حاشیه پیش‌فرض
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#378CE7", // حاشیه هنگام هاور
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#378CE7", // حاشیه هنگام فوکوس
+                      },
+                    },
+                  }}
+                />
+              </FormControl>
+            </Grid>
 
             {/* Upload Image */}
             <Box
@@ -875,14 +868,18 @@ export default function AddCourse() {
                 borderRadius: 2,
                 width: 300,
                 mt: "30px",
-                mb:"30px",
-                ml:"250px"
+                mb: "30px",
+                ml: "250px",
               }}
             >
               <Typography variant="h6">Upload an Image</Typography>
-              <Button variant="contained" component="label" sx={{
-                backgroundColor: "#378ce7"
-              }}>
+              <Button
+                variant="contained"
+                component="label"
+                sx={{
+                  backgroundColor: "#378ce7",
+                }}
+              >
                 Choose Image
                 <input
                   type="file"
@@ -941,9 +938,13 @@ export default function AddCourse() {
           </Grid>
 
           <Box textAlign="center" mt={3} mb={5}>
-            <Button type="submit" variant="contained"  sx={{
-                backgroundColor: "#378ce7"
-              }}>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                backgroundColor: "#378ce7",
+              }}
+            >
               Add Course
             </Button>
           </Box>

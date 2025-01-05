@@ -1,5 +1,14 @@
-import { Box, Button, Card, Grid2, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  Grid2,
+  Snackbar,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function EditProfile({ closeState }) {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -77,9 +86,11 @@ export default function EditProfile({ closeState }) {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        alert("change profile successfully");
-        closeState();
-        window.location.reload();
+        toast.success("change profile successfully");
+        setTimeout(() => {
+          closeState();
+          window.location.reload();
+        }, 3000);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -286,6 +297,21 @@ export default function EditProfile({ closeState }) {
             </Button>
           </Box>
         </Grid2>
+        <ToastContainer
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+            marginTop: "100px",
+          }}
+          autoClose={3000}
+          hideProgressBar
+          closeOnClick
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </Card>
     </Box>
   );

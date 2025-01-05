@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import LoadingScreen from "../../common/Loading.jsx";
+import LoadingScreen from "../../../common/Loading.jsx";
 import {
   Box,
   Button,

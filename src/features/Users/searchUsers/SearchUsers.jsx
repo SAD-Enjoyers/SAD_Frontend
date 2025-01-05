@@ -9,6 +9,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function SearchUsers() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,7 +36,6 @@ function SearchUsers() {
               : "/api/v1/uploads/profile-images/" + q.image,
         }));
         setUsers(transformedQuestions);
-        console.log(transformedQuestions);
       } catch (error) {
         console.error("Error fetching profiles:", error);
       }
@@ -57,6 +57,9 @@ function SearchUsers() {
     startIndex,
     startIndex + itemsPerPage
   );
+  function handleLinkClick(imageUrl) {
+    localStorage.setItem("userImage", imageUrl);
+  }
 
   return (
     <Box
@@ -119,64 +122,73 @@ function SearchUsers() {
                 },
               }}
             >
-              <img
-                src={user.image}
-                alt={user.title}
+              <Link
+                to={"/PublicUsers/" + user.userName}
                 style={{
-                  width: "100%",
-                  height: "200px",
-                  objectFit: "cover",
-                  borderRadius: "12px",
-                  marginBottom: "16px",
+                  textDecoration: "none",
+                  color: "inherit",
                 }}
-              />
-              <Grid2 container spacing={2} alignItems="center">
-                <Grid2 size={4}>
-                  <Typography
-                    variant="subtitle1"
-                    color="textSecondary"
-                    sx={{
-                      fontWeight: "bold",
-                      textAlign: "right",
-                    }}
-                  >
-                    User Name:
-                  </Typography>
-                </Grid2>
-                <Grid2 size={6}>
-                  <Typography variant="h6">{user.userName}</Typography>
-                </Grid2>
+                onClick={() => handleLinkClick(user.image)}
+              >
+                <img
+                  src={user.image}
+                  alt={user.title}
+                  style={{
+                    width: "100%",
+                    height: "200px",
+                    objectFit: "cover",
+                    borderRadius: "12px",
+                    marginBottom: "16px",
+                  }}
+                />
+                <Grid2 container spacing={2} alignItems="center">
+                  <Grid2 size={4}>
+                    <Typography
+                      variant="subtitle1"
+                      color="textSecondary"
+                      sx={{
+                        fontWeight: "bold",
+                        textAlign: "left",
+                      }}
+                    >
+                      User Name:
+                    </Typography>
+                  </Grid2>
+                  <Grid2 size={8}>
+                    <Typography variant="h6">{user.userName}</Typography>
+                  </Grid2>
 
-                <Grid2 size={4}>
-                  <Typography
-                    variant="subtitle1"
-                    color="textSecondary"
-                    sx={{ fontWeight: "bold", textAlign: "right" }}
-                  >
-                    Full Name:
-                  </Typography>
-                </Grid2>
-                <Grid2 size={8}>
-                  <Typography variant="h6">
-                    {user.firstName} {user.lastName}
-                  </Typography>
-                </Grid2>
+                  <Grid2 size={4}>
+                    <Typography
+                      variant="subtitle1"
+                      color="textSecondary"
+                      sx={{ fontWeight: "bold", textAlign: "left" }}
+                    >
+                      Full Name:
+                    </Typography>
+                  </Grid2>
+                  <Grid2 size={8}>
+                    <Typography variant="h6">
+                      {user.firstName} {user.lastName}
+                    </Typography>
+                  </Grid2>
 
-                <Grid2 size={4}>
-                  <Typography
-                    variant="subtitle1"
-                    color="textSecondary"
-                    sx={{ fontWeight: "bold", textAlign: "right" }}
-                  >
-                    Description:
-                  </Typography>
+                  <Grid2 size={4}>
+                    <Typography
+                      variant="subtitle1"
+                      color="textSecondary"
+                      sx={{ fontWeight: "bold", textAlign: "left" }}
+                    >
+                      Description:
+                    </Typography>
+                  </Grid2>
+                  <Grid2 size={8}>
+                    <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
+                      {user.description}
+                    </Typography>
+                  </Grid2>
                 </Grid2>
-                <Grid2 size={8}>
-                  <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
-                    {user.description}
-                  </Typography>
-                </Grid2>
-              </Grid2>
+              </Link>
             </Box>
           </Grid2>
         ))}

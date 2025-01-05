@@ -296,13 +296,27 @@ export default function ReviewComponent(props) {
                     flexShrink: 0,
                   }}
                 >
-                  {data.map((item, index) => (
-                    <MemoizedCard
-                      key={index}
-                      item={item}
-                      Condition={Condition}
-                    />
-                  ))}
+                  {data && data.length > 0 ? (
+                    data.map((item, index) => (
+                      <MemoizedCard
+                        key={index}
+                        item={item}
+                        Condition={Condition}
+                      />
+                    ))
+                  ) : (
+                    <Box
+                      sx={{
+                        textAlign: "center",
+                        margin: "0 auto",
+                        padding: 2,
+                        color: "text.secondary",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      <Typography variant="body1">not exist</Typography>
+                    </Box>
+                  )}
                 </Grid2>
               </Box>
             )}
