@@ -37,7 +37,7 @@ export default function AddArticle() {
   const [categories, setCategories] = useState([]);
   const [selectedLevelError, setSelectedLevelError] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
-  const [courseNameError, setcourseNameError] = useState("");
+  const [articleNameError, setarticleNameError] = useState("");
   const [imageName, setImageName] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
   const [isLoading, setLoading] = useState(true);
@@ -52,10 +52,10 @@ export default function AddArticle() {
     let isValid = true;
 
     if (!coursename.trim()) {
-      setcourseNameError(" ");
+      setarticleNameError(" ");
       isValid = false;
     } else {
-      setcourseNameError("");
+      setarticleNameError("");
     }
 
     if (!selectedLevel) {
@@ -181,11 +181,11 @@ export default function AddArticle() {
       var [tag1, tag2, tag3] = [...selectedSubjects];
   
       const formData = {
-        name: coursename,
+        name: articlename,
         description,
         level: selectedLevel,
         activityStatus: "Active",
-        serviceType: "3",
+        serviceType: "2",
         price: parseInt(price),
         image: image,
         tag1,
@@ -194,7 +194,7 @@ export default function AddArticle() {
       };
       console.log(formData);
   
-      fetch("/api/v1/course/make-course", {
+      fetch("/api/v1/article/make-article", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -206,9 +206,9 @@ export default function AddArticle() {
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
-          setSnackbarMessage("Course created successfully!");
+          setSnackbarMessage("Article created successfully!");
           setOpenSnackbar(true);
-          navigate("/PrivateCourse");
+          navigate("/PrivateArticle");
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -258,17 +258,17 @@ export default function AddArticle() {
               {/* Course Name */}
               <Grid item xs={12}>
                 <TextField
-                  label="Course Name"
+                  label="Article Name"
                   fullWidth
                   required
-                  value={coursename}
+                  value={articlename}
                   onChange={(e) => {
                     let value = e.target.value;
                     setCourseName(value);
                     setcourseNameError("");
                   }}
-                  helperText={!coursename && "Course name is required."}
-                  error={!coursename}
+                  helperText={!articlename && "Article name is required."}
+                  error={!articlename}
                   variant="outlined"
                   sx={{
                     "& .MuiInputBase-root": {
@@ -561,7 +561,7 @@ export default function AddArticle() {
               <Button type="submit" variant="contained"  sx={{
                   backgroundColor: "#378ce7"
                 }}>
-                Add Course
+                Add Article
               </Button>
             </Box>
           </form>
