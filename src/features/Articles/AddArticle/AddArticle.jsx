@@ -516,7 +516,83 @@ export default function AddArticle() {
     // if (isLoading) {
     //   return <LoadingScreen />;
     // }
-
+    return (
+      <Container maxWidth="md">
+        <Box
+          mt={6}
+          mb={4}
+          p={4}
+          borderRadius={3}
+          boxShadow={5}
+          // borderColor={"#378ce7"}
+          sx={{
+            background: "linear-gradient(135deg, #f2f2f2 30%, #ffffff 90%)",
+            transition: "all 0.3s ease-in-out",
+            "&:hover": {
+              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+              transform: "scale(1.02)",
+             
+            },
+          }}
+        >
+          <Typography
+            variant="h4"
+            align="center"
+            gutterBottom
+            sx={{ fontWeight: 600, color: "#333" , mb:4,}}
+          >
+            Add New Course
+          </Typography>
+          {/* Course Image Preview
+          {previewImage && (
+            <Box mb={2} display="flex" justifyContent="center">
+              <Avatar alt={imageName} src={previewImage} sx={{ width: 120, height: 120, border: "2px solid #378ce7" }} />
+            </Box>
+          )} */}
+          <form onSubmit={handleFormSubmit}>
+            <Grid container spacing={3}>
+              {/* Course Name */}
+              <Grid item xs={12}>
+                <TextField
+                  label="Course Name"
+                  fullWidth
+                  required
+                  value={coursename}
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    setCourseName(value);
+                    setcourseNameError("");
+                  }}
+                  helperText={!coursename && "Course name is required."}
+                  error={!coursename}
+                  variant="outlined"
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      borderRadius: "8px",
+                    },
+                  }}
+                />
+              </Grid>
+              {/* Course Description */}
+              <Grid item xs={12}>
+                <TextField
+                  label="Description"
+                  fullWidth
+                  required
+                  multiline
+                  rows={4}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  helperText={!description && "Description is required."}
+                  error={!description}
+                  variant="outlined"
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      borderRadius: "8px",
+                    },
+                  }}
+                />
+              </Grid>
 
 
 
