@@ -320,8 +320,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default function AddCourse() {
-  const [coursename, setCourseName] = useState("");
+export default function AddArticle() {
+  const [articlename, setArticleName] = useState("");
   const [description, setDescription] = useState("");
   const [selectedLevel, setSelectedLevel] = useState("");
   const [price, setPrice] = useState(10);
