@@ -219,7 +219,7 @@ export default function ReviewComponent(props) {
   const navigateToPrivateCourse = (courseData) => {
     localStorage.setItem("courseData", JSON.stringify(courseData)); // Save to localStorage
     navigate(`/PrivateCourse/${courseData.serviceId}`, {
-      state: { articleData },
+      state: { courseData },
     });
   };
   // اجرا در بارگذاری اولیه
