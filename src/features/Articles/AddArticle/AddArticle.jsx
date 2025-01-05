@@ -217,9 +217,6 @@ export default function AddArticle() {
         });
     };
   
-    // if (isLoading) {
-    //   return <LoadingScreen />;
-    // }
     return (
       <Container maxWidth="md">
         <Box
@@ -227,6 +224,7 @@ export default function AddArticle() {
           mb={4}
           p={4}
           borderRadius={3}
+          borderColor="#378ce7"
           boxShadow={5}
           // borderColor={"#378ce7"}
           sx={{
@@ -243,7 +241,10 @@ export default function AddArticle() {
             variant="h4"
             align="center"
             gutterBottom
-            sx={{ fontWeight: 600, color: "#333" , mb:4,}}
+            sx={{      fontWeight: 700,
+              color: "#00796b",
+              mb: 4,
+              textTransform: "uppercase",}}
           >
             Add New Article
           </Typography>
