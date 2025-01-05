@@ -28,8 +28,8 @@ const Footer = () => {
               {[
                 { text: "Home", to: "/" },
                 { text: "About Us", to: "/AboutUs" },
-                { text: "Courses", to: "/SearchCourse" },
-                { text: "Contact", to: "/QA" },
+                { text: "Terms And Conditions", to: "/TermsAndConditions" },
+                { text: "Q&A", to: "/QA" },
               ].map((link) => (
                 <Link
                   key={link.text}

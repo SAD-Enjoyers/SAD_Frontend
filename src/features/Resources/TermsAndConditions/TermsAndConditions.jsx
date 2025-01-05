@@ -94,7 +94,10 @@ const TermsAndConditions = () => {
         <footer className="terms-footer">
           <p>
             If you have any questions, please contact us at{" "}
-            <a href="mailto:support@techverse.com">support@techverse.com</a>.
+            <a href="mailto:erfanmasoudiba@gmail.com">
+              erfanmasoudiba@gmail.com
+            </a>
+            .
           </p>
         </footer>
       </section>
