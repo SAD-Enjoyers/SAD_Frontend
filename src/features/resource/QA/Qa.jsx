@@ -160,7 +160,7 @@ const QAPage = () => {
       >
         For further inquiries, please contact our support team at{" "}
         <Typography component="span" color="#378CE7" fontWeight="bold">
-          support@example.com
+          erfanmasoudiba@gmail.com
         </Typography>{" "}
         or call us at{" "}
         <Typography component="span" color="#378CE7" fontWeight="bold">
