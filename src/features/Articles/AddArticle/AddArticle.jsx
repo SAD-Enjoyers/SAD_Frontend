@@ -225,7 +225,7 @@ export default function AddArticle() {
           console.log(data);
           setSnackbarMessage("Article created successfully!");
           setOpenSnackbar(true);
-          navigate("/PrivateArticle/"+serviceId);
+          navigate("/profile");
         })
         .catch((error) => {
           console.error("Error:", error);
