@@ -412,6 +412,7 @@ function QuestionPage() {
             >
               Total Votes: {question.ratingCount}
             </Typography>
+
             {userRating !== null && (
         <Typography
           variant="body1"
