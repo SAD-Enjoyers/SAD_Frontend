@@ -91,8 +91,8 @@ const ArticlePreview = () => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch article data.");
                 }
-                const { data } = await response.json();
-                setArticleData(data.Article);
+                const  data  = await response.json();
+                setArticleData(data.data.Article);
             } catch (error) {
                 setErrorMessage(error.message || "An unexpected error occurred.");
             } finally {

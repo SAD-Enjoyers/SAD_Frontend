@@ -7,14 +7,14 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { LibraryBooks, Settings, Comment, Preview } from "@mui/icons-material";
-import InfoIcon from '@mui/icons-material/Info';
+import { LibraryBooks, Settings, Comment } from "@mui/icons-material";
+import InfoIcon from "@mui/icons-material/Info";
 import { useLocation, useParams } from "react-router-dom";
-import ArticleContent from "./tabs/ArticleContent"
+import ArticleContent from "./tabs/ArticleContent";
 import ArticleSettings from "./tabs/ArticleSettings";
 import CommentSection from "./tabs/CommentSection";
 
-const PrivateArticle = () => {
+const PrivateArticle = (props) => {
   const { articleId } = useParams(); // Extract articleId from URL
   const location = useLocation(); // Get location state
   const [selectedTab, setSelectedTab] = useState(0);
@@ -30,12 +30,6 @@ const PrivateArticle = () => {
     localStorage.setItem("selectedTab", newValue); // Save selected tab to localStorage
   };
 
-  const handleContentSubmit = (data) => {
-    console.log("Received data:", data);
-    // Perform actions with the data
-  };
-  
-
   useEffect(() => {
     // First, check if articleData is passed via location state
     if (location.state?.articleData) {
@@ -44,7 +38,10 @@ const PrivateArticle = () => {
     } else {
       // Otherwise, try fetching the article data from localStorage
       const storedArticleData = JSON.parse(localStorage.getItem("articleData"));
-      if (storedArticleData && storedArticleData.articleId === parseInt(articleId, 10)) {
+      if (
+        storedArticleData &&
+        storedArticleData.articleId === parseInt(articleId, 10)
+      ) {
         setArticleData(storedArticleData);
         setLoading(false);
       } else {
@@ -64,17 +61,23 @@ const PrivateArticle = () => {
   const tabContent = [
     {
       label: "Article Contents",
-      content: <ArticleContent articleData={articleData} accessToken={accessToken} onContentSubmit={handleContentSubmit} />,
+      content: (
+        <ArticleContent articleData={articleData} accessToken={accessToken} />
+      ),
       icon: <LibraryBooks />,
     },
     {
       label: "Comments",
-      content: <CommentSection articleId={articleId} accessToken={accessToken} />,
+      content: (
+        <CommentSection articleId={articleId} accessToken={accessToken} />
+      ),
       icon: <Comment />,
     },
     {
       label: "Article Settings",
-      content: <ArticleSettings articleData={articleData} accessToken={accessToken} />,
+      content: (
+        <ArticleSettings articleData={articleData} accessToken={accessToken} />
+      ),
       icon: <Settings />,
     },
   ];
@@ -91,7 +94,9 @@ const PrivateArticle = () => {
         boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.1)",
       }}
     >
-      <Box sx={{ bgcolor: "#f4f4f4", display: "flex", justifyContent: "center" }}>
+      <Box
+        sx={{ bgcolor: "#f4f4f4", display: "flex", justifyContent: "center" }}
+      >
         <Tabs
           value={selectedTab}
           onChange={handleTabChange}

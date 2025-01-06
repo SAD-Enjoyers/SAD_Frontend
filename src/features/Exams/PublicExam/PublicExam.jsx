@@ -7,6 +7,8 @@ import {
   Card,
   Button,
   Chip,
+  Paper,
+  Grid,
   Snackbar,
   Alert,
   CircularProgress,
@@ -18,8 +20,14 @@ import QuizIcon from "@mui/icons-material/Quiz";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PeopleIcon from "@mui/icons-material/People";
 import DefaultExamImage from "../../../assets/images/default_exam_image.jpg";
-import ExamResult from "./ExamResult";
+// import ExamResult from "./ExamResult";
 import Comments from "../../../common/Comments/CommentSection";
+import {
+  CheckCircle,
+  Clear,
+  HourglassEmpty,
+  Assessment,
+} from "@mui/icons-material";
 
 const primaryGradient = ["#5356FF", "#378CE7", "#67C6E3", "#DFF5FF"];
 const levelColors = {
@@ -94,26 +102,25 @@ const ErrorContainer = styled(Box)({
 
 // Main Component
 function PublicExam() {
-  const location = useLocation();
   const navigate = useNavigate();
-  const { examData } = location.state || {};
+  const [examInfo, setExamInfo] = useState(null);
+  const [examResult, setExamResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [examResult, setExamResult] = useState(null);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [examData2, setExamData] = useState(null);
+  const location = useLocation();
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [severity, setSeverity] = useState("info"); // 'success', 'error', 'warning', 'info'
-
+  const [severity, setSeverity] = useState("info");
+  const { examData } = location.state || {};
   const accessToken = localStorage.getItem("token");
+  const serviceId = examData.serviceId;
+  console.log(serviceId);
+
   useEffect(() => {
     const fetchExamData = async () => {
-      setLoading(true);
-      setErrorMessage("");
-
       try {
-        const response = await fetch(`/api/v1/exam/${examData.serviceId}`, {
+        // Fetch Exam Info
+        const examInfoResponse = await fetch(`/api/v1/exam/${serviceId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -121,69 +128,53 @@ function PublicExam() {
           },
         });
 
-        if (!response.ok) {
-          const responseData = await response.json();
-          setErrorMessage(responseData.message || "Failed to fetch exam data.");
-          return;
+        if (!examInfoResponse.ok) {
+          throw new Error("Failed to fetch exam data");
         }
 
-        const responseData = await response.json();
-        // console.log("Response Data:", JSON.stringify(responseData, null, 2));
+        const examInfoData = await examInfoResponse.json();
+        console.log(examInfoData.data);
 
-        // Set examData to responseData.data
-        setExamData(responseData.data);
+        setExamInfo(examInfoData.data);
+
+        // Fetch Exam Result (assuming there's a separate endpoint for results)
+        const examResultResponse = await fetch(
+          `/api/v1/exam/exam-result/${serviceId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        console.log(examResultResponse);
+
+        if (examResultResponse.status === 404) {
+          // If the result is not found, set examResult to null
+          setExamResult(null);
+        } else if (!examResultResponse.ok) {
+          throw new Error("Failed to fetch exam result data");
+        } else {
+          const examResultData = await examResultResponse.json();
+          console.log(
+            "Response Data:",
+            JSON.stringify(examResultData.data, null, 2)
+          );
+
+          setExamResult(examResultData.data);
+        }
       } catch (error) {
-        setErrorMessage("An unexpected error occurred. Please try again.");
+        setError(error.message);
       } finally {
         setLoading(false);
       }
     };
 
-    // Fetch exam data from the API
     fetchExamData();
-  }, [location.state, examData.serviceId]); // Dependency on location.state and examData.serviceId
-
-  // Fetch exam result after exam data is fetched
-  useEffect(() => {
-    if (examData && examData.serviceId) {
-      const fetchExamResult = async () => {
-        try {
-          const response = await fetch(
-            `/api/v1/exam/exam-result/${examData.serviceId}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${accessToken}`,
-              },
-            }
-          );
-          if (response.status === 404) {
-            // If 404 is returned, simply pass and don't set examResult
-            return;
-          }
-
-          if (!response.ok) {
-            const responseData = await response.json();
-            setErrorMessage(
-              responseData.message || "Failed to fetch exam result."
-            );
-            return;
-          }
-
-          const responseData = await response.json();
-          setExamResult(responseData.data || null); // Set result or null if not found
-        } catch (error) {
-          setErrorMessage("An unexpected error occurred. Please try again.");
-        }
-      };
-
-      fetchExamResult();
-    }
-  }, [examData]); // Trigger when examData changes
-
+  }, [serviceId, accessToken]);
   const handleGoToExam = () => {
-    if (examData2.numberOfQuestion < 1) {
+    if (examInfo.numberOfQuestion < 1) {
       setSnackbarMessage("There are no questions in this exam.");
       setSeverity("error");
       setOpenSnackbar(true);
@@ -194,24 +185,7 @@ function PublicExam() {
       navigate("/OngoingExamPage", { state: { examData } }); // Call the function to navigate to the exam
     }
   };
-
   if (loading) {
-    return (
-      <LoadingContainer>
-        <CircularProgress />
-        <Typography sx={{ marginTop: 2 }}>Loading exam details...</Typography>
-      </LoadingContainer>
-    );
-  }
-
-  if (error) {
-    return (
-      <ErrorContainer>
-        <Typography sx={{ color: "red" }}>{error}</Typography>
-      </ErrorContainer>
-    );
-  }
-  if (errorMessage) {
     return (
       <Box
         sx={{
@@ -221,13 +195,30 @@ function PublicExam() {
           height: "100vh",
         }}
       >
-        <Typography color="error">{errorMessage}</Typography>
-        <Button onClick={() => setErrorMessage("")}>Retry</Button>
+        <CircularProgress />
       </Box>
     );
   }
+
+  if (error) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Typography variant="h6" color="error">
+          {error}
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
-    examData && (
+    examInfo && (
       <Box
         sx={{
           display: "flex",
@@ -241,16 +232,16 @@ function PublicExam() {
           <CustomCard sx={{ maxWidth: 800, margin: "0 auto" }}>
             <Grid2 container spacing={4}>
               <Grid2 item xs={12} md={8}>
-                <Title>{examData.name}</Title>
+                <Title>{examInfo.name}</Title>
                 <Chip
-                  label={examData.level}
+                  label={examInfo.level}
                   sx={{
-                    backgroundColor: levelColors[examData.level],
+                    backgroundColor: levelColors[examInfo.level],
                     color: "#fff",
                     marginBottom: 2,
                   }}
                 />
-                <SubTitle>{examData.description}</SubTitle>
+                <SubTitle>{examInfo.description}</SubTitle>
 
                 {/* Tags Section */}
                 <Box sx={{ marginTop: 2 }}>
@@ -258,21 +249,21 @@ function PublicExam() {
                     Tags
                   </Typography>
                   <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                    {examData.tag1 && (
+                    {examInfo.tag1 && (
                       <Chip
-                        label={examData.tag1}
+                        label={examInfo.tag1}
                         sx={{ backgroundColor: "#FFEB3B", color: "#000" }}
                       />
                     )}
-                    {examData.tag2 && (
+                    {examInfo.tag2 && (
                       <Chip
-                        label={examData.tag2}
+                        label={examInfo.tag2}
                         sx={{ backgroundColor: "#FF9800", color: "#fff" }}
                       />
                     )}
-                    {examData.tag3 && (
+                    {examInfo.tag3 && (
                       <Chip
-                        label={examData.tag3}
+                        label={examInfo.tag3}
                         sx={{ backgroundColor: "#009688", color: "#fff" }}
                       />
                     )}
@@ -280,7 +271,7 @@ function PublicExam() {
                 </Box>
 
                 <Rating
-                  value={Number(examData.score) || 0}
+                  value={Number(examInfo.score) || 0}
                   readOnly
                   precision={0.5}
                   sx={{ marginTop: 2 }}
@@ -292,8 +283,8 @@ function PublicExam() {
                   sx={{ marginTop: 1 }}
                 >
                   Average User Rating:{" "}
-                  {typeof examData.score === "number" && !isNaN(examData.score)
-                    ? examData.score.toFixed(1)
+                  {typeof examInfo.score === "number" && !isNaN(examInfo.score)
+                    ? examInfo.score.toFixed(1)
                     : "0"}{" "}
                   / 5
                 </Typography>
@@ -314,8 +305,8 @@ function PublicExam() {
                 {/* Exam Image */}
                 <img
                   src={
-                    examData.image
-                      ? `/api/v1/uploads/service-images/${examData.image}`
+                    examInfo.image
+                      ? `/api/v1/uploads/service-images/${examInfo.image}`
                       : DefaultExamImage
                   }
                   alt="Exam Preview"
@@ -390,7 +381,7 @@ function PublicExam() {
                   variant="body1"
                   sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
                 >
-                  {examData2?.examDuration} min
+                  {examInfo?.examDuration} min
                 </Typography>
               </CustomCard>
             </Grid2>
@@ -431,7 +422,7 @@ function PublicExam() {
                   variant="body1"
                   sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
                 >
-                  {examData2?.minPassScore}%
+                  {examInfo?.minPassScore}%
                 </Typography>
               </CustomCard>
             </Grid2>
@@ -472,7 +463,7 @@ function PublicExam() {
                   variant="body1"
                   sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
                 >
-                  {examData2?.numberOfQuestion}
+                  {examInfo?.numberOfQuestion}
                 </Typography>
               </CustomCard>
             </Grid2>
@@ -513,32 +504,115 @@ function PublicExam() {
                   variant="body1"
                   sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
                 >
-                  {examData2?.numberOfMembers}
+                  {examInfo?.numberOfMembers}
                 </Typography>
               </CustomCard>
             </Grid2>
           </Grid2>
 
-          {/* Comments and Exam Result */}
           <Box sx={{ padding: { xs: 2, sm: 4 } }}>
-            {examResult ? (
-              <ExamResult examData={examData} />
-            ) : (
-              <Box
-                sx={{
-                  maxWidth: 600,
-                  margin: "35px auto",
-                  textAlign: "center",
-                  padding: { xs: 2, sm: 3 },
-                  borderRadius: 2,
-                  boxShadow: 3,
-                  backgroundColor: "#f8f9fa",
-                  width: "100%",
-                }}
-              >
-                <Typography variant="h6" sx={{ color: "#5356FF" }}>
-                  You haven’t taken the test yet.
-                </Typography>
+            {examResult && (
+              <Box sx={{ maxWidth: 600, margin: "auto", padding: 3 }}>
+                <Paper
+                  elevation={3}
+                  sx={{ padding: 2, backgroundColor: "#f0f4f8" }}
+                >
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    align="center"
+                    sx={{ fontWeight: "bold", color: "#3f51b5" }}
+                  >
+                    Exam Results
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: "bold", color: "#4caf50" }}
+                      >
+                        <CheckCircle
+                          sx={{ verticalAlign: "middle", color: "#4caf50" }}
+                        />{" "}
+                        Exam Score:
+                        <span
+                          style={{ fontWeight: "normal", color: "#1e88e5" }}
+                        >
+                          {" "}
+                          {examResult.examScore}
+                        </span>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: "bold", color: "#388e3c" }}
+                      >
+                        <CheckCircle
+                          sx={{ verticalAlign: "middle", color: "#388e3c" }}
+                        />{" "}
+                        Right Answers:
+                        <span
+                          style={{ fontWeight: "normal", color: "#1e88e5" }}
+                        >
+                          {" "}
+                          {examResult.rightAnswers}
+                        </span>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: "bold", color: "#f44336" }}
+                      >
+                        <Clear
+                          sx={{ verticalAlign: "middle", color: "#f44336" }}
+                        />{" "}
+                        Wrong Answers:
+                        <span
+                          style={{ fontWeight: "normal", color: "#1e88e5" }}
+                        >
+                          {" "}
+                          {examResult.wrongAnswers}
+                        </span>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: "bold", color: "#ff9800" }}
+                      >
+                        <HourglassEmpty
+                          sx={{ verticalAlign: "middle", color: "#ff9800" }}
+                        />{" "}
+                        Empty Answers:
+                        <span
+                          style={{ fontWeight: "normal", color: "#1e88e5" }}
+                        >
+                          {" "}
+                          {examResult.emptyAnswers}
+                        </span>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: "bold", color: "#1976d2" }}
+                      >
+                        <Assessment
+                          sx={{ verticalAlign: "middle", color: "#1976d2" }}
+                        />{" "}
+                        Result:
+                        <span
+                          style={{ fontWeight: "normal", color: "#1e88e5" }}
+                        >
+                          {" "}
+                          {examResult.passed}
+                        </span>
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Paper>
               </Box>
             )}
           </Box>
@@ -561,7 +635,7 @@ function PublicExam() {
           {/* Comments Container */}
           <CommentsContainer>
             <SectionHeader>Comments</SectionHeader>
-            <Comments serviceId={examData.serviceId} />
+            <Comments serviceId={examInfo.serviceId} />
           </CommentsContainer>
         </Box>
       </Box>

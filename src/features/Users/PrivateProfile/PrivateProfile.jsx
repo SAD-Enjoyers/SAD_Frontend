@@ -59,6 +59,7 @@ export default function PrivateProfile() {
           lastName: data.data.userData.lastName,
           userName: data.data.userData.userName,
           email: data.data.userData.email,
+          description: data.data.userData.description,
         });
         setLoading(false); // وقتی درخواست تمام شد، حالت loading را به false تغییر بده
       })
@@ -205,8 +206,8 @@ export default function PrivateProfile() {
                     Email: {formData.email}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Bio: Software Developer with a passion for coding and
-                    technology.
+                    {console.log(formData)}
+                    description: {formData.description}
                   </Typography>
                 </CardContent>
               </Grid2>

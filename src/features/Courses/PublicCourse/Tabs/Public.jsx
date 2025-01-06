@@ -3,94 +3,46 @@ import Grid2 from "@mui/material/Grid2";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-const videos = [
-  {
-    id: "video1",
-    title: "install-ts",
-    src: "/videos/1.mp4",
-    thumbnail: "/thumbnails/image.png",
-    author: "author1",
-  },
-  {
-    id: "video2",
-    title: "compile-ts-code",
-    src: "/videos/2.mp4",
-    thumbnail: "/thumbnails/image.png",
-    author: "author1",
-  },
-  {
-    id: "video3",
-    title: "static-vs-dynamic-type",
-    src: "/videos/1.mp4",
-    thumbnail: "/thumbnails/image.png",
-    author: "author1",
-  },
-  {
-    id: "video4",
-    title: "number-dataType",
-    src: "/videos/2.mp4",
-    thumbnail: "/thumbnails/image.png",
-    author: "author1",
-  },
-  {
-    id: "video5",
-    title: "string-datatype",
-    src: "/videos/1.mp4",
-    thumbnail: "/thumbnails/image.png",
-    author: "author1",
-  },
-];
-
 export default function Public(props) {
-  const [selectedVideo, setSelectedVideo] = useState(videos[0]?.src || null);
-  const [selectedVideoId, setSelectedVideoId] = useState(videos[0]?.id || null);
+  const [selectedVideo, setSelectedVideo] = useState();
+  const [selectedVideoId, setSelectedVideoId] = useState();
   const [videoDurations, setVideoDurations] = useState({});
   const [videos, setVideos] = useState([]);
-  console.log(props.serviceId);
 
-  const fetchExamData = async (Services) => {
+  const fetchExamData = async () => {
     const response = await fetch(
       `/api/v1/course/play-list/${props.serviceId}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // توکن را اینجا اضافه کنید
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
           "x-role": localStorage.getItem("role"),
         },
       }
     );
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const responseData = await response.json();
-    console.log(response.status, responseData.data.playList);
+    const thumbnail = responseData.data.thumbnail;
     const updatedVideos = responseData.data.playList.map((video) => ({
       id: video.video_id,
       title: video.title,
       src: video.address,
-      address: video.address,
-      phoneNumber: video.phoneNumber,
+      thumbnail,
     }));
 
-    setVideos((prev) => [...prev, ...updatedVideos]);
-
-    // console.log(response.status, responseData);
+    setVideos(updatedVideos);
   };
+
   useEffect(() => {
-    fetchExamData();
-    videos.forEach((video) => {
-      const videoElement = document.createElement("video");
-      videoElement.src = video.src;
-      videoElement.addEventListener("loadedmetadata", () => {
-        setVideoDurations((prev) => ({
-          ...prev,
-          [video.id]: formatTime(videoElement.duration),
-        }));
-      });
-    });
-  }, []);
+    if (props.serviceId) {
+      fetchExamData();
+    }
+  }, [props.serviceId]);
 
   const handleVideoChange = (src, id) => {
     const videoElement = document.querySelector("video");
@@ -98,7 +50,7 @@ export default function Public(props) {
       videoElement.pause();
       videoElement.currentTime = 0;
     }
-    setSelectedVideo(src);
+    setSelectedVideo(`/api/v1/uploads/course-video/${src}`);
     setSelectedVideoId(id);
   };
 
@@ -107,6 +59,7 @@ export default function Public(props) {
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
+
   return (
     <Grid2
       container
@@ -122,7 +75,7 @@ export default function Public(props) {
             backgroundColor: "#f0f0f0",
           }}
         >
-          introduction to typescript
+          Introduction to TypeScript
         </Typography>
         <Box
           sx={{
@@ -166,7 +119,6 @@ export default function Public(props) {
               }}
               onClick={() => handleVideoChange(video.src, video.id)}
             >
-              {/* متن در سمت چپ */}
               <Box sx={{ flexGrow: 1 }}>
                 <Typography
                   variant="body1"
@@ -180,23 +132,7 @@ export default function Public(props) {
                 >
                   {video.title}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: "#888",
-                    textAlign: "left",
-                    marginTop: "4px",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    fontSize: "1.1rem",
-                  }}
-                >
-                  {video.author}
-                </Typography>
               </Box>
-
-              {/* تصویر در سمت راست */}
               <Box
                 sx={{
                   position: "relative",
@@ -209,7 +145,7 @@ export default function Public(props) {
               >
                 <Box
                   component="img"
-                  src={video.thumbnail}
+                  src={`/api/v1/uploads/service-images/${video.thumbnail}`}
                   alt={video.title}
                   sx={{
                     width: "100%",
@@ -218,21 +154,6 @@ export default function Public(props) {
                     borderRadius: "8px",
                   }}
                 />
-                <Typography
-                  variant="caption"
-                  sx={{
-                    position: "absolute",
-                    bottom: 4,
-                    right: 4,
-                    backgroundColor: "rgba(0, 0, 0, 0.7)",
-                    color: "#fff",
-                    padding: "2px 4px",
-                    borderRadius: "4px",
-                    fontSize: "0.8rem",
-                  }}
-                >
-                  {videoDurations[video.id] || "درحال بارگذاری..."}
-                </Typography>
               </Box>
             </Box>
           ))}
@@ -246,9 +167,8 @@ export default function Public(props) {
           backgroundColor: "#f9f9f9",
           borderRadius: 2,
           padding: 2,
-          height: "auto", // اجازه به ارتفاع برای افزایش دینامیک
-          minHeight: "300px", // حداقل ارتفاع مناسب
-          maxHeight: "none", // جلوگیری از محدودیت ارتفاع
+          height: "auto",
+          minHeight: "300px",
         }}
       >
         {selectedVideo ? (
@@ -299,10 +219,7 @@ export default function Public(props) {
                     variant="body1"
                     sx={{ fontWeight: "bold", ml: "20px" }}
                   >
-                    {
-                      videos.find((video) => video.src === selectedVideo)
-                        ?.author
-                    }
+                    {localStorage.getItem("authorCourse")}
                   </Typography>
                 </Box>
               </Box>

@@ -7,27 +7,22 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import {
-  LibraryBooks,
-  Settings,
-  People,
-  Comment,
-  VideoLibrary,
-} from "@mui/icons-material";
-import { useLocation, useParams } from "react-router-dom"; // Import useLocation and useParams
+import { VideoLibrary, Comment } from "@mui/icons-material";
+import { useLocation, useParams } from "react-router-dom";
 import Public from "./Tabs/Public";
 import CommentSection from "../../../common/Comments/CommentSection";
+import CoursePreview from "./Tabs/CoursePreview";
 
 const PublicCourse = () => {
-  const { courseId } = useParams(); // Extract courseId from URL
-  const location = useLocation(); // Get location state
-  const [selectedTab, setSelectedTab] = useState(0);
-  const [enrolledStudents, setEnrolledStudents] = useState([]);
+  const { courseId } = useParams();
+  const location = useLocation();
+  const [selectedTab, setSelectedTab] = useState(0); // Default to first tab
   const [courseData, setCourseData] = useState(null);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [tabContent, setTabContent] = useState([]);
+
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
     localStorage.setItem("selectedTab", newValue); // Save selected tab to localStorage
@@ -39,9 +34,15 @@ const PublicCourse = () => {
       setLoading(false);
       setTabContent([
         {
+          label: "information course",
+          content: (
+            <CoursePreview serviceId={location.state.courseData.serviceId} />
+          ),
+          icon: <VideoLibrary />,
+        },
+        {
           label: "Enrolled Students",
           content: <Public serviceId={location.state.courseData.serviceId} />,
-
           icon: <VideoLibrary />,
         },
         {
@@ -69,7 +70,9 @@ const PublicCourse = () => {
 
   useEffect(() => {
     const savedTab = localStorage.getItem("selectedTab");
-    if (savedTab) setSelectedTab(parseInt(savedTab, 10));
+    if (savedTab) {
+      setSelectedTab(parseInt(savedTab, 10));
+    }
   }, []);
 
   return (
@@ -125,10 +128,9 @@ const PublicCourse = () => {
             <CircularProgress />
           </Box>
         ) : (
-          // selectedTab == 1   => comments section
           <Box
             sx={{
-              width: selectedTab == 1 ? "800px" : "100%",
+              width: selectedTab === 2 ? "800px" : "100%",
               margin: "0 auto",
             }}
           >
