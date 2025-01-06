@@ -50,9 +50,7 @@ const ArticleSettings = ({ articleData, accessToken }) => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get("/api/v1/common/categories");
-        if (response.data.status === "success") {
-          setCategories(response.data.data.categoryList);
-        }
+        setCategories(response.data.data.categoryList || []);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
