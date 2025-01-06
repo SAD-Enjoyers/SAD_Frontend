@@ -62,7 +62,7 @@ export default function AddArticle() {
     setIsSubmitted(true);
     let isValid = true;
 
-    if (!coursename.trim()) {
+    if (!articlename.trim()) {
       setarticleNameError("Article name is required. ");
       isValid = false;
     } else {
@@ -149,7 +149,7 @@ export default function AddArticle() {
         }
   
         const data = await response.json();
-        submitCourse(data.data.fileName);
+        submitArticle(data.data.fileName);
       } catch (error) {
         console.error("Error uploading image:", error);
         setSnackbarMessage("Failed to upload image. Please try again.");
@@ -194,7 +194,7 @@ export default function AddArticle() {
       }
     };
   
-    const submitCourse = (image) => {
+    const submitArticle = (image) => {
       var [tag1, tag2, tag3] = [...selectedSubjects];
   
       const formData = {
@@ -229,7 +229,7 @@ export default function AddArticle() {
         })
         .catch((error) => {
           console.error("Error:", error);
-          setSnackbarMessage("Failed to create course. Please try again.");
+          setSnackbarMessage("Failed to create article. Please try again.");
           setOpenSnackbar(true);
         });
     };
@@ -289,7 +289,7 @@ export default function AddArticle() {
                     }
                   }}
                   onBlur={() => {
-                    if (coursename.trim() === "") {
+                    if (articlename.trim() === "") {
                       setarticleNameError("Article name is required.");
                     }
                   }}
