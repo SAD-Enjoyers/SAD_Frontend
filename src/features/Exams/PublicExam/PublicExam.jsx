@@ -2,17 +2,9 @@ import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Divider,
-  TextField,
-  Avatar,
   Rating,
   Grid2,
   Card,
-  CardContent,
   Button,
   Chip,
   CircularProgress,
@@ -22,12 +14,7 @@ import { styled } from "@mui/system";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import QuizIcon from "@mui/icons-material/Quiz";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
-import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
-import CommentIcon from "@mui/icons-material/Comment";
 import PeopleIcon from "@mui/icons-material/People";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import DoneAllIcon from "@mui/icons-material/DoneAll";
 import DefaultExamImage from "../../../assets/images/default_exam_image.jpg";
 import ExamResult from "./ExamResult";
 import Comments from "../../../common/Comments/CommentSection";
@@ -38,16 +25,6 @@ const levelColors = {
   Intermediate: "#FF9800",
   Advanced: "#F44336",
 };
-
-const mockExamResult = {
-  score: 85,
-  passed: true,
-  totalQuestions: 100,
-  correctAnswers: 85,
-  timeTaken: "15 minutes",
-};
-
-// Styled components
 
 const Title = styled(Typography)({
   fontWeight: "bold",
@@ -180,21 +157,6 @@ function PublicExam() {
   }, [location.state, examData]);
 
   console.log("Response Data:", JSON.stringify(examData, null, 2));
-  const handleAddComment = () => {
-    if (!newComment.name || !newComment.comment.trim()) {
-      alert("Both name and comment are required.");
-      return;
-    }
-    setComments([
-      ...comments,
-      {
-        id: comments.length + 1,
-        name: newComment.name,
-        comment: newComment.comment,
-      },
-    ]);
-    setNewComment({ name: "", comment: "" });
-  };
   const handleStartExam = () => {
     // Simulate navigating to the exam page
     console.log("Starting the exam...");

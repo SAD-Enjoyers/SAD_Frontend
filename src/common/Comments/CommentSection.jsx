@@ -46,7 +46,7 @@ const CommentSection = ({ serviceId }) => {
         return; // Do nothing for 404 errors
       }
       console.error("Error fetching comments:", error);
-      showSnackbar("Failed to load comments. Please try again later.", "error");
+      showSnackbar("Network is bad. Please try again.", "error");
     }
   };
 
