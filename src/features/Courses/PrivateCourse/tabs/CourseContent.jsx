@@ -20,7 +20,7 @@ import {
   Divider,
   FormControl,
 } from "@mui/material";
-import { PlayArrow, Delete, Edit } from "@mui/icons-material";
+import { Download, Delete, Edit } from "@mui/icons-material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
 import {
@@ -309,7 +309,7 @@ const CourseContent = ({ courseData, accessToken }) => {
                               color="primary"
                               onClick={() => handlePlayVideo(video.url)}
                             >
-                              <PlayArrow />
+                              <Download />
                             </IconButton>
                             <IconButton
                               aria-label="edit"
@@ -337,14 +337,6 @@ const CourseContent = ({ courseData, accessToken }) => {
           )}
         </Droppable>
       </DragDropContext>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleUpload}
-        sx={{ mt: 3 }}
-      >
-        Upload New Video
-      </Button>
 
       {/* Edit Modal */}
       <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
