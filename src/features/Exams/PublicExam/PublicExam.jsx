@@ -7,6 +7,8 @@ import {
   Card,
   Button,
   Chip,
+  Paper,
+  Grid,
   Snackbar,
   Alert,
   CircularProgress,
@@ -18,8 +20,14 @@ import QuizIcon from "@mui/icons-material/Quiz";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PeopleIcon from "@mui/icons-material/People";
 import DefaultExamImage from "../../../assets/images/default_exam_image.jpg";
-import ExamResult from "./ExamResult";
+// import ExamResult from "./ExamResult";
 import Comments from "../../../common/Comments/CommentSection";
+import {
+  CheckCircle,
+  Clear,
+  HourglassEmpty,
+  Assessment,
+} from "@mui/icons-material";
 
 const primaryGradient = ["#5356FF", "#378CE7", "#67C6E3", "#DFF5FF"];
 const levelColors = {
@@ -504,58 +512,107 @@ function PublicExam() {
 
           <Box sx={{ padding: { xs: 2, sm: 4 } }}>
             {examResult && (
-              <Box sx={{ marginTop: 4 }}>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  Exam Result
-                </Typography>
-                <Grid2 container spacing={2} sx={{ marginTop: 2 }}>
-                  <Grid2 item xs={6}>
-                    <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                      Score:
-                    </Typography>
-                    <Typography variant="body1">
-                      {examResult.examScore}
-                    </Typography>
-                  </Grid2>
-                  <Grid2 item xs={6}>
-                    <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                      Right Answers:
-                    </Typography>
-                    <Typography variant="body1">
-                      {examResult.rightAnswers}
-                    </Typography>
-                  </Grid2>
-                  <Grid2 item xs={6}>
-                    <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                      Wrong Answers:
-                    </Typography>
-                    <Typography variant="body1">
-                      {examResult.wrongAnswers}
-                    </Typography>
-                  </Grid2>
-                  <Grid2 item xs={6}>
-                    <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                      Empty Answers:
-                    </Typography>
-                    <Typography variant="body1">
-                      {examResult.emptyAnswers}
-                    </Typography>
-                  </Grid2>
-                  <Grid2 item xs={6}>
-                    <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                      Status:
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        color:
-                          examResult.passed === "Rejected" ? "red" : "green",
-                      }}
-                    >
-                      {examResult.passed}
-                    </Typography>
-                  </Grid2>
-                </Grid2>
+              <Box sx={{ maxWidth: 600, margin: "auto", padding: 3 }}>
+                <Paper
+                  elevation={3}
+                  sx={{ padding: 2, backgroundColor: "#f0f4f8" }}
+                >
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    align="center"
+                    sx={{ fontWeight: "bold", color: "#3f51b5" }}
+                  >
+                    Exam Results
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: "bold", color: "#4caf50" }}
+                      >
+                        <CheckCircle
+                          sx={{ verticalAlign: "middle", color: "#4caf50" }}
+                        />{" "}
+                        Exam Score:
+                        <span
+                          style={{ fontWeight: "normal", color: "#1e88e5" }}
+                        >
+                          {" "}
+                          {examResult.examScore}
+                        </span>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: "bold", color: "#388e3c" }}
+                      >
+                        <CheckCircle
+                          sx={{ verticalAlign: "middle", color: "#388e3c" }}
+                        />{" "}
+                        Right Answers:
+                        <span
+                          style={{ fontWeight: "normal", color: "#1e88e5" }}
+                        >
+                          {" "}
+                          {examResult.rightAnswers}
+                        </span>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: "bold", color: "#f44336" }}
+                      >
+                        <Clear
+                          sx={{ verticalAlign: "middle", color: "#f44336" }}
+                        />{" "}
+                        Wrong Answers:
+                        <span
+                          style={{ fontWeight: "normal", color: "#1e88e5" }}
+                        >
+                          {" "}
+                          {examResult.wrongAnswers}
+                        </span>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: "bold", color: "#ff9800" }}
+                      >
+                        <HourglassEmpty
+                          sx={{ verticalAlign: "middle", color: "#ff9800" }}
+                        />{" "}
+                        Empty Answers:
+                        <span
+                          style={{ fontWeight: "normal", color: "#1e88e5" }}
+                        >
+                          {" "}
+                          {examResult.emptyAnswers}
+                        </span>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: "bold", color: "#1976d2" }}
+                      >
+                        <Assessment
+                          sx={{ verticalAlign: "middle", color: "#1976d2" }}
+                        />{" "}
+                        Result:
+                        <span
+                          style={{ fontWeight: "normal", color: "#1e88e5" }}
+                        >
+                          {" "}
+                          {examResult.passed}
+                        </span>
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Paper>
               </Box>
             )}
           </Box>
