@@ -208,7 +208,7 @@ export default function AddArticle() {
           console.log(data);
           setSnackbarMessage("Article created successfully!");
           setOpenSnackbar(true);
-          navigate("/PrivateArticle/"+serviceId);
+          navigate("/PrivateProfile");
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -265,8 +265,8 @@ export default function AddArticle() {
                   value={articlename}
                   onChange={(e) => {
                     let value = e.target.value;
-                    setCourseName(value);
-                    setcourseNameError("");
+                    setArticleName(value);
+                    setarticleNameError("");
                   }}
                   helperText={!articlename && "Article name is required."}
                   error={!articlename}
