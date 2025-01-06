@@ -209,6 +209,7 @@ const OngoingExamPage = () => {
         }
 
         const examData = await response.json();
+
         toast.success("end exam successful! Redirecting to Profile...");
         setTimeout(() => navigate("/Profile"), 2000); // Redirect after 2 seconds
       } catch (error) {
@@ -250,7 +251,7 @@ const OngoingExamPage = () => {
       <Container maxWidth="md">
         <Paper sx={{ p: 4, mb: 2 }}>
           <Typography variant="h6">
-            {`Q${currentQuestion.sortNumber}: ${currentQuestion.questionName}`}
+            {`Q${currentQuestion.sortNumber}: ${currentQuestion.questionText}`}
           </Typography>
           <RadioGroup
             value={selectedAnswers[currentQuestionIndex] || ""}

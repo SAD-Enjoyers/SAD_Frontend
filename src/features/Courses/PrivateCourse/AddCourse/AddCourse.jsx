@@ -337,6 +337,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function AddCourse() {
   const [coursename, setCourseName] = useState("");
@@ -482,6 +483,7 @@ export default function AddCourse() {
       } catch (error) {
         console.error("Error fetching categories:", error);
         setLoading(false);
+
         navigate("/privateprofile");
       }
     };
@@ -539,7 +541,12 @@ export default function AddCourse() {
         console.log(data);
         setSnackbarMessage("Course created successfully!");
         setOpenSnackbar(true);
-        navigate("/PrivateCourse/"+serviceId);
+        toast.success("Add Course successfully");
+        setTimeout(() => {
+          closeState();
+          window.location.reload();
+        }, 3000);
+        navigate("/PrivateCourse/" + data.data.serviceId);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -1011,6 +1018,21 @@ export default function AddCourse() {
           </Alert>
         </Snackbar>
       </Box>
+      <ToastContainer
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+          marginTop: "100px",
+        }}
+        autoClose={3000}
+        hideProgressBar
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </Container>
   );
 }

@@ -84,30 +84,33 @@ const ArticleContent = ({ articleData, accessToken, onSaveChange }) => {
 
     setLoading(true);
     try {
-      const response = await fetch(`/api/v1/article/blog/${articleData.serviceId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "x-role": localStorage.getItem("role"),
-        },
-        body: JSON.stringify({
-          title,
-          text: content,
-          attachment: attachmentName,
-        }),
-      });
+      const response = await fetch(
+        `/api/v1/article/blog/${articleData.serviceId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "x-role": localStorage.getItem("role"),
+          },
+          body: JSON.stringify({
+            title,
+            text: content,
+            attachment: attachmentName,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(
+          errorData.message || `HTTP error! status: ${response.status}`
+        );
       }
 
       setSnackbarSeverity("success");
       setSnackbarMessage("Article saved successfully!");
       setOpenSnackbar(true);
-      setChildData(true)
-      onSaveChange(childData)
     } catch (error) {
       console.error("Error saving article:", error);
       setSnackbarSeverity("error");
@@ -117,7 +120,7 @@ const ArticleContent = ({ articleData, accessToken, onSaveChange }) => {
       setLoading(false);
     }
   };
-  console.log(childData)
+  console.log(childData);
   return (
     <Box sx={{ margin: "0 auto", padding: 2 }}>
       <form onSubmit={handleSubmit}>

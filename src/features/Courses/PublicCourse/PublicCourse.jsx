@@ -7,27 +7,21 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import {
-  LibraryBooks,
-  Settings,
-  People,
-  Comment,
-  VideoLibrary,
-} from "@mui/icons-material";
-import { useLocation, useParams } from "react-router-dom"; // Import useLocation and useParams
+import { VideoLibrary, Comment } from "@mui/icons-material";
+import { useLocation, useParams } from "react-router-dom";
 import Public from "./Tabs/Public";
 import CommentSection from "../../../common/Comments/CommentSection";
+import CoursePreview from "./Tabs/CoursePreview";
 
 const PublicCourse = () => {
-  const { courseId } = useParams(); // Extract courseId from URL
-  const location = useLocation(); // Get location state
-  const [selectedTab, setSelectedTab] = useState(0);
-  const [enrolledStudents, setEnrolledStudents] = useState([]);
+  const { courseId } = useParams();
+  const location = useLocation();
+  const [selectedTab, setSelectedTab] = useState(0); // Default to first tab
   const [courseData, setCourseData] = useState(null);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const accessToken = localStorage.getItem("token");
+  const [tabContent, setTabContent] = useState([]);
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -38,6 +32,27 @@ const PublicCourse = () => {
     if (location.state && location.state.courseData) {
       setCourseData(location.state.courseData);
       setLoading(false);
+      setTabContent([
+        {
+          label: "information course",
+          content: (
+            <CoursePreview serviceId={location.state.courseData.serviceId} />
+          ),
+          icon: <VideoLibrary />,
+        },
+        {
+          label: "Enrolled Students",
+          content: <Public serviceId={location.state.courseData.serviceId} />,
+          icon: <VideoLibrary />,
+        },
+        {
+          label: "Comment Section",
+          icon: <Comment />,
+          content: (
+            <CommentSection serviceId={location.state.courseData.serviceId} />
+          ),
+        },
+      ]);
     } else {
       const storedCourseData = JSON.parse(localStorage.getItem("courseData"));
       if (
@@ -55,22 +70,10 @@ const PublicCourse = () => {
 
   useEffect(() => {
     const savedTab = localStorage.getItem("selectedTab");
-    if (savedTab) setSelectedTab(parseInt(savedTab, 10));
+    if (savedTab) {
+      setSelectedTab(parseInt(savedTab, 10));
+    }
   }, []);
-
-  const tabContent = [
-    {
-      label: "Enrolled Students",
-      content: <Public />,
-
-      icon: <VideoLibrary />,
-    },
-    {
-      label: "Comment Section",
-      content: <CommentSection serviceId={courseId} />,
-      icon: <Comment />,
-    },
-  ];
 
   return (
     <Box
@@ -125,10 +128,9 @@ const PublicCourse = () => {
             <CircularProgress />
           </Box>
         ) : (
-          // selectedTab == 1   => comments section
           <Box
             sx={{
-              width: selectedTab == 1 ? "800px" : "100%",
+              width: selectedTab === 2 ? "800px" : "100%",
               margin: "0 auto",
             }}
           >
