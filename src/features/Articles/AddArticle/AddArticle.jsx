@@ -45,14 +45,25 @@ export default function AddArticle() {
   const [selectedSubjectsError, setSelectedSubjectsError] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [descriptionError, setDescriptionError] = useState("");
   const navigate = useNavigate();
+
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
+    setIsSubmitted(true);
     let isValid = true;
 
-    if (!coursename.trim()) {
-      setarticleNameError(" ");
+    if (!articlename.trim()) {
+      setarticleNameError("Article name is required. ");
       isValid = false;
     } else {
       setarticleNameError("");
@@ -63,6 +74,12 @@ export default function AddArticle() {
       isValid = false;
     } else {
       setSelectedLevelError("");
+    }
+    if (!description.trim()) {
+      setDescriptionError("Description is required.");
+      isValid = false;
+    } else {
+      setDescriptionError("");
     }
 
     if (selectedSubjects.length === 0) {
@@ -132,7 +149,7 @@ export default function AddArticle() {
         }
   
         const data = await response.json();
-        submitCourse(data.data.fileName);
+        submitArticle(data.data.fileName);
       } catch (error) {
         console.error("Error uploading image:", error);
         setSnackbarMessage("Failed to upload image. Please try again.");
@@ -177,7 +194,7 @@ export default function AddArticle() {
       }
     };
   
-    const submitCourse = (image) => {
+    const submitArticle = (image) => {
       var [tag1, tag2, tag3] = [...selectedSubjects];
   
       const formData = {
@@ -212,8 +229,8 @@ export default function AddArticle() {
         })
         .catch((error) => {
           console.error("Error:", error);
-          // setSnackbarMessage("Failed to create course. Please try again.");
-          // setOpenSnackbar(true);
+          setSnackbarMessage("Failed to create article. Please try again.");
+          setOpenSnackbar(true);
         });
     };
   
@@ -264,12 +281,20 @@ export default function AddArticle() {
                   required
                   value={articlename}
                   onChange={(e) => {
-                    let value = e.target.value;
-                    setCourseName(value);
-                    setcourseNameError("");
+                    setArticleName(e.target.value);
+                    if (e.target.value.trim() === "") {
+                      setarticleNameError("Article name is required.");
+                    } else {
+                      setarticleNameError("");
+                    }
                   }}
-                  helperText={!articlename && "Article name is required."}
-                  error={!articlename}
+                  onBlur={() => {
+                    if (articlename.trim() === "") {
+                      setarticleNameError("Article name is required.");
+                    }
+                  }}
+                  helperText={articleNameError}
+                  error={!!articleNameError}
                   variant="outlined"
                   sx={{
                     "& .MuiInputBase-root": {
@@ -287,10 +312,21 @@ export default function AddArticle() {
                   multiline
                   rows={4}
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  helperText={!description && "Description is required."}
-                  error={!description}
-                  variant="outlined"
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                    if (e.target.value.trim() === "") {
+                      setDescriptionError("Description is required.");
+                    } else {
+                      setDescriptionError("");
+                    }
+                  }}
+                  onBlur={() => {
+                    if (description.trim() === "") {
+                      setDescriptionError("Description is required.");
+                    }
+                  }}
+                  helperText={descriptionError} // نمایش ارور
+                  error={!!descriptionError}
                   sx={{
                     "& .MuiInputBase-root": {
                       borderRadius: "8px",
@@ -566,6 +602,24 @@ export default function AddArticle() {
               </Button>
             </Box>
           </form>
+
+          <Snackbar
+          open={openSnackbar}
+          autoHideDuration={1000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={
+              snackbarMessage.includes("successfully") ? "success" : "error"
+            }
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+
         </Box>
       </Container>
     );
