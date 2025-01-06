@@ -229,9 +229,7 @@ function PublicArticle() {
 
                   {/* Tags Section */}
                   <Box sx={{ marginTop: 2 }}>
-                    <Typography variant="h6" sx={{ color: primaryGradient[0] }}>
-                      Tags
-                    </Typography>
+                    
                     <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
                       {articleDetails.tag1 && (
                         <Chip
@@ -335,19 +333,21 @@ function PublicArticle() {
         {tabIndex === 1 && (
           <Box sx={{ maxWidth: 950, margin: "0 auto", paddingX: 4 }}>
             <CustomCard>
-              <Typography variant="h4" gutterBottom>
+              <Typography variant="h4" gutterBottom sx={{textAlign:'center'}}>
                 {articleContents.title}
               </Typography>
               <div
                 style={{
                   whiteSpace: "pre-wrap",
-                  border: "1px solid #ddd",
                   minWidth: 650,
                   padding: "10px",
                   minHeight: "600px",
                   maxHeight: "250px",
                   overflowY: "auto", // enable vertical scrolling
-                  backgroundColor: 'white'
+                  backgroundColor: 'white',
+                  fontFamily: "'Roboto', 'Arial', sans-serif", // Add your desired font here
+                  fontSize: "16px", // Optional: adjust the font size
+                  lineHeight: "1.6", // Optional: improve readability
                 }}
 
                 dangerouslySetInnerHTML={{ __html: articleContents.text }}
