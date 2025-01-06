@@ -10,67 +10,73 @@ import {
   InputLabel,
   Typography,
   Chip,
-  Rating,
-  Pagination,
-  Checkbox,
   Grid,
+  Rating,
+  Checkbox,
+  ListItemText,
+  Pagination,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { Link } from "react-router-dom";
+import { Sort, SortByAlpha } from "@mui/icons-material";
 import axios from "axios";
 import { motion } from "framer-motion";
-import {
-  School,
-  FilterList,
-  Sort,
-  SortByAlpha,
-} from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
-function CoursesTab() {
+function SearchAndFilterArticle() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [courses, setCourses] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [sortOrder, setSortOrder] = useState({ criterion: "", direction: "asc" });
+  const [categories, setCategories] = useState([]); // Categories for filter
+  const [selectedSubjects, setSelectedSubjects] = useState([]);
+  const [sortOrder, setSortOrder] = useState({
+    criterion: "",
+    direction: "asc",
+  });
+  const [articles, setArticles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
-
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("/api/v1/common/courseCategories");
+        const response = await axios.get("/api/v1/common/categories");
         setCategories(response.data.data.categoryList || []);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
     };
 
-    const fetchCourses = async () => {
+    const fetchArticles = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("/api/v1/courses");
-        const transformedCourses = response.data.data.result.map((course) => ({
-          id: course.id,
-          name: course.title,
-          description: course.description,
-          categories: [course.category1, course.category2, course.category3].filter(Boolean),
-          level: course.level,
-          price: course.price,
-          rating: course.rating,
-          instructor: course.instructorName,
-          numberOfRatings: course.numberOfRatings,
-        }));
-        setCourses(transformedCourses);
+        const response = await axios.get("/api/v1/course");
+        const transformedQuestions = response.data.data.result.map(
+          (q, index) => {
+            const subject = [];
+            for (let i = 1; i < 4; i++) {
+              if (q[`tag${i}`]) {
+                subject.push(q[`tag${i}`]);
+              }
+            }
+            return {
+              id: q.serviceId,
+              writer: q.userId,
+              title: q.name,
+              content: q.description,
+              rating: q.score,
+              subject: subject,
+            };
+          }
+        );
+
+        setArticles(transformedQuestions);
       } catch (error) {
-        console.error("Error fetching courses:", error);
+        console.error("Error fetching questions:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchCategories();
-    fetchCourses();
+    fetchArticles();
   }, []);
 
   const handleSearch = (event) => setSearchTerm(event.target.value);
@@ -80,11 +86,8 @@ function CoursesTab() {
     setTimeout(() => setLoading(false), 1500);
   };
 
-  const handleCategoryChange = (event) => {
-    const selected = event.target.value;
-    if (selected.length <= 3) {
-      setSelectedCategories(selected);
-    }
+  const handleSubjectChange = (event) => {
+    setSelectedSubjects(event.target.value);
   };
 
   const handleSortChange = (event) => {
@@ -99,41 +102,45 @@ function CoursesTab() {
     setCurrentPage(1);
   };
 
-  const filteredCourses = useMemo(() => {
-    return courses
-      .filter((course) => {
-        const matchesSearchTerm = course.name
-          ? course.name.toLowerCase().includes(searchTerm.toLowerCase())
-          : false;
-        const matchesCategories =
-          selectedCategories.length === 0 ||
-          selectedCategories.every((category) =>
-            course.categories.includes(category)
+  // Memoized filtering and sorting logic
+  const filteredQuestions = useMemo(() => {
+    return articles
+      .filter((question) => {
+        const matchesSearchTerm = question.title
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+        const matchesSubjects =
+          selectedSubjects.length === 0 ||
+          selectedSubjects.includes("All") ||
+          selectedSubjects.some((subject) =>
+            question.subject.includes(subject)
           );
-        return matchesSearchTerm && matchesCategories;
+        return matchesSearchTerm && matchesSubjects;
       })
       .sort((a, b) => {
         const { criterion, direction } = sortOrder;
-        if (criterion === "rating") {
-          return direction === "asc" ? a.rating - b.rating : b.rating - a.rating;
+        if (criterion === "score") {
+          return direction === "asc"
+            ? a.rating - b.rating
+            : b.rating - a.rating;
         }
         if (criterion === "name") {
           return direction === "asc"
-            ? a.name.localeCompare(b.name)
-            : b.name.localeCompare(a.name);
+            ? a.title.localeCompare(b.title)
+            : b.title.localeCompare(a.title);
         }
-        if (criterion === "instructor") {
+        if (criterion === "writer") {
           return direction === "asc"
-            ? a.instructor.localeCompare(b.instructor)
-            : b.instructor.localeCompare(a.instructor);
+            ? a.writer.localeCompare(b.writer)
+            : b.writer.localeCompare(a.writer);
         }
         return 0;
       });
-  }, [searchTerm, selectedCategories, courses, sortOrder]);
+  }, [searchTerm, selectedSubjects, articles, sortOrder]);
 
-  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentCourses = filteredCourses.slice(
+  const currentQuestions = filteredQuestions.slice(
     startIndex,
     startIndex + itemsPerPage
   );
@@ -141,18 +148,20 @@ function CoursesTab() {
   return (
     <Box
       sx={{
-        width: "100%",
-        maxWidth: "800px",
-        margin: "auto",
-        marginTop: "50px",
-        padding: "20px",
-        backgroundColor: "#F9FAFB",
-        borderRadius: "12px",
-        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.1)",
+        minWidth: 500,
+        maxWidth: 900,
+        // marginLeft: 35,
+        margin: "0 auto",
       }}
     >
+      <div style={{ textAlign: "center" }}>
+        <Typography variant="button" fontSize={20} color="primary" gutterBottom>
+          Articles
+        </Typography>
+      </div>
       {/* Search and Sort Filters */}
       <Grid container spacing={3} sx={{ marginTop: "30px" }}>
+        {/* Search */}
         <Grid item xs={12} sm={8} md={9}>
           <TextField
             variant="outlined"
@@ -173,70 +182,46 @@ function CoursesTab() {
                 borderRadius: "8px",
                 backgroundColor: "#fff",
               },
+              minWidth: 900,
             }}
           />
-        </Grid>
-        <Grid item xs={12} sm={4} md={3}>
-          <Button
-            variant="contained"
-            onClick={handleSearchSubmit}
-            disabled={loading}
-            fullWidth
-            sx={{
-              backgroundColor: "#4A90E2",
-              color: "#fff",
-              borderRadius: "8px",
-              "&:hover": { backgroundColor: "#357ABD" },
-              padding: "10px",
-            }}
-          >
-            {loading ? "Searching..." : "Search"}
-          </Button>
         </Grid>
       </Grid>
 
       <Grid container spacing={3} sx={{ marginTop: "30px" }}>
+        {/* Filter by Subjects */}
         <Grid item xs={12} sm={4}>
+          {/* Subjects */}
           <FormControl fullWidth variant="outlined">
-            <InputLabel>Categories</InputLabel>
-            <Select
-              multiple
-              value={selectedCategories}
-              onChange={handleCategoryChange}
-              label="Categories"
-              renderValue={(selected) => selected.join(", ")}
-              sx={{
-                backgroundColor: "#ffffff",
-                borderRadius: "8px",
-                borderColor: "#E0E0E0",
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#E0E0E0",
-                },
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#378CE7",
-                },
-                "& .MuiSelect-icon": {
-                  color: "#378CE7",
-                },
-              }}
-            >
-              {categories.map((category) => (
-                <MenuItem key={category.id} value={category.name}>
-                  <Checkbox
-                    checked={selectedCategories.includes(category.name)}
-                    sx={{
-                      color: "#378CE7",
-                      "&.Mui-checked": {
-                        color: "#378CE7",
-                      },
-                    }}
-                  />
-                  {category.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              <InputLabel>Subjects</InputLabel>
+              <Select
+                multiple
+                value={selectedSubjects}
+                onChange={handleSubjectChange}
+                label="Subjects"
+                renderValue={(selected) => selected.join(", ")}
+                sx={{
+                  backgroundColor: "#f5f5f5",
+                  borderRadius: "8px",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#ddd",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#4A90E2",
+                  },
+                }}
+              >
+                {categories.map((category) => (
+                  <MenuItem key={category.categoryId} value={category.category} sx={{maxHeight:50}}>
+                    <Checkbox checked={selectedSubjects.includes(category.category)} />
+                    <ListItemText primary={category.category} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
         </Grid>
+
+        {/* Sort By Filter */}
         <Grid item xs={12} sm={4}>
           <FormControl fullWidth variant="outlined">
             <InputLabel>Sort By</InputLabel>
@@ -244,22 +229,34 @@ function CoursesTab() {
               value={`${sortOrder.criterion}-${sortOrder.direction}`}
               onChange={handleSortChange}
               label="Sort By"
+              sx={{
+                backgroundColor: "#f5f5f5",
+                borderRadius: "8px",
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#ddd",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#4A90E2",
+                },
+              }}
             >
-              <MenuItem value="rating-asc">
-                <Sort sx={{ marginRight: "8px" }} /> Rating (Low to High)
+              <MenuItem value="score-asc">
+                <Sort sx={{ marginRight: "8px" }} /> Score (Low to High)
               </MenuItem>
-              <MenuItem value="rating-desc">
-                <Sort sx={{ marginRight: "8px" }} /> Rating (High to Low)
+              <MenuItem value="score-desc">
+                <Sort sx={{ marginRight: "8px" }} /> Score (High to Low)
               </MenuItem>
               <MenuItem value="name-asc">
-                <SortByAlpha sx={{ marginRight: "8px" }} /> Name (A to Z)
+                <SortByAlpha sx={{ marginRight: "8px" }} /> Title (A to Z)
               </MenuItem>
               <MenuItem value="name-desc">
-                <SortByAlpha sx={{ marginRight: "8px" }} /> Name (Z to A)
+                <SortByAlpha sx={{ marginRight: "8px" }} /> Title (Z to A)
               </MenuItem>
             </Select>
           </FormControl>
         </Grid>
+
+        {/* Items Per Page Filter */}
         <Grid item xs={12} sm={4}>
           <FormControl fullWidth variant="outlined">
             <InputLabel>Items Per Page</InputLabel>
@@ -267,19 +264,31 @@ function CoursesTab() {
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
               label="Items Per Page"
+              sx={{
+                backgroundColor: "#f5f5f5",
+                borderRadius: "8px",
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#ddd",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#4A90E2",
+                },
+              }}
             >
-              <MenuItem value={6}>6</MenuItem>
-              <MenuItem value={12}>12</MenuItem>
-              <MenuItem value={18}>18</MenuItem>
-              <MenuItem value={24}>24</MenuItem>
+              {[6, 12, 18, 24].map((items) => (
+                <MenuItem key={items} value={items}>
+                  {items} items
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
       </Grid>
 
+      {/* Display Results */}
       <Grid container spacing={3} sx={{ marginTop: "20px" }}>
-        {currentCourses.map((course) => (
-          <Grid item xs={12} key={course.id}>
+        {currentQuestions.map((question) => (
+          <Grid item xs={12} key={question.id}>
             <Box
               sx={{
                 display: "flex",
@@ -292,73 +301,136 @@ function CoursesTab() {
                 "&:hover": {
                   transform: "scale(1.03)",
                 },
+                width: "100%",
+                maxWidth: "900px", // Max width for large screens
+                margin: "0 auto",
+                boxSizing: "border-box",
               }}
             >
+              {/* Question Title */}
               <Typography
                 variant="h6"
-                sx={{ color: "#4A90E2", fontWeight: "bold" }}
+                sx={{
+                  color: "#4A90E2",
+                  fontWeight: "bold",
+                  textDecoration: "none",
+                  marginBottom: "10px",
+                  lineHeight: "1.4", // Adjust line height for better readability
+                }}
               >
-                <Link
-                  to={`/coursePreview/${course.id}`}
-                  style={{ textDecoration: "none", color: "#4A90E2" }}
-                >
-                  {course.name}
+                <Link to={`/CoursePreview/${question.id}`} style={{ textDecoration: "none" }}>
+                  {question.title}
                 </Link>
               </Typography>
 
+              {/* Question Description */}
               <Typography
                 variant="body2"
                 color="text.secondary"
-                sx={{ marginBottom: "10px" }}
+                sx={{
+                  marginBottom: "10px",
+                  fontSize: "0.875rem", // Slightly smaller font for description
+                  lineHeight: "1.5",
+                }}
               >
-                {course.description.split(" ").slice(0, 15).join(" ")}...
+                {question.content.split(" ").slice(0, 15).join(" ")}...
               </Typography>
 
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                {course.categories.map((category, index) => (
+               {/* Subjects */}
+               <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "8px",
+                  marginBottom: "15px", // Space before the next section
+                }}
+              >
+                {question.subject.map((subject, index) => (
                   <Chip
                     key={index}
-                    label={category}
+                    label={subject}
                     color="primary"
                     variant="outlined"
                     size="small"
+                    sx={{
+                      fontSize: "0.75rem",
+                      fontWeight: "bold",
+                      borderRadius: "4px",
+                      padding: "2px 8px",
+                    }}
                   />
                 ))}
               </Box>
 
+              {/* Score & Writer */}
               <Box
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
                   marginTop: "15px",
+                  borderTop: "1px solid #ddd",
+                  paddingTop: "10px",
                 }}
               >
+                {/* Score */}
                 <Rating
-                  name="rating"
-                  value={course.rating}
+                  name="score"
+                  value={question.rating}
                   max={5}
                   readOnly
-                  sx={{ fontSize: "1.2rem" }}
+                  sx={{
+                    fontSize: "1.2rem",
+                    "& .MuiRating-iconFilled": { color: "#ffcc00" },
+                  }}
                 />
-                <Typography variant="body2">
-                  Instructor: {course.instructor}
-                </Typography>
+
+                {/* Writer Name with Motion Effects */}
+                <motion.div
+                  whileHover={{ scale: 1.05, color: "#4A90E2" }} // Hover effect: scale up and change color
+                  whileTap={{ scale: 0.98 }} // Click effect: scale down on tap
+                  transition={{ duration: 0.2 }} // Smooth transition for hover and click
+                >
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "#6c757d",
+                      fontWeight: "bold",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {question.writer}
+                  </Typography>
+                </motion.div>
               </Box>
             </Box>
           </Grid>
         ))}
       </Grid>
 
-      <Pagination
-        count={totalPages}
-        page={currentPage}
-        onChange={handlePageChange}
-        color="primary"
-        sx={{ marginTop: "30px", display: "flex", justifyContent: "center" }}
-      />
+      {/* Pagination */}
+      <Box
+        sx={{ display: "flex", justifyContent: "center", marginTop: "30px" }}
+      >
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
+          sx={{
+            "& .MuiPaginationItem-root": {
+              backgroundColor: "#f0f0f0",
+              borderRadius: "8px",
+            },
+            "& .MuiPaginationItem-root.Mui-selected": {
+              backgroundColor: "#4A90E2",
+              color: "#fff",
+            },
+          }}
+        />
+      </Box>
     </Box>
   );
 }
 
-export default CoursesTab;
+export default SearchAndFilterArticle;

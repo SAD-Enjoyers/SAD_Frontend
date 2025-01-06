@@ -9,6 +9,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function SearchUsers() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,7 +36,6 @@ function SearchUsers() {
               : "/api/v1/uploads/profile-images/" + q.image,
         }));
         setUsers(transformedQuestions);
-        console.log(transformedQuestions);
       } catch (error) {
         console.error("Error fetching profiles:", error);
       }
@@ -57,12 +57,15 @@ function SearchUsers() {
     startIndex,
     startIndex + itemsPerPage
   );
+  function handleLinkClick(imageUrl) {
+    localStorage.setItem("userImage", imageUrl);
+  }
 
   return (
     <Box
       sx={{
         minWidth: 500,
-        maxWidth: 900,
+        maxWidth: 1200,
         margin: "0 auto",
       }}
     >
@@ -72,7 +75,11 @@ function SearchUsers() {
         </Typography>
       </div>
 
-      <Grid2 container spacing={3} sx={{ marginTop: "40px" }}>
+      <Grid2
+        container
+        spacing={3}
+        sx={{ marginTop: "40px", display: "flex", justifyContent: "center" }}
+      >
         <Grid2 size={{ xs: 12, sm: 8, md: 9 }}>
           <TextField
             variant="outlined"
@@ -103,29 +110,85 @@ function SearchUsers() {
           <Grid2 size={{ s: 12, sm: 6, md: 4 }} key={id}>
             <Box
               sx={{
-                padding: "16px",
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                textAlign: "center",
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                padding: 3,
+                border: "1px solid #e0e0e0",
+                borderRadius: "12px",
+                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+                backgroundColor: "#fff",
+                transition: "transform 0.2s, box-shadow 0.2s",
+                "&:hover": {
+                  transform: "scale(1.03)",
+                  boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.15)",
+                },
               }}
             >
-              <img
-                src={user.image}
-                alt={user.title}
+              <Link
+                to={"/PublicUsers/" + user.userName}
                 style={{
-                  width: "100%",
-                  height: "180px",
-                  borderRadius: "8px",
-                  marginBottom: "12px",
+                  textDecoration: "none",
+                  color: "inherit",
                 }}
-              />
-              <Typography variant="h6" gutterBottom>
-                {user.firstName} {user.lastName}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {user.description}
-              </Typography>
+                onClick={() => handleLinkClick(user.image)}
+              >
+                <img
+                  src={user.image}
+                  alt={user.title}
+                  style={{
+                    width: "100%",
+                    height: "200px",
+                    objectFit: "cover",
+                    borderRadius: "12px",
+                    marginBottom: "16px",
+                  }}
+                />
+                <Grid2 container spacing={2} alignItems="center">
+                  <Grid2 size={4}>
+                    <Typography
+                      variant="subtitle1"
+                      color="textSecondary"
+                      sx={{
+                        fontWeight: "bold",
+                        textAlign: "left",
+                      }}
+                    >
+                      User Name:
+                    </Typography>
+                  </Grid2>
+                  <Grid2 size={8}>
+                    <Typography variant="h6">{user.userName}</Typography>
+                  </Grid2>
+
+                  <Grid2 size={4}>
+                    <Typography
+                      variant="subtitle1"
+                      color="textSecondary"
+                      sx={{ fontWeight: "bold", textAlign: "left" }}
+                    >
+                      Full Name:
+                    </Typography>
+                  </Grid2>
+                  <Grid2 size={8}>
+                    <Typography variant="h6">
+                      {user.firstName} {user.lastName}
+                    </Typography>
+                  </Grid2>
+
+                  <Grid2 size={4}>
+                    <Typography
+                      variant="subtitle1"
+                      color="textSecondary"
+                      sx={{ fontWeight: "bold", textAlign: "left" }}
+                    >
+                      Description:
+                    </Typography>
+                  </Grid2>
+                  <Grid2 size={8}>
+                    <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
+                      {user.description}
+                    </Typography>
+                  </Grid2>
+                </Grid2>
+              </Link>
             </Box>
           </Grid2>
         ))}

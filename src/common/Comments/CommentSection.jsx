@@ -11,6 +11,7 @@ import {
   Avatar,
   Box,
   Divider,
+  Alert,
 } from "@mui/material";
 import axios from "axios";
 
@@ -19,7 +20,9 @@ const CommentSection = ({ serviceId }) => {
   const [newComment, setNewComment] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
 
   const token = localStorage.getItem("token");
 
@@ -36,10 +39,14 @@ const CommentSection = ({ serviceId }) => {
         `/comments/${serviceId}?page=${page}`
       );
       setComments(response.data.data);
-      setTotalPages(response.data.totalPages); // Adjust based on your response structure
+      setTotalPages(response.data.totalPages);
     } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.warn("Comments not found.");
+        return; // Do nothing for 404 errors
+      }
       console.error("Error fetching comments:", error);
-      setErrorMessage("Failed to load comments. Please try again later.");
+      showSnackbar("Network is bad. Please try again.", "error");
     }
   };
 
@@ -54,13 +61,24 @@ const CommentSection = ({ serviceId }) => {
     };
 
     try {
-      const response = await axiosInstance.post("/add-comment", payload);
+      await axiosInstance.post("/add-comment", payload);
       setNewComment("");
+      showSnackbar("Comment posted successfully!", "success");
       fetchComments(); // Refresh comments after posting
     } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.warn("Service not found.");
+        return; // Do nothing for 404 errors
+      }
       console.error("Error adding comment:", error);
-      setErrorMessage("Failed to post comment. Please try again.");
+      showSnackbar("Failed to post comment. Please try again.", "error");
     }
+  };
+
+  const showSnackbar = (message, severityType) => {
+    setSnackbarMessage(message);
+    setSeverity(severityType);
+    setOpenSnackbar(true);
   };
 
   return (
@@ -97,12 +115,11 @@ const CommentSection = ({ serviceId }) => {
             <Card key={comment.commentId} variant="outlined" sx={{ p: 2 }}>
               <Stack direction="row" spacing={2} alignItems="center">
                 <Avatar sx={{ bgcolor: "primary.main" }}>
-                  {comment.userId.charAt(0).toUpperCase()}{" "}
-                  {/* Avatar initials */}
+                  {comment.userId.charAt(0).toUpperCase()}
                 </Avatar>
                 <Box>
                   <Typography variant="subtitle2" fontWeight="bold">
-                    {comment.userId} {/* Display username */}
+                    {comment.userId}
                   </Typography>
                   <Typography variant="body1" sx={{ mt: 1 }}>
                     {comment.text}
@@ -129,13 +146,21 @@ const CommentSection = ({ serviceId }) => {
         />
       </CardContent>
 
-      {/* Error Message Snackbar */}
+      {/* Snackbar for success/error message */}
       <Snackbar
-        open={Boolean(errorMessage)}
-        message={errorMessage}
-        autoHideDuration={6000}
-        onClose={() => setErrorMessage("")}
-      />
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Card>
   );
 };

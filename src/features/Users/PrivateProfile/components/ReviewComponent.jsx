@@ -132,9 +132,10 @@ export default function ReviewComponent(props) {
     }
     if (props.section == "My Courses") {
       if (item.type === "member") {
-        navigate("/PublicCourse");
+        navigateToPublicCourse(item);
       } else {
-        navigate("/PrivateCourse");
+        console.log("2");
+        navigateToPrivateCourse(item);
       }
     }
     if (props.section == "My Articles") {
@@ -162,7 +163,7 @@ export default function ReviewComponent(props) {
       }
 
       const responseData = await response.json();
-      console.log(response.status, responseData);
+      // console.log(response.status, responseData);
 
       // دریافت تصاویر و ذخیره در حافظه
       const fetchedData = await Promise.all(
@@ -209,6 +210,17 @@ export default function ReviewComponent(props) {
     localStorage.setItem("articleData", JSON.stringify(articleData)); // Save to localStorage
     navigate(`/PrivateArticle/${articleData.serviceId}`, {
       state: { articleData },
+    });
+  };
+
+  const navigateToPublicCourse = (courseData) => {
+    localStorage.setItem("courseData", JSON.stringify(courseData)); // Save to localStorage
+    navigate("/PublicCourse", { state: { courseData } });
+  };
+  const navigateToPrivateCourse = (courseData) => {
+    localStorage.setItem("courseData", JSON.stringify(courseData)); // Save to localStorage
+    navigate(`/PrivateCourse/${courseData.serviceId}`, {
+      state: { courseData },
     });
   };
   // اجرا در بارگذاری اولیه
@@ -284,13 +296,27 @@ export default function ReviewComponent(props) {
                     flexShrink: 0,
                   }}
                 >
-                  {data.map((item, index) => (
-                    <MemoizedCard
-                      key={index}
-                      item={item}
-                      Condition={Condition}
-                    />
-                  ))}
+                  {data && data.length > 0 ? (
+                    data.map((item, index) => (
+                      <MemoizedCard
+                        key={index}
+                        item={item}
+                        Condition={Condition}
+                      />
+                    ))
+                  ) : (
+                    <Box
+                      sx={{
+                        textAlign: "center",
+                        margin: "0 auto",
+                        padding: 2,
+                        color: "text.secondary",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      <Typography variant="body1">not exist</Typography>
+                    </Box>
+                  )}
                 </Grid2>
               </Box>
             )}

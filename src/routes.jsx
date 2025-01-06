@@ -5,8 +5,7 @@ import Signup from "./features/Auth/Signup/Signup.jsx";
 import Login from "./features/Auth/Login/Login.jsx";
 import Fpass from "./features/Auth/ForgetPassword/forgotPassword.jsx";
 import ChangePassword from "./features/Auth/ChangePassword/ChangePassword.jsx";
-import PrivateProfile from "./features/PrivateProfile/PrivateProfile.jsx";
-import WalletPage from "./features/PrivateProfile/Wallet/Wallet.jsx";
+import WalletPage from "./features/Users/PrivateProfile/Wallet/Wallet.jsx";
 
 import PublicExam from "./features/Exams/PublicExam/PublicExam.jsx";
 import ExamResult from "./features/Exams/PublicExam/ExamResult.jsx";
@@ -32,14 +31,16 @@ import PublicArticle from "./features/Articles/publicArticle/publicArticle.jsx";
 import PrivateArticle from "./features/Articles/privateArticle/privateArticle.jsx";
 import ArticlePreview from "./features/Articles/ArticlePreview/ArticlePreview.jsx";
 
-import TermsAndConditions from "./features/resource/TermsAndConditions/TermsAndConditions.jsx";
-import QA from "./features/resource/QA/Qa.jsx";
+import TermsAndConditions from "./features/Resources/TermsAndConditions/TermsAndConditions.jsx";
+import QA from "./features/Resources/QA/Qa.jsx";
 import AboutUs from "./features/Resources/AboutUs/Aboutus.jsx";
 
 import Comments from "./common/Comments/CommentSection.jsx";
 import SearchUsers from "./features/Users/searchUsers/SearchUsers.jsx";
 import ImageUpload from "./features/Exams/MakeExam/components/ImageUpload.jsx";
 import ExamSearch from "./features/Exams/ExamsSearch/ExamsTab.jsx";
+import PrivateProfile from "./features/Users/PrivateProfile/PrivateProfile.jsx";
+import PublicUsers from "./features/Users/publicUsers/PublicUsers.jsx";
 
 function AppRoutes() {
   return (
@@ -53,6 +54,7 @@ function AppRoutes() {
           <Route path="fp" element={<Fpass />} />
           <Route path="changepassword" element={<ChangePassword />} />
           <Route path="profile" element={<PrivateProfile />} />
+          <Route path="PublicUsers/:userId" element={<PublicUsers />} />
           <Route path="WalletPage" element={<WalletPage />} />
           <Route path="TermsAndConditions" element={<TermsAndConditions />} />
           <Route path="QA" element={<QA />} />
@@ -76,7 +78,7 @@ function AppRoutes() {
 
           {/* Courses */}
           <Route path="PublicCourse" element={<PublicCourse />} />
-          <Route path="PrivateCourse" element={<PrivateCourse />} />
+          <Route path="PrivateCourse/:serviceId" element={<PrivateCourse />} />
           <Route path="AddCourse" element={<AddCourse />} />
           <Route path="CoursePreview/:serviceId" element={<CoursePreview />} />
           <Route path="SearchCourse" element={<SearchCourse />} />

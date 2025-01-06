@@ -7,13 +7,18 @@ import {
     Button,
     Rating,
     Chip,
+    Avatar,
     Snackbar,
+    CardContent,
+    Divider,
+    Stack,
     Alert,
     CircularProgress,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import { styled } from "@mui/system";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import axios from "axios";
 
 // Define level colors
 const levelColors = {
@@ -72,6 +77,7 @@ const ArticlePreview = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [purchased, setPurchased] = useState(false);
     const [purchaseLoading, setPurchaseLoading] = useState(false);
+    const [comments, setComments] = useState([]);
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [severity, setSeverity] = useState("success");
     const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -85,14 +91,25 @@ const ArticlePreview = () => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch article data.");
                 }
-                const { data } = await response.json();
-                setArticleData(data.Article);
+                const  data  = await response.json();
+                setArticleData(data.data.Article);
             } catch (error) {
                 setErrorMessage(error.message || "An unexpected error occurred.");
             } finally {
                 setLoading(false);
             }
         };
+
+        const fetchComments = async () => {
+            try {
+                const response = await axios.get(`/api/v1/educational-service/comments/${serviceId}`);
+                setComments(response.data.data);
+            } catch (error) {
+                console.error("Error fetching comments:", error);
+            }
+        };
+
+        fetchComments();
         fetchArticleData();
     }, [serviceId]);
 
@@ -115,7 +132,7 @@ const ArticlePreview = () => {
             setSnackbarMessage("Article successfully purchased!");
             setSeverity("success");
             localStorage.setItem("articleData", JSON.stringify(articleData));
-            navigate("/PublicExam", { state: { articleData } });
+            navigate(`/PublicArticle`, { state: { articleData } });
         } catch (error) {
             setSnackbarMessage(error.message);
             setSeverity("error");
@@ -184,7 +201,7 @@ const ArticlePreview = () => {
                                 <Typography variant="body2" color="text.secondary">
                                     Average Rating: {(articleData.score || 0)} / 5
                                 </Typography>
-                                <Box sx={{mt: 2, display: "flex", gap: 1, flexWrap: "wrap" }}>
+                                <Box sx={{ mt: 2, display: "flex", gap: 1, flexWrap: "wrap" }}>
                                     {articleData.tag1 && (
                                         <Chip
                                             label={articleData.tag1}
@@ -249,14 +266,44 @@ const ArticlePreview = () => {
                             </Button>
                         )}
                     </CustomCard>
-                    <CommentSection>
-                        <CommentsHeader>Comments</CommentsHeader>
-                        <Typography variant="body2">Please log in to leave a comment.</Typography>
-                    </CommentSection>
+                    <Card sx={{ margin: 2, padding: 2, boxShadow: 3 }}>
+                        <CardContent>
+                            <Typography variant="h6" sx={{ mb: 2 }}>
+                                Comments
+                            </Typography>
+                            <Stack spacing={2}>
+                                {comments.map((comment) => (
+                                    <Card key={comment.commentId} variant="outlined" sx={{ p: 2 }}>
+                                        <Stack direction="row" spacing={2} alignItems="center">
+                                            <Avatar sx={{ bgcolor: "primary.main" }}>
+                                                {comment.userId.charAt(0).toUpperCase()}
+                                            </Avatar>
+                                            <Box>
+                                                <Typography variant="subtitle2" fontWeight="bold">
+                                                    {comment.userId}
+                                                </Typography>
+                                                <Typography variant="body1" sx={{ mt: 1 }}>
+                                                    {comment.text}
+                                                </Typography>
+                                                <Typography
+                                                    variant="caption"
+                                                    color="text.secondary"
+                                                    sx={{ mt: 1 }}
+                                                >
+                                                    {new Date(comment.date).toLocaleString()}
+                                                </Typography>
+                                            </Box>
+                                        </Stack>
+                                        <Divider sx={{ my: 2 }} />
+                                    </Card>
+                                ))}
+                            </Stack>
+                        </CardContent>
+                    </Card>
                 </Box>
                 <Snackbar
                     open={openSnackbar}
-                    autoHideDuration={6000}
+                    autoHideDuration={3000}
                     onClose={handleCloseSnackbar}
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 >

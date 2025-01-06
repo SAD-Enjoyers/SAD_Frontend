@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
 import {
   Box,
   Grid,
@@ -15,86 +14,73 @@ import {
   MenuItem,
   Checkbox,
   ListItemText,
+  Snackbar,
+  Alert,
 } from "@mui/material";
-
-// Material-UI icons
 import {
   Image as ImageIcon,
-  Description as DescriptionIcon,
-  Grade as GradeIcon,
-  AttachMoney as AttachMoneyIcon,
-  Timelapse as TimelapseIcon,
   LocalOffer as LocalOfferIcon,
-  Save as SaveIcon,
 } from "@mui/icons-material";
 
 const ArticleSettings = ({ articleData, accessToken }) => {
-  const [newImage, setNewImage] = useState(null); // New image file
-  const [isUploading, setIsUploading] = useState(false); // Uploading state
-  const [uploadedImage, setUploadedImage] = useState(articleData?.image || ''); // Updated image state
+  const [newImage, setNewImage] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState(articleData?.image || "");
 
-  // Editable article data states
-  const [name, setName] = useState(articleData?.name || '');
-  const [description, setDescription] = useState(articleData?.description || '');
-  const [level, setLevel] = useState(articleData?.level || '');
-  const [price, setPrice] = useState(articleData?.price || '');
+  const [name, setName] = useState(articleData?.name || "");
+  const [description, setDescription] = useState(articleData?.description || "");
+  const [level, setLevel] = useState(articleData?.level || "");
+  const [price, setPrice] = useState(articleData?.price || "");
   const [activityStatus, setActivityStatus] = useState("Active");
 
-  const [tag1, setTag1] = useState(articleData?.tag1 || '');
-  const [tag2, setTag2] = useState(articleData?.tag2 || '');
-  const [tag3, setTag3] = useState(articleData?.tag3 || '');
+  const [tag1, setTag1] = useState(articleData?.tag1 || "");
+  const [tag2, setTag2] = useState(articleData?.tag2 || "");
+  const [tag3, setTag3] = useState(articleData?.tag3 || "");
 
-  // Categories fetched from the API
   const [categories, setCategories] = useState([]);
   const [selectedTags, setSelectedTags] = useState([tag1, tag2, tag3]);
 
-  // Fetch categories from the API
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get("/api/v1/common/categories");
-        if (response.data.status === "success") {
-          setCategories(response.data.data.categoryList);
-        }
+        setCategories(response.data.data.categoryList || []);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
     };
 
-    // Initialize selectedTags with existing examData tags
-    // setSelectedTags(
-    //   [articleData.tag1, articleData.tag2, articleData.tag3, ''].filter(Boolean) // Filter out null or undefined tags
-    // );
-
-    setSelectedTags(
-      [tag1, tag2, tag3].filter(Boolean) // Filter out null or undefined tags
-    );
-
+    setSelectedTags([tag1, tag2, tag3].filter(Boolean));
     fetchCategories();
-    console.log(articleData.image)
-  }, [articleData]);
+  }, [articleData, tag1, tag2, tag3]);
 
-
-
-
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const handleTagChange = (event) => {
     const { value } = event.target;
-
-    // Ensure selected tags are unique and limited to 3
     if (value.length <= 3) {
       setSelectedTags(value);
     } else {
-      alert("You can only select up to 3 tags.");
+      setSnackbar({
+        open: true,
+        message: "You can only select up to 3 tags.",
+        severity: "warning",
+      });
     }
   };
 
-  // Handle new image selection
   const handleImageChange = (e) => {
     setNewImage(e.target.files[0]);
   };
 
-  // Upload new image and update article data
   const uploadNewImage = async () => {
     if (!newImage) return;
 
@@ -103,8 +89,6 @@ const ArticleSettings = ({ articleData, accessToken }) => {
 
     try {
       setIsUploading(true);
-
-      // Upload the new image
       const response = await axios.post(
         "/api/v1/educational-service/upload-image",
         formData,
@@ -117,55 +101,38 @@ const ArticleSettings = ({ articleData, accessToken }) => {
         }
       );
 
-      const newImageName = response.data.data.fileName; // Get the new image name
+      const newImageName = response.data.data.fileName;
       setUploadedImage(newImageName);
 
-      // Extract and prepare the updated article data
-      const updatedArticleData = {
-        serviceId: parseFloat(articleData.serviceId),
-        title,
-        description,
-        tag1,
-        tag2,
-        tag3,
-        activityStatus,
-        price: parseFloat(price),
-        level,
-        image: newImageName,
-      };
-
-      // Send updated article data to the backend
-      await axios.put("/api/v1/article/edit-article", updatedArticleData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
+      setSnackbar({
+        open: true,
+        message: "Image uploaded successfully!",
+        severity: "success",
       });
-
-      alert("Image updated and article data saved successfully!");
     } catch (error) {
-      console.error("Error updating image or article data:", error);
-      alert("Failed to update image or article data.");
+      console.error("Error uploading image:", error);
+      setSnackbar({
+        open: true,
+        message: "Failed to upload image.",
+        severity: "error",
+      });
     } finally {
       setIsUploading(false);
       setNewImage(null);
     }
   };
 
-  // Handle form data changes
   const handleSaveChanges = async () => {
     try {
-
-      // Map selected tags to tag1, tag2, tag3, and fill with null for unselected tags
       const updatedTags = [
-        selectedTags[0] || null, // First tag or null
-        selectedTags[1] || null, // Second tag or null
-        selectedTags[2] || null, // Third tag or null
+        selectedTags[0] || null,
+        selectedTags[1] || null,
+        selectedTags[2] || null,
       ];
 
       const updatedArticleData = {
         serviceId: articleData.serviceId,
-        title,
+        title: name,
         description,
         tag1: updatedTags[0],
         tag2: updatedTags[1],
@@ -183,23 +150,29 @@ const ArticleSettings = ({ articleData, accessToken }) => {
         },
       });
 
-      alert("Article data updated successfully!");
-      setSelectedTags(selectedTags);
+      setSnackbar({
+        open: true,
+        message: "Article data updated successfully!",
+        severity: "success",
+      });
     } catch (error) {
       console.error("Error updating article data:", error);
-      alert("Failed to update article data.");
+      setSnackbar({
+        open: true,
+        message: "Failed to update article data.",
+        severity: "error",
+      });
     }
   };
 
   return (
     <Grid container spacing={2}>
-      {/* Image and Description in a row layout */}
       <Grid item xs={12} container spacing={2} alignItems="center">
         <Grid item xs={12} sm={4}>
           <Typography variant="h6">Current Image:</Typography>
           {uploadedImage ? (
             <Avatar
-              src={`/api/v1/uploads/service-images/${articleData.image}`}
+              src={`/api/v1/uploads/service-images/${uploadedImage}`}
               alt="Article Image"
               sx={{ width: 200, height: 200, marginBottom: 2 }}
             />
@@ -217,7 +190,6 @@ const ArticleSettings = ({ articleData, accessToken }) => {
             {isUploading ? "Uploading..." : "Upload & Save Image"}
           </Button>
         </Grid>
-
         <Grid item xs={12} sm={8}>
           <Typography variant="h6">Article Name:</Typography>
           <TextField
@@ -257,10 +229,8 @@ const ArticleSettings = ({ articleData, accessToken }) => {
         </FormControl>
       </Grid>
 
-      {/* Editable Article Data */}
-      {/* Tags */}
       <Grid item xs={12}>
-        <Typography variant="body1" sx={{ fontWeight: "500", marginBottom: 1 }}>
+        <Typography variant="body1" sx={{ marginBottom: 1 }}>
           <LocalOfferIcon sx={{ marginRight: 1, color: "#0288D1" }} /> Tags:
         </Typography>
         <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
@@ -273,7 +243,6 @@ const ArticleSettings = ({ articleData, accessToken }) => {
             MenuProps={{
               PaperProps: { style: { maxHeight: 200, overflow: "auto" } },
             }}
-            
           >
             {categories.map((category) => (
               <MenuItem key={category.categoryId} value={category.category}>
@@ -319,7 +288,6 @@ const ArticleSettings = ({ articleData, accessToken }) => {
         </FormControl>
       </Grid>
 
-      {/* Save Changes Button */}
       <Grid item xs={12}>
         <Button
           variant="contained"
@@ -330,6 +298,22 @@ const ArticleSettings = ({ articleData, accessToken }) => {
           Save Changes
         </Button>
       </Grid>
+
+      {/* Snackbar for Notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };

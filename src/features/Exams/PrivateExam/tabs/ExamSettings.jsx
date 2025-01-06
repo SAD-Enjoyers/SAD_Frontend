@@ -45,7 +45,7 @@ const ExamSettings = ({ examData, accessToken }) => {
   const [description, setDescription] = useState(examData.description);
   const [level, setLevel] = useState(examData.level);
   const [price, setPrice] = useState(examData.price);
-  const [activityStatus, setActivityStatus] = useState("Active");
+  const [activityStatus, setActivityStatus] = useState(examData.activityStatus);
   const [examDuration, setExamDuration] = useState(35);
 
   // Editable tags states
@@ -325,7 +325,7 @@ const ExamSettings = ({ examData, accessToken }) => {
           icon: <TimelapseIcon sx={{ marginRight: 1, color: "#F9A825" }} />,
           value: activityStatus,
           onChange: setActivityStatus,
-          options: ["Active", "Inactive"],
+          options: ["Active", "Passive"],
         },
         {
           label: "Exam Duration",
