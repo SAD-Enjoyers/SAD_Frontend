@@ -5,7 +5,7 @@ import {
   Typography,
   Chip,
   Box,
-  Rating,
+  Rating as MuiRating,
   FormControl,
   RadioGroup,
   FormControlLabel,
@@ -29,8 +29,12 @@ function QuestionPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  // const [hasSubmitted, setHasSubmitted] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // Error message state
+  const [ratingStatus, setRatingStatus] = useState(null);  // اضافه کردن استیت جدید
+
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -66,6 +70,7 @@ function QuestionPage() {
               { text: data.data.question.o4, isCorrect: data.data.question.rightAnswer === 4 },
             ],
             author: data.data.question.userName || "Unknown Author",
+            userScore:data.data.userScore || 0,
           };
           setQuestion(fetchedQuestion);
         } else {
@@ -113,37 +118,70 @@ function QuestionPage() {
   const handleRatingChange = async (event, newValue) => {
     if (newValue !== null) {
       try {
+        // Retrieve the token (the same key used at login)
+        const token = localStorage.getItem("token");
+  
+        if (!token) {
+          throw new Error("User is not authenticated. Token is missing.");
+        }
+  
+        // Optionally, get the user role
+        const role = localStorage.getItem("role") || "user";
+  
+        // If you are using a proxy, "/api/v1/..." is fine.
+        // Otherwise, use the full URL: "http://localhost:3000/api/v1/..."
         const response = await fetch("/api/v1/questions/score-submission", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,  // Include Bearer
+            "x-role": role,
           },
           body: JSON.stringify({
             questionId: question.id,
             scored: newValue,
           }),
         });
-
+  
         if (!response.ok) {
-          throw new Error("Failed to submit rating");
+          const errorData = await response.json();
+          if (response.status === 403) {
+            setErrorMessage(errorData.message || "You have already submitted a rating.");
+          } else {
+            throw new Error("Failed to submit rating.");
+          }
+          return;
         }
-
+  
         const data = await response.json();
-
+  
         if (data.status === "success") {
           setQuestion((prevQuestion) => ({
             ...prevQuestion,
             rating: parseFloat(data.data.score),
             ratingCount: data.data.numberOfVoters,
+            
           }));
+        // اگر اولین بار است ریتینگ داده شده، پیام ارسال می‌شود
+        if (ratingStatus === null) {
+          setSuccessMessage("Rating submitted successfully!");
+          setRatingStatus("submitted");
         } else {
-          throw new Error("Unexpected response format");
+          // اگر ریتینگ آپدیت شده باشد، پیام آپدیت شدن داده می‌شود
+          setSuccessMessage("Rating updated successfully!");
         }
+      } else {
+        throw new Error("Unexpected response format");
+      }
       } catch (error) {
         console.error("Error submitting rating:", error);
+        setErrorMessage("Error submitting rating. Please try again.");
       }
     }
   };
+  
+  
+  
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -287,26 +325,90 @@ function QuestionPage() {
               textAlign: "center",
             }}
           >
+     {/* Error Message */}
+     {errorMessage && (
+        <Typography
+          sx={{
+            backgroundColor: "#f8d7da",
+            color: "#721c24",
+            padding: "10px 20px",
+            borderRadius: "5px",
+            fontSize: "14px",
+            fontWeight: 500,
+            textAlign: "center",
+            border: "1px solid #f5c6cb",
+            marginBottom: "10px",
+          }}
+        >
+          {errorMessage}
+        </Typography>
+      )}
+
+      {/* Success Message */}
+      {successMessage && !hasSubmitted &&(
+        <Typography
+          sx={{
+            backgroundColor: "#d4edda",
+            color: "#155724",
+            padding: "10px 20px",
+            borderRadius: "5px",
+            fontSize: "14px",
+            fontWeight: 500,
+            textAlign: "center",
+            border: "1px solid #c3e6cb",
+            marginBottom: "10px",
+          }}
+        >
+          {successMessage}
+        </Typography>
+      )}
+
+  {/* Update Message (for rating update)
+  {hasSubmitted && (
+    <Typography
+      sx={{
+        backgroundColor: "#c3e6cb",
+        color: "#155724",
+        padding: "10px 20px",
+        borderRadius: "5px",
+        fontSize: "14px",
+        fontWeight: 500,
+        textAlign: "center",
+        border: "1px solid #c3e6cb",
+        marginBottom: "10px",
+      }}
+    >
+      Your rating has been updated!
+    </Typography>
+  )} */}
+
             <Typography variant="h6" gutterBottom>
               Rate this question
             </Typography>
-            <Rating
+            <MuiRating
               name={`rating-${question.id}`}
-              value={question.rating}
+              value={question.userScore || 0}
               onChange={handleRatingChange}
               precision={0.5}
-              sx={{ color: "#5356FF", fontSize: "24px" }}
+              sx={{
+                color: "#FFD700",
+                fontSize: "48px",
+                cursor:  "pointer",
+                "& .MuiRating-iconEmpty": {
+                  color: "#FFD70066",
+                },
+              }}
             />
 
             <Typography
-              variant="body2"
-              sx={{ marginTop: 1, color: "#5356FF" }}
+              variant="body1"
+              sx={{  marginTop: 2, color: "#1E88E5", fontWeight: "bold" }}
             >
-              Current Rating: {question.rating.toFixed(1)}
+              Average Rating: {question.rating.toFixed(1)}
             </Typography>
             <Typography
-              variant="body2"
-              sx={{ marginTop: 1, color: "#5356FF" }}
+              variant="body1"
+              sx={{ marginTop: 1, color: "#1E88E5", fontWeight: "bold" }}
             >
               Total Votes: {question.ratingCount}
             </Typography>
