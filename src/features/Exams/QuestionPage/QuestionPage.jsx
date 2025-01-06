@@ -29,11 +29,12 @@ function QuestionPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [hasSubmitted, setHasSubmitted] = useState(false);
+  // const [hasSubmitted, setHasSubmitted] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // Error message state
-  
+  const [ratingStatus, setRatingStatus] = useState(null);  // اضافه کردن استیت جدید
+
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -69,6 +70,7 @@ function QuestionPage() {
               { text: data.data.question.o4, isCorrect: data.data.question.rightAnswer === 4 },
             ],
             author: data.data.question.userName || "Unknown Author",
+            userScore:data.data.userScore || 0,
           };
           setQuestion(fetchedQuestion);
         } else {
@@ -160,12 +162,17 @@ function QuestionPage() {
             ratingCount: data.data.numberOfVoters,
             
           }));
+        // اگر اولین بار است ریتینگ داده شده، پیام ارسال می‌شود
+        if (ratingStatus === null) {
           setSuccessMessage("Rating submitted successfully!");
-          setHasSubmitted(true);
+          setRatingStatus("submitted");
         } else {
-          throw new Error("Unexpected response format");
+          // اگر ریتینگ آپدیت شده باشد، پیام آپدیت شدن داده می‌شود
+          setSuccessMessage("Rating updated successfully!");
         }
-  
+      } else {
+        throw new Error("Unexpected response format");
+      }
       } catch (error) {
         console.error("Error submitting rating:", error);
         setErrorMessage("Error submitting rating. Please try again.");
@@ -338,7 +345,7 @@ function QuestionPage() {
       )}
 
       {/* Success Message */}
-      {successMessage && (
+      {successMessage && !hasSubmitted &&(
         <Typography
           sx={{
             backgroundColor: "#d4edda",
@@ -356,18 +363,37 @@ function QuestionPage() {
         </Typography>
       )}
 
+  {/* Update Message (for rating update)
+  {hasSubmitted && (
+    <Typography
+      sx={{
+        backgroundColor: "#c3e6cb",
+        color: "#155724",
+        padding: "10px 20px",
+        borderRadius: "5px",
+        fontSize: "14px",
+        fontWeight: 500,
+        textAlign: "center",
+        border: "1px solid #c3e6cb",
+        marginBottom: "10px",
+      }}
+    >
+      Your rating has been updated!
+    </Typography>
+  )} */}
+
             <Typography variant="h6" gutterBottom>
               Rate this question
             </Typography>
             <MuiRating
               name={`rating-${question.id}`}
-              value={question.rating}
+              value={question.userScore || 0}
               onChange={handleRatingChange}
               precision={0.5}
               sx={{
                 color: "#FFD700",
                 fontSize: "48px",
-                cursor: hasSubmitted ? "not-allowed" : "pointer",
+                cursor:  "pointer",
                 "& .MuiRating-iconEmpty": {
                   color: "#FFD70066",
                 },
@@ -386,6 +412,12 @@ function QuestionPage() {
             >
               Total Votes: {question.ratingCount}
             </Typography>
+            <Typography
+    variant="body1"
+    sx={{ marginTop: 1, color: "#1E88E5", fontWeight: "bold" }}
+  >
+    Your Rating: {question.userScore || 0}  {/* نمایش ریتینگ کاربر */}
+  </Typography>
           </Box>
         </Box>
       </Box>
