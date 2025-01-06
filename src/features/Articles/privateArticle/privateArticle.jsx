@@ -7,14 +7,14 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { LibraryBooks, Settings, Comment, Preview } from "@mui/icons-material";
+import { LibraryBooks, Settings, Comment } from "@mui/icons-material";
 import InfoIcon from '@mui/icons-material/Info';
 import { useLocation, useParams } from "react-router-dom";
-import ArticleContent from "./tabs/ArticleContent"
+import ArticleContent from "./tabs/ArticleContent";
 import ArticleSettings from "./tabs/ArticleSettings";
 import CommentSection from "./tabs/CommentSection";
 
-const PrivateArticle = () => {
+const PrivateArticle = (props) => {
   const { articleId } = useParams(); // Extract articleId from URL
   const location = useLocation(); // Get location state
   const [selectedTab, setSelectedTab] = useState(0);
@@ -29,12 +29,6 @@ const PrivateArticle = () => {
     setSelectedTab(newValue);
     localStorage.setItem("selectedTab", newValue); // Save selected tab to localStorage
   };
-
-  const handleContentSubmit = (data) => {
-    console.log("Received data:", data);
-    // Perform actions with the data
-  };
-  
 
   useEffect(() => {
     // First, check if articleData is passed via location state

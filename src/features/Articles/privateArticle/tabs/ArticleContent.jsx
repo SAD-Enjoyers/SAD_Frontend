@@ -19,7 +19,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   marginTop: theme.spacing(2),
 }));
 
-const ArticleContent = ({ articleData, accessToken }) => {
+const ArticleContent = ({ articleData, accessToken, onSaveChange }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [attachment, setAttachment] = useState(null);
@@ -28,77 +28,35 @@ const ArticleContent = ({ articleData, accessToken }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  const [save, setSave] = useState(false);
-
+  const [childData, setChildData] = useState(false);
 
   useEffect(() => {
-    // if (articleData) {
-    //   setTitle(articleData.title || "");
-    //   setContent(articleData.text || "");
-    //   setAttachment(articleData.attachment || null);
-    // }
-
     const fetchArticleContent = async () => {
-      // URL of the API endpoint
-      const apiUrl = `/api/v1/article/blog/${articleData.serviceId}`; // Replace with your API URL
-
-      // Make the GET request
-      axios
-        .get(apiUrl, {
+      try {
+        const apiUrl = `/api/v1/article/blog/${articleData.serviceId}`;
+        const response = await axios.get(apiUrl, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
             "x-role": localStorage.getItem("role"),
           },
-        })
-        .then(async (response) => {
-          if (response?.data?.data) {
-            setTitle(response.data.data.title)
-            setContent(response.data.data.text)
-            setAttachment(response.data.data.attachment)
-          }
-          else {
-            throw new Error("No transactions data");
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching ArticleContent:", error);
-          setSnackbarMessage("Failed to load ArticleContent.");
-          setSnackbarSeverity("error");
-          setOpenSnackbar(true);
         });
+
+        if (response?.data?.data) {
+          setTitle(response.data.data.title || "");
+          setContent(response.data.data.text || "");
+          setAttachmentName(response.data.data.attachment || null);
+        } else {
+          throw new Error("No article data found.");
+        }
+      } catch (error) {
+        console.error("Error fetching article content:", error);
+        setSnackbarSeverity("error");
+        setSnackbarMessage("Failed to load article content.");
+        setOpenSnackbar(true);
+      }
     };
 
-    const fetchAttachment = async () => {
-      // URL of the API endpoint
-      const apiUrl = `/api/v1/educational-service/upload-attachment`; // Replace with your API URL
-
-      // Make the GET request
-      axios
-        .get(apiUrl, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "x-role": localStorage.getItem("role"),
-          },
-        })
-        .then(async (response) => {
-          if (response?.data?.data) {
-            setTitle(response.data.data.title)
-            setContent(response.data.data.text)
-            setAttachment(response.data.data.attachment)
-          }
-          else {
-            throw new Error("No transactions data");
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching ArticleContent:", error);
-          setSnackbarMessage("Failed to load ArticleContent.");
-          setSnackbarSeverity("error");
-          setOpenSnackbar(true);
-        });
-    };
     fetchArticleContent();
   }, [articleData]);
 
@@ -107,19 +65,20 @@ const ArticleContent = ({ articleData, accessToken }) => {
     if (file && file.size > 5 * 1024 * 1024) {
       setSnackbarSeverity("error");
       setSnackbarMessage("File size must be less than 5MB.");
-      setSnackbarOpen(true);
+      setOpenSnackbar(true);
       return;
     }
     setAttachment(file);
-    setAttachmentName(file.name)
+    setAttachmentName(file.name);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     if (!title.trim() || !content.trim()) {
       setSnackbarSeverity("error");
       setSnackbarMessage("Title and content are required.");
-      setSnackbarOpen(true);
+      setOpenSnackbar(true);
       return;
     }
 
@@ -133,12 +92,12 @@ const ArticleContent = ({ articleData, accessToken }) => {
           "x-role": localStorage.getItem("role"),
         },
         body: JSON.stringify({
-          title: title,
+          title,
           text: content,
-          attachment: attachmentName
+          attachment: attachmentName,
         }),
       });
-      console.log(response)
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
@@ -146,20 +105,19 @@ const ArticleContent = ({ articleData, accessToken }) => {
 
       setSnackbarSeverity("success");
       setSnackbarMessage("Article saved successfully!");
-      setSnackbarOpen(true);
-      setSave(true)
-      setTitle("");
-      setContent("");
-      setAttachment(null);
+      setOpenSnackbar(true);
+      setChildData(true)
+      onSaveChange(childData)
     } catch (error) {
-      console.error(error);
+      console.error("Error saving article:", error);
       setSnackbarSeverity("error");
-      setSnackbarMessage(error.message || "Failed to save the article. Please try again.");
-      setSnackbarOpen(true);
+      setSnackbarMessage(error.message || "Failed to save the article.");
+      setOpenSnackbar(true);
     } finally {
       setLoading(false);
     }
   };
+  console.log(childData)
   return (
     <Box sx={{ margin: "0 auto", padding: 2 }}>
       <form onSubmit={handleSubmit}>
@@ -170,11 +128,9 @@ const ArticleContent = ({ articleData, accessToken }) => {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           margin="normal"
-          defaultValue={title}
-          sx={{ backgroundColor: 'white' }}
+          sx={{ backgroundColor: "white" }}
         />
-
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: "flex", gap: 2 }}>
           <Box>
             <Typography variant="h6" gutterBottom>
               Rich Text Editor
@@ -183,12 +139,21 @@ const ArticleContent = ({ articleData, accessToken }) => {
               theme="snow"
               value={content}
               onChange={(value) => setContent(value)}
-              style={{ height: "200px", minHeight: "580px", marginBottom: "70px", minWidth: 650, backgroundColor: 'white', borderRadius: 10 }}
+              style={{
+                height: "200px",
+                minHeight: "580px",
+                marginBottom: "70px",
+                minWidth: 650,
+                backgroundColor: "white",
+                borderRadius: 10,
+              }}
             />
           </Box>
 
-          <Box sx={{ ml: 2 }}>
-            <Typography variant="h6" gutterBottom>Text Preview</Typography>
+          <Box>
+            <Typography variant="h6" gutterBottom>
+              Text Preview
+            </Typography>
             <div
               style={{
                 whiteSpace: "pre-wrap",
@@ -197,12 +162,10 @@ const ArticleContent = ({ articleData, accessToken }) => {
                 padding: "10px",
                 minHeight: "600px",
                 maxHeight: "250px",
-                overflowY: "auto", // enable vertical scrolling
-                backgroundColor: 'white'
+                overflowY: "auto",
+                backgroundColor: "white",
               }}
-
               dangerouslySetInnerHTML={{ __html: content }}
-
             />
           </Box>
         </Box>
@@ -212,9 +175,9 @@ const ArticleContent = ({ articleData, accessToken }) => {
           <input type="file" hidden onChange={handleFileChange} />
         </Button>
 
-        {attachment && (
+        {attachmentName && (
           <Typography variant="body2" sx={{ marginTop: 1 }}>
-            Selected File: {attachment}
+            Selected File: {attachmentName}
           </Typography>
         )}
 
