@@ -16,6 +16,7 @@ import {
 import { Alert } from "@mui/lab";
 import axios from "axios";
 import { blue } from "@mui/material/colors";
+import { format } from "date-fns";
 
 const WalletPage = () => {
   const [accountInfo, setAccountInfo] = useState(null);
@@ -73,7 +74,7 @@ const WalletPage = () => {
           if (response?.data?.data) {
             const transformedTransactions = response.data.data.map((tx) => ({
               amount: tx.volume,
-              date: tx.time,
+              date: format(new Date(tx.time), "MM/dd/yyyy HH:mm:ss"),
               type: tx.type,
             }));
             setTransactions(transformedTransactions);
@@ -148,6 +149,7 @@ const WalletPage = () => {
         if (response.status === 200) {
           setSnackbarMessage("Withdrawal successful!");
           setSnackbarSeverity("success");
+          window.location.reload();
         } else {
           throw new Error("Withdrawal failed");
         }
