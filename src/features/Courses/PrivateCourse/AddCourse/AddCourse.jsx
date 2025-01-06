@@ -345,7 +345,10 @@ export default function AddCourse() {
   const [price, setPrice] = useState(10);
   const [priceError, setPriceError] = useState("");
   const [categories, setCategories] = useState([]);
-  // const [activityStatus, setActivityStatus] = useState("Active");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [imageError, setImageError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+
   const [selectedLevelError, setSelectedLevelError] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [courseNameError, setcourseNameError] = useState("");
@@ -354,19 +357,24 @@ export default function AddCourse() {
   const [isLoading, setLoading] = useState(true);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [selectedSubjectsError, setSelectedSubjectsError] = useState("");
-  // const [tag1, setTag1] = useState("");
-  // const [tag2, setTag2] = useState("");
-  // const [tag3, setTag3] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const navigate = useNavigate();
 
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
+
   const handleFormSubmit = (event) => {
     event.preventDefault();
+    setIsSubmitted(true);
     let isValid = true;
 
     if (!coursename.trim()) {
-      setcourseNameError(" ");
+      setcourseNameError("Course name is required.");
       isValid = false;
     } else {
       setcourseNameError("");
@@ -377,6 +385,13 @@ export default function AddCourse() {
       isValid = false;
     } else {
       setSelectedLevelError("");
+    }
+
+    if (!description.trim()) {
+      setDescriptionError("Description is required.");
+      isValid = false;
+    } else {
+      setDescriptionError("");
     }
 
     if (selectedSubjects.length === 0) {
@@ -454,6 +469,8 @@ export default function AddCourse() {
     }
   };
   useEffect(() => {
+    // setSnackbarMessage("Test Message: Snackbar should be visible.");
+    // setOpenSnackbar(true);
     setLoading(true);
     const fetchCategories = async () => {
       try {
@@ -522,12 +539,12 @@ export default function AddCourse() {
         console.log(data);
         setSnackbarMessage("Course created successfully!");
         setOpenSnackbar(true);
-        navigate("/PrivateCourse");
+        navigate("/PrivateCourse/"+serviceId);
       })
       .catch((error) => {
         console.error("Error:", error);
-        // setSnackbarMessage("Failed to create course. Please try again.");
-        // setOpenSnackbar(true);
+        setSnackbarMessage("Failed to create course. Please try again.");
+        setOpenSnackbar(true);
       });
   };
 
@@ -538,7 +555,7 @@ export default function AddCourse() {
   return (
     <Container maxWidth="md">
       <Box
-        mt={6}
+        mt={8}
         mb={4}
         p={4}
         borderRadius={3}
@@ -557,7 +574,12 @@ export default function AddCourse() {
           variant="h4"
           align="center"
           gutterBottom
-          sx={{ fontWeight: 600, color: "#333", mb: 4 }}
+          sx={{
+            fontWeight: 700,
+            color: "#378ce7",
+            mb: 4,
+            textTransform: "uppercase",
+          }}
         >
           Add New Course
         </Typography>
@@ -577,16 +599,27 @@ export default function AddCourse() {
                 required
                 value={coursename}
                 onChange={(e) => {
-                  let value = e.target.value;
-                  setCourseName(value);
-                  setcourseNameError("");
+                  setCourseName(e.target.value);
+                  if (e.target.value.trim() === "") {
+                    setcourseNameError("Course name is required.");
+                  } else {
+                    setcourseNameError("");
+                  }
                 }}
-                helperText={!coursename && "Course name is required."}
-                error={!coursename}
+                onBlur={() => {
+                  if (coursename.trim() === "") {
+                    setcourseNameError("Course name is required.");
+                  }
+                }}
+                helperText={courseNameError}
+                error={!!courseNameError}
                 variant="outlined"
                 sx={{
                   "& .MuiInputBase-root": {
                     borderRadius: "8px",
+                  },
+                  "& .MuiFormHelperText-root": {
+                    color: "red", // تغییر رنگ helperText به قرمز
                   },
                 }}
               />
@@ -600,10 +633,21 @@ export default function AddCourse() {
                 multiline
                 rows={4}
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                helperText={!description && "Description is required."}
-                error={!description}
-                variant="outlined"
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                  if (e.target.value.trim() === "") {
+                    setDescriptionError("Description is required.");
+                  } else {
+                    setDescriptionError("");
+                  }
+                }}
+                onBlur={() => {
+                  if (description.trim() === "") {
+                    setDescriptionError("Description is required.");
+                  }
+                }}
+                helperText={descriptionError} // نمایش ارور
+                error={!!descriptionError} // بررسی ارور برای فعال کردن حالت قرمز
                 sx={{
                   "& .MuiInputBase-root": {
                     borderRadius: "8px",
@@ -855,7 +899,6 @@ export default function AddCourse() {
                 />
               </FormControl>
             </Grid>
-
             {/* Upload Image */}
             <Box
               sx={{
@@ -872,7 +915,16 @@ export default function AddCourse() {
                 ml: "250px",
               }}
             >
-              <Typography variant="h6">Upload an Image</Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  color: "#378ce7",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                }}
+              >
+                Upload an Image
+              </Typography>
               <Button
                 variant="contained"
                 component="label"
@@ -896,6 +948,11 @@ export default function AddCourse() {
                   fullWidth
                   size="small"
                   label="Selected File"
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "8px",
+                    },
+                  }}
                 />
               )}
               {previewImage && (
@@ -912,29 +969,16 @@ export default function AddCourse() {
                 />
               )}
               {selectedImage && (
-                <Button variant="outlined" color="error" onClick={handleClear}>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={handleClear}
+                  sx={{ mt: 2 }}
+                >
                   Remove Image
                 </Button>
               )}
             </Box>
-            {/* Submit Button */}
-            {/* <Grid item xs={12}>
-              <Button
-                variant="contained"
-                type="submit"
-                sx={{
-                  backgroundColor: "#378ce7",
-                  width: "100%",
-                  borderRadius: "8px",
-                  "&:hover": {
-                    backgroundColor: "#285e99",
-                  },
-                }}
-                disabled={isLoading}
-              >
-                {isLoading ? <CircularProgress size={24} color="inherit" /> : "Submit Course"}
-              </Button>
-            </Grid> */}
           </Grid>
 
           <Box textAlign="center" mt={3} mb={5}>
@@ -949,6 +993,23 @@ export default function AddCourse() {
             </Button>
           </Box>
         </form>
+
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={1000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={
+              snackbarMessage.includes("successfully") ? "success" : "error"
+            }
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </Box>
     </Container>
   );
