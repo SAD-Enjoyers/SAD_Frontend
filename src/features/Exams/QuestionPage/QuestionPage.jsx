@@ -52,9 +52,9 @@ function QuestionPage() {
         if (!response.ok) {
           throw new Error("Failed to fetch question");
         }
-
+      
         const data = await response.json();
-
+        console.log("Response from server:", data);
         if (data.status === "success") {
           const fetchedQuestion = {
             id: data.data.question.questionId,
@@ -70,8 +70,9 @@ function QuestionPage() {
               { text: data.data.question.o4, isCorrect: data.data.question.rightAnswer === 4 },
             ],
             author: data.data.question.userName || "Unknown Author",
-            userScore:data.data.userScore || 0,
+            userScore: data.userScore !== null ? data.userScore : 0,
           };
+
           setQuestion(fetchedQuestion);
         } else {
           throw new Error("Unexpected response format");
@@ -146,7 +147,7 @@ function QuestionPage() {
         if (!response.ok) {
           const errorData = await response.json();
           if (response.status === 403) {
-            setErrorMessage(errorData.message || "You have already submitted a rating.");
+            setErrorMessage(errorData.message || "You have already submitted a rating, but you can update it.");
           } else {
             throw new Error("Failed to submit rating.");
           }
@@ -154,21 +155,23 @@ function QuestionPage() {
         }
   
         const data = await response.json();
-  
+        
         if (data.status === "success") {
           setQuestion((prevQuestion) => ({
             ...prevQuestion,
             rating: parseFloat(data.data.score),
             ratingCount: data.data.numberOfVoters,
+            userScore: newValue, 
             
           }));
         // اگر اولین بار است ریتینگ داده شده، پیام ارسال می‌شود
         if (ratingStatus === null) {
-          setSuccessMessage("Rating submitted successfully!");
+          setSuccessMessage("Your rating has been successfully submitted.");
           setRatingStatus("submitted");
         } else {
           // اگر ریتینگ آپدیت شده باشد، پیام آپدیت شدن داده می‌شود
-          setSuccessMessage("Rating updated successfully!");
+          setSuccessMessage("Your rating has been updated successfully!");
+          setRatingStatus("updated");
         }
       } else {
         throw new Error("Unexpected response format");
@@ -180,7 +183,8 @@ function QuestionPage() {
     }
   };
   
-  
+
+
   
 
   const handleCloseDialog = () => {
@@ -345,7 +349,7 @@ function QuestionPage() {
       )}
 
       {/* Success Message */}
-      {successMessage && !hasSubmitted &&(
+      {successMessage &&(
         <Typography
           sx={{
             backgroundColor: "#d4edda",
@@ -412,8 +416,8 @@ function QuestionPage() {
             >
               Total Votes: {question.ratingCount}
             </Typography>
-
-            {userRating !== null && (
+            
+            {question.userScore !== null && (
         <Typography
           variant="body1"
           sx={{
@@ -422,7 +426,8 @@ function QuestionPage() {
             fontWeight: "bold",
           }}
         >
-          Your Rating: {userRating}
+          Your Rating: {question.userScore}
+
         </Typography>
       )}
           </Box>
