@@ -27,8 +27,7 @@ const PublicCourse = () => {
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const accessToken = localStorage.getItem("token");
-
+  const [tabContent, setTabContent] = useState([]);
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
     localStorage.setItem("selectedTab", newValue); // Save selected tab to localStorage
@@ -38,6 +37,21 @@ const PublicCourse = () => {
     if (location.state && location.state.courseData) {
       setCourseData(location.state.courseData);
       setLoading(false);
+      setTabContent([
+        {
+          label: "Enrolled Students",
+          content: <Public serviceId={location.state.courseData.serviceId} />,
+
+          icon: <VideoLibrary />,
+        },
+        {
+          label: "Comment Section",
+          icon: <Comment />,
+          content: (
+            <CommentSection serviceId={location.state.courseData.serviceId} />
+          ),
+        },
+      ]);
     } else {
       const storedCourseData = JSON.parse(localStorage.getItem("courseData"));
       if (
@@ -57,20 +71,6 @@ const PublicCourse = () => {
     const savedTab = localStorage.getItem("selectedTab");
     if (savedTab) setSelectedTab(parseInt(savedTab, 10));
   }, []);
-
-  const tabContent = [
-    {
-      label: "Enrolled Students",
-      content: <Public />,
-
-      icon: <VideoLibrary />,
-    },
-    {
-      label: "Comment Section",
-      content: <CommentSection serviceId={courseId} />,
-      icon: <Comment />,
-    },
-  ];
 
   return (
     <Box

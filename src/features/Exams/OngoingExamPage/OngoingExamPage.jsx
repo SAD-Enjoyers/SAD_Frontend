@@ -210,15 +210,14 @@ const OngoingExamPage = () => {
 
         const examData = await response.json();
         toast.success("end exam successful! Redirecting to PublicExam...");
-        setTimeout(
-          () =>
-            navigate("/PublicExam", {
-              state: {
-                examData,
-              },
-            }),
-          2000
-        ); // Redirect after 2 seconds
+        setTimeout(() => {
+          localStorage.setItem("examData", JSON.stringify(examData));
+          navigate("/PublicExam", {
+            state: {
+              examData,
+            },
+          });
+        }, 2000); // Redirect after 2 seconds
       } catch (error) {
         toast.error(`Failed to fetch exam data: ${error}`);
       }

@@ -41,12 +41,45 @@ const videos = [
   },
 ];
 
-export default function Public() {
+export default function Public(props) {
   const [selectedVideo, setSelectedVideo] = useState(videos[0]?.src || null);
   const [selectedVideoId, setSelectedVideoId] = useState(videos[0]?.id || null);
   const [videoDurations, setVideoDurations] = useState({});
+  const [videos, setVideos] = useState([]);
+  console.log(props.serviceId);
 
+  const fetchExamData = async (Services) => {
+    const response = await fetch(
+      `/api/v1/course/play-list/${props.serviceId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // توکن را اینجا اضافه کنید
+          "x-role": localStorage.getItem("role"),
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    console.log(response.status, responseData.data.playList);
+    const updatedVideos = responseData.data.playList.map((video) => ({
+      id: video.video_id,
+      title: video.title,
+      src: video.address,
+      address: video.address,
+      phoneNumber: video.phoneNumber,
+    }));
+
+    setVideos((prev) => [...prev, ...updatedVideos]);
+
+    // console.log(response.status, responseData);
+  };
   useEffect(() => {
+    fetchExamData();
     videos.forEach((video) => {
       const videoElement = document.createElement("video");
       videoElement.src = video.src;

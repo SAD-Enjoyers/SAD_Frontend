@@ -86,7 +86,6 @@ export default function EditProfile({ closeState }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         toast.success("change profile successfully");
         setTimeout(() => {
           closeState();
