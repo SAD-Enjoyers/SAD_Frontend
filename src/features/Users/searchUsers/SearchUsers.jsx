@@ -46,8 +46,12 @@ function SearchUsers() {
 
   const handlePageChange = (event, value) => setCurrentPage(value);
 
-  const filteredUsers = users.filter((user) =>
-    user.userName.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      `${user.firstName} ${user.lastName}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
