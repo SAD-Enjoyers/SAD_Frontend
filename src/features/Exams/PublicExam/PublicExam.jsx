@@ -7,6 +7,8 @@ import {
   Card,
   Button,
   Chip,
+  Snackbar,
+  Alert,
   CircularProgress,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -95,29 +97,29 @@ function PublicExam() {
   const location = useLocation();
   const navigate = useNavigate();
   const { examData } = location.state || {};
-  const [comments, setComments] = useState([]);
-  const [newComment, setNewComment] = useState({ name: "", comment: "" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [examResult, setExamResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [examData2, setExamData] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("info"); // 'success', 'error', 'warning', 'info'
 
+  const accessToken = localStorage.getItem("token");
   useEffect(() => {
     const fetchExamData = async () => {
       setLoading(true);
       setErrorMessage("");
 
       try {
-        const response = await fetch(
-          `/api/v1/exam/preview?serviceId=${examData.serviceId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/api/v1/exam/${examData.serviceId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
 
         if (!response.ok) {
           const responseData = await response.json();
@@ -126,9 +128,10 @@ function PublicExam() {
         }
 
         const responseData = await response.json();
-        console.log("Response Data:", JSON.stringify(responseData, null, 2));
+        // console.log("Response Data:", JSON.stringify(responseData, null, 2));
 
-        setExamData(responseData.data.Exam);
+        // Set examData to responseData.data
+        setExamData(responseData.data);
       } catch (error) {
         setErrorMessage("An unexpected error occurred. Please try again.");
       } finally {
@@ -136,38 +139,60 @@ function PublicExam() {
       }
     };
 
+    // Fetch exam data from the API
     fetchExamData();
-    // Check if exam results are available in location state
-    if (location.state && location.state.examResult) {
-      setExamResult(location.state.examResult);
-      setLoading(false);
-      return;
+  }, [location.state, examData.serviceId]); // Dependency on location.state and examData.serviceId
+
+  // Fetch exam result after exam data is fetched
+  useEffect(() => {
+    if (examData && examData.serviceId) {
+      const fetchExamResult = async () => {
+        try {
+          const response = await fetch(
+            `/api/v1/exam/exam-result/${examData.serviceId}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          if (response.status === 404) {
+            // If 404 is returned, simply pass and don't set examResult
+            return;
+          }
+
+          if (!response.ok) {
+            const responseData = await response.json();
+            setErrorMessage(
+              responseData.message || "Failed to fetch exam result."
+            );
+            return;
+          }
+
+          const responseData = await response.json();
+          setExamResult(responseData.data || null); // Set result or null if not found
+        } catch (error) {
+          setErrorMessage("An unexpected error occurred. Please try again.");
+        }
+      };
+
+      fetchExamResult();
     }
+  }, [examData]); // Trigger when examData changes
 
-    // Handle loading exam data
-    setLoading(true);
-    setError(null);
-
-    setTimeout(() => {
-      if (!examData) {
-        setError("Failed to load exam data.");
-      }
-      setLoading(false);
-    }, 2000);
-  }, [location.state, examData]);
-
-  console.log("Response Data:", JSON.stringify(examData, null, 2));
-  const handleStartExam = () => {
-    // Simulate navigating to the exam page
-    console.log("Starting the exam...");
-
-    // Pass the result and exam data to the current page
-    navigate("/OngoingExamPage", {
-      state: {
-        // examResult: mockExamResult,
-        examData,
-      },
-    }); // Simulate a 2-second delay for the exam process
+  const handleGoToExam = () => {
+    if (examData2.numberOfQuestion < 1) {
+      setSnackbarMessage("There are no questions in this exam.");
+      setSeverity("error");
+      setOpenSnackbar(true);
+    } else {
+      setSnackbarMessage("Navigating to the exam...");
+      setSeverity("success");
+      setOpenSnackbar(true);
+      navigate("/OngoingExamPage", { state: { examData } }); // Call the function to navigate to the exam
+    }
   };
 
   if (loading) {
@@ -254,13 +279,13 @@ function PublicExam() {
                   </Box>
                 </Box>
 
-                {/* Rating and Average User Rating */}
                 <Rating
-                  value={examData.score || 0}
+                  value={Number(examData.score) || 0}
                   readOnly
                   precision={0.5}
                   sx={{ marginTop: 2 }}
                 />
+
                 <Typography
                   variant="body2"
                   color="text.secondary"
@@ -296,27 +321,29 @@ function PublicExam() {
                   alt="Exam Preview"
                   style={{
                     width: "100%",
-                    maxWidth: "500px", // Adjusted maxWidth to make the image smaller
+                    maxWidth: "400px", // Adjusted maxWidth to make the image smaller
                     height: "auto",
                     borderRadius: "8px",
                     marginBottom: "16px",
                   }}
                 />
 
-                {/* Start Exam Button */}
-                <ButtonStyled
-                  variant="contained"
-                  fullWidth
-                  onClick={handleStartExam}
-                  sx={{
-                    marginTop: 2,
-                    maxWidth: "300px",
-                    fontSize: { xs: "1rem", sm: "1.2rem" },
-                    padding: { xs: "12px", sm: "15px" },
-                  }}
-                >
-                  Go to Exam
-                </ButtonStyled>
+                {/* Show button only if no exam result */}
+                {!examResult && (
+                  <ButtonStyled
+                    variant="contained"
+                    fullWidth
+                    onClick={handleGoToExam}
+                    sx={{
+                      marginTop: 2,
+                      maxWidth: "300px",
+                      fontSize: { xs: "1rem", sm: "1.2rem" },
+                      padding: { xs: "12px", sm: "15px" },
+                    }}
+                  >
+                    Go to Exam
+                  </ButtonStyled>
+                )}
               </Grid2>
             </Grid2>
           </CustomCard>
@@ -515,6 +542,21 @@ function PublicExam() {
               </Box>
             )}
           </Box>
+          {/* Snackbar for success/error messages */}
+          <Snackbar
+            open={openSnackbar}
+            autoHideDuration={3000}
+            onClose={() => setOpenSnackbar(false)}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          >
+            <Alert
+              onClose={() => setOpenSnackbar(false)}
+              severity={severity}
+              sx={{ width: "100%" }}
+            >
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
 
           {/* Comments Container */}
           <CommentsContainer>
