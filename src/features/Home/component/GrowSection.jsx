@@ -10,6 +10,7 @@ import { useTheme } from "@mui/material/styles";
 
 // image
 import growth from "../../../assets/images/growth.jpg";
+import { Link } from "react-router-dom";
 
 function GrowSection() {
   const theme = useTheme();
@@ -35,13 +36,18 @@ function GrowSection() {
       >
         <Typography
           variant="h3"
-          sx={{ fontWeight: "600", mb: 2, fontSize: "60px" }}
+          sx={{ fontWeight: "600", mb: 2, fontSize: "60px", textAlign: "left" }}
         >
           Learn and Grow Together
         </Typography>
         <Typography
           variant="body1"
-          sx={{ color: "text.secondary", mb: 4, fontSize: "30px" }}
+          sx={{
+            color: "text.secondary",
+            mb: 4,
+            fontSize: "30px",
+            textAlign: "left",
+          }}
         >
           Join a community where users can create courses, write educational
           articles, and host interactive quizzes. Become both a learner and an
@@ -56,19 +62,21 @@ function GrowSection() {
             justifyContent: { xs: "center", md: "left" },
           }}
         >
-          <Button
-            variant="contained"
-            sx={{
-              minWidth: "150px",
-              backgroundColor: "#378CE7",
-              padding: "10px",
-            }}
+          <Link
+            to={"/signup"}
+            style={{ textDecoration: "none", color: "inherit" }}
           >
-            Sign Up
-          </Button>
-          <Button variant="outlined" color="primary" sx={{ minWidth: "150px" }}>
-            For Businesses
-          </Button>
+            <Button
+              variant="contained"
+              sx={{
+                minWidth: "150px",
+                backgroundColor: "#378CE7",
+                padding: "10px",
+              }}
+            >
+              Sign Up
+            </Button>
+          </Link>
         </Box>
       </Box>
 
