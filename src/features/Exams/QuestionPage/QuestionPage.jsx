@@ -155,13 +155,14 @@ function QuestionPage() {
         }
   
         const data = await response.json();
+        console.log("API Response after submitting rating:", data)
         
         if (data.status === "success") {
           setQuestion((prevQuestion) => ({
             ...prevQuestion,
             rating: parseFloat(data.data.score),
             ratingCount: data.data.numberOfVoters,
-            userScore: newValue, 
+            userScore: data.data.userScore || newValue,
             
           }));
 
@@ -188,14 +189,16 @@ function QuestionPage() {
   useEffect(() => {
     if (question) {
       const savedRating = localStorage.getItem(`rating-${question.id}`);
-      if (savedRating) {
+      if (savedRating && parseFloat(savedRating) !== question.userScore) {
         setQuestion((prevQuestion) => ({
           ...prevQuestion,
           userScore: parseFloat(savedRating),
         }));
       }
     }
-  }, [question]);
+  }, [question?.id]);
+  
+  
   
 
   
