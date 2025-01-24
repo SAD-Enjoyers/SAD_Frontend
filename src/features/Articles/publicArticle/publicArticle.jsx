@@ -212,7 +212,7 @@ function PublicArticle() {
         </Tabs>
 
         {tabIndex === 0 && (
-          <Box sx={{ maxWidth: 950, width: "100%", paddingX: 4, margin: "0 auto" }}>
+          <Box sx={{ maxWidth: 950, margin: "0 auto"}}>
             <CustomCard sx={{ maxWidth: 800, margin: "0 auto" }}>
               <Grid2 container spacing={4}>
                 <Grid2 item xs={12} md={8}>
@@ -308,7 +308,9 @@ function PublicArticle() {
             {/* Number of Members */}
             <Box
               sx={{
-                marginTop: 4,
+                maxWidth: 825,
+                marginInline: 7,
+                marginBlock: 4,
                 textAlign: "center",
                 padding: 2,
                 backgroundColor: "secondary.light",
@@ -339,7 +341,7 @@ function PublicArticle() {
               <div
                 style={{
                   whiteSpace: "pre-wrap",
-                  minWidth: 650,
+                  
                   padding: "10px",
                   minHeight: "600px",
                   maxHeight: "250px",
@@ -358,7 +360,7 @@ function PublicArticle() {
                   variant="contained"
                   sx={{ marginTop: 2 }}
                   href={`/api/v1/uploads/article-attachments/${articleContents.attachment}`}
-                  target="_blank"
+                  
                 >
                   Download Attachment
                 </Button>

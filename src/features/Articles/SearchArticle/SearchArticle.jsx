@@ -9,151 +9,33 @@ import {
   FormControl,
   InputLabel,
   Typography,
+  Checkbox,
+  ListItemText,
   Chip,
   Grid,
   Rating,
-  Checkbox,
-  ListItemText,
   Pagination,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import { motion } from "framer-motion";
 import { Sort, SortByAlpha } from "@mui/icons-material";
 import axios from "axios";
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import PeopleIcon from "@mui/icons-material/People";
 
-// const articles = [
-//   {
-//     id: 1,
-//     title: "The Future of Artificial Intelligence",
-//     rating: 4.7,
-//     writer: "John Doe",
-//     content:
-//       "Artificial Intelligence (AI) is rapidly evolving, and it has the potential to revolutionize industries like healthcare, transportation, and finance. In this article, we explore the trends and innovations that will shape the future of AI.",
-//     subject: ["Technology"],
-//   },
-//   {
-//     id: 2,
-//     title: "Climate Change and Its Impact on Agriculture",
-//     rating: 4.5,
-//     writer: "Jane Smith",
-//     content:
-//       "Climate change is affecting crop production and agriculture worldwide. This article discusses how rising temperatures and unpredictable weather patterns are challenging farmers and the strategies they are using to adapt.",
-//     subject: ["Environment"],
-//   },
-//   {
-//     id: 3,
-//     title: "The Rise of Remote Work Post-COVID",
-//     rating: 4.8,
-//     writer: "Alice Green",
-//     content:
-//       "The COVID-19 pandemic has changed how we work, with remote work becoming a permanent fixture for many industries. This article delves into the pros and cons of remote work, and how businesses can thrive in a hybrid work environment.",
-//     subject: ["Business"],
-//   },
-//   {
-//     id: 4,
-//     title: "Exploring the Wonders of Space Travel",
-//     rating: 4.6,
-//     writer: "Michael Brown",
-//     content:
-//       "Space exploration has captivated humans for decades. From the first moon landing to private space companies like SpaceX, this article explores the technological advancements and future of space travel.",
-//     subject: ["Science"],
-//   },
-//   {
-//     id: 5,
-//     title: "Mental Health Awareness in the Workplace",
-//     rating: 4.3,
-//     writer: "Emily White",
-//     content:
-//       "Mental health issues are becoming more prominent in the workplace. This article covers how companies can create supportive environments for employees, providing resources and breaking the stigma around mental health.",
-//     subject: ["Health"],
-//   },
-//   {
-//     id: 6,
-//     title: "Advances in Quantum Computing",
-//     rating: 4.9,
-//     writer: "David Black",
-//     content:
-//       "Quantum computing is an emerging field that could drastically change how we approach problem-solving in science, cryptography, and AI. In this article, we break down the complexities of quantum computing and its potential applications.",
-//     subject: ["Technology"],
-//   },
-//   {
-//     id: 7,
-//     title: "The Evolution of Social Media Marketing",
-//     rating: 4.4,
-//     writer: "Sarah Blue",
-//     content:
-//       "Social media marketing continues to evolve, with new platforms and strategies emerging regularly. This article looks at how businesses can stay ahead of the curve in utilizing social media to engage customers and drive sales.",
-//     subject: ["Marketing"],
-//   },
-//   {
-//     id: 8,
-//     title: "Sustainable Fashion: A Growing Trend",
-//     rating: 4.6,
-//     writer: "Rachel Gold",
-//     content:
-//       "As concerns about environmental impact grow, sustainable fashion is gaining momentum. This article discusses eco-friendly materials, ethical production practices, and how consumers can support sustainable fashion brands.",
-//     subject: ["Fashion"],
-//   },
-//   {
-//     id: 9,
-//     title: "The Future of Electric Vehicles",
-//     rating: 4.7,
-//     writer: "James Lee",
-//     content:
-//       "Electric vehicles (EVs) are rapidly becoming the future of transportation. This article explores the benefits of EVs, their impact on the environment, and the challenges that the automotive industry faces in shifting to electric power.",
-//     subject: ["Automotive"],
-//   },
-//   {
-//     id: 10,
-//     title: "The Role of Artificial Intelligence in Healthcare",
-//     rating: 4.8,
-//     writer: "Laura King",
-//     content:
-//       "AI is transforming healthcare by improving diagnostic accuracy, streamlining operations, and advancing medical research. This article dives into how AI is reshaping the healthcare landscape.",
-//     subject: ["Healthcare"],
-//   },
-//   {
-//     id: 11,
-//     title: "The Impact of Automation on Jobs",
-//     rating: 4.2,
-//     writer: "Ethan Taylor",
-//     content:
-//       "Automation is increasingly taking over jobs across various industries. While it boosts efficiency, it raises concerns about job displacement. This article analyzes the impact of automation on the workforce and potential solutions.",
-//     subject: ["Economics"],
-//   },
-//   {
-//     id: 12,
-//     title: "Exploring the Benefits of Plant-Based Diets",
-//     rating: 4.5,
-//     writer: "Olivia Scott",
-//     content:
-//       "Plant-based diets are growing in popularity due to their health and environmental benefits. This article outlines the benefits of plant-based eating, including reduced risk of chronic diseases and a lower carbon footprint.",
-//     subject: ["Health"],
-//   },
-//   {
-//     id: 13,
-//     title: "Smart Cities: The Future of Urban Living",
-//     rating: 4.9,
-//     writer: "Daniel Evans",
-//     content:
-//       "Smart cities are transforming the way we live by using technology to improve infrastructure, reduce energy consumption, and enhance quality of life. This article explores the advancements in smart city technology and their potential impact.",
-//     subject: ["Urban Development"],
-//   },
-// ];
-
-function SearchAndFilterArticle() {
+function QuestionsTab() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
+  const [questions, setQuestions] = useState([]);
   const [categories, setCategories] = useState([]); // Categories for filter
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [sortOrder, setSortOrder] = useState({
     criterion: "",
     direction: "asc",
   });
-  const [articles, setArticles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -164,30 +46,20 @@ function SearchAndFilterArticle() {
       }
     };
 
-    const fetchArticles = async () => {
+    const fetchQuestions = async () => {
       setLoading(true);
       try {
         const response = await axios.get("/api/v1/article");
-        const transformedQuestions = response.data.data.result.map(
-          (q, index) => {
-            const subject = [];
-            for (let i = 1; i < 4; i++) {
-              if (q[`tag${i}`]) {
-                subject.push(q[`tag${i}`]);
-              }
-            }
-            return {
-              id: q.serviceId,
-              writer: q.userId,
-              title: q.name,
-              content: q.description,
-              rating: q.score,
-              subject: subject,
-            };
-          }
-        );
-
-        setArticles(transformedQuestions);
+        const transformedQuestions = response.data.data.result.map((q) => ({
+          id: q.serviceId,
+          name: q.name,
+          text: q.description,
+          subjects: [q.tag1, q.tag2, q.tag3].filter(Boolean),
+          score: q.score,
+          writer: q.userId, // Ensure writerId is available for linking
+          numberOfVoters: q.numberOfVoters,
+        }));
+        setQuestions(transformedQuestions);
       } catch (error) {
         console.error("Error fetching questions:", error);
       } finally {
@@ -196,7 +68,7 @@ function SearchAndFilterArticle() {
     };
 
     fetchCategories();
-    fetchArticles();
+    fetchQuestions();
   }, []);
 
   const handleSearch = (event) => setSearchTerm(event.target.value);
@@ -207,7 +79,10 @@ function SearchAndFilterArticle() {
   };
 
   const handleSubjectChange = (event) => {
-    setSelectedSubjects(event.target.value);
+    const selected = event.target.value;
+    if (selected.length <= 3) {
+      setSelectedSubjects(selected);
+    }
   };
 
   const handleSortChange = (event) => {
@@ -224,30 +99,32 @@ function SearchAndFilterArticle() {
 
   // Memoized filtering and sorting logic
   const filteredQuestions = useMemo(() => {
-    return articles
+    return questions
       .filter((question) => {
-        const matchesSearchTerm = question.title
+        const matchesSearchTerm = question.name
           .toLowerCase()
           .includes(searchTerm.toLowerCase());
         const matchesSubjects =
           selectedSubjects.length === 0 ||
-          selectedSubjects.includes("All") ||
-          selectedSubjects.some((subject) =>
-            question.subject.includes(subject)
+          selectedSubjects.every((subject) =>
+            question.subjects.includes(subject)
           );
         return matchesSearchTerm && matchesSubjects;
       })
       .sort((a, b) => {
         const { criterion, direction } = sortOrder;
         if (criterion === "score") {
+          return direction === "asc" ? a.score - b.score : b.score - a.score;
+        }
+        if (criterion === "voters") {
           return direction === "asc"
-            ? a.rating - b.rating
-            : b.rating - a.rating;
+            ? a.numberOfVoters - b.numberOfVoters
+            : b.numberOfVoters - a.numberOfVoters;
         }
         if (criterion === "name") {
           return direction === "asc"
-            ? a.title.localeCompare(b.title)
-            : b.title.localeCompare(a.title);
+            ? a.name.localeCompare(b.name)
+            : b.name.localeCompare(a.name);
         }
         if (criterion === "writer") {
           return direction === "asc"
@@ -256,7 +133,7 @@ function SearchAndFilterArticle() {
         }
         return 0;
       });
-  }, [searchTerm, selectedSubjects, articles, sortOrder]);
+  }, [searchTerm, selectedSubjects, questions, sortOrder]);
 
   const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -268,24 +145,23 @@ function SearchAndFilterArticle() {
   return (
     <Box
       sx={{
-        minWidth: 500,
-        maxWidth: 900,
-        // marginLeft: 35,
-        margin: "0 auto",
+        width: "100%",
+        maxWidth: "800px",
+        margin: "auto",
+        marginTop: "50px", // Adjusted margin for a more spacious layout
+        padding: "20px",
+        backgroundColor: "#F9FAFB", // Light background for a clean look
+        borderRadius: "12px", // Rounded corners
+        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.1)", // Soft shadows for a floating effect
       }}
     >
-      <div style={{ textAlign: "center" }}>
-        <Typography variant="button" fontSize={20} color="primary" gutterBottom>
-          Articles
-        </Typography>
-      </div>
       {/* Search and Sort Filters */}
       <Grid container spacing={3} sx={{ marginTop: "30px" }}>
         {/* Search */}
         <Grid item xs={12} sm={8} md={9}>
           <TextField
             variant="outlined"
-            placeholder="Search articles..."
+            placeholder="Search questions..."
             value={searchTerm}
             onChange={handleSearch}
             onKeyDown={(event) => event.key === "Enter" && handleSearchSubmit()}
@@ -302,18 +178,34 @@ function SearchAndFilterArticle() {
                 borderRadius: "8px",
                 backgroundColor: "#fff",
               },
-              minWidth: 900,
             }}
           />
+        </Grid>
+        <Grid item xs={12} sm={4} md={3}>
+          <Button
+            variant="contained"
+            onClick={handleSearchSubmit}
+            disabled={loading}
+            fullWidth
+            sx={{
+              backgroundColor: "#4A90E2",
+              color: "#fff",
+              borderRadius: "8px",
+              "&:hover": { backgroundColor: "#357ABD" },
+              padding: "10px",
+            }}
+          >
+            {loading ? "Searching..." : "Search"}
+          </Button>
         </Grid>
       </Grid>
 
       <Grid container spacing={3} sx={{ marginTop: "30px" }}>
         {/* Filter by Subjects */}
         <Grid item xs={12} sm={4}>
-          {/* Subjects */}
           <FormControl fullWidth variant="outlined">
             <InputLabel>Subjects</InputLabel>
+
             <Select
               multiple
               value={selectedSubjects}
@@ -321,30 +213,75 @@ function SearchAndFilterArticle() {
               label="Subjects"
               renderValue={(selected) => selected.join(", ")}
               sx={{
-                backgroundColor: "#f5f5f5",
+                backgroundColor: "#ffffff",
                 borderRadius: "8px",
+                borderColor: "#E0E0E0",
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#ddd",
+                  borderColor: "#E0E0E0",
                 },
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#4A90E2",
+                  borderColor: "#378CE7",
+                },
+                "& .MuiSelect-icon": {
+                  color: "#378CE7",
+                },
+              }}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 200, // Limit height
+                    overflow: "auto", // Enable scrolling
+                  },
                 },
               }}
             >
               {categories.map((category) => (
-                <MenuItem
-                  key={category.categoryId}
-                  value={category.category}
-                  sx={{ maxHeight: 50 }}
-                >
+                <MenuItem key={category.categoryId} value={category.category}>
                   <Checkbox
                     checked={selectedSubjects.includes(category.category)}
+                    sx={{
+                      color: "#378CE7",
+                      "&.Mui-checked": {
+                        color: "#378CE7",
+                      },
+                    }}
                   />
                   <ListItemText primary={category.category} />
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+
+          {/* Display selected categories as tags */}
+          {/* <Box sx={{ marginTop: 2 }}>
+            {selectedSubjects.length > 0 && (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                {selectedSubjects.slice(0, 3).map((category) => (
+                  <Chip
+                    key={category}
+                    label={category}
+                    sx={{
+                      backgroundColor: "#67C6E3", // Tag background color
+                      color: "#ffffff", // Tag text color
+                      borderRadius: "20px", // Rounded corners for the tag
+                      padding: "6px 12px", // Padding for better appearance
+                    }}
+                  />
+                ))}
+                {selectedSubjects.length > 3 && (
+                  <Chip
+                    label="..."
+                    sx={{
+                      backgroundColor: "#67C6E3", // Tag background color
+                      color: "#ffffff", // Tag text color
+                      borderRadius: "20px", // Rounded corners for the tag
+                      padding: "6px 12px", // Padding for better appearance
+                    }}
+                  />
+                )}
+              </Box>
+            )}
+          </Box> */}
         </Grid>
 
         {/* Sort By Filter */}
@@ -356,13 +293,13 @@ function SearchAndFilterArticle() {
               onChange={handleSortChange}
               label="Sort By"
               sx={{
-                backgroundColor: "#f5f5f5",
+                backgroundColor: "#f5f5f5", // Light background for Select box
                 borderRadius: "8px",
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#ddd",
+                  borderColor: "#ddd", // Lighter border color
                 },
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#4A90E2",
+                  borderColor: "#4A90E2", // Hover effect with blue border
                 },
               }}
             >
@@ -373,10 +310,16 @@ function SearchAndFilterArticle() {
                 <Sort sx={{ marginRight: "8px" }} /> Score (High to Low)
               </MenuItem>
               <MenuItem value="name-asc">
-                <SortByAlpha sx={{ marginRight: "8px" }} /> Title (A to Z)
+                <SortByAlpha sx={{ marginRight: "8px" }} /> Name (A to Z)
               </MenuItem>
               <MenuItem value="name-desc">
-                <SortByAlpha sx={{ marginRight: "8px" }} /> Title (Z to A)
+                <SortByAlpha sx={{ marginRight: "8px" }} /> Name (Z to A)
+              </MenuItem>
+              <MenuItem value="voters-asc">
+                <Sort sx={{ marginRight: "8px" }} /> Voters (Low to High)
+              </MenuItem>
+              <MenuItem value="voters-desc">
+                <Sort sx={{ marginRight: "8px" }} /> Voters (High to Low)
               </MenuItem>
             </Select>
           </FormControl>
@@ -391,21 +334,19 @@ function SearchAndFilterArticle() {
               onChange={handleItemsPerPageChange}
               label="Items Per Page"
               sx={{
-                backgroundColor: "#f5f5f5",
+                backgroundColor: "#f5f5f5", // Light background for Select box
                 borderRadius: "8px",
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#ddd",
+                  borderColor: "#ddd", // Lighter border color
                 },
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#4A90E2",
+                  borderColor: "#4A90E2", // Hover effect with blue border
                 },
               }}
             >
-              {[6, 12, 18, 24].map((items) => (
-                <MenuItem key={items} value={items}>
-                  {items} items
-                </MenuItem>
-              ))}
+              <MenuItem value={12}>12</MenuItem>
+              <MenuItem value={24}>24</MenuItem>
+              <MenuItem value={36}>36</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -448,7 +389,7 @@ function SearchAndFilterArticle() {
                   to={`/ArticlePreview/${question.id}`}
                   style={{ textDecoration: "none" }}
                 >
-                  {question.title}
+                  {question.name}
                 </Link>
               </Typography>
 
@@ -462,7 +403,7 @@ function SearchAndFilterArticle() {
                   lineHeight: "1.5",
                 }}
               >
-                {question.content.split(" ").slice(0, 15).join(" ")}...
+                {question.text.split(" ").slice(0, 15).join(" ")}...
               </Typography>
 
               {/* Subjects */}
@@ -474,7 +415,7 @@ function SearchAndFilterArticle() {
                   marginBottom: "15px", // Space before the next section
                 }}
               >
-                {question.subject.map((subject, index) => (
+                {question.subjects.map((subject, index) => (
                   <Chip
                     key={index}
                     label={subject}
@@ -505,7 +446,7 @@ function SearchAndFilterArticle() {
                 {/* Score */}
                 <Rating
                   name="score"
-                  value={question.rating}
+                  value={question.score}
                   max={5}
                   readOnly
                   sx={{
@@ -513,6 +454,21 @@ function SearchAndFilterArticle() {
                     "& .MuiRating-iconFilled": { color: "#ffcc00" },
                   }}
                 />
+
+                {/* Display number of voters */}
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "#6c757d",
+                    fontWeight: "bold",
+                    fontSize: "0.9rem",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <PeopleIcon sx={{ marginRight: "5px", fontSize: "1rem" }} />
+                  {question.numberOfVoters} Voters
+                </Typography>
 
                 {/* Writer Name with Motion Effects */}
                 <motion.div
@@ -528,7 +484,15 @@ function SearchAndFilterArticle() {
                       fontSize: "0.9rem",
                     }}
                   >
-                    {question.writer}
+                    <Link
+                      to={`/profile/${question.writerId}`}
+                      style={{
+                        color: "#6c757d",
+                        textDecoration: "none",
+                      }}
+                    >
+                      {question.writer}
+                    </Link>
                   </Typography>
                 </motion.div>
               </Box>
@@ -538,28 +502,15 @@ function SearchAndFilterArticle() {
       </Grid>
 
       {/* Pagination */}
-      <Box
-        sx={{ display: "flex", justifyContent: "center", marginTop: "30px" }}
-      >
-        <Pagination
-          count={totalPages}
-          page={currentPage}
-          onChange={handlePageChange}
-          color="primary"
-          sx={{
-            "& .MuiPaginationItem-root": {
-              backgroundColor: "#f0f0f0",
-              borderRadius: "8px",
-            },
-            "& .MuiPaginationItem-root.Mui-selected": {
-              backgroundColor: "#4A90E2",
-              color: "#fff",
-            },
-          }}
-        />
-      </Box>
+      <Pagination
+        count={totalPages}
+        page={currentPage}
+        onChange={handlePageChange}
+        color="primary"
+        sx={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+      />
     </Box>
   );
 }
 
-export default SearchAndFilterArticle;
+export default QuestionsTab;

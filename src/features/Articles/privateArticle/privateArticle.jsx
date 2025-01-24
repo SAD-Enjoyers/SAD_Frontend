@@ -8,7 +8,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { LibraryBooks, Settings, Comment } from "@mui/icons-material";
-import InfoIcon from "@mui/icons-material/Info";
+import InfoIcon from '@mui/icons-material/Info';
 import { useLocation, useParams } from "react-router-dom";
 import ArticleContent from "./tabs/ArticleContent";
 import ArticleSettings from "./tabs/ArticleSettings";
@@ -38,10 +38,7 @@ const PrivateArticle = (props) => {
     } else {
       // Otherwise, try fetching the article data from localStorage
       const storedArticleData = JSON.parse(localStorage.getItem("articleData"));
-      if (
-        storedArticleData &&
-        storedArticleData.articleId === parseInt(articleId, 10)
-      ) {
+      if (storedArticleData && storedArticleData.articleId === parseInt(articleId, 10)) {
         setArticleData(storedArticleData);
         setLoading(false);
       } else {
@@ -61,23 +58,17 @@ const PrivateArticle = (props) => {
   const tabContent = [
     {
       label: "Article Contents",
-      content: (
-        <ArticleContent articleData={articleData} accessToken={accessToken} />
-      ),
+      content: <ArticleContent articleData={articleData} accessToken={accessToken} />,
       icon: <LibraryBooks />,
     },
     {
       label: "Comments",
-      content: (
-        <CommentSection articleId={articleId} accessToken={accessToken} />
-      ),
+      content: <CommentSection articleId={articleId} accessToken={accessToken} />,
       icon: <Comment />,
     },
     {
       label: "Article Settings",
-      content: (
-        <ArticleSettings articleData={articleData} accessToken={accessToken} />
-      ),
+      content: <ArticleSettings articleData={articleData} accessToken={accessToken} />,
       icon: <Settings />,
     },
   ];
@@ -94,9 +85,7 @@ const PrivateArticle = (props) => {
         boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.1)",
       }}
     >
-      <Box
-        sx={{ bgcolor: "#f4f4f4", display: "flex", justifyContent: "center" }}
-      >
+      <div style={{ bgcolor: "#f4f4f4", display: "flex", justifyContent: "center" }}>
         <Tabs
           value={selectedTab}
           onChange={handleTabChange}
@@ -120,9 +109,9 @@ const PrivateArticle = (props) => {
             />
           ))}
         </Tabs>
-      </Box>
+      </div>
 
-      <Box sx={{ flex: 1, p: 2, overflowY: "auto" }}>
+      <div style={{ flex: 1, p: 2, overflowY: "auto" }}>
         {loading ? (
           <Box
             sx={{
@@ -137,7 +126,7 @@ const PrivateArticle = (props) => {
         ) : (
           tabContent[selectedTab]?.content
         )}
-      </Box>
+      </div>
     </Box>
   );
 };
