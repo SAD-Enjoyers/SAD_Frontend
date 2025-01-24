@@ -41,6 +41,7 @@ import ImageUpload from "./features/Exams/MakeExam/components/ImageUpload.jsx";
 import ExamSearch from "./features/Exams/ExamsSearch/ExamsTab.jsx";
 import PrivateProfile from "./features/Users/PrivateProfile/PrivateProfile.jsx";
 import PublicUsers from "./features/Users/publicUsers/PublicUsers.jsx";
+import Rating from "./common/Ratings/Rating.jsx"
 
 function AppRoutes() {
   return (
@@ -99,6 +100,7 @@ function AppRoutes() {
           {/* Utilities */}
           <Route path="Comments" element={<Comments />} />
           <Route path="SearchUsers" element={<SearchUsers />} />
+          <Route path="Rating" element={<Rating />} />
         </Route>
       </Routes>
     </Router>
