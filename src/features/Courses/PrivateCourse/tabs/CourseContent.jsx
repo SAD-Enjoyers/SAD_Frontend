@@ -13,6 +13,7 @@ import {
   Typography,
   IconButton,
   Button,
+  Link,
   Modal,
   Snackbar,
   Alert,
@@ -30,6 +31,8 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const CourseContent = ({ courseData, accessToken }) => {
+  const navigate = useNavigate();
+
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [severity, setSeverity] = useState("success"); // "success", "error", "warning", "info"
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -195,6 +198,12 @@ const CourseContent = ({ courseData, accessToken }) => {
     );
   }
 
+  const handleNavigate = () => {
+    // Navigate to the PublicCourse route, you can pass courseId or other data in location state
+    navigate("/PublicCourse", {
+      state: { courseData }, // Pass your course data here
+    });
+  };
   const handleUpload = () => {
     console.log("Upload a new video");
   };
@@ -469,6 +478,8 @@ const CourseContent = ({ courseData, accessToken }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Button onClick={handleNavigate}>Go to Public Course</Button>
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}
