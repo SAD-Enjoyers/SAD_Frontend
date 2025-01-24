@@ -164,6 +164,8 @@ function QuestionPage() {
             userScore: newValue, 
             
           }));
+
+          localStorage.setItem(`rating-${question.id}`, newValue);
         // اگر اولین بار است ریتینگ داده شده، پیام ارسال می‌شود
         if (ratingStatus === null) {
           setSuccessMessage("Your rating has been successfully submitted.");
@@ -183,7 +185,18 @@ function QuestionPage() {
     }
   };
   
-
+  useEffect(() => {
+    if (question) {
+      const savedRating = localStorage.getItem(`rating-${question.id}`);
+      if (savedRating) {
+        setQuestion((prevQuestion) => ({
+          ...prevQuestion,
+          userScore: parseFloat(savedRating),
+        }));
+      }
+    }
+  }, [question]);
+  
 
   
 

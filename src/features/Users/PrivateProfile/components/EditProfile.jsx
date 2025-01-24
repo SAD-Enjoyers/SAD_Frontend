@@ -29,14 +29,20 @@ export default function EditProfile({ closeState }) {
   };
   const submitImage = async (closeState) => {
     if (!selectedImage) {
-      alert("Please select an image first!");
+      toast.error("Please select an image first!", {
+        autoClose: 3000,
+      });
+
       return;
     }
 
     // بررسی فرمت فایل
     const validImageTypes = ["image/jpeg", "image/png"];
     if (!validImageTypes.includes(selectedImage.type)) {
-      alert("Only image files (jpeg, png) are allowed!");
+      toast.error("Only image files (jpeg, png) are allowed!", {
+        autoClose: 3000,
+      });
+
       return;
     }
 
@@ -61,7 +67,9 @@ export default function EditProfile({ closeState }) {
       submitInformation(data.data.fileName, closeState);
     } catch (error) {
       console.error("Error uploading image:", error);
-      alert("Failed to upload image. Please try again.");
+      toast.error("Failed to upload image. Please try again.", {
+        autoClose: 3000,
+      });
     }
   };
   const submitInformation = (image, closeState) => {

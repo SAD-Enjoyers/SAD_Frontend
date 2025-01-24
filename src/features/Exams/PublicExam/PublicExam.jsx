@@ -22,6 +22,8 @@ import PeopleIcon from "@mui/icons-material/People";
 import DefaultExamImage from "../../../assets/images/default_exam_image.jpg";
 // import ExamResult from "./ExamResult";
 import Comments from "../../../common/Comments/CommentSection";
+import RegisterTicket from "../../../common/registerTicket/registerTicket.jsx";
+
 import {
   CheckCircle,
   Clear,
@@ -616,6 +618,8 @@ function PublicExam() {
               </Box>
             )}
           </Box>
+          <RegisterTicket serviceId={serviceId} />
+
           {/* Snackbar for success/error messages */}
           <Snackbar
             open={openSnackbar}
