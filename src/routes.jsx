@@ -42,11 +42,18 @@ import ExamSearch from "./features/Exams/ExamsSearch/ExamsTab.jsx";
 import PrivateProfile from "./features/Users/PrivateProfile/PrivateProfile.jsx";
 import PublicUsers from "./features/Users/publicUsers/PublicUsers.jsx";
 
+import TicketAdmin from "./features/Admin/ticketReview/ticketReview.jsx";
+import RegisterTicket from "./common/registerTicket/registerTicket.jsx";
+
 function AppRoutes() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
+          {/* Admin */}
+          <Route path="TicketAdmin" element={<TicketAdmin />} />
+          <Route path="RegisterTicket" element={<RegisterTicket />} />
+
           {/* General Routes */}
           <Route index element={<Home />} />
           <Route path="signup" element={<Signup />} />

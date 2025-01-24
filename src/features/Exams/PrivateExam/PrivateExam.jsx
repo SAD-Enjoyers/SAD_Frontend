@@ -13,6 +13,8 @@ import ExamQuestions from "./tabs/ExamQuestions";
 import Comments from "../../../common/Comments/CommentSection";
 import ExamSettings from "./tabs/ExamSettings";
 import ParticipantStatus from "./tabs/ParticipantStatus";
+import { FeedbackOutlined } from "@mui/icons-material";
+import RegisterTicket from "./../../../common/registerTicket/registerTicket";
 
 const PrivateExam = () => {
   const { serviceId } = useParams(); // Extract serviceId from URL
@@ -88,6 +90,11 @@ const PrivateExam = () => {
       content: <Comments serviceId={serviceId} />,
       icon: <Comment />,
     },
+    {
+      label: "Ticket Section",
+      content: <RegisterTicket serviceId={serviceId} />,
+      icon: <FeedbackOutlined />,
+    },
   ];
 
   return (
@@ -103,13 +110,19 @@ const PrivateExam = () => {
       }}
     >
       <Box
-        sx={{ bgcolor: "#f4f4f4", display: "flex", justifyContent: "center" }}
+        sx={{
+          bgcolor: "#f4f4f4",
+          display: "flex",
+          justifyContent: "center",
+          overflowX: "auto", // Allow horizontal scrolling
+        }}
       >
         <Tabs
           value={selectedTab}
           onChange={handleTabChange}
           aria-label="Private Exam Navigation Tabs"
-          variant={isMobile ? "scrollable" : "standard"}
+          variant="scrollable" // Always make it scrollable
+          scrollButtons="auto" // Adds auto buttons to scroll tabs when needed
           sx={{
             width: "100%",
             borderBottom: 1,
