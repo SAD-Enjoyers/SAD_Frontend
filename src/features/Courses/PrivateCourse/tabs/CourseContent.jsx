@@ -243,100 +243,110 @@ const CourseContent = ({ courseData, accessToken }) => {
       <Typography variant="h6" gutterBottom>
         Course Videos
       </Typography>
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="videos">
-          {(provided) => (
-            <Grid
-              container
-              spacing={3}
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
-              {videos.map((video, index) => (
-                <Draggable
-                  key={video.id}
-                  draggableId={String(video.id)}
-                  index={index}
-                >
-                  {(provided) => (
-                    <Grid
-                      item
-                      xs={12}
-                      sm={6}
-                      md={4}
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <Card>
-                        <CardMedia
-                          component="img"
-                          height="140"
-                          image={video.thumbnail}
-                          alt={video.title}
-                          sx={{ cursor: "pointer" }}
-                          onClick={() => handlePlayVideo(video.url)} // Open in a new window
-                        />
 
-                        <CardContent>
-                          <Typography
-                            variant="subtitle1"
-                            component="div"
+      {videos.length === 0 ? (
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          sx={{ textAlign: "center", mt: 2 }}
+        >
+          No videos available
+        </Typography>
+      ) : (
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="videos">
+            {(provided) => (
+              <Grid
+                container
+                spacing={3}
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {videos.map((video, index) => (
+                  <Draggable
+                    key={video.id}
+                    draggableId={String(video.id)}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <Grid
+                        item
+                        xs={12}
+                        sm={6}
+                        md={4}
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <Card>
+                          <CardMedia
+                            component="img"
+                            height="140"
+                            image={video.thumbnail}
+                            alt={video.title}
                             sx={{ cursor: "pointer" }}
-                            onClick={() => handlePlayVideo(video.url)}
-                          >
-                            {video.title}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {video.description}
-                          </Typography>
-                          <Typography
-                            variant="caption"
-                            color="text.secondary"
-                            sx={{ mt: 1 }}
-                          >
-                            Order: {video.sortNumber}
-                          </Typography>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              mt: 1,
-                            }}
-                          >
-                            <IconButton
-                              aria-label="play"
-                              color="primary"
+                            onClick={() => handlePlayVideo(video.url)} // Open in a new window
+                          />
+                          <CardContent>
+                            <Typography
+                              variant="subtitle1"
+                              component="div"
+                              sx={{ cursor: "pointer" }}
                               onClick={() => handlePlayVideo(video.url)}
                             >
-                              <Download />
-                            </IconButton>
-                            <IconButton
-                              aria-label="edit"
-                              color="info"
-                              onClick={() => handleEdit(video)}
+                              {video.title}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {video.description}
+                            </Typography>
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              sx={{ mt: 1 }}
                             >
-                              <Edit />
-                            </IconButton>
-                            <IconButton
-                              aria-label="delete"
-                              color="error"
-                              onClick={() => handleDeleteClick(video)} // Open confirmation dialog
+                              Order: {video.sortNumber}
+                            </Typography>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                mt: 1,
+                              }}
                             >
-                              <Delete />
-                            </IconButton>
-                          </Box>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </Grid>
-          )}
-        </Droppable>
-      </DragDropContext>
+                              <IconButton
+                                aria-label="play"
+                                color="primary"
+                                onClick={() => handlePlayVideo(video.url)}
+                              >
+                                <Download />
+                              </IconButton>
+                              <IconButton
+                                aria-label="edit"
+                                color="info"
+                                onClick={() => handleEdit(video)}
+                              >
+                                <Edit />
+                              </IconButton>
+                              <IconButton
+                                aria-label="delete"
+                                color="error"
+                                onClick={() => handleDeleteClick(video)} // Open confirmation dialog
+                              >
+                                <Delete />
+                              </IconButton>
+                            </Box>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </Grid>
+            )}
+          </Droppable>
+        </DragDropContext>
+      )}
 
       {/* Edit Modal */}
       <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>

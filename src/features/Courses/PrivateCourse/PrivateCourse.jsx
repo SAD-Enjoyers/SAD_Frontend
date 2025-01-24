@@ -301,7 +301,7 @@ const PrivateCourse = () => {
     {
       label: "Enrolled Students",
       content: (
-        <EnrolledStudents courseData={courseData} accessToken={accessToken} />
+        <EnrolledStudents courseId={courseId} accessToken={accessToken} />
       ),
       icon: <People fontSize={isMobile ? "small" : "medium"} />,
     },
