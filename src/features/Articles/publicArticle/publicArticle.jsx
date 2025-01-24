@@ -16,6 +16,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "@mui/system";
 import DefaultArticleImage from "../../../assets/images/blog.jpg";
 import Comments from "../../../common/Comments/CommentSection";
+import RegisterTicket from "../../../common/registerTicket/registerTicket";
 
 const primaryGradient = ["#5356FF", "#378CE7", "#67C6E3", "#DFF5FF"];
 const levelColors = {
@@ -303,6 +304,7 @@ function PublicArticle() {
                   />
                 </Grid2>
               </Grid2>
+              <RegisterTicket serviceId={articleData.serviceId} />
             </CustomCard>
 
             {/* Number of Members */}

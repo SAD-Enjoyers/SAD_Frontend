@@ -386,7 +386,7 @@ function QuestionsTab() {
                 }}
               >
                 <Link
-                  to={`/QuestionPage/${question.id}`}
+                  to={`/CoursePreview/${question.id}`}
                   style={{ textDecoration: "none" }}
                 >
                   {question.name}
