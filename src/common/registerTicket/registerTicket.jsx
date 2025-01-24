@@ -10,6 +10,7 @@ const RegisterTicket = ({ serviceId }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [severity, setSeverity] = useState("success");
+  console.log(serviceId);
 
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
