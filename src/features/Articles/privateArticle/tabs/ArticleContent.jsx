@@ -1,4 +1,5 @@
 // import React, { useState, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
 // import {
 //   Box,
 //   TextField,
@@ -20,6 +21,7 @@
 // }));
 
 // const ArticleContent = ({ articleData, accessToken }) => {
+//   const navigate = useNavigate();
 //   const [title, setTitle] = useState("");
 //   const [content, setContent] = useState("");
 //   const [attachment, setAttachment] = useState(null);
@@ -59,153 +61,209 @@
 //     fetchArticleContent();
 //   }, [articleData]);
 
-//   const handleFileChange = (event) => {
-//     const file = event.target.files[0];
-//     if (file && file.size > 5 * 1024 * 1024) {
-//       setSnackbarSeverity("error");
-//       setSnackbarMessage("File size must be less than 5MB.");
-//       setOpenSnackbar(true);
-//       return;
+// const handleFileChange = async (event) => {
+//   const file = event.target.files[0];
+//   if (file && file.size > 5 * 1024 * 1024) {
+//     setSnackbarSeverity("error");
+//     setSnackbarMessage("File size must be less than 5MB.");
+//     setOpenSnackbar(true);
+//     return;
+//   }
+
+//   try {
+//     const response = await fetch(`/api/v1/educational-service/upload-attachment`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${localStorage.getItem("token")}`,
+//         "x-role": localStorage.getItem("role"),
+//       },
+//       body: JSON.stringify({
+//         file: file
+//       }),
+//     });
+
+//     setAttachmentName(file.name)
+//     setAttachment(file)
+
+//     if (!response.ok) {
+//       const errorData = await response.json();
+//       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
 //     }
-//     setAttachment(file);
-//     setAttachmentName(file.name);
-//   };
 
-//   const handleSubmit = async (event) => {
-//     event.preventDefault();
+//     setSnackbarSeverity("success");
+//     setSnackbarMessage("Attachment saved successfully!");
+//     setOpenSnackbar(true);
+//   } catch (error) {
+//     console.error("Error saving Attachment:", error);
+//     console.log(file)
+//     setSnackbarSeverity("error");
+//     setSnackbarMessage(error.message || "Failed to save the Attachment.");
+//     setOpenSnackbar(true);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
 
-//     if (!title.trim() || !content.trim()) {
-//       setSnackbarSeverity("error");
-//       setSnackbarMessage("Title and content are required.");
-//       setOpenSnackbar(true);
-//       return;
+// const handlePublicPage = () => {
+//   localStorage.setItem("articleData", JSON.stringify(articleData)); // Save to localStorage
+//   navigate("/PublicArticle", { state: { articleData } });
+
+// };
+
+// const handleSubmit = async (event) => {
+//   event.preventDefault();
+
+//   if (!title.trim() || !content.trim()) {
+//     setSnackbarSeverity("error");
+//     setSnackbarMessage("Title and content are required.");
+//     setOpenSnackbar(true);
+//     return;
+//   }
+
+//   setLoading(true);
+//   console.log(attachment)
+//   try {
+//     const response = await fetch(`/api/v1/article/blog/${articleData.serviceId}`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${localStorage.getItem("token")}`,
+//         "x-role": localStorage.getItem("role"),
+//       },
+//       body: JSON.stringify({
+//         title,
+//         text: content,
+//         attachment: attachmentName,
+//       }),
+//     });
+
+//     if (!response.ok) {
+//       const errorData = await response.json();
+//       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
 //     }
 
-//     setLoading(true);
-//     try {
-//       const response = await fetch(`/api/v1/article/blog/${articleData.serviceId}`, {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${localStorage.getItem("token")}`,
-//           "x-role": localStorage.getItem("role"),
-//         },
-//         body: JSON.stringify({
-//           title,
-//           text: content,
-//           attachment: attachmentName,
-//         }),
-//       });
+//     setSnackbarSeverity("success");
+//     setSnackbarMessage("Article saved successfully!");
+//     setOpenSnackbar(true);
+//   } catch (error) {
+//     console.error("Error saving article:", error);
+//     setSnackbarSeverity("error");
+//     setSnackbarMessage(error.message || "Failed to save the article.");
+//     setOpenSnackbar(true);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
 
-//       if (!response.ok) {
-//         const errorData = await response.json();
-//         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-//       }
-
-//       setSnackbarSeverity("success");
-//       setSnackbarMessage("Article saved successfully!");
-//       setOpenSnackbar(true);
-//     } catch (error) {
-//       console.error("Error saving article:", error);
-//       setSnackbarSeverity("error");
-//       setSnackbarMessage(error.message || "Failed to save the article.");
-//       setOpenSnackbar(true);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <Box sx={{ margin: "0 auto", padding: 2 }}>
-//       <form onSubmit={handleSubmit}>
-//         <TextField
-//           label="Title"
-//           variant="outlined"
-//           fullWidth
-//           value={title}
-//           onChange={(e) => setTitle(e.target.value)}
-//           margin="normal"
-//           sx={{ backgroundColor: "white" }}
-//         />
-//         <Box sx={{ display: "flex", gap: 2 }}>
-//           <Box>
-//             <Typography variant="h6" gutterBottom>
-//               Rich Text Editor
-//             </Typography>
-//             <ReactQuill
-//               theme="snow"
-//               value={content}
-//               onChange={(value) => setContent(value)}
-//               style={{
-//                 height: "200px",
-//                 minHeight: "580px",
-//                 marginBottom: "70px",
-//                 minWidth: 650,
-//                 backgroundColor: "white",
-//                 borderRadius: 10,
-//               }}
-//             />
-//           </Box>
-
-//           <Box>
-//             <Typography variant="h6" gutterBottom>
-//               Text Preview
-//             </Typography>
-//             <div
-//               style={{
-//                 whiteSpace: "pre-wrap",
-//                 border: "1px solid #ddd",
-//                 minWidth: 650,
-//                 padding: "10px",
-//                 minHeight: "600px",
-//                 maxHeight: "250px",
-//                 overflowY: "auto",
-//                 backgroundColor: "white",
-//               }}
-//               dangerouslySetInnerHTML={{ __html: content }}
-//             />
-//           </Box>
+// return (
+//   <div style={{ margin: "0 auto", padding: 2, maxWidth: "1350px", width: "100%" }}>
+//     <form onSubmit={handleSubmit}>
+//       <TextField
+//         label="Title"
+//         variant="outlined"
+//         fullWidth
+//         value={title}
+//         onChange={(e) => setTitle(e.target.value)}
+//         margin="normal"
+//         sx={{ backgroundColor: "white" }}
+//       />
+//       <Box
+//         sx={{
+//           display: "flex",
+//           flexDirection: { xs: "column", md: "row" },
+//           gap: 2,
+//         }}
+//       >
+//         <Box sx={{ flex: 1 }}>
+//           <Typography variant="h6" gutterBottom>
+//             Rich Text Editor
+//           </Typography>
+//           <ReactQuill
+//             theme="snow"
+//             value={content}
+//             onChange={(value) => setContent(value)}
+//             style={{
+//               height: "200px",
+//               minHeight: "1025px",
+//               marginBottom: "40px",
+//               width: "100%",
+//               backgroundColor: "white",
+//               borderRadius: 10,
+//             }}
+//           />
 //         </Box>
 
-//         <Button variant="contained" component="label" sx={{ marginTop: 2 }}>
-//           Upload Attachment
-//           <input type="file" hidden onChange={handleFileChange} />
-//         </Button>
-
-//         {attachmentName && (
-//           <Typography variant="body2" sx={{ marginTop: 1 }}>
-//             Selected File: {attachmentName}
+//         <Box sx={{ flex: 1 }}>
+//           <Typography variant="h6" gutterBottom >
+//             Text Preview
 //           </Typography>
-//         )}
+//           <div
+//             style={{
+//               whiteSpace: "pre-wrap",
+//               border: "1px solid #ddd",
+//               padding: "10px",
+//               minHeight: "1045px",
+//               maxHeight: "1000px",
+//               overflowY: "auto",
+//               backgroundColor: "white",
+//               fontFamily: "'Roboto', 'Arial', sans-serif", // Add your desired font here
+//               lineHeight: "1.6", // Optional: improve readability
+//             }}
+//             dangerouslySetInnerHTML={{ __html: content }}
+//           />
+//         </Box>
+//       </Box>
 
-//         <Button
-//           type="submit"
-//           variant="contained"
-//           color="primary"
-//           fullWidth
-//           sx={{ marginTop: 3 }}
-//           disabled={loading}
-//         >
-//           {loading ? <CircularProgress size={24} /> : "Submit"}
-//         </Button>
-//       </form>
+//       <Button variant="contained" component="label" sx={{ marginTop: 2 }}>
+//         Upload Attachment
+//         <input type="file" hidden onChange={handleFileChange} />
+//       </Button>
 
-//       <Snackbar
-//         open={openSnackbar}
-//         autoHideDuration={3000}
-//         onClose={() => setOpenSnackbar(false)}
-//         anchorOrigin={{ vertical: "top", horizontal: "center" }}
+//       {attachmentName && (
+//         <Typography variant="body2" sx={{ marginTop: 1 }}>
+//           Selected File: {attachmentName}
+//         </Typography>
+//       )}
+
+//       <Button
+//         type="submit"
+//         variant="contained"
+//         color="primary"
+//         fullWidth
+//         sx={{ marginTop: 3 }}
+//         disabled={loading}
 //       >
-//         <Alert
-//           onClose={() => setOpenSnackbar(false)}
-//           severity={snackbarSeverity}
-//           sx={{ width: "100%" }}
-//         >
-//           {snackbarMessage}
-//         </Alert>
-//       </Snackbar>
-//     </Box>
-//   );
+//         {loading ? <CircularProgress size={24} /> : "Submit"}
+//       </Button>
+//     </form>
+
+//     <Button
+//       color="primary"
+//       fullWidth
+//       onClick={handlePublicPage}
+//       sx={{ marginTop: 3 }}
+
+//     >
+//       see public page
+//     </Button>
+
+//     <Snackbar
+//       open={openSnackbar}
+//       autoHideDuration={3000}
+//       onClose={() => setOpenSnackbar(false)}
+//       anchorOrigin={{ vertical: "top", horizontal: "center" }}
+//     >
+//       <Alert
+//         onClose={() => setOpenSnackbar(false)}
+//         severity={snackbarSeverity}
+//         sx={{ width: "100%" }}
+//       >
+//         {snackbarMessage}
+//       </Alert>
+//     </Snackbar>
+//   </div>
+// );
 // };
 
 // export default ArticleContent;
@@ -285,34 +343,44 @@ const ArticleContent = ({ articleData, accessToken }) => {
       setOpenSnackbar(true);
       return;
     }
-    
+
     try {
+      const formData = new FormData();
+      formData.append("file", file);
+
       const response = await fetch(`/api/v1/educational-service/upload-attachment`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "x-role": localStorage.getItem("role"),
         },
-        body: JSON.stringify({
-          file: file
-        }),
+        body: formData,
       });
-      
-      setAttachmentName(file.name)
-      setAttachment(file)
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
 
+      const responseData = await response.json();
+
+      // Assuming the server returns the name of the file as `fileName` in the response
+      setAttachmentName(responseData.data.fileName || file.name);
+      setAttachment(file);
+
+      setSnackbarSeverity("success");
+      setSnackbarMessage("Attachment uploaded successfully!");
+      setOpenSnackbar(true);
     } catch (error) {
-     
+      console.error("Error uploading attachment:", error);
+      setSnackbarSeverity("error");
+      setSnackbarMessage(error.message || "Failed to upload the attachment.");
+      setOpenSnackbar(true);
     } finally {
       setLoading(false);
     }
   };
+
 
   const handlePublicPage = () => {
     localStorage.setItem("articleData", JSON.stringify(articleData)); // Save to localStorage
@@ -331,7 +399,7 @@ const ArticleContent = ({ articleData, accessToken }) => {
     }
 
     setLoading(true);
-    console.log(attachment)
+    
     try {
       const response = await fetch(`/api/v1/article/blog/${articleData.serviceId}`, {
         method: "POST",
@@ -366,7 +434,7 @@ const ArticleContent = ({ articleData, accessToken }) => {
   };
 
   return (
-    <div style={{ margin: "0 auto", padding: 2, maxWidth: "1200px", width: "100%" }}>
+    <div style={{ margin: "0 auto", padding: 2, maxWidth: "1350px", width: "100%" }}>
       <form onSubmit={handleSubmit}>
         <TextField
           label="Title"
