@@ -13,6 +13,8 @@ import { useLocation, useParams } from "react-router-dom";
 import ArticleContent from "./tabs/ArticleContent";
 import ArticleSettings from "./tabs/ArticleSettings";
 import CommentSection from "./tabs/CommentSection";
+import RegisterTicket from "./../../../common/registerTicket/registerTicket";
+import { FeedbackOutlined } from "@mui/icons-material";
 
 const PrivateArticle = (props) => {
   const { articleId } = useParams(); // Extract articleId from URL
@@ -70,6 +72,11 @@ const PrivateArticle = (props) => {
       label: "Article Settings",
       content: <ArticleSettings articleData={articleData} accessToken={accessToken} />,
       icon: <Settings />,
+    },
+    {
+      label: "Ticket Section",
+      content: <RegisterTicket articleId={articleId} />,
+      icon: <FeedbackOutlined />,
     },
   ];
 

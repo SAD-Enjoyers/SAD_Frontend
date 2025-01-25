@@ -69,39 +69,46 @@ const ArticleContent = ({ articleData, accessToken }) => {
       setOpenSnackbar(true);
       return;
     }
-    
+
     try {
+      const formData = new FormData();
+      formData.append("file", file);
+
       const response = await fetch(`/api/v1/educational-service/upload-attachment`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "x-role": localStorage.getItem("role"),
         },
-        body: JSON.stringify({
-          file: file
-        }),
+        body: formData,
       });
-      
-      setAttachmentName(file.name)
-      setAttachment(file)
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
 
+      const responseData = await response.json();
+
+      setAttachmentName(responseData.data.fileName || file.name);
+      setAttachment(file);
+
+      setSnackbarSeverity("success");
+      setSnackbarMessage("Attachment uploaded successfully!");
+      setOpenSnackbar(true);
     } catch (error) {
-     
+      console.error("Error uploading attachment:", error);
+      setSnackbarSeverity("error");
+      setSnackbarMessage(error.message || "Failed to upload the attachment.");
+      setOpenSnackbar(true);
     } finally {
       setLoading(false);
     }
   };
 
   const handlePublicPage = () => {
-    localStorage.setItem("articleData", JSON.stringify(articleData)); // Save to localStorage
+    localStorage.setItem("articleData", JSON.stringify(articleData));
     navigate("/PublicArticle", { state: { articleData } });
-
   };
 
   const handleSubmit = async (event) => {
@@ -115,7 +122,7 @@ const ArticleContent = ({ articleData, accessToken }) => {
     }
 
     setLoading(true);
-    console.log(attachment)
+
     try {
       const response = await fetch(`/api/v1/article/blog/${articleData.serviceId}`, {
         method: "POST",
@@ -150,7 +157,7 @@ const ArticleContent = ({ articleData, accessToken }) => {
   };
 
   return (
-    <div style={{ margin: "0 auto", padding: 2, maxWidth: "1200px", width: "100%" }}>
+    <div style={{ margin: "0 auto", padding: 2, maxWidth: "1350px", width: "100%" }}>
       <form onSubmit={handleSubmit}>
         <TextField
           label="Title"
@@ -178,7 +185,7 @@ const ArticleContent = ({ articleData, accessToken }) => {
               onChange={(value) => setContent(value)}
               style={{
                 height: "200px",
-                minHeight: "1025px",
+                minHeight: "400px",
                 marginBottom: "40px",
                 width: "100%",
                 backgroundColor: "white",
@@ -187,8 +194,15 @@ const ArticleContent = ({ articleData, accessToken }) => {
             />
           </Box>
 
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="h6" gutterBottom >
+          <Box
+            sx={{
+              flex: 1,
+              paddingTop: 2,
+              maxWidth: { xs: "100%", md: "50%" },
+              margin: "0 auto",
+            }}
+          >
+            <Typography variant="h6" gutterBottom>
               Text Preview
             </Typography>
             <div
@@ -196,12 +210,12 @@ const ArticleContent = ({ articleData, accessToken }) => {
                 whiteSpace: "pre-wrap",
                 border: "1px solid #ddd",
                 padding: "10px",
-                minHeight: "1045px",
+                minHeight: "400px",
                 maxHeight: "1000px",
                 overflowY: "auto",
                 backgroundColor: "white",
-                fontFamily: "'Roboto', 'Arial', sans-serif", // Add your desired font here
-                lineHeight: "1.6", // Optional: improve readability
+                fontFamily: "'Roboto', 'Arial', sans-serif",
+                lineHeight: "1.6",
               }}
               dangerouslySetInnerHTML={{ __html: content }}
             />
@@ -236,9 +250,8 @@ const ArticleContent = ({ articleData, accessToken }) => {
         fullWidth
         onClick={handlePublicPage}
         sx={{ marginTop: 3 }}
-
       >
-        see public page
+        See Public Page
       </Button>
 
       <Snackbar

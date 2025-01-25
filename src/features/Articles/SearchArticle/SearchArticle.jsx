@@ -252,36 +252,6 @@ function QuestionsTab() {
             </Select>
           </FormControl>
 
-          {/* Display selected categories as tags */}
-          {/* <Box sx={{ marginTop: 2 }}>
-            {selectedSubjects.length > 0 && (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                {selectedSubjects.slice(0, 3).map((category) => (
-                  <Chip
-                    key={category}
-                    label={category}
-                    sx={{
-                      backgroundColor: "#67C6E3", // Tag background color
-                      color: "#ffffff", // Tag text color
-                      borderRadius: "20px", // Rounded corners for the tag
-                      padding: "6px 12px", // Padding for better appearance
-                    }}
-                  />
-                ))}
-                {selectedSubjects.length > 3 && (
-                  <Chip
-                    label="..."
-                    sx={{
-                      backgroundColor: "#67C6E3", // Tag background color
-                      color: "#ffffff", // Tag text color
-                      borderRadius: "20px", // Rounded corners for the tag
-                      padding: "6px 12px", // Padding for better appearance
-                    }}
-                  />
-                )}
-              </Box>
-            )}
-          </Box> */}
         </Grid>
 
         {/* Sort By Filter */}
