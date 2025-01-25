@@ -13,7 +13,8 @@ const TestPage = () => {
      {/* <RatingComponent serviceId="53"  />  */}
 
     {/* برای صفحه دوره */}
-     {/* <RatingComponent serviceId="53" type="course/preview" />  */}
+     <RatingComponent serviceId="53" /> 
+     {/* <RatingComponent serviceId="43" type="article" />  */}
   </div>
   );
 };
