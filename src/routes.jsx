@@ -42,6 +42,7 @@ import ExamSearch from "./features/Exams/ExamsSearch/ExamsTab.jsx";
 import PrivateProfile from "./features/Users/PrivateProfile/PrivateProfile.jsx";
 import PublicUsers from "./features/Users/publicUsers/PublicUsers.jsx";
 import RatingComponent from "./common/Ratings/RatingComponent.jsx";
+import TestPage from "./common/Ratings/testpage.jsx";
 
 function AppRoutes() {
   return (
@@ -101,6 +102,7 @@ function AppRoutes() {
           <Route path="Comments" element={<Comments />} />
           <Route path="SearchUsers" element={<SearchUsers />} />
           <Route path="RatingComponent " element={<RatingComponent />} />
+          <Route path="TestPage" element={<TestPage/>} />
         </Route>
       </Routes>
     </Router>
