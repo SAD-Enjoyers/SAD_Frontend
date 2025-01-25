@@ -12,16 +12,16 @@ import {
   ListItemText,
   ToggleButton,
   ToggleButtonGroup,
-  Grid2,
+  Grid,
   FormControlLabel,
   Snackbar,
   Alert,
 } from "@mui/material";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Correctly use useNavigate hook
+import { useNavigate } from "react-router-dom";
 
 function AddQuestion() {
-  const navigate = useNavigate(); // Place useNavigate at the top
+  const navigate = useNavigate();
 
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [question, setQuestion] = useState({
@@ -41,7 +41,7 @@ function AddQuestion() {
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
-    severity: "success", // success, error
+    severity: "success",
   });
 
   const handleSubjectChange = (event) => {
@@ -96,7 +96,16 @@ function AddQuestion() {
   }, []);
 
   const handleChangeAddButton = async () => {
-    if (!question.questionName || !question.question || !options.option1 || !options.option2 || !options.option3 || !options.option4 || !rightAnswer || selectedSubjects.length === 0) {
+    if (
+      !question.questionName ||
+      !question.question ||
+      !options.option1 ||
+      !options.option2 ||
+      !options.option3 ||
+      !options.option4 ||
+      !rightAnswer ||
+      selectedSubjects.length === 0
+    ) {
       setSnackbar({
         open: true,
         message: "Please fill in all the fields.",
@@ -141,7 +150,7 @@ function AddQuestion() {
         message: "Question added successfully!",
         severity: "success",
       });
-      // navigate("/QuestionBank"); // Correct navigation after form submission
+      // navigate("/QuestionBank"); // Uncomment for navigation after submission
     } catch (error) {
       console.error(error);
       setSnackbar({
@@ -153,92 +162,130 @@ function AddQuestion() {
   };
 
   return (
-    <Grid2 container justifyContent={"center"} alignItems={"center"} mt="100px" mb="100px">
-      <Box justifyContent={"center"} alignItems={"center"} textAlign={"center"}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            padding: 3,
-            borderRadius: 2,
-            backgroundColor: "white",
-            boxShadow: 3,
-            width: "90ch",
-            minWidth: 600,
-          }}
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      sx={{ mt: 8, mb: 8 }}
+    >
+      <Box
+        sx={{
+          width: { xs: "100%", sm: "90%", md: "70%" },
+          p: { xs: 2, sm: 4 },
+          borderRadius: 2,
+          backgroundColor: "white",
+          boxShadow: 3,
+        }}
+      >
+        <Typography variant="h5" textAlign="center" mb={3}>
+          Add a Question
+        </Typography>
+
+        {/* Question Name */}
+        <Typography>Question Name:</Typography>
+        <TextField
+          id="questionName"
+          onChange={handleChangeQuestion}
+          fullWidth
+          sx={{ mb: 2 }}
+        />
+
+        {/* Question Text */}
+        <Typography>Question:</Typography>
+        <TextField
+          id="question"
+          onChange={handleChangeQuestion}
+          multiline
+          rows={4}
+          fullWidth
+          sx={{ mb: 2 }}
+        />
+
+        {/* Options */}
+        <Typography>Options:</Typography>
+        {["option1", "option2", "option3", "option4"].map((id, index) => (
+          <TextField
+            key={id}
+            id={id}
+            label={`Option ${index + 1}`}
+            onChange={handleChangeOptions}
+            fullWidth
+            sx={{ mb: 1 }}
+          />
+        ))}
+
+        {/* Right Answer */}
+        <Typography>Right Answer:</Typography>
+        <ToggleButtonGroup
+          color="primary"
+          value={rightAnswer}
+          exclusive
+          onChange={handleChangeRightAnswer}
+          fullWidth
+          sx={{ mb: 2 }}
         >
-          {/* Question Name */}
-          <Typography>Question Name:</Typography>
-          <Box component="form" sx={{ "& .MuiTextField-root": { m: 1, width: "70ch" } }} noValidate autoComplete="off">
-            <TextField id="questionName" onChange={handleChangeQuestion} />
-          </Box>
+          {["1", "2", "3", "4"].map((value) => (
+            <ToggleButton key={value} value={value}>
+              {value}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
 
-          {/* Question Text */}
-          <Typography>Question:</Typography>
-          <Box component="form" sx={{ "& .MuiTextField-root": { m: 1, width: "70ch" } }} noValidate autoComplete="off">
-            <TextField id="question" onChange={handleChangeQuestion} multiline rows={5} />
-          </Box>
+        {/* Subjects */}
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <InputLabel>Subjects</InputLabel>
+          <Select
+            multiple
+            value={selectedSubjects}
+            onChange={handleSubjectChange}
+            renderValue={(selected) => selected.join(", ")}
+          >
+            {categories.map((category) => (
+              <MenuItem key={category.categoryId} value={category.category}>
+                <Checkbox
+                  checked={selectedSubjects.includes(category.category)}
+                />
+                <ListItemText primary={category.category} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-          {/* Options */}
-          <Typography>Options:</Typography>
-          <Box component="form" sx={{ "& .MuiTextField-root": { m: 1, width: "70ch" } }} noValidate autoComplete="off">
-            <TextField id="option1" label="1" onChange={handleChangeOptions} multiline />
-            <TextField id="option2" label="2" onChange={handleChangeOptions} multiline />
-            <TextField id="option3" label="3" onChange={handleChangeOptions} multiline />
-            <TextField id="option4" label="4" onChange={handleChangeOptions} multiline />
-          </Box>
+        {/* Visibility */}
+        <FormControlLabel
+          label="Visibility"
+          control={
+            <Checkbox checked={visibility} onChange={handleChangeVisibility} />
+          }
+          sx={{ mb: 2 }}
+        />
 
-          {/* Right Answer */}
-          <Box textAlign={"center"}>
-            <Typography mb="20px" mt={"20px"}>Right Answer</Typography>
-            <ToggleButtonGroup color="primary" value={rightAnswer} exclusive onChange={handleChangeRightAnswer} aria-label="Right Answer" sx={{ mb: "40px" }}>
-              {["1", "2", "3", "4"].map((value) => (
-                <ToggleButton key={value} value={value}>
-                  {value}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-
-            {/* Subjects */}
-            <FormControl fullWidth variant="outlined">
-              <InputLabel>Subjects</InputLabel>
-              <Select
-                multiple
-                value={selectedSubjects}
-                onChange={handleSubjectChange}
-                label="Subjects"
-                renderValue={(selected) => selected.join(", ")}
-              >
-                {categories.map((category) => (
-                  <MenuItem key={category.categoryId} value={category.category}>
-                    <Checkbox checked={selectedSubjects.includes(category.category)} />
-                    <ListItemText primary={category.category} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            {/* Visibility */}
-            <FormControlLabel label="Visibility" control={<Checkbox checked={visibility} onChange={handleChangeVisibility} />} />
-
-            {/* Add Question Button */}
-            <Button variant="contained" onClick={handleChangeAddButton} sx={{ marginTop: '10px' }}>Add question</Button>
-          </Box>
-        </Box>
+        {/* Add Question Button */}
+        <Button
+          variant="contained"
+          onClick={handleChangeAddButton}
+          fullWidth
+          sx={{ mt: 2 }}
+        >
+          Add Question
+        </Button>
       </Box>
 
-      {/* Snackbar for feedback messages */}
+      {/* Snackbar */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
         onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))} severity={snackbar.severity}>
+        <Alert
+          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+          severity={snackbar.severity}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>
-    </Grid2>
+    </Grid>
   );
 }
 
