@@ -22,7 +22,9 @@ import { useNavigate } from "react-router-dom";
 
 const AdminToken = localStorage.getItem("token");
 const AdminRole = localStorage.getItem("role");
-
+localStorage.setItem("AdminToken", AdminToken);
+localStorage.setItem("AdminRole", AdminRole);
+console.log("LocalStorage contents:", localStorage);
 const TicketReview = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,9 +40,9 @@ const TicketReview = () => {
       try {
         const ticketResponse = await axios.get("api/v1/admin/tickets", {
           headers: {
-            Authorization: `Bearer ${AdminToken}`,
+            Authorization: `Bearer ${localStorage.getItem("AdminToken")}`,
             "Content-Type": "application/json",
-            "x-role": AdminRole,
+            "x-role": localStorage.getItem("AdminRole"),
           },
         });
 
@@ -53,9 +55,9 @@ const TicketReview = () => {
               `/api/v1/admin/service-information?serviceId=${ticket.serviceId}`,
               {
                 headers: {
-                  Authorization: `Bearer ${AdminToken}`,
+                  Authorization: `Bearer ${localStorage.getItem("AdminToken")}`,
                   "Content-Type": "application/json",
-                  "x-role": AdminRole,
+                  "x-role": localStorage.getItem("AdminRole"),
                 },
               }
             )
@@ -121,9 +123,9 @@ const TicketReview = () => {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${AdminToken}`,
+            Authorization: `Bearer ${localStorage.getItem("AdminToken")}`,
             "Content-Type": "application/json",
-            "x-role": AdminRole,
+            "x-role": localStorage.getItem("AdminRole"),
           },
         }
       );
@@ -207,9 +209,9 @@ const TicketReview = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${AdminToken}`,
+            Authorization: `Bearer ${localStorage.getItem("AdminToken")}`,
             "Content-Type": "application/json",
-            "x-role": AdminRole,
+            "x-role": localStorage.getItem("AdminRole"),
           },
         }
       );
@@ -248,9 +250,9 @@ const TicketReview = () => {
         {},
         {
           headers: {
-            Authorization: `Bearer ${AdminToken}`,
+            Authorization: `Bearer ${localStorage.getItem("AdminToken")}`,
             "Content-Type": "application/json",
-            "x-role": AdminRole,
+            "x-role": localStorage.getItem("AdminRole"),
           },
         }
       );

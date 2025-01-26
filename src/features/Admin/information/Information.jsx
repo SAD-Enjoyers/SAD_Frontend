@@ -34,7 +34,7 @@ export default function Information() {
       method: "GET",
       headers: {
         Authorization: `Bearer ${tokenCheck}`,
-        "x-role": localStorage.getItem("role"),
+        "x-role": localStorage.getItem("AdminRole"),
         "Content-Type": "application/json",
       },
     })
@@ -62,7 +62,7 @@ export default function Information() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("AdminToken");
 
     if (!token || !data) {
       fetchData(token);
