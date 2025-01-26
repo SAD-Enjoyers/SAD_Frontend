@@ -41,6 +41,8 @@ import ImageUpload from "./features/Exams/MakeExam/components/ImageUpload.jsx";
 import ExamSearch from "./features/Exams/ExamsSearch/ExamsTab.jsx";
 import PrivateProfile from "./features/Users/PrivateProfile/PrivateProfile.jsx";
 import PublicUsers from "./features/Users/publicUsers/PublicUsers.jsx";
+import RatingComponent from "./common/Ratings/RatingComponent.jsx";
+import RatingComponentExam from "./common/Ratings/RatingComponentExam.jsx";
 
 import TicketAdmin from "./features/Admin/ticketReview/ticketReview.jsx";
 import RegisterTicket from "./common/registerTicket/registerTicket.jsx";
@@ -115,6 +117,11 @@ function AppRoutes() {
             {/* Utilities */}
             <Route path="Comments" element={<Comments />} />
             <Route path="SearchUsers" element={<SearchUsers />} />
+            <Route path="RatingComponent " element={<RatingComponent />} />
+            <Route
+              path="RatingComponentExam "
+              element={<RatingComponentExam />}
+            />
           </>
         </Route>
       </Routes>
