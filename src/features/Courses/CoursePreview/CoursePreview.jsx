@@ -135,6 +135,15 @@ function CoursePreview() {
     fetchCourseData();
   }, [serviceId]); // Dependency on serviceId
   const handlePurchase = useCallback(async () => {
+    // Check if user is an admin
+    const adminRole = localStorage.getItem("AdminRole");
+    if (adminRole == "expert") {
+      setSnackbarMessage("Admins cannot buy the course.");
+      setSeverity("error");
+      setOpenSnackbar(true);
+      return;
+    }
+
     setPurchaseLoading(true);
     try {
       const payload = { serviceId };
