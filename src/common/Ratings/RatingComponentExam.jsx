@@ -120,6 +120,7 @@ const RatingComponentExam = ({ serviceId, type }) => {
         width: 'auto',
         maxWidth: '350px',
         margin: '0 auto',
+        border: '2px solid #1976d2',
       }}
     >
       {successMessage && (
