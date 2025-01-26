@@ -22,7 +22,7 @@ export default function ServiceStatistics(props) {
         p: 2,
       }}
     >
-      <Typography variant="h5" sx={{ mb: 2 }}>
+      <Typography variant="h6" sx={{ mb: 2, color: "#387EC9" }}>
         {props.title}
       </Typography>
       <PieChart width={400} height={300}>

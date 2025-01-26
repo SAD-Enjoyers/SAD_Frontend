@@ -239,10 +239,6 @@ const TicketReview = () => {
 
   const handleServiceStateUpdate = async () => {
     if (!selectedTicket) return;
-    console.log(selectedTicket.serviceId);
-    console.log(serviceState);
-    console.log(AdminToken);
-    console.log(AdminRole);
 
     try {
       const response = await axios.put(

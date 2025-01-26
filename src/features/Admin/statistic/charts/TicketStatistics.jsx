@@ -65,11 +65,11 @@ const TicketStatistics = (props) => {
         textAlign: "center",
         width: { xs: "50%", sm: "80%", md: "100%" }, // واکنش‌گرا
         height: "300px",
-        paddingTop: 5,
-        margin: "0 auto", // برای وسط‌چین کردن
+        paddingTop: 3,
+        mt: 4,
       }}
     >
-      <Typography variant="h5" color="textPrimary" gutterBottom>
+      <Typography variant="h6" color="#387EC9" gutterBottom mb={10}>
         Ticket Statistics
       </Typography>
       <ResponsiveContainer width="50%" height="100%">
