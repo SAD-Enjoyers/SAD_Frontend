@@ -1,4 +1,4 @@
-import { Edit } from "@mui/icons-material";
+import { Add, Edit } from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -7,11 +7,18 @@ import {
   CardContent,
   Grid2,
   Typography,
+  Stack,
+  List,
+  ListItem,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import React, { useEffect, useState } from "react";
 import LoadingScreen from "../../../common/Loading";
 import { useNavigate } from "react-router-dom";
-import EditProfile from "../../Users/PrivateProfile/components/EditProfile";
+import EditProfileAdmin from "./EditProfileAdmin";
+import AddCategoryButton from "./AddCategory";
+import AddAdmin from "./AddAdmin";
+import axios from "axios";
 
 export default function Information() {
   const navigate = useNavigate();
@@ -19,13 +26,21 @@ export default function Information() {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openAddAdmin, setOpenAddAdmin] = useState(false);
+  const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     userName: "",
     phoneNumber: "",
-    organizationalPosition: "",
   });
+  const handleOpenAddAdmin = () => {
+    setOpenAddAdmin(true);
+  };
+
+  const handleCloseAddAdmin = () => {
+    setOpenAddAdmin(false);
+  };
   const closeState = () => {
     setOpen(false);
   };
@@ -52,7 +67,6 @@ export default function Information() {
           lastName: data.data.expertData.lastName,
           userName: data.data.expertData.userName,
           phoneNumber: data.data.expertData.phoneNumber,
-          organizationalPosition: data.data.expertData.organizationalPosition,
         });
         setLoading(false);
       })
@@ -60,12 +74,21 @@ export default function Information() {
         setLoading(false);
       });
   };
-
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("/api/v1/common/categories");
+      setCategories(response.data.data.categoryList || []);
+      console.log("categories", response.data.data.categoryList);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (!token || !data) {
       fetchData(token);
+      fetchCategories();
     } else {
       setLoading(false);
     }
@@ -82,7 +105,7 @@ export default function Information() {
 
   return (
     <>
-      <Grid2 container>
+      <Grid2 container alignItems={"center"} justifyContent={"center"}>
         <Grid2 size={9}>
           <Card
             sx={{
@@ -105,7 +128,7 @@ export default function Information() {
                 <Box display="flex" justifyContent="center">
                   <Avatar
                     alt="User Name"
-                    src={"images/profile.png"}
+                    src={"images/admin.png"}
                     sx={{ width: "150px", height: "150px" }}
                   />
                 </Box>
@@ -118,9 +141,6 @@ export default function Information() {
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
                   Username: {formData.userName}
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  organizationalPosition: {formData.organizationalPosition}
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
                   phoneNumber: {formData.phoneNumber}
@@ -139,7 +159,75 @@ export default function Information() {
               </Button>
             </Box>
           </Card>
-          {open && <EditProfile closeState={closeState} />}
+          <Box display={"flex"} justifyContent={"center"} gap={10}>
+            <Box>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<Add />}
+                onClick={handleOpenAddAdmin} // تابعی که هنگام کلیک فراخوانی می‌شود
+              >
+                Add Admin
+              </Button>
+
+              {openAddAdmin && <AddAdmin closeState={handleCloseAddAdmin} />}
+            </Box>
+            <Box>
+              <AddCategoryButton />
+              <Box
+                sx={{
+                  width: "100%",
+                  maxWidth: 360,
+                  bgcolor: "background.paper",
+                  borderRadius: 2,
+                  boxShadow: 3,
+                  overflow: "hidden", // Prevent content from overflowing
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{ p: 2, backgroundColor: "#f5f5f5" }}
+                >
+                  Categories
+                </Typography>
+                <Box
+                  sx={{
+                    height: 300, // Fixed height for scrollable area
+                    overflowY: "auto", // Enable vertical scrolling
+                    "&::-webkit-scrollbar": {
+                      width: "8px", // Scrollbar width
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "#888", // Scrollbar thumb color
+                      borderRadius: "4px", // Scrollbar thumb rounded corners
+                    },
+                    "&::-webkit-scrollbar-thumb:hover": {
+                      backgroundColor: "#555", // Scrollbar thumb color on hover
+                    },
+                  }}
+                >
+                  <List>
+                    {categories.map((cat) => (
+                      <ListItem
+                        key={cat.categoryId}
+                        sx={{
+                          borderBottom: "1px solid #eee",
+                          "&:hover": {
+                            backgroundColor: "#f9f9f9", // Hover effect
+                          },
+                        }}
+                      >
+                        <Typography sx={{ fontWeight: "medium" }}>
+                          {cat.category}
+                        </Typography>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+          {open && <EditProfileAdmin closeState={closeState} />}
         </Grid2>
       </Grid2>
     </>
