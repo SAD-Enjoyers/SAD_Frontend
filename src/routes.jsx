@@ -104,7 +104,6 @@ function AppRoutes() {
           <Route path="SearchUsers" element={<SearchUsers />} />
           <Route path="RatingComponent " element={<RatingComponent />} />
           <Route path="RatingComponentExam " element={<RatingComponentExam />} />
-          <Route path="TestPage" element={<TestPage/>} />
         </Route>
       </Routes>
     </Router>
