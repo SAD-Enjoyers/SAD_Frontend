@@ -40,31 +40,30 @@ function Login() {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleLogin = async () => {
-   // Reset errors
-   setUsernameError(false);
-   setPasswordError(false);
-  //  setErrorMessage("");
+    // Reset errors
+    setUsernameError(false);
+    setPasswordError(false);
+    //  setErrorMessage("");
 
-   // Frontend validation checks
-   if (!username && !password) {
-    setUsernameError(true);
-    setPasswordError(true);
-    setErrorMessage("Both fields are required.");
-    return;
-  }
+    // Frontend validation checks
+    if (!username && !password) {
+      setUsernameError(true);
+      setPasswordError(true);
+      setErrorMessage("Both fields are required.");
+      return;
+    }
 
+    if (!username) {
+      setUsernameError(true);
+      setErrorMessage("Username is required");
+      return;
+    }
 
-   if (!username) {
-     setUsernameError(true);
-     setErrorMessage("Username is required");
-     return;
-   }
-
-   if (!password) {
-     setPasswordError(true);
-     setErrorMessage("Password is required");
-     return;
-   }
+    if (!password) {
+      setPasswordError(true);
+      setErrorMessage("Password is required");
+      return;
+    }
 
     setLoading(true);
 
@@ -85,7 +84,6 @@ function Login() {
 
       const responseData = await response.json();
 
-     
       // Map of error messages
       const errorMessages = {
         "Invalid username or password":
@@ -94,16 +92,39 @@ function Login() {
         "Account locked": "Your account is locked. Please contact support.",
       };
 
-
       // Handle backend response
       if (response.ok) {
+        // Assuming responseData is the object containing the token and role
+        const token = responseData.data.token;
+        const role = responseData.data.role;
+
+        // Set the role in localStorage
+        localStorage.setItem("role", role);
+
+        // Check the role and set the appropriate token
+        if (role !== "user") {
+          localStorage.setItem("AdminToken", token);
+          localStorage.setItem("AdminRole", role);
+
+          localStorage.setItem("token", token); // Set token if role is "user"
+          // Set AdminToken if role is not "user"
+        } else {
+          localStorage.setItem("token", token); // Set token if role is "user"
+        }
         // Successfully logged in, redirect to home page
         // console;
         // alert("Login successful!");
-        localStorage.setItem("token", responseData.data.token);
-        localStorage.setItem("role", responseData.data.role);
+        // localStorage.setItem("token", responseData.data.token);
+        // localStorage.setItem("role", responseData.data.role);
         toast.success("Login successful! Redirecting to homepage...");
-        setTimeout(() => navigate("/"), 2000); // Redirect after 2 seconds
+        // console.log(responseData.data.role);
+        setTimeout(
+          () =>
+            responseData.data.role === "user"
+              ? navigate("/")
+              : navigate("/admin"),
+          2000
+        ); // Redirect after 2 seconds
       } else {
         setErrorMessage(
           responseData.message || "Login failed. Please try again."
@@ -141,23 +162,23 @@ function Login() {
         <Typography variant="h4" gutterBottom>
           Login
         </Typography>
-{/* Error Message Box */}
-<Box
-  sx={{
-    backgroundColor: "#fce4e4", // Light red background
-    color: "#d32f2f", // Dark red text
-    padding: "10px 20px",
-    borderRadius: "5px",
-    fontSize: "14px",
-    fontWeight: 500,
-    textAlign: "center",
-    marginBottom: "10px",
-    border: "1px solid #f8b6b6",
-    display: errorMessage ? "block" : "none", // Hide if no error
-  }}
->
-  {errorMessage}
-</Box>
+        {/* Error Message Box */}
+        <Box
+          sx={{
+            backgroundColor: "#fce4e4", // Light red background
+            color: "#d32f2f", // Dark red text
+            padding: "10px 20px",
+            borderRadius: "5px",
+            fontSize: "14px",
+            fontWeight: 500,
+            textAlign: "center",
+            marginBottom: "10px",
+            border: "1px solid #f8b6b6",
+            display: errorMessage ? "block" : "none", // Hide if no error
+          }}
+        >
+          {errorMessage}
+        </Box>
 
         <TextField
           fullWidth
@@ -221,7 +242,15 @@ function Login() {
           </Link>
         </Typography>
       </Box>
-      <ToastContainer position="top-center" autoClose={5000} hideProgressBar closeOnClick pauseOnFocusLoss draggable pauseOnHover />
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </Container>
   );
 }

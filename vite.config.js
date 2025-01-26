@@ -1,3 +1,4 @@
+// vite.config.js
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
@@ -6,12 +7,14 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        // http://91.107.142.37/
-        // http://thetechverse.ir:3000
-        target: "http://thetechverse.ir:3000/api/", // your backend URL
-
+        target: "http://thetechverse.ir:3000/api/", // General backend URL
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""), // adjust based on your API endpoint
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+      "/signuppage": {
+        target: "http://localhost:3000/api/", // Address for signup
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/signuppage/, ""), // Adjust path as needed
       },
     },
   },

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   TextField,
@@ -19,7 +20,8 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   marginTop: theme.spacing(2),
 }));
 
-const ArticleContent = ({ articleData, accessToken, onSaveChange }) => {
+const ArticleContent = ({ articleData, accessToken }) => {
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [attachment, setAttachment] = useState(null);
@@ -28,7 +30,6 @@ const ArticleContent = ({ articleData, accessToken, onSaveChange }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  const [childData, setChildData] = useState(false);
 
   useEffect(() => {
     const fetchArticleContent = async () => {
@@ -60,7 +61,7 @@ const ArticleContent = ({ articleData, accessToken, onSaveChange }) => {
     fetchArticleContent();
   }, [articleData]);
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file && file.size > 5 * 1024 * 1024) {
       setSnackbarSeverity("error");
@@ -68,8 +69,46 @@ const ArticleContent = ({ articleData, accessToken, onSaveChange }) => {
       setOpenSnackbar(true);
       return;
     }
-    setAttachment(file);
-    setAttachmentName(file.name);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch(`/api/v1/educational-service/upload-attachment`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "x-role": localStorage.getItem("role"),
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+
+      setAttachmentName(responseData.data.fileName || file.name);
+      setAttachment(file);
+
+      setSnackbarSeverity("success");
+      setSnackbarMessage("Attachment uploaded successfully!");
+      setOpenSnackbar(true);
+    } catch (error) {
+      console.error("Error uploading attachment:", error);
+      setSnackbarSeverity("error");
+      setSnackbarMessage(error.message || "Failed to upload the attachment.");
+      setOpenSnackbar(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePublicPage = () => {
+    localStorage.setItem("articleData", JSON.stringify(articleData));
+    navigate("/PublicArticle", { state: { articleData } });
   };
 
   const handleSubmit = async (event) => {
@@ -83,29 +122,25 @@ const ArticleContent = ({ articleData, accessToken, onSaveChange }) => {
     }
 
     setLoading(true);
+
     try {
-      const response = await fetch(
-        `/api/v1/article/blog/${articleData.serviceId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "x-role": localStorage.getItem("role"),
-          },
-          body: JSON.stringify({
-            title,
-            text: content,
-            attachment: attachmentName,
-          }),
-        }
-      );
+      const response = await fetch(`/api/v1/article/blog/${articleData.serviceId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "x-role": localStorage.getItem("role"),
+        },
+        body: JSON.stringify({
+          title,
+          text: content,
+          attachment: attachmentName,
+        }),
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(
-          errorData.message || `HTTP error! status: ${response.status}`
-        );
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
 
       setSnackbarSeverity("success");
@@ -120,9 +155,9 @@ const ArticleContent = ({ articleData, accessToken, onSaveChange }) => {
       setLoading(false);
     }
   };
-  console.log(childData);
+
   return (
-    <Box sx={{ margin: "0 auto", padding: 2 }}>
+    <div style={{ margin: "0 auto", padding: 2, maxWidth: "1350px", width: "100%" }}>
       <form onSubmit={handleSubmit}>
         <TextField
           label="Title"
@@ -133,8 +168,14 @@ const ArticleContent = ({ articleData, accessToken, onSaveChange }) => {
           margin="normal"
           sx={{ backgroundColor: "white" }}
         />
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 2,
+          }}
+        >
+          <Box sx={{ flex: 1 }}>
             <Typography variant="h6" gutterBottom>
               Rich Text Editor
             </Typography>
@@ -144,16 +185,23 @@ const ArticleContent = ({ articleData, accessToken, onSaveChange }) => {
               onChange={(value) => setContent(value)}
               style={{
                 height: "200px",
-                minHeight: "580px",
-                marginBottom: "70px",
-                minWidth: 650,
+                minHeight: "400px",
+                marginBottom: "40px",
+                width: "100%",
                 backgroundColor: "white",
                 borderRadius: 10,
               }}
             />
           </Box>
 
-          <Box>
+          <Box
+            sx={{
+              flex: 1,
+              paddingTop: 2,
+              maxWidth: { xs: "100%", md: "50%" },
+              margin: "0 auto",
+            }}
+          >
             <Typography variant="h6" gutterBottom>
               Text Preview
             </Typography>
@@ -161,12 +209,13 @@ const ArticleContent = ({ articleData, accessToken, onSaveChange }) => {
               style={{
                 whiteSpace: "pre-wrap",
                 border: "1px solid #ddd",
-                minWidth: 650,
                 padding: "10px",
-                minHeight: "600px",
-                maxHeight: "250px",
+                minHeight: "400px",
+                maxHeight: "1000px",
                 overflowY: "auto",
                 backgroundColor: "white",
+                fontFamily: "'Roboto', 'Arial', sans-serif",
+                lineHeight: "1.6",
               }}
               dangerouslySetInnerHTML={{ __html: content }}
             />
@@ -196,6 +245,15 @@ const ArticleContent = ({ articleData, accessToken, onSaveChange }) => {
         </Button>
       </form>
 
+      <Button
+        color="primary"
+        fullWidth
+        onClick={handlePublicPage}
+        sx={{ marginTop: 3 }}
+      >
+        See Public Page
+      </Button>
+
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}
@@ -210,7 +268,7 @@ const ArticleContent = ({ articleData, accessToken, onSaveChange }) => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
-    </Box>
+    </div>
   );
 };
 

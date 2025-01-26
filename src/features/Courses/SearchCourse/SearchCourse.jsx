@@ -9,31 +9,33 @@ import {
   FormControl,
   InputLabel,
   Typography,
+  Checkbox,
+  ListItemText,
   Chip,
   Grid,
   Rating,
-  Checkbox,
-  ListItemText,
   Pagination,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import { motion } from "framer-motion";
 import { Sort, SortByAlpha } from "@mui/icons-material";
 import axios from "axios";
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import PeopleIcon from "@mui/icons-material/People";
 
-function SearchAndFilterArticle() {
+function QuestionsTab() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
+  const [questions, setQuestions] = useState([]);
   const [categories, setCategories] = useState([]); // Categories for filter
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [sortOrder, setSortOrder] = useState({
     criterion: "",
     direction: "asc",
   });
-  const [articles, setArticles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -44,30 +46,20 @@ function SearchAndFilterArticle() {
       }
     };
 
-    const fetchArticles = async () => {
+    const fetchQuestions = async () => {
       setLoading(true);
       try {
         const response = await axios.get("/api/v1/course");
-        const transformedQuestions = response.data.data.result.map(
-          (q, index) => {
-            const subject = [];
-            for (let i = 1; i < 4; i++) {
-              if (q[`tag${i}`]) {
-                subject.push(q[`tag${i}`]);
-              }
-            }
-            return {
-              id: q.serviceId,
-              writer: q.userId,
-              title: q.name,
-              content: q.description,
-              rating: q.score,
-              subject: subject,
-            };
-          }
-        );
-
-        setArticles(transformedQuestions);
+        const transformedQuestions = response.data.data.result.map((q) => ({
+          id: q.serviceId,
+          name: q.name,
+          text: q.description,
+          subjects: [q.tag1, q.tag2, q.tag3].filter(Boolean),
+          score: q.score,
+          writer: q.userId, // Ensure writerId is available for linking
+          numberOfVoters: q.numberOfVoters,
+        }));
+        setQuestions(transformedQuestions);
       } catch (error) {
         console.error("Error fetching questions:", error);
       } finally {
@@ -76,7 +68,7 @@ function SearchAndFilterArticle() {
     };
 
     fetchCategories();
-    fetchArticles();
+    fetchQuestions();
   }, []);
 
   const handleSearch = (event) => setSearchTerm(event.target.value);
@@ -87,7 +79,10 @@ function SearchAndFilterArticle() {
   };
 
   const handleSubjectChange = (event) => {
-    setSelectedSubjects(event.target.value);
+    const selected = event.target.value;
+    if (selected.length <= 3) {
+      setSelectedSubjects(selected);
+    }
   };
 
   const handleSortChange = (event) => {
@@ -104,30 +99,32 @@ function SearchAndFilterArticle() {
 
   // Memoized filtering and sorting logic
   const filteredQuestions = useMemo(() => {
-    return articles
+    return questions
       .filter((question) => {
-        const matchesSearchTerm = question.title
+        const matchesSearchTerm = question.name
           .toLowerCase()
           .includes(searchTerm.toLowerCase());
         const matchesSubjects =
           selectedSubjects.length === 0 ||
-          selectedSubjects.includes("All") ||
-          selectedSubjects.some((subject) =>
-            question.subject.includes(subject)
+          selectedSubjects.every((subject) =>
+            question.subjects.includes(subject)
           );
         return matchesSearchTerm && matchesSubjects;
       })
       .sort((a, b) => {
         const { criterion, direction } = sortOrder;
         if (criterion === "score") {
+          return direction === "asc" ? a.score - b.score : b.score - a.score;
+        }
+        if (criterion === "voters") {
           return direction === "asc"
-            ? a.rating - b.rating
-            : b.rating - a.rating;
+            ? a.numberOfVoters - b.numberOfVoters
+            : b.numberOfVoters - a.numberOfVoters;
         }
         if (criterion === "name") {
           return direction === "asc"
-            ? a.title.localeCompare(b.title)
-            : b.title.localeCompare(a.title);
+            ? a.name.localeCompare(b.name)
+            : b.name.localeCompare(a.name);
         }
         if (criterion === "writer") {
           return direction === "asc"
@@ -136,7 +133,7 @@ function SearchAndFilterArticle() {
         }
         return 0;
       });
-  }, [searchTerm, selectedSubjects, articles, sortOrder]);
+  }, [searchTerm, selectedSubjects, questions, sortOrder]);
 
   const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -148,24 +145,23 @@ function SearchAndFilterArticle() {
   return (
     <Box
       sx={{
-        minWidth: 500,
-        maxWidth: 900,
-        // marginLeft: 35,
-        margin: "0 auto",
+        width: "100%",
+        maxWidth: "800px",
+        margin: "auto",
+        marginTop: "50px", // Adjusted margin for a more spacious layout
+        padding: "20px",
+        backgroundColor: "#F9FAFB", // Light background for a clean look
+        borderRadius: "12px", // Rounded corners
+        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.1)", // Soft shadows for a floating effect
       }}
     >
-      <div style={{ textAlign: "center" }}>
-        <Typography variant="button" fontSize={20} color="primary" gutterBottom>
-          Articles
-        </Typography>
-      </div>
       {/* Search and Sort Filters */}
       <Grid container spacing={3} sx={{ marginTop: "30px" }}>
         {/* Search */}
         <Grid item xs={12} sm={8} md={9}>
           <TextField
             variant="outlined"
-            placeholder="Search courses..."
+            placeholder="Search questions..."
             value={searchTerm}
             onChange={handleSearch}
             onKeyDown={(event) => event.key === "Enter" && handleSearchSubmit()}
@@ -182,43 +178,110 @@ function SearchAndFilterArticle() {
                 borderRadius: "8px",
                 backgroundColor: "#fff",
               },
-              minWidth: 900,
             }}
           />
+        </Grid>
+        <Grid item xs={12} sm={4} md={3}>
+          <Button
+            variant="contained"
+            onClick={handleSearchSubmit}
+            disabled={loading}
+            fullWidth
+            sx={{
+              backgroundColor: "#4A90E2",
+              color: "#fff",
+              borderRadius: "8px",
+              "&:hover": { backgroundColor: "#357ABD" },
+              padding: "10px",
+            }}
+          >
+            {loading ? "Searching..." : "Search"}
+          </Button>
         </Grid>
       </Grid>
 
       <Grid container spacing={3} sx={{ marginTop: "30px" }}>
         {/* Filter by Subjects */}
         <Grid item xs={12} sm={4}>
-          {/* Subjects */}
           <FormControl fullWidth variant="outlined">
-              <InputLabel>Subjects</InputLabel>
-              <Select
-                multiple
-                value={selectedSubjects}
-                onChange={handleSubjectChange}
-                label="Subjects"
-                renderValue={(selected) => selected.join(", ")}
-                sx={{
-                  backgroundColor: "#f5f5f5",
-                  borderRadius: "8px",
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#ddd",
+            <InputLabel>Subjects</InputLabel>
+
+            <Select
+              multiple
+              value={selectedSubjects}
+              onChange={handleSubjectChange}
+              label="Subjects"
+              renderValue={(selected) => selected.join(", ")}
+              sx={{
+                backgroundColor: "#ffffff",
+                borderRadius: "8px",
+                borderColor: "#E0E0E0",
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#E0E0E0",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#378CE7",
+                },
+                "& .MuiSelect-icon": {
+                  color: "#378CE7",
+                },
+              }}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 200, // Limit height
+                    overflow: "auto", // Enable scrolling
                   },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#4A90E2",
-                  },
-                }}
-              >
-                {categories.map((category) => (
-                  <MenuItem key={category.categoryId} value={category.category} sx={{maxHeight:50}}>
-                    <Checkbox checked={selectedSubjects.includes(category.category)} />
-                    <ListItemText primary={category.category} />
-                  </MenuItem>
+                },
+              }}
+            >
+              {categories.map((category) => (
+                <MenuItem key={category.categoryId} value={category.category}>
+                  <Checkbox
+                    checked={selectedSubjects.includes(category.category)}
+                    sx={{
+                      color: "#378CE7",
+                      "&.Mui-checked": {
+                        color: "#378CE7",
+                      },
+                    }}
+                  />
+                  <ListItemText primary={category.category} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* Display selected categories as tags */}
+          {/* <Box sx={{ marginTop: 2 }}>
+            {selectedSubjects.length > 0 && (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                {selectedSubjects.slice(0, 3).map((category) => (
+                  <Chip
+                    key={category}
+                    label={category}
+                    sx={{
+                      backgroundColor: "#67C6E3", // Tag background color
+                      color: "#ffffff", // Tag text color
+                      borderRadius: "20px", // Rounded corners for the tag
+                      padding: "6px 12px", // Padding for better appearance
+                    }}
+                  />
                 ))}
-              </Select>
-            </FormControl>
+                {selectedSubjects.length > 3 && (
+                  <Chip
+                    label="..."
+                    sx={{
+                      backgroundColor: "#67C6E3", // Tag background color
+                      color: "#ffffff", // Tag text color
+                      borderRadius: "20px", // Rounded corners for the tag
+                      padding: "6px 12px", // Padding for better appearance
+                    }}
+                  />
+                )}
+              </Box>
+            )}
+          </Box> */}
         </Grid>
 
         {/* Sort By Filter */}
@@ -230,13 +293,13 @@ function SearchAndFilterArticle() {
               onChange={handleSortChange}
               label="Sort By"
               sx={{
-                backgroundColor: "#f5f5f5",
+                backgroundColor: "#f5f5f5", // Light background for Select box
                 borderRadius: "8px",
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#ddd",
+                  borderColor: "#ddd", // Lighter border color
                 },
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#4A90E2",
+                  borderColor: "#4A90E2", // Hover effect with blue border
                 },
               }}
             >
@@ -247,10 +310,16 @@ function SearchAndFilterArticle() {
                 <Sort sx={{ marginRight: "8px" }} /> Score (High to Low)
               </MenuItem>
               <MenuItem value="name-asc">
-                <SortByAlpha sx={{ marginRight: "8px" }} /> Title (A to Z)
+                <SortByAlpha sx={{ marginRight: "8px" }} /> Name (A to Z)
               </MenuItem>
               <MenuItem value="name-desc">
-                <SortByAlpha sx={{ marginRight: "8px" }} /> Title (Z to A)
+                <SortByAlpha sx={{ marginRight: "8px" }} /> Name (Z to A)
+              </MenuItem>
+              <MenuItem value="voters-asc">
+                <Sort sx={{ marginRight: "8px" }} /> Voters (Low to High)
+              </MenuItem>
+              <MenuItem value="voters-desc">
+                <Sort sx={{ marginRight: "8px" }} /> Voters (High to Low)
               </MenuItem>
             </Select>
           </FormControl>
@@ -265,21 +334,19 @@ function SearchAndFilterArticle() {
               onChange={handleItemsPerPageChange}
               label="Items Per Page"
               sx={{
-                backgroundColor: "#f5f5f5",
+                backgroundColor: "#f5f5f5", // Light background for Select box
                 borderRadius: "8px",
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#ddd",
+                  borderColor: "#ddd", // Lighter border color
                 },
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#4A90E2",
+                  borderColor: "#4A90E2", // Hover effect with blue border
                 },
               }}
             >
-              {[6, 12, 18, 24].map((items) => (
-                <MenuItem key={items} value={items}>
-                  {items} items
-                </MenuItem>
-              ))}
+              <MenuItem value={12}>12</MenuItem>
+              <MenuItem value={24}>24</MenuItem>
+              <MenuItem value={36}>36</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -318,8 +385,11 @@ function SearchAndFilterArticle() {
                   lineHeight: "1.4", // Adjust line height for better readability
                 }}
               >
-                <Link to={`/CoursePreview/${question.id}`} style={{ textDecoration: "none" }}>
-                  {question.title}
+                <Link
+                  to={`/CoursePreview/${question.id}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  {question.name}
                 </Link>
               </Typography>
 
@@ -333,11 +403,11 @@ function SearchAndFilterArticle() {
                   lineHeight: "1.5",
                 }}
               >
-                {question.content.split(" ").slice(0, 15).join(" ")}...
+                {question.text.split(" ").slice(0, 15).join(" ")}...
               </Typography>
 
-               {/* Subjects */}
-               <Box
+              {/* Subjects */}
+              <Box
                 sx={{
                   display: "flex",
                   flexWrap: "wrap",
@@ -345,7 +415,7 @@ function SearchAndFilterArticle() {
                   marginBottom: "15px", // Space before the next section
                 }}
               >
-                {question.subject.map((subject, index) => (
+                {question.subjects.map((subject, index) => (
                   <Chip
                     key={index}
                     label={subject}
@@ -376,7 +446,7 @@ function SearchAndFilterArticle() {
                 {/* Score */}
                 <Rating
                   name="score"
-                  value={question.rating}
+                  value={question.score}
                   max={5}
                   readOnly
                   sx={{
@@ -384,6 +454,21 @@ function SearchAndFilterArticle() {
                     "& .MuiRating-iconFilled": { color: "#ffcc00" },
                   }}
                 />
+
+                {/* Display number of voters */}
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "#6c757d",
+                    fontWeight: "bold",
+                    fontSize: "0.9rem",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <PeopleIcon sx={{ marginRight: "5px", fontSize: "1rem" }} />
+                  {question.numberOfVoters} Voters
+                </Typography>
 
                 {/* Writer Name with Motion Effects */}
                 <motion.div
@@ -399,7 +484,15 @@ function SearchAndFilterArticle() {
                       fontSize: "0.9rem",
                     }}
                   >
-                    {question.writer}
+                    <Link
+                      to={`/profile/${question.writerId}`}
+                      style={{
+                        color: "#6c757d",
+                        textDecoration: "none",
+                      }}
+                    >
+                      {question.writer}
+                    </Link>
                   </Typography>
                 </motion.div>
               </Box>
@@ -409,28 +502,15 @@ function SearchAndFilterArticle() {
       </Grid>
 
       {/* Pagination */}
-      <Box
-        sx={{ display: "flex", justifyContent: "center", marginTop: "30px" }}
-      >
-        <Pagination
-          count={totalPages}
-          page={currentPage}
-          onChange={handlePageChange}
-          color="primary"
-          sx={{
-            "& .MuiPaginationItem-root": {
-              backgroundColor: "#f0f0f0",
-              borderRadius: "8px",
-            },
-            "& .MuiPaginationItem-root.Mui-selected": {
-              backgroundColor: "#4A90E2",
-              color: "#fff",
-            },
-          }}
-        />
-      </Box>
+      <Pagination
+        count={totalPages}
+        page={currentPage}
+        onChange={handlePageChange}
+        color="primary"
+        sx={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+      />
     </Box>
   );
 }
 
-export default SearchAndFilterArticle;
+export default QuestionsTab;

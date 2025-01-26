@@ -5,17 +5,10 @@ import { styled } from "@mui/system";
 import Comments from "../../../../common/Comments/CommentSection";
 
 const CommentsContainer = styled(Box)(({ theme }) => ({
-  marginTop: theme.spacing(6),
+  marginTop: theme.spacing(2),
   backgroundColor: "#f9f9f9",
-  padding: theme.spacing(3),
+  // padding: theme.spacing(3),
   borderRadius: "8px",
-}));
-
-const SectionHeader = styled(Typography)(({ theme }) => ({
-  fontWeight: 700,
-  fontSize: "1.5rem",
-  marginBottom: theme.spacing(2),
-  color: "#333",
 }));
 
 const CommentSection = ({ accessToken }) => {
@@ -95,7 +88,6 @@ const CommentSection = ({ accessToken }) => {
     <Box>
       {/* Comments Container */}
       <CommentsContainer>
-        <SectionHeader>Comments</SectionHeader>
         <Comments serviceId={articleData.serviceId} />
       </CommentsContainer>
     </Box>

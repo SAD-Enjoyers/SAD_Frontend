@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import axios from "axios"; // Ensure axios is installed: npm install axios
 
-const EnrolledStudents = ({ courseData, accessToken }) => {
+const EnrolledStudents = ({ courseId, accessToken }) => {
   const [participants, setParticipants] = useState([]);
   const [filteredParticipants, setFilteredParticipants] = useState([]);
   const [search, setSearch] = useState("");
@@ -19,10 +19,6 @@ const EnrolledStudents = ({ courseData, accessToken }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const itemsPerPage = 6;
-
-  // console.log(courseData, accessToken);
-
-  const courseId = courseData?.id || 53; // Use courseData ID if available
 
   // Fetch participants from the backend
   useEffect(() => {

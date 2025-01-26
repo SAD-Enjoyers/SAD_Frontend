@@ -219,6 +219,8 @@ import CourseSettings from "./tabs/CourseSettings";
 import EnrolledStudents from "./tabs/EnrolledStudents";
 import Comments from "../../../common/Comments/CommentSection";
 import UploadVideo from "./tabs/UploadVideo"; // Import the new component
+import { FeedbackOutlined } from "@mui/icons-material";
+import RegisterTicket from "./../../../common/registerTicket/registerTicket";
 
 const PrivateCourse = () => {
   const { serviceId } = useParams();
@@ -301,7 +303,7 @@ const PrivateCourse = () => {
     {
       label: "Enrolled Students",
       content: (
-        <EnrolledStudents courseData={courseData} accessToken={accessToken} />
+        <EnrolledStudents courseId={courseId} accessToken={accessToken} />
       ),
       icon: <People fontSize={isMobile ? "small" : "medium"} />,
     },
@@ -310,6 +312,11 @@ const PrivateCourse = () => {
       content: <Comments serviceId={courseId} />,
       icon: <Comment fontSize={isMobile ? "small" : "medium"} />,
     },
+    {
+      label: "Ticket Section",
+      content: <RegisterTicket serviceId={serviceId} />,
+      icon: <FeedbackOutlined />,
+    },
   ];
 
   return (
@@ -317,7 +324,7 @@ const PrivateCourse = () => {
       sx={{
         width: "100%",
         maxWidth: "800px",
-        margin: "20px auto",
+        margin: "50px auto",
         padding: isMobile ? "10px" : "20px",
         backgroundColor: "#F9FAFB",
         borderRadius: "12px",

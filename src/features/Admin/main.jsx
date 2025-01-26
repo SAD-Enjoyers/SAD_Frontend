@@ -9,17 +9,12 @@ import {
 } from "@mui/material";
 import { VideoLibrary, Comment } from "@mui/icons-material";
 import { useLocation, useParams } from "react-router-dom";
-import Public from "./Tabs/Public";
-import CommentSection from "../../../common/Comments/CommentSection";
-import CoursePreview from "./Tabs/CoursePreview";
-import { FeedbackOutlined } from "@mui/icons-material";
-import RegisterTicket from "./../../../common/registerTicket/registerTicket";
+import Information from "./information/Information";
+import Statistics from "./statistic/Statistics";
+import TicketReview from "./ticketReview/ticketReview";
 
-const PublicCourse = () => {
-  const { courseId } = useParams();
-  const location = useLocation();
+const Admin = () => {
   const [selectedTab, setSelectedTab] = useState(0); // Default to first tab
-  const [courseData, setCourseData] = useState(null);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -31,52 +26,25 @@ const PublicCourse = () => {
   };
 
   useEffect(() => {
-    if (location.state && location.state.courseData) {
-      setCourseData(location.state.courseData);
-      setLoading(false);
-      setTabContent([
-        {
-          label: "information course",
-          content: (
-            <CoursePreview serviceId={location.state.courseData.serviceId} />
-          ),
-          icon: <VideoLibrary />,
-        },
-        {
-          label: "Enrolled Students",
-          content: <Public serviceId={location.state.courseData.serviceId} />,
-          icon: <VideoLibrary />,
-        },
-        {
-          label: "Comment Section",
-          icon: <Comment />,
-          content: (
-            <CommentSection serviceId={location.state.courseData.serviceId} />
-          ),
-        },
-
-        {
-          label: "Ticket Section",
-          content: (
-            <RegisterTicket serviceId={location.state.courseData.serviceId} />
-          ),
-          icon: <FeedbackOutlined />,
-        },
-      ]);
-    } else {
-      const storedCourseData = JSON.parse(localStorage.getItem("courseData"));
-      if (
-        storedCourseData &&
-        storedCourseData.courseId === parseInt(courseId)
-      ) {
-        setCourseData(storedCourseData);
-        setLoading(false);
-      } else {
-        console.error("Course data not found or invalid courseId");
-        setLoading(false);
-      }
-    }
-  }, [location.state, courseId]);
+    setLoading(false);
+    setTabContent([
+      {
+        label: "information admin",
+        content: <Information />,
+        icon: <VideoLibrary />,
+      },
+      {
+        label: "tickets",
+        content: <TicketReview />,
+        icon: <VideoLibrary />,
+      },
+      {
+        label: "Statistic",
+        icon: <Comment />,
+        content: <Statistics />,
+      },
+    ]);
+  }, []);
 
   useEffect(() => {
     const savedTab = localStorage.getItem("selectedTab");
@@ -152,4 +120,4 @@ const PublicCourse = () => {
   );
 };
 
-export default PublicCourse;
+export default Admin;
