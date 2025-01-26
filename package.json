@@ -14,13 +14,8 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.1.7",
     "@mui/lab": "^6.0.0-beta.18",
-<<<<<<< HEAD
     "@mui/material": "^6.4.1",
     "@mui/x-data-grid": "^7.24.0",
-=======
-    "@mui/material": "^6.3.0",
-    "@mui/x-data-grid": "^7.24.1",
->>>>>>> 4a70543d299dfb8677d31a9f43502b967f3f43a6
     "@mui/x-date-pickers": "^7.22.2",
     "@syncfusion/ej2-react-richtexteditor": "^28.1.36",
     "@tinymce/tinymce-react": "^5.1.1",
