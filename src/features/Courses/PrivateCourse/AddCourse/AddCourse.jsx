@@ -543,7 +543,6 @@ export default function AddCourse() {
         setOpenSnackbar(true);
         toast.success("Add Course successfully");
         setTimeout(() => {
-          closeState();
           window.location.reload();
         }, 3000);
         navigate("/PrivateCourse/" + data.data.serviceId);

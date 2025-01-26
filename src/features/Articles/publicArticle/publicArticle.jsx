@@ -16,7 +16,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "@mui/system";
 import DefaultArticleImage from "../../../assets/images/blog.jpg";
 import Comments from "../../../common/Comments/CommentSection";
-
+import RegisterTicket from "../../../common/registerTicket/registerTicket";
+import RatingComponent from "../../../common/Ratings/RatingComponent";
 const primaryGradient = ["#5356FF", "#378CE7", "#67C6E3", "#DFF5FF"];
 const levelColors = {
   Beginner: "#4CAF50",
@@ -151,7 +152,7 @@ function PublicArticle() {
 
     fetchArticleDetail();
     fetchArticleContent();
-    console.log(articleContents)
+    console.log(articleContents);
   }, [articleData]);
 
   const handleTabChange = (_, newIndex) => {
@@ -178,7 +179,9 @@ function PublicArticle() {
     return (
       <LoadingContainer>
         <CircularProgress />
-        <Typography sx={{ marginTop: 2 }}>Loading article details...</Typography>
+        <Typography sx={{ marginTop: 2 }}>
+          Loading article details...
+        </Typography>
       </LoadingContainer>
     );
   }
@@ -212,7 +215,7 @@ function PublicArticle() {
         </Tabs>
 
         {tabIndex === 0 && (
-          <Box sx={{ maxWidth: 950, width: "100%", paddingX: 4, margin: "0 auto" }}>
+          <Box sx={{ maxWidth: 950, margin: "0 auto" }}>
             <CustomCard sx={{ maxWidth: 800, margin: "0 auto" }}>
               <Grid2 container spacing={4}>
                 <Grid2 item xs={12} md={8}>
@@ -229,7 +232,6 @@ function PublicArticle() {
 
                   {/* Tags Section */}
                   <Box sx={{ marginTop: 2 }}>
-                    
                     <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
                       {articleDetails.tag1 && (
                         <Chip
@@ -253,7 +255,7 @@ function PublicArticle() {
                   </Box>
 
                   {/* Rating */}
-                  <Rating
+                  {/* <Rating
                     value={articleDetails.score || 0}
                     readOnly
                     precision={0.5}
@@ -270,7 +272,11 @@ function PublicArticle() {
                       ? articleDetails.score.toFixed(1)
                       : "0"}{" "}
                     / 5
-                  </Typography>
+                  </Typography> */}
+                  <RatingComponent
+                    serviceId={articleData.serviceId}
+                    type={"article"}
+                  />
                 </Grid2>
 
                 <Grid2
@@ -304,11 +310,13 @@ function PublicArticle() {
                 </Grid2>
               </Grid2>
             </CustomCard>
-
+            <RegisterTicket serviceId={articleData.serviceId} />
             {/* Number of Members */}
             <Box
               sx={{
-                marginTop: 4,
+                maxWidth: 825,
+                marginInline: 7,
+                marginBlock: 4,
                 textAlign: "center",
                 padding: 2,
                 backgroundColor: "secondary.light",
@@ -319,7 +327,9 @@ function PublicArticle() {
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                 Number of Members
               </Typography>
-              <Typography variant="body1">{articleDetails.numberOfMembers}</Typography>
+              <Typography variant="body1">
+                {articleDetails.numberOfMembers}
+              </Typography>
             </Box>
 
             {/* Comments Container */}
@@ -333,32 +343,33 @@ function PublicArticle() {
         {tabIndex === 1 && (
           <Box sx={{ maxWidth: 950, margin: "0 auto", paddingX: 4 }}>
             <CustomCard>
-              <Typography variant="h4" gutterBottom sx={{textAlign:'center'}}>
+              <Typography
+                variant="h4"
+                gutterBottom
+                sx={{ textAlign: "center" }}
+              >
                 {articleContents.title}
               </Typography>
               <div
                 style={{
                   whiteSpace: "pre-wrap",
-                  minWidth: 650,
+
                   padding: "10px",
                   minHeight: "600px",
                   maxHeight: "250px",
                   overflowY: "auto", // enable vertical scrolling
-                  backgroundColor: 'white',
+                  backgroundColor: "white",
                   fontFamily: "'Roboto', 'Arial', sans-serif", // Add your desired font here
                   fontSize: "16px", // Optional: adjust the font size
                   lineHeight: "1.6", // Optional: improve readability
                 }}
-
                 dangerouslySetInnerHTML={{ __html: articleContents.text }}
-
               />
               {articleContents.attachment && (
                 <Button
                   variant="contained"
                   sx={{ marginTop: 2 }}
                   href={`/api/v1/uploads/article-attachments/${articleContents.attachment}`}
-                  target="_blank"
                 >
                   Download Attachment
                 </Button>

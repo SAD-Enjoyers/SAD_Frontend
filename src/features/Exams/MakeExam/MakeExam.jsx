@@ -13,12 +13,15 @@ import {
   ListItemIcon,
   Checkbox,
   ListItemText,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { School, SchoolOutlined } from "@mui/icons-material";
 import LoadingScreen from "../../../common/Loading";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function MakeExam() {
   const [value, setValue] = useState();
@@ -27,6 +30,8 @@ export default function MakeExam() {
   const [minScore, setMinScore] = useState(50);
   const [examName, setExamName] = useState("");
   const [description, setDescription] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+
   const [selectedLevel, setSelectedLevel] = useState("");
   const [categories, setCategories] = useState([]);
   const [isLoading, setLoading] = useState(true);
@@ -44,6 +49,16 @@ export default function MakeExam() {
   const [timeError, setTimeError] = useState("");
   const [priceError, setPriceError] = useState("");
   const [minScoreError, setMinScoreError] = useState("");
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
@@ -113,14 +128,17 @@ export default function MakeExam() {
 
   const submitImage = async () => {
     if (!selectedImage) {
-      alert("Please select an image first!");
+      toast.error("Please select an image first!", {
+        autoClose: 3000,
+      });
       return;
     }
 
-    // بررسی فرمت فایل
     const validImageTypes = ["image/jpeg", "image/png"];
     if (!validImageTypes.includes(selectedImage.type)) {
-      alert("Only image files (jpeg, png) are allowed!");
+      toast.error("Only image files (jpeg, png) are allowed!", {
+        autoClose: 3000,
+      });
       return;
     }
 
@@ -142,10 +160,12 @@ export default function MakeExam() {
       }
 
       const data = await response.json();
-      submitInformation(data.data.fileName);
+      submitExam(data.data.fileName);
     } catch (error) {
       console.error("Error uploading image:", error);
-      alert("Failed to upload image. Please try again.");
+      toast.error("Failed to upload image. Please try again.", {
+        autoClose: 3000,
+      });
     }
   };
 
@@ -189,7 +209,7 @@ export default function MakeExam() {
     }
   };
 
-  const submitInformation = (image) => {
+  const submitExam = (image) => {
     var [tag1, tag2, tag3] = [...selectedSubjects];
     const formData = {
       name: examName,
@@ -220,11 +240,17 @@ export default function MakeExam() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        alert("maked exam successfully");
-        navigate("/profile");
+        toast.success("Add Exam successfully");
+        setTimeout(() => {
+          navigate("/PrivateExam/" + data.data.serviceId);
+        }, 4000);
       })
       .catch((error) => {
         console.error("Error:", error);
+
+        toast.error("Failed to create exam. Please try again.", {
+          autoClose: 3000,
+        });
       });
   };
   if (isLoading) {
@@ -237,16 +263,34 @@ export default function MakeExam() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          justifyContent: "center",
+          margin: "0 auto",
           gap: 2,
-          p: 3,
-          border: "1px solid #ddd",
+          p: 2,
+          border: "1px solid #378ce7",
           borderRadius: 2,
-          width: 400,
+          width: 300,
           mt: "30px",
+          mb: "20px",
         }}
       >
-        <Typography variant="h6">Upload an Image</Typography>
-        <Button variant="contained" component="label">
+        <Typography
+          variant="h6"
+          sx={{
+            color: "#378ce7",
+            fontWeight: 600,
+            textTransform: "uppercase",
+          }}
+        >
+          Upload an Image
+        </Typography>
+        <Button
+          variant="contained"
+          component="label"
+          sx={{
+            backgroundColor: "#378ce7",
+          }}
+        >
           Choose Image
           <input
             type="file"
@@ -263,6 +307,11 @@ export default function MakeExam() {
             fullWidth
             size="small"
             label="Selected File"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+              },
+            }}
           />
         )}
         {previewImage && (
@@ -279,366 +328,469 @@ export default function MakeExam() {
           />
         )}
         {selectedImage && (
-          <Button variant="outlined" color="error" onClick={handleClear}>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={handleClear}
+            sx={{ mt: 2 }}
+          >
             Remove Image
           </Button>
         )}
-        {/* <Button
-          variant="contained"
-          color="primary"
-          onClick={submitImage}
-          disabled={!selectedImage}
-        >
-          Upload Image
-        </Button> */}
       </Box>
     );
   };
 
   return (
     <>
-      <Container
-        maxWidth="lg"
-        sx={{
-          border: "2px solid #378CE7",
-          mt: "150px",
-          mb: "150px",
-          bgcolor: "",
-          borderRadius: "70px",
-        }}
-      >
-        <form onSubmit={handleFormSubmit}>
-          <Grid2 container alignItems="center" justifyContent="center">
-            <Grid2 size={{ xs: 6, sm: 6, md: 6 }}>
-              <Box
-                display={"flex"}
-                flexDirection={"column"}
-                justifyContent={"center"}
-                alignItems={"center"}
-                // mr={{ xs: "7px", sm: "100px", md: "80px" }}
-                mt={"20px"}
-                textAlign={"center"}
-                sx={{
-                  "& .MuiTextField-root": {
-                    mb: 4,
-                    width: { xs: "50%", sm: "50%", md: "50%" },
-                  },
-                }}
-              >
+      <Container maxWidth="md">
+        <Box
+          mt={8}
+          mb={4}
+          p={4}
+          borderRadius={3}
+          boxShadow={5}
+          // borderColor={"#378ce7"}
+          sx={{
+            background: "linear-gradient(135deg, #f2f2f2 30%, #ffffff 90%)",
+            transition: "all 0.3s ease-in-out",
+            "&:hover": {
+              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+              transform: "scale(1.02)",
+            },
+          }}
+        >
+          <Typography
+            variant="h4"
+            align="center"
+            gutterBottom
+            sx={{
+              fontWeight: 700,
+              color: "#378ce7",
+              mb: 4,
+              textTransform: "uppercase",
+            }}
+          >
+            Add New Exam
+          </Typography>
+          <form onSubmit={handleFormSubmit}>
+            <Grid2
+              container
+              // alignItems="center"
+              // justifyContent="center"
+              spacing={3}
+            >
+              <Grid2 size={12}>
                 <TextField
-                  id="standard-required"
-                  label="Exam Name:"
-                  variant="standard"
+                  label="Exam Name"
+                  fullWidth
+                  required
                   value={examName}
                   onChange={(e) => {
-                    let value = e.target.value;
-                    setExamName(value);
-                    setExamNameError("");
-
-                    // value ? setExamNameError("") : setExamNameError(" ");
+                    setExamName(e.target.value);
+                    if (e.target.value.trim() === "") {
+                      setExamNameError("Course name is required.");
+                    } else {
+                      setExamNameError("");
+                    }
                   }}
+                  onBlur={() => {
+                    if (examName.trim() === "") {
+                      setExamNameError("Course name is required.");
+                    }
+                  }}
+                  helperText={examNameError}
                   error={!!examNameError}
-                  // helperText={examNameError}
+                  variant="outlined"
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      borderRadius: "8px",
+                    },
+                    "& .MuiFormHelperText-root": {
+                      color: "red", // تغییر رنگ helperText به قرمز
+                    },
+                  }}
                 />
-              </Box>
-            </Grid2>
-            <Grid2 size={12}>
-              <Box
-                display={"flex"}
-                justifyContent={"center"}
-                alignItems={"center"}
-                mb={"20px"}
-              >
-                <ImageUpload />
-              </Box>
-            </Grid2>
-            <Grid2 size={4}>
-              <Box margin={"0 auto"} width={"50%"}>
+              </Grid2>
+              <Grid2 size={12}>
+                <TextField
+                  label="Description"
+                  fullWidth
+                  required
+                  multiline
+                  rows={4}
+                  value={description}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                    if (e.target.value.trim() === "") {
+                      setDescriptionError("Description is required.");
+                    } else {
+                      setDescriptionError("");
+                    }
+                  }}
+                  onBlur={() => {
+                    if (description.trim() === "") {
+                      setDescriptionError("Description is required.");
+                    }
+                  }}
+                  helperText={descriptionError} // نمایش ارور
+                  error={!!descriptionError} // بررسی ارور برای فعال کردن حالت قرمز
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      borderRadius: "8px",
+                    },
+                  }}
+                />
+              </Grid2>
+
+              <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+                <Box margin={"0 auto"} width={"100%"}>
+                  <FormControl
+                    fullWidth
+                    variant="outlined"
+                    error={!!selectedLevelError}
+                    // helperText={selectedLevelError}
+                  >
+                    <InputLabel>Level</InputLabel>
+                    <Select
+                      value={selectedLevel}
+                      onChange={(event) => {
+                        setSelectedLevel(event.target.value);
+                        setSelectedLevelError("");
+                      }}
+                      label="Level"
+                      sx={{
+                        backgroundColor: "#ffffff", // سفید بودن پس‌زمینه
+                        borderRadius: "8px", // گوشه‌های گرد
+                        borderColor: "#E0E0E0", // رنگ حاشیه
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#E0E0E0", // رنگ حاشیه روی حالت عادی
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#378CE7", // رنگ حاشیه روی هاور
+                        },
+                        "& .MuiSelect-icon": {
+                          color: "#378CE7", // رنگ آیکن
+                        },
+                      }}
+                    >
+                      <MenuItem value="">
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <SchoolOutlined
+                            sx={{ fontSize: "1.2rem", color: "#6c757d" }}
+                          />
+                          <Typography
+                            variant="body2"
+                            sx={{ fontSize: "0.9rem" }}
+                          >
+                            All Levels
+                          </Typography>
+                        </Box>
+                      </MenuItem>
+                      <MenuItem value="Beginner">
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <School
+                            sx={{ fontSize: "1.2rem", color: "#4CAF50" }}
+                          />
+
+                          <Typography
+                            variant="body2"
+                            sx={{ fontSize: "0.9rem" }}
+                          >
+                            Beginner
+                          </Typography>
+                        </Box>
+                      </MenuItem>
+                      <MenuItem value="Medium">
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <School
+                            sx={{ fontSize: "1.2rem", color: "#FF9800" }}
+                          />
+                          <Typography
+                            variant="body2"
+                            sx={{ fontSize: "0.9rem" }}
+                          >
+                            Medium
+                          </Typography>
+                        </Box>
+                      </MenuItem>
+                      <MenuItem value="Advanced">
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <School
+                            sx={{ fontSize: "1.2rem", color: "#F44336" }}
+                          />
+                          <Typography
+                            variant="body2"
+                            sx={{ fontSize: "0.9rem" }}
+                          >
+                            Advanced
+                          </Typography>
+                        </Box>
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+              </Grid2>
+              <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
                 <FormControl
                   fullWidth
                   variant="outlined"
-                  error={!!selectedLevelError}
-                  // helperText={selectedLevelError}
+                  error={!!selectedSubjectsError}
                 >
-                  <InputLabel>Level</InputLabel>
+                  <InputLabel>Subjects</InputLabel>
+
                   <Select
-                    value={selectedLevel}
-                    onChange={(event) => {
-                      setSelectedLevel(event.target.value);
-                      setSelectedLevelError("");
+                    multiple
+                    value={selectedSubjects}
+                    onChange={(e) => {
+                      handleSubjectChange(e);
+                      setSelectedSubjectsError("");
                     }}
-                    label="Level"
+                    label="Subjects"
+                    renderValue={(selected) => selected.join(", ")} // Comma-separated values
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 224, // حداکثر ارتفاع منو
+                          width: 250, // عرض منو
+                        },
+                      },
+                    }}
+                    sx={{
+                      backgroundColor: "#ffffff", // Clean white background
+                      borderRadius: "8px", // Rounded corners
+                      borderColor: "#E0E0E0", // Lighter border color
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#E0E0E0", // Light grey border color
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#378CE7", // Hover effect with blue border
+                      },
+                      "& .MuiSelect-icon": {
+                        color: "#378CE7", // Icon color matches theme
+                      },
+                    }}
                   >
-                    FormControl
-                    <MenuItem value="">
-                      <ListItemIcon>
-                        <SchoolOutlined
-                          sx={{ fontSize: "1.2rem", color: "#6c757d" }}
+                    {categories.map((category) => (
+                      <MenuItem
+                        key={category.categoryId}
+                        value={category.category}
+                      >
+                        <Checkbox
+                          checked={selectedSubjects.includes(category.category)}
+                          sx={{
+                            color: "#378CE7", // Checkbox icon color matches theme
+                            "&.Mui-checked": {
+                              color: "#378CE7", // Checked state color
+                            },
+                          }}
                         />
-                      </ListItemIcon>
-                      <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
-                        All Levels
-                      </Typography>
-                    </MenuItem>
-                    <MenuItem value="Beginner">
-                      <ListItemIcon>
-                        <School sx={{ fontSize: "1.2rem", color: "#4CAF50" }} />
-                      </ListItemIcon>
-                      <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
-                        Beginner
-                      </Typography>
-                    </MenuItem>
-                    <MenuItem value="Medium">
-                      <ListItemIcon>
-                        <School sx={{ fontSize: "1.2rem", color: "#FF9800" }} />
-                      </ListItemIcon>
-                      <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
-                        Medium
-                      </Typography>
-                    </MenuItem>
-                    <MenuItem value="Advanced">
-                      <ListItemIcon>
-                        <School sx={{ fontSize: "1.2rem", color: "#F44336" }} />
-                      </ListItemIcon>
-                      <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
-                        Advanced
-                      </Typography>
-                    </MenuItem>
+                        <ListItemText primary={category.category} />
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
-              </Box>
-            </Grid2>
-            <Grid2 size={4}>
-              <FormControl
-                fullWidth
-                variant="outlined"
-                error={!!selectedSubjectsError}
-              >
-                <InputLabel>Subjects</InputLabel>
+              </Grid2>
+              <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+                <Box
+                  display={"flex"}
+                  flexDirection={"column"}
+                  mb={"25px"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
 
-                <Select
-                  multiple
-                  value={selectedSubjects}
-                  onChange={(e) => {
-                    handleSubjectChange(e);
-                    setSelectedSubjectsError("");
-                  }}
-                  label="Subjects"
-                  renderValue={(selected) => selected.join(", ")} // Comma-separated values
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: 224, // حداکثر ارتفاع منو
-                        width: 250, // عرض منو
+                  // ml={"90px"}
+                >
+                  <TextField
+                    error={!!timeError}
+                    label="exam time"
+                    // helperText={timeError}
+
+                    value={value}
+                    onChange={(e) => {
+                      setValue(e.target.value);
+                      setTimeError("");
+                    }}
+                    type="number"
+                    placeholder="exam time(minutes:)"
+                    sx={{
+                      backgroundColor: "#ffffff", // Clean white background
+                      borderRadius: "8px", // Rounded corners
+                      borderColor: "#E0E0E0", // Lighter border color
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#E0E0E0", // Light grey border color
                       },
-                    },
-                  }}
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#378CE7", // Hover effect with blue border
+                      },
+                      "& .MuiSelect-icon": {
+                        color: "#378CE7", // Icon color matches theme
+                      },
+                    }}
+                  ></TextField>
+                </Box>
+              </Grid2>
+
+              <Grid2 size={12}>
+                <Box
                   sx={{
-                    backgroundColor: "#ffffff", // Clean white background
-                    borderRadius: "8px", // Rounded corners
-                    borderColor: "#E0E0E0", // Lighter border color
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#E0E0E0", // Light grey border color
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#378CE7", // Hover effect with blue border
-                    },
-                    "& .MuiSelect-icon": {
-                      color: "#378CE7", // Icon color matches theme
-                    },
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 3,
                   }}
                 >
-                  {categories.map((category) => (
-                    <MenuItem
-                      key={category.categoryId}
-                      value={category.category}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 1,
+                    }}
+                  >
+                    <Typography
+                      variant="body1"
+                      sx={
+                        priceError
+                          ? {
+                              color: "#FF0000",
+                              fontSize: { xs: "12px", sm: "15px", md: "17px" },
+                            }
+                          : {
+                              color: "inherit",
+                              fontSize: { xs: "12px", sm: "15px", md: "17px" },
+                            }
+                      }
                     >
-                      <Checkbox
-                        checked={selectedSubjects.includes(category.category)}
-                        sx={{
-                          color: "#378CE7", // Checkbox icon color matches theme
-                          "&.Mui-checked": {
-                            color: "#378CE7", // Checked state color
-                          },
-                        }}
-                      />
-                      <ListItemText primary={category.category} />
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid2>
-            <Grid2 size={4}>
-              <Box
-                display={"flex"}
-                flexDirection={"column"}
-                mb={"25px"}
-                justifyContent={"center"}
-                alignItems={"center"}
-                // ml={"90px"}
-              >
-                <Typography
-                  variant="body1"
-                  sx={
-                    timeError
-                      ? {
-                          color: "#FF0000",
-                          fontSize: { xs: "12px", sm: "15px", md: "17px" },
-                          // mb: "7px",
-                          ml: { md: "25px" },
-                        }
-                      : {
-                          color: "inherit",
-                          fontSize: { xs: "12px", sm: "15px", md: "17px" },
-                          // mb: "7px",
-                          ml: { md: "25px" },
-                        }
-                  }
-                >
-                  exam time:
-                </Typography>
-                <TextField
-                  error={!!timeError}
-                  // helperText={timeError}
-                  value={value}
-                  onChange={(e) => {
-                    setValue(e.target.value);
-                    setTimeError("");
-                  }}
-                  type="number"
-                  size="small"
-                  placeholder="time in minutes"
-                ></TextField>
-              </Box>
+                      Price:
+                    </Typography>
+                    <TextField
+                      error={!!priceError}
+                      type="number"
+                      size="small"
+                      value={price}
+                      onChange={(e) => {
+                        setPrice(e.target.value);
+                        setPriceError("");
+                      }}
+                      InputProps={{
+                        endAdornment: <Typography>$</Typography>,
+                      }}
+                      sx={{
+                        width: "70%",
+                        backgroundColor: "#ffffff", // Clean white background
+                        borderRadius: "8px", // Rounded corners
+                        borderColor: "#E0E0E0", // Lighter border color
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#E0E0E0", // Light grey border color
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#378CE7", // Hover effect with blue border
+                        },
+                        "& .MuiSelect-icon": {
+                          color: "#378CE7", // Icon color matches theme
+                        },
+                      }}
+                    />
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 1,
+                    }}
+                  >
+                    <Typography
+                      variant="body1"
+                      sx={
+                        minScoreError
+                          ? {
+                              color: "#FF0000",
+                              fontSize: { xs: "12px", sm: "15px", md: "17px" },
+                            }
+                          : {
+                              color: "inherit",
+                              fontSize: { xs: "12px", sm: "15px", md: "17px" },
+                            }
+                      }
+                    >
+                      min pass score:
+                    </Typography>
+                    <TextField
+                      error={!!minScoreError}
+                      type="number"
+                      size="small"
+                      value={minScore}
+                      onChange={(e) => {
+                        setMinScore(e.target.value);
+                        setMinScoreError("");
+                      }}
+                      InputProps={{
+                        endAdornment: <Typography>%</Typography>,
+                      }}
+                      sx={{
+                        width: "70%",
+                        backgroundColor: "#ffffff", // Clean white background
+                        borderRadius: "8px", // Rounded corners
+                        borderColor: "#E0E0E0", // Lighter border color
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#E0E0E0", // Light grey border color
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#378CE7", // Hover effect with blue border
+                        },
+                        "& .MuiSelect-icon": {
+                          color: "#378CE7", // Icon color matches theme
+                        },
+                      }}
+                    />
+                  </Box>
+                </Box>
+              </Grid2>
+              <ImageUpload />
             </Grid2>
 
-            <Grid2 size={12}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 3,
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  <Typography
-                    variant="body1"
-                    sx={
-                      priceError
-                        ? {
-                            color: "#FF0000",
-                            fontSize: { xs: "12px", sm: "15px", md: "17px" },
-                          }
-                        : {
-                            color: "inherit",
-                            fontSize: { xs: "12px", sm: "15px", md: "17px" },
-                          }
-                    }
-                  >
-                    Price:
-                  </Typography>
-                  <TextField
-                    error={!!priceError}
-                    type="number"
-                    size="small"
-                    value={price}
-                    onChange={(e) => {
-                      setPrice(e.target.value);
-                      setPriceError("");
-                    }}
-                    InputProps={{
-                      endAdornment: <Typography>$</Typography>,
-                    }}
-                    sx={{ width: "70%" }}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  <Typography
-                    variant="body1"
-                    sx={
-                      minScoreError
-                        ? {
-                            color: "#FF0000",
-                            fontSize: { xs: "12px", sm: "15px", md: "17px" },
-                          }
-                        : {
-                            color: "inherit",
-                            fontSize: { xs: "12px", sm: "15px", md: "17px" },
-                          }
-                    }
-                  >
-                    min pass score:
-                  </Typography>
-                  <TextField
-                    error={!!minScoreError}
-                    type="number"
-                    size="small"
-                    value={minScore}
-                    onChange={(e) => {
-                      setMinScore(e.target.value);
-                      setMinScoreError("");
-                    }}
-                    InputProps={{
-                      endAdornment: <Typography>%</Typography>,
-                    }}
-                    sx={{ width: "70%" }}
-                  />
-                </Box>
-              </Box>
-            </Grid2>
-            <Grid2 size={12}>
-              <Box
-                display={"flex"}
-                justifyContent={"center"}
-                alignItems={"center"}
-                textAlign={"center"}
-                mb={"20px"}
-                mt={"20px"}
-                sx={{
-                  "& .MuiTextField-root": {
-                    m: 1,
-                    width: { xs: "70%", sm: "70%", md: "50%" },
-                    mt: "20px",
-                  },
-                }}
-              >
-                <TextField
-                  id="outlined-multiline"
-                  label="Desciption"
-                  multiline
-                  rows={3}
-                  placeholder="Enter your text here"
-                  variant="outlined"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </Box>
-            </Grid2>
-          </Grid2>
-
-          {/* دکمه ارسال */}
-          <Box textAlign="center" mt={3} mb={5}>
-            <Button type="submit" variant="contained" color="primary">
-              Make Exam
-            </Button>
-          </Box>
-        </form>
+            {/* دکمه ارسال */}
+            <Box textAlign="center" mt={3} mb={5}>
+              <Button type="submit" variant="contained" color="primary">
+                Add Exam
+              </Button>
+            </Box>
+          </form>
+          <Snackbar
+            open={openSnackbar}
+            autoHideDuration={1000}
+            onClose={handleCloseSnackbar}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          >
+            <Alert
+              onClose={handleCloseSnackbar}
+              severity={
+                snackbarMessage.includes("successfully") ? "success" : "error"
+              }
+              sx={{ width: "100%" }}
+            >
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
+        </Box>
+        <ToastContainer
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+            marginTop: "100px",
+          }}
+          autoClose={3000}
+          hideProgressBar
+          closeOnClick
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </Container>
     </>
   );

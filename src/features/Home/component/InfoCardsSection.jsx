@@ -4,7 +4,8 @@ import { Typography, Box, Container } from "@mui/material";
 import Grid2 from "@mui/material/Grid2";
 import blog from "../../../assets/images/blog.jpg";
 import course from "../../../assets/images/course.jpg";
-
+import { Link as RouterLink } from "react-router-dom";
+import Link from "@mui/material/Link";
 const CardComponent = ({ title, description, linkText, linkUrl }) => {
   return (
     <Box
@@ -27,7 +28,11 @@ const CardComponent = ({ title, description, linkText, linkUrl }) => {
           backgroundColor: "#378ce7",
           color: "#ffffff",
         },
-        "&:hover .cardTitle, &:hover p, &:hover a": {
+        "&:hover .cardTitle, &:hover p": {
+          color: "inherit",
+        },
+
+        "&:hover .Link": {
           color: "#ffffff",
         },
       }}
@@ -56,10 +61,11 @@ const CardComponent = ({ title, description, linkText, linkUrl }) => {
       >
         {description}
       </Typography>
-      <Typography
-        component="a"
-        href={linkUrl}
-        className="cardLink"
+
+      <Link
+        component={RouterLink}
+        className="Link"
+        to={linkUrl}
         sx={{
           textDecoration: "none",
           fontWeight: "bold",
@@ -69,7 +75,7 @@ const CardComponent = ({ title, description, linkText, linkUrl }) => {
         }}
       >
         {linkText}
-      </Typography>
+      </Link>
     </Box>
   );
 };
@@ -81,28 +87,29 @@ const InfoCardsSection = () => {
       description:
         "Access a wide range of video courses with direct payment from student to instructor, enhancing learning efficiency and instructor benefits.",
       linkText: "View Courses",
-      linkUrl: "#",
+      linkUrl: "/SearchCourse",
     },
     {
       title: "Questions",
       description:
         "Take multiple-choice tests with automatic grading and gain immediate feedback on your progress.",
       linkText: "Take Exams",
-      linkUrl: "#",
+      linkUrl: "/QuestionSearch",
     },
     {
-      title: "Blog",
+      title: "Articles",
       description:
-        "Share your experiences through blog posts, helping you build a comprehensive professional profile.",
+        "Share your experiences through Articles, helping you build a comprehensive professional profile.",
       linkText: "Write a Blog",
-      linkUrl: "#",
+      linkUrl: "/SearchArticle",
     },
+
     {
       title: "Rating & Profile",
       description:
         "Receive user ratings on your courses, exams, and blog posts, which automatically update your profile based on activity evaluations.",
       linkText: "View User Profiles",
-      linkUrl: "#",
+      linkUrl: "/SearchUsers",
     },
   ];
 

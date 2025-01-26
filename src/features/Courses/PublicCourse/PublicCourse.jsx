@@ -12,6 +12,8 @@ import { useLocation, useParams } from "react-router-dom";
 import Public from "./Tabs/Public";
 import CommentSection from "../../../common/Comments/CommentSection";
 import CoursePreview from "./Tabs/CoursePreview";
+import { FeedbackOutlined } from "@mui/icons-material";
+import RegisterTicket from "./../../../common/registerTicket/registerTicket";
 
 const PublicCourse = () => {
   const { courseId } = useParams();
@@ -41,7 +43,7 @@ const PublicCourse = () => {
           icon: <VideoLibrary />,
         },
         {
-          label: "Enrolled Students",
+          label: "Course Section",
           content: <Public serviceId={location.state.courseData.serviceId} />,
           icon: <VideoLibrary />,
         },
@@ -51,6 +53,14 @@ const PublicCourse = () => {
           content: (
             <CommentSection serviceId={location.state.courseData.serviceId} />
           ),
+        },
+
+        {
+          label: "Ticket Section",
+          content: (
+            <RegisterTicket serviceId={location.state.courseData.serviceId} />
+          ),
+          icon: <FeedbackOutlined />,
         },
       ]);
     } else {
