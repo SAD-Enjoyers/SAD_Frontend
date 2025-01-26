@@ -43,7 +43,6 @@ import PrivateProfile from "./features/Users/PrivateProfile/PrivateProfile.jsx";
 import PublicUsers from "./features/Users/publicUsers/PublicUsers.jsx";
 import RatingComponent from "./common/Ratings/RatingComponent.jsx";
 import RatingComponentExam from "./common/Ratings/RatingComponentExam.jsx";
-import TestPage from "./common/Ratings/testpage.jsx";
 
 import TicketAdmin from "./features/Admin/ticketReview/ticketReview.jsx";
 import RegisterTicket from "./common/registerTicket/registerTicket.jsx";
@@ -115,13 +114,16 @@ function AppRoutes() {
               element={<ArticlePreview />}
             />
 
-
-          {/* Utilities */}
-          <Route path="Comments" element={<Comments />} />
-          <Route path="SearchUsers" element={<SearchUsers />} />
-          <Route path="RatingComponent " element={<RatingComponent />} />
-          <Route path="RatingComponentExam " element={<RatingComponentExam />} />
-        </></Route>
+            {/* Utilities */}
+            <Route path="Comments" element={<Comments />} />
+            <Route path="SearchUsers" element={<SearchUsers />} />
+            <Route path="RatingComponent " element={<RatingComponent />} />
+            <Route
+              path="RatingComponentExam "
+              element={<RatingComponentExam />}
+            />
+          </>
+        </Route>
       </Routes>
     </Router>
   );
