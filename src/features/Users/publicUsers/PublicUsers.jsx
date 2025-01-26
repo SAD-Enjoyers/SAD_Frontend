@@ -176,9 +176,6 @@ export default function PublicUsers() {
               Services="article"
               userId={userId}
             />
-
-            {/* Edit Profile Dialog */}
-            {open && <EditProfile closeState={closeState} />}
           </Grid2>
         </Grid2>
       </OutlineContainer>

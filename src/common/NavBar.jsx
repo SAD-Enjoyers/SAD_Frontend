@@ -141,7 +141,9 @@ export default function NavBar() {
               src={
                 imageProfile
                   ? `api/v1/uploads/profile-images/${imageProfile}`
-                  : "images/profile.png"
+                  : localStorage.getItem("token") === "user"
+                  ? "images/profile.png"
+                  : "images/admin.png"
               }
               sx={{ width: 40, height: 40 }}
             />

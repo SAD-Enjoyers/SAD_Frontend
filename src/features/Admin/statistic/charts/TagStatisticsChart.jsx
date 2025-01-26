@@ -22,12 +22,12 @@ export default function TagStatisticsChart(props) {
     const width = window.innerWidth;
     if (width < 600) {
       // xs
-      setWidth(500);
+      setWidth(400);
       setHeight(200);
       calData(7);
     } else if (width >= 600 && width < 960) {
       // sm
-      setWidth(500);
+      setWidth(400);
       setHeight(200);
       calData(7);
     } else if (width >= 960 && width < 1280) {
@@ -60,13 +60,13 @@ export default function TagStatisticsChart(props) {
 
   return (
     <Box sx={{ textAlign: "center", p: 2 }}>
-      <Typography variant="h4" color="error" gutterBottom>
+      <Typography variant="h6" color="#5356FF" gutterBottom>
         Tag Statistics
       </Typography>
       <Box
         sx={{
           width: "100%",
-          height: 400,
+          // height: 400,
           display: "flex",
           justifyContent: "center",
         }}

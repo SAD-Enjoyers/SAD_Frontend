@@ -10,7 +10,7 @@ import Stack from "@mui/material/Stack";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 export default function AddCategoryButton({ onSuccess }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [categoryName, setCategoryName] = useState("");
   const [error, setError] = useState(false);
 
@@ -56,43 +56,33 @@ export default function AddCategoryButton({ onSuccess }) {
   };
 
   return (
-    <Stack direction="row" spacing={2}>
+    <Stack display={"flex"} justifyContent={"center"} alignItems={"center"}>
       {/* دکمه Add Category */}
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<AddIcon />}
-        onClick={handleClickOpen}
-      >
-        Add Category
-      </Button>
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add New Category</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            error={error}
-            margin="dense"
-            label="Category Name"
-            type="text"
-            fullWidth
-            value={categoryName}
-            onChange={(e) => {
-              setCategoryName(e.target.value);
-              setError(false);
-            }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DialogTitle>Add New Category</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          error={error}
+          margin="dense"
+          label="Category Name"
+          type="text"
+          fullWidth
+          value={categoryName}
+          onChange={(e) => {
+            setCategoryName(e.target.value);
+            setError(false);
+          }}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="secondary">
+          Cancel
+        </Button>
+        <Button onClick={handleSave} color="primary">
+          Save
+        </Button>
+      </DialogActions>
 
       <ToastContainer
         position="top-center"

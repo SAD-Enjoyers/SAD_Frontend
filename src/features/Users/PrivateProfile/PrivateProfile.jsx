@@ -207,7 +207,6 @@ export default function PrivateProfile() {
                     Email: {formData.email}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {console.log(formData)}
                     description: {formData.description}
                   </Typography>
                 </CardContent>

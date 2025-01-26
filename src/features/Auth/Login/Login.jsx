@@ -116,7 +116,10 @@ function Login() {
         // alert("Login successful!");
         // localStorage.setItem("token", responseData.data.token);
         // localStorage.setItem("role", responseData.data.role);
-        toast.success("Login successful! Redirecting to homepage...");
+        localStorage.getItem("role") === "user"
+          ? toast.success("Login successful! Redirecting to homepage...")
+          : toast.success("Login successful! Redirecting to AdminPage...");
+
         // console.log(responseData.data.role);
         setTimeout(
           () =>

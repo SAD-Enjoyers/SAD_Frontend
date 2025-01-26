@@ -5,7 +5,6 @@ import ServiceStatistics from "./charts/ServiceStatistics";
 import TicketStatistics from "./charts/TicketStatistics";
 import { Box, CircularProgress, Grid, Grid2, Typography } from "@mui/material";
 
-
 export default function Statistics() {
   const [dataTag, setDataTag] = useState("");
   const [dataActivity, setDataActivity] = useState("");
@@ -204,7 +203,7 @@ export default function Statistics() {
   }, []);
 
   return (
-    <>
+    <Box sx={{ height: "100%", width: "100%" }}>
       {loading ? (
         <Box
           sx={{
@@ -212,12 +211,13 @@ export default function Statistics() {
             justifyContent: "center",
             alignItems: "center",
             height: "100%",
+            width: "100%",
           }}
         >
           <CircularProgress />
         </Box>
       ) : (
-        <>
+        <Box>
           <TagStatisticsChart Data={dataTag} />
           <ActivityStatistics Data={dataActivity} />
           <Grid2 container spacing={2}>
@@ -236,7 +236,10 @@ export default function Statistics() {
             <Grid2 size={{ xs: 12, md: 4 }}>
               <ServiceStatistics title="Level" Data={dataService.level} />
             </Grid2>
+            <Grid2 size={{ xs: 12, md: 8 }}>
               <TicketStatistics Data={dataticket} />
+            </Grid2>
+
             <Grid2 size={{ xs: 12, md: 4 }}>
               <ServiceStatistics
                 title="TransAction Data"
@@ -244,8 +247,8 @@ export default function Statistics() {
               />
             </Grid2>
           </Grid2>
-        </>
+        </Box>
       )}
-    </>
+    </Box>
   );
 }

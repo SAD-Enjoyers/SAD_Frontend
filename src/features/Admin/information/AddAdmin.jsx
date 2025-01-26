@@ -9,22 +9,27 @@ export default function AddAdmin({ closeState }) {
   const [password, setPassword] = useState("");
   const [expertId, setExpertId] = useState("");
 
-  // State for error handling
   const [firstNameError, setFirstNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [expertIdError, setExpertIdError] = useState(false);
 
+  const cancleHandle = () => {
+    setFirstNameError(false);
+    setLastNameError(false);
+    setPhoneNumberError(false);
+    setPasswordError(false);
+    setExpertIdError(false);
+  };
+
   const submitInformation = (closeState) => {
-    // Reset errors
     setFirstNameError(false);
     setLastNameError(false);
     setPhoneNumberError(false);
     setPasswordError(false);
     setExpertIdError(false);
 
-    // Check if all fields are filled
     let hasError = false;
     if (!firstName) {
       setFirstNameError(true);
@@ -47,7 +52,6 @@ export default function AddAdmin({ closeState }) {
       hasError = true;
     }
 
-    // If any field is empty, stop the submission
     if (hasError) {
       return;
     }
@@ -65,13 +69,26 @@ export default function AddAdmin({ closeState }) {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "x-role": localStorage.getItem("role"), // Add role to headers
+        "x-role": localStorage.getItem("role"),
       },
       body: JSON.stringify(formData),
     })
       .then((response) => response.json())
       .then((data) => {
-        toast.success("Admin successfully added");
+        console.log(data);
+
+        if (
+          data.code === 403 &&
+          data.message === "There is an expert with same expertId."
+        ) {
+          toast.error("There is an expert with same expertId.");
+        }
+        if (data.status === "success") {
+          toast.success("Admin successfully added");
+        }
+        if (data.code === 403 && data.message === "Invalid or expired token.") {
+          toast.success("Invalid or expired token.");
+        }
         setTimeout(() => {
           closeState();
         }, 3000);
@@ -85,17 +102,12 @@ export default function AddAdmin({ closeState }) {
   return (
     <Box
       sx={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        zIndex: 10,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         textAlign: "center",
+        backgroundColor: "#f0f8ff",
+        minHeight: "80vh",
       }}
     >
       <Card
@@ -103,9 +115,9 @@ export default function AddAdmin({ closeState }) {
           p: 4,
           width: "90%",
           maxWidth: 400,
-          backgroundColor: "white",
-          borderRadius: 2,
-          boxShadow: 5,
+          backgroundColor: "#e6f7ff",
+          borderRadius: 4,
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
         }}
       >
         <Typography variant="h6" gutterBottom>
@@ -124,7 +136,7 @@ export default function AddAdmin({ closeState }) {
               value={expertId}
               onChange={(e) => {
                 setExpertId(e.target.value);
-                setExpertIdError(false); // Reset error when typing
+                setExpertIdError(false);
               }}
               margin="normal"
               fullWidth
@@ -139,7 +151,7 @@ export default function AddAdmin({ closeState }) {
               value={firstName}
               onChange={(e) => {
                 setFirstName(e.target.value);
-                setFirstNameError(false); // Reset error when typing
+                setFirstNameError(false);
               }}
               margin="normal"
               fullWidth
@@ -154,7 +166,7 @@ export default function AddAdmin({ closeState }) {
               value={lastName}
               onChange={(e) => {
                 setLastName(e.target.value);
-                setLastNameError(false); // Reset error when typing
+                setLastNameError(false);
               }}
               margin="normal"
               fullWidth
@@ -180,7 +192,7 @@ export default function AddAdmin({ closeState }) {
               value={phoneNumber}
               onChange={(e) => {
                 setPhoneNumber(e.target.value);
-                setPhoneNumberError(false); // Reset error when typing
+                setPhoneNumberError(false);
               }}
               fullWidth
               error={phoneNumberError}
@@ -194,7 +206,7 @@ export default function AddAdmin({ closeState }) {
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
-                setPasswordError(false); // Reset error when typing
+                setPasswordError(false);
               }}
               fullWidth
               error={passwordError}
@@ -204,15 +216,30 @@ export default function AddAdmin({ closeState }) {
           <Box display="flex" justifyContent="flex-end" mt={2}>
             <Button
               variant="outlined"
-              color="secondary"
-              onClick={closeState}
+              sx={{
+                color: "#0077b6",
+                borderColor: "#0077b6",
+                "&:hover": {
+                  backgroundColor: "#caf0f8",
+                  borderColor: "#023e8a",
+                },
+              }}
+              onClick={() => {
+                closeState;
+                cancleHandle();
+              }}
               sx={{ mr: 2 }}
             >
               Cancel
             </Button>
             <Button
               variant="contained"
-              color="primary"
+              sx={{
+                backgroundColor: "#0077b6",
+                "&:hover": {
+                  backgroundColor: "#023e8a",
+                },
+              }}
               onClick={() => {
                 submitInformation(closeState);
               }}
