@@ -18,8 +18,8 @@ export default function Statistics() {
     fetch("/api/v1/admin/tag-usage-statistics", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "x-role": localStorage.getItem("role"),
+        Authorization: `Bearer ${localStorage.getItem("AdminToken")}`,
+        "x-role": localStorage.getItem("AdminRole"),
         "Content-Type": "application/json",
       },
     })
