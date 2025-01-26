@@ -24,23 +24,27 @@ const TicketUser = () => {
 
   useEffect(() => {
     // Axios call to get the true/false value
-    // const fetchStatus = async () => {
-    //   try {
-    //     const response = await axios.get("/api/v1/profile/ticket-status", {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         Authorization: `Bearer ${localStorage.getItem("token")}`,
-    //         "x-role": localStorage.getItem("role"),
-    //       },
-    //     });
-    //     setStatus(response.data.status); // Assuming the API returns `{ status: true }` or `{ status: false }`
-    //   } catch (err) {
-    //     console.error("Error fetching ticket status:", err);
-    //     setError(true);
-    //   }
-    // };
-    // fetchStatus();
-    setStatus(true);
+    const fetchStatus = async () => {
+      try {
+        const response = await axios.get("/api/v1/profile/ticket-notify", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "x-role": localStorage.getItem("role"),
+          },
+        });
+
+        setStatus(response.data.data.status); // Assuming the API returns `{ status: true }` or `{ status: false }`
+        // setStatus(true);
+
+        // console.log(response.data.data.status); // Assuming the API returns `{ status: true }` or `{ status: false }`
+      } catch (err) {
+        console.error("Error fetching ticket status:", err);
+        setError(true);
+      }
+    };
+
+    fetchStatus();
   }, []);
 
   useEffect(() => {
@@ -102,16 +106,23 @@ const TicketUser = () => {
       }}
     >
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Typography variant="h5" component="h2" gutterBottom>
+        <Typography variant="h6" component="h2">
           Your Tickets
         </Typography>
+
+        {/* Show loading spinner while fetching */}
+        {status === null && !error && <CircularProgress size={20} />}
+
+        {/* Show error message if API call fails */}
+        {/* {error && <Typography color="error">Error!</Typography>} */}
+
+        {/* Show green or red light based on status */}
         {status !== null && !error && (
-          <Chip
-            label={
-              status ? "Support team has seen your tickets." : "Not yet seen"
-            }
-            color={status ? "success" : "error"}
-            icon={<Brightness1Icon />}
+          <Brightness1Icon
+            style={{
+              color: status ? "green" : "red", // Green for true, red for false
+              fontSize: "1.5rem", // Adjust the size if needed
+            }}
           />
         )}
       </Box>

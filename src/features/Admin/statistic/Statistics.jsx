@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import TagStatisticsChart from "./charts/TagStatisticsChart";
 import ActivityStatistics from "./charts/ActivityStatistics";
 import ServiceStatistics from "./charts/ServiceStatistics";
+import TicketStatistics from "./charts/TicketStatistics";
 import { Box, CircularProgress, Grid, Grid2, Typography } from "@mui/material";
+
 
 export default function Statistics() {
   const [dataTag, setDataTag] = useState("");
   const [dataActivity, setDataActivity] = useState("");
+  const [dataticket, setDataticket] = useState("");
   const [transactionData, setTransactionData] = useState(0);
   const [dataService, setDataService] = useState({
     servicetype: [],
@@ -47,6 +50,26 @@ export default function Statistics() {
       .then((response) => response.json())
       .then((data) => {
         setDataActivity(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching activity statistics:", err);
+        setLoading(false);
+      });
+  };
+
+  const ticket_statistics_data = () => {
+    fetch("/api/v1/admin/ticket-statistics", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "x-role": localStorage.getItem("role"),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setDataticket(data);
         setLoading(false);
       })
       .catch((err) => {
@@ -176,6 +199,7 @@ export default function Statistics() {
     tag_usage_statistics_data();
     activity_statistics_data();
     service_statistics_data();
+    ticket_statistics_data();
     transaction_statistics_data();
   }, []);
 
@@ -212,6 +236,7 @@ export default function Statistics() {
             <Grid2 size={{ xs: 12, md: 4 }}>
               <ServiceStatistics title="Level" Data={dataService.level} />
             </Grid2>
+              <TicketStatistics Data={dataticket} />
             <Grid2 size={{ xs: 12, md: 4 }}>
               <ServiceStatistics
                 title="TransAction Data"
