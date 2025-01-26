@@ -16,6 +16,7 @@ import { styled } from "@mui/system";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import DefaultCourseImage from "../../../../assets/images/default_course_image.jpg";
 import axios from "axios";
+import RatingComponent from "../../../../common/Ratings/RatingComponent";
 // Palette colors
 const primaryGradient = ["#5356FF", "#378CE7", "#67C6E3", "#DFF5FF"];
 const levelColors = {
@@ -251,7 +252,7 @@ function CoursePreview(props) {
                 />
                 <SubTitle>{courseData.description}</SubTitle>
 
-                <Rating
+                {/* <Rating
                   value={
                     typeof courseData.score === "number" ? courseData.score : 0
                   }
@@ -269,8 +270,9 @@ function CoursePreview(props) {
                     ? courseData.score.toFixed(1)
                     : "0"}{" "}
                   / 5 ({courseData.numberOfVoters} votes)
-                </Typography>
+                </Typography> */}
 
+                <RatingComponent serviceId={serviceId} type={"course"} />
                 <Box sx={{ marginTop: 2 }}>
                   <Typography variant="body2" color="text.secondary">
                     {courseData.tag1 && (

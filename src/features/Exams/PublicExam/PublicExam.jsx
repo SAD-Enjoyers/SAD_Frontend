@@ -23,7 +23,7 @@ import DefaultExamImage from "../../../assets/images/default_exam_image.jpg";
 // import ExamResult from "./ExamResult";
 import Comments from "../../../common/Comments/CommentSection";
 import RegisterTicket from "../../../common/registerTicket/registerTicket.jsx";
-
+import RatingComponentExam from "../../../common/Ratings/RatingComponentExam.jsx";
 import {
   CheckCircle,
   Clear,
@@ -272,14 +272,15 @@ function PublicExam() {
                   </Box>
                 </Box>
 
-                <Rating
+                {/* <Rating
                   value={Number(examInfo.score) || 0}
                   readOnly
                   precision={0.5}
                   sx={{ marginTop: 2 }}
-                />
+                /> */}
+                <RatingComponentExam serviceId={serviceId} type={"exam"} />
 
-                <Typography
+                {/* <Typography
                   variant="body2"
                   color="text.secondary"
                   sx={{ marginTop: 1 }}
@@ -289,7 +290,7 @@ function PublicExam() {
                     ? examInfo.score.toFixed(1)
                     : "0"}{" "}
                   / 5
-                </Typography>
+                </Typography> */}
               </Grid2>
 
               <Grid2
