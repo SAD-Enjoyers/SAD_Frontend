@@ -8,13 +8,18 @@ import {
   Rating,
   Chip,
   Snackbar,
+  Stack,
+  Avatar,
   Alert,
   CircularProgress,
+  CardContent,
+  Divider,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import { styled } from "@mui/system";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import DefaultExamImage from "../../../assets/images/default_exam_image.jpg";
+import axios from "axios";
 
 // Palette colors
 const primaryGradient = ["#5356FF", "#378CE7", "#67C6E3", "#DFF5FF"];
@@ -133,9 +138,30 @@ function ExamPreview() {
     };
 
     fetchExamData();
+
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(
+          `/api/v1/educational-service/comments/${serviceId}`
+        );
+        setComments(response.data.data);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    fetchComments();
   }, [serviceId]);
 
   const handlePurchase = useCallback(async () => {
+    // Check if user is an admin
+    const adminRole = localStorage.getItem("AdminRole");
+    if (adminRole == "expert") {
+      setSnackbarMessage("Admins cannot buy the course.");
+      setSeverity("error");
+      setOpenSnackbar(true);
+      return;
+    }
     setPurchaseLoading(true);
     try {
       const response = await fetch("/api/v1/educational-service/register", {
@@ -152,9 +178,7 @@ function ExamPreview() {
       console.log("Backend Response: ", responseData); // This will show the full response
 
       if (!response.ok) {
-        setSnackbarMessage(
-          `Failed to register the exam: ${responseData.message}`
-        );
+        setSnackbarMessage(`${responseData.message}`);
         setSeverity("error");
         setOpenSnackbar(true);
         setPurchaseLoading(false);
@@ -356,13 +380,56 @@ function ExamPreview() {
             </Grid2>
           </CustomCard>
 
-          <CommentSection>
+          <CardContent>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Comments
+            </Typography>
+            {comments.length === 0 ? (
+              <Typography variant="body1" color="text.secondary">
+                There are no comments to show
+              </Typography>
+            ) : (
+              <Stack spacing={2}>
+                {comments.map((comment) => (
+                  <Card
+                    key={comment.commentId}
+                    variant="outlined"
+                    sx={{ p: 2 }}
+                  >
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Avatar sx={{ bgcolor: "primary.main" }}>
+                        {comment.userId.charAt(0).toUpperCase()}
+                      </Avatar>
+                      <Box>
+                        <Typography variant="subtitle2" fontWeight="bold">
+                          {comment.userId}
+                        </Typography>
+                        <Typography variant="body1" sx={{ mt: 1 }}>
+                          {comment.text}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ mt: 1 }}
+                        >
+                          {new Date(comment.date).toLocaleString()}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                    <Divider sx={{ my: 2 }} />
+                  </Card>
+                ))}
+              </Stack>
+            )}
+          </CardContent>
+
+          {/* <CommentSection>
             <CommentsHeader variant="h6">Comments</CommentsHeader>
 
             <Typography variant="body2">
               Please purchase the exam to leave a comment.
             </Typography>
-          </CommentSection>
+          </CommentSection> */}
         </Box>
         {/* Snackbar for success/error message */}
         <Snackbar

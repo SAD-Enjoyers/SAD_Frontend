@@ -158,6 +158,7 @@ export default function PrivateProfile() {
                   Review Profile
                 </StyledButton>
               )}
+              <StyledButton link="TicketUser">review tikets</StyledButton>
             </Box>
           </Grid2>
 
@@ -237,7 +238,9 @@ export default function PrivateProfile() {
             />
 
             {/* Edit Profile Dialog */}
-            {open && <EditProfile closeState={closeState} />}
+            {open && (
+              <EditProfile closeState={closeState} fetchData={fetchData} />
+            )}
           </Grid2>
         </Grid2>
       </Container>

@@ -2,14 +2,15 @@ import React, { useEffect, useState } from "react";
 import TagStatisticsChart from "./charts/TagStatisticsChart";
 import ActivityStatistics from "./charts/ActivityStatistics";
 import ServiceStatistics from "./charts/ServiceStatistics";
-import { Grid, Grid2, Typography } from "@mui/material";
 import TicketStatistics from "./charts/TicketStatistics";
+import { Box, CircularProgress, Grid, Grid2, Typography } from "@mui/material";
+
 
 export default function Statistics() {
   const [dataTag, setDataTag] = useState("");
   const [dataActivity, setDataActivity] = useState("");
   const [dataticket, setDataticket] = useState("");
-
+  const [transactionData, setTransactionData] = useState(0);
   const [dataService, setDataService] = useState({
     servicetype: [],
     activitystatus: [],
@@ -21,8 +22,8 @@ export default function Statistics() {
     fetch("/api/v1/admin/tag-usage-statistics", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "x-role": localStorage.getItem("role"),
+        Authorization: `Bearer ${localStorage.getItem("AdminToken")}`,
+        "x-role": localStorage.getItem("AdminRole"),
         "Content-Type": "application/json",
       },
     })
@@ -41,8 +42,8 @@ export default function Statistics() {
     fetch("/api/v1/admin/activity-statistics?days=7", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "x-role": localStorage.getItem("role"),
+        Authorization: `Bearer ${localStorage.getItem("AdminToken")}`,
+        "x-role": localStorage.getItem("AdminRole"),
         "Content-Type": "application/json",
       },
     })
@@ -81,8 +82,8 @@ export default function Statistics() {
     fetch("/api/v1/admin/service-statistics", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "x-role": localStorage.getItem("role"),
+        Authorization: `Bearer ${localStorage.getItem("AdminToken")}`,
+        "x-role": localStorage.getItem("AdminRole"),
         "Content-Type": "application/json",
       },
     })
@@ -159,20 +160,62 @@ export default function Statistics() {
         setLoading(false);
       });
   };
+  const transaction_statistics_data = () => {
+    fetch("/api/v1/admin/transaction-statistics", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("AdminToken")}`,
+        "x-role": localStorage.getItem("AdminRole"),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const deposit = data.data.deposit || 0;
+        const withdraw = data.data.withdraw || 0;
+
+        setTransactionData([
+          {
+            name: "deposite",
+            value: parseInt(deposit || 0, 10),
+            color: "#FF0000",
+          },
+          {
+            name: "withdraw",
+            value: parseInt(withdraw || 0, 10),
+            color: "#00FF00",
+          },
+        ]);
+
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching service statistics:", err);
+        setLoading(false);
+      });
+  };
 
   useEffect(() => {
     tag_usage_statistics_data();
     activity_statistics_data();
     service_statistics_data();
     ticket_statistics_data();
+    transaction_statistics_data();
   }, []);
 
   return (
     <>
       {loading ? (
-        <Typography variant="h6" align="center">
-          Loading...
-        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          <CircularProgress />
+        </Box>
       ) : (
         <>
           <TagStatisticsChart Data={dataTag} />
@@ -194,6 +237,12 @@ export default function Statistics() {
               <ServiceStatistics title="Level" Data={dataService.level} />
             </Grid2>
               <TicketStatistics Data={dataticket} />
+            <Grid2 size={{ xs: 12, md: 4 }}>
+              <ServiceStatistics
+                title="TransAction Data"
+                Data={transactionData}
+              />
+            </Grid2>
           </Grid2>
         </>
       )}

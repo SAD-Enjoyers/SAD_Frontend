@@ -7,7 +7,6 @@ export default function TagStatisticsChart(props) {
   const [height, setHeight] = useState(0);
   const [data, setData] = useState([]);
 
-  // تبدیل داده‌ها، مرتب کردن بر اساس مقدار و محدود کردن به 15 مورد اول
   const calData = (slice) => {
     if (props.Data) {
       setData(
@@ -44,21 +43,19 @@ export default function TagStatisticsChart(props) {
     }
   };
 
-  // این effect برای زمانی است که داده‌ها بارگذاری می‌شوند
   useEffect(() => {
-    updateScreenSize(); // به‌روزرسانی اندازه صفحه با داده‌های موجود
-  }, [props.Data]); // فقط وقتی داده‌ها تغییر می‌کنند اجرا می‌شود
+    updateScreenSize();
+  }, [props.Data]);
 
-  // این effect برای زمانی است که اندازه صفحه تغییر می‌کند
   useEffect(() => {
     const handleResize = () => {
-      updateScreenSize(); // به‌روزرسانی هنگام تغییر اندازه صفحه
+      updateScreenSize();
     };
 
-    window.addEventListener("resize", handleResize); // اضافه کردن event listener
-    handleResize(); // فراخوانی بلافاصله برای اندازه‌گیری اولیه
+    window.addEventListener("resize", handleResize);
+    handleResize();
 
-    return () => window.removeEventListener("resize", handleResize); // حذف event listener هنگام unmount
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
