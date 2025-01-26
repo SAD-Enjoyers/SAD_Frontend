@@ -46,6 +46,7 @@ import RatingComponentExam from "./common/Ratings/RatingComponentExam.jsx";
 
 import TicketAdmin from "./features/Admin/ticketReview/ticketReview.jsx";
 import RegisterTicket from "./common/registerTicket/registerTicket.jsx";
+import TicketUser from "./features/Users/TicketUser/TicketUser.jsx";
 import Admin from "./features/Admin/main.jsx";
 
 function AppRoutes() {
@@ -54,7 +55,6 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* Admin */}
-          =
           <Route path="admin" element={<Admin />} />
           <Route path="TicketAdmin" element={<TicketAdmin />} />
           <Route path="RegisterTicket" element={<RegisterTicket />} />
@@ -67,6 +67,7 @@ function AppRoutes() {
             <Route path="changepassword" element={<ChangePassword />} />
             <Route path="profile" element={<PrivateProfile />} />
             <Route path="PublicUsers/:userId" element={<PublicUsers />} />
+            <Route path="TicketUser" element={<TicketUser />} />
             <Route path="WalletPage" element={<WalletPage />} />
             <Route path="TermsAndConditions" element={<TermsAndConditions />} />
             <Route path="QA" element={<QA />} />
