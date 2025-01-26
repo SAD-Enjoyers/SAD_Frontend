@@ -10,6 +10,7 @@ import {
   Stack,
   List,
   ListItem,
+  CircularProgress,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import React, { useEffect, useState } from "react";
@@ -95,7 +96,18 @@ export default function Information() {
   }, []);
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
   if (!isValid) {
     localStorage.removeItem("token");
@@ -173,7 +185,7 @@ export default function Information() {
               {openAddAdmin && <AddAdmin closeState={handleCloseAddAdmin} />}
             </Box>
             <Box>
-              <AddCategoryButton />
+              <AddCategoryButton onSuccess={fetchCategories} />
               <Box
                 sx={{
                   width: "100%",
