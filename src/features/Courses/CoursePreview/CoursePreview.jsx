@@ -167,9 +167,10 @@ function CoursePreview() {
       console.log("Response Headers:", [...response.headers.entries()]);
       const data = await response.json();
       console.log("Response Data:", data);
+      console.log(data.message);
 
       if (!response.ok) {
-        throw new Error("Failed to process the purchase. Please try again.");
+        throw new Error(`${data.message}`);
       }
 
       if (data.status === "success") {

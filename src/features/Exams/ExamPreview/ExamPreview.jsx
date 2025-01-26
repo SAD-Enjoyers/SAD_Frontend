@@ -178,9 +178,7 @@ function ExamPreview() {
       console.log("Backend Response: ", responseData); // This will show the full response
 
       if (!response.ok) {
-        setSnackbarMessage(
-          `Failed to register the exam: ${responseData.message}`
-        );
+        setSnackbarMessage(`${responseData.message}`);
         setSeverity("error");
         setOpenSnackbar(true);
         setPurchaseLoading(false);
