@@ -158,6 +158,7 @@ export default function PrivateProfile() {
                   Review Profile
                 </StyledButton>
               )}
+              <StyledButton link="TicketUser">review tikets</StyledButton>
             </Box>
           </Grid2>
 
