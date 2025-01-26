@@ -286,24 +286,6 @@ function CoursePreview(props) {
                     )}
                   </Typography>
                 </Box>
-                {/* <Typography variant="body2" sx={{ marginTop: 2 }}>
-                  <strong>Number of Videos:</strong> {courseData.numberOfVideos}
-                </Typography>
-                <Typography variant="body2" sx={{ marginTop: 1 }}>
-                  <strong>Members Enrolled:</strong>{" "}
-                  {courseData.numberOfMembers}
-                </Typography> */}
-
-                <Price
-                  sx={{
-                    fontSize: "1.4rem",
-                    fontWeight: "bold",
-                    color: "#00796b",
-                    marginTop: 2,
-                  }}
-                >
-                  Price: ${courseData.price}
-                </Price>
               </Grid2>
 
               {/* Right side: Image, Buy Button */}

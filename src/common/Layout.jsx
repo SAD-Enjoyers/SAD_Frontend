@@ -5,13 +5,9 @@ import { Box } from "@mui/material";
 
 export default function Layout() {
   const location = useLocation();
-  const hideNavBar = [
-    "/login",
-    "/signup",
-    "/changePassword",
-    "/fp",
-    "/admin",
-  ].includes(location.pathname);
+  const hideNavBar = ["/login", "/signup", "/changePassword", "/fp"].includes(
+    location.pathname
+  );
 
   return (
     <Box

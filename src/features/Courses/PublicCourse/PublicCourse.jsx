@@ -43,7 +43,7 @@ const PublicCourse = () => {
           icon: <VideoLibrary />,
         },
         {
-          label: "Enrolled Students",
+          label: "Course Section",
           content: <Public serviceId={location.state.courseData.serviceId} />,
           icon: <VideoLibrary />,
         },

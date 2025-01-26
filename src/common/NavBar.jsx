@@ -165,18 +165,24 @@ export default function NavBar() {
             {/* inside jsx useNavigate */}
             <MenuItem
               onClick={() => {
-                navigate("/profile");
+                localStorage.getItem("role") === "user"
+                  ? navigate("/profile")
+                  : navigate("/admin");
               }}
             >
               Profile
             </MenuItem>
-            <MenuItem
-              onClick={() => {
-                navigate("/WalletPage");
-              }}
-            >
-              Wallet
-            </MenuItem>
+            {localStorage.getItem("role") === "user" ? (
+              <MenuItem
+                onClick={() => {
+                  navigate("/WalletPage");
+                }}
+              >
+                Wallet
+              </MenuItem>
+            ) : (
+              <></>
+            )}
 
             <MenuItem
               onClick={() => {

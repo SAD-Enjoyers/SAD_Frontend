@@ -10,7 +10,7 @@ import {
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
-export default function EditProfile({ closeState }) {
+export default function EditProfile({ closeState, fetchData }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageName, setImageName] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
@@ -83,11 +83,13 @@ export default function EditProfile({ closeState }) {
     if (image) formData.image = image;
     if (address) formData.address = address;
 
+    const token = localStorage.getItem("token");
+
     fetch("/api/v1/profile/edit-profile", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
         "x-role": localStorage.getItem("role"), // Add role to headers
       },
       body: JSON.stringify(formData),
@@ -97,7 +99,7 @@ export default function EditProfile({ closeState }) {
         toast.success("change profile successfully");
         setTimeout(() => {
           closeState();
-          window.location.reload();
+          fetchData(token);
         }, 3000);
       })
       .catch((error) => {
