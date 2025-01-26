@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle"; //
 import Stack from "@mui/material/Stack";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-export default function AddCategoryButton() {
+export default function AddCategoryButton({ onSuccess }) {
   const [open, setOpen] = useState(false);
   const [categoryName, setCategoryName] = useState("");
   const [error, setError] = useState(false);
@@ -47,6 +47,7 @@ export default function AddCategoryButton() {
         setTimeout(() => {
           handleClose();
         }, 3000);
+        onSuccess();
       })
       .catch((error) => {
         console.error("Error:", error);
