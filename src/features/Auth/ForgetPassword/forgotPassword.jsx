@@ -25,7 +25,7 @@ const ForgotPassword = () => {
     setSuccess(false);
 
     try {
-      const response = await fetch("/api/v1/auth/sendMail", {
+      const response = await fetch("/forgetPassword/v1/auth/sendMail", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

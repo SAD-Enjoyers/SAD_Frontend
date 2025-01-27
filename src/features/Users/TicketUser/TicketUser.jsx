@@ -34,10 +34,7 @@ const TicketUser = () => {
           },
         });
 
-        setStatus(response.data.data.status); // Assuming the API returns `{ status: true }` or `{ status: false }`
-        // setStatus(true);
-
-        // console.log(response.data.data.status); // Assuming the API returns `{ status: true }` or `{ status: false }`
+        setStatus(response.data.data.status);
       } catch (err) {
         console.error("Error fetching ticket status:", err);
         setError(true);
@@ -57,7 +54,13 @@ const TicketUser = () => {
             "x-role": localStorage.getItem("role"),
           },
         });
-        setTickets(response.data.data);
+
+        if (response.data.data === null || response.data.data.length === 0) {
+          setError("There are no tickets from you."); // Set error message
+          setTickets([]); // Ensure tickets is an empty array
+        } else {
+          setTickets(response.data.data);
+        }
       } catch (err) {
         setError("Failed to load tickets.");
       } finally {
@@ -140,59 +143,71 @@ const TicketUser = () => {
         </Alert>
       )}
 
+      {error && (
+        <Typography color="error" sx={{ mt: 2 }}>
+          {error}
+        </Typography>
+      )}
+
       <TableContainer component={Paper} sx={{ mt: 3 }}>
-        <Table>
-          <TableHead sx={{ backgroundColor: "#f1f1f1" }}>
-            <TableRow>
-              <TableCell>
-                <strong>Ticket ID</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Message</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Report Time</strong>
-              </TableCell>
-              <TableCell>
-                <strong>State</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Answer</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Expert</strong>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {tickets.map((ticket) => (
-              <TableRow key={ticket.ticketId} hover>
-                <TableCell>{ticket.ticketId}</TableCell>
-                <TableCell>{ticket.message}</TableCell>
+        {tickets.length > 0 ? (
+          <Table>
+            <TableHead sx={{ backgroundColor: "#f1f1f1" }}>
+              <TableRow>
                 <TableCell>
-                  {new Date(ticket.reportTime).toLocaleString()}
+                  <strong>Ticket ID</strong>
                 </TableCell>
                 <TableCell>
-                  <Chip
-                    label={ticket.state}
-                    color={
-                      ticket.state === "Pending"
-                        ? "error" // Red for Pending
-                        : ticket.state === "Under Review"
-                        ? "warning" // Orange for Under Review
-                        : ticket.state === "Checked"
-                        ? "success" // Green for Checked
-                        : "default" // Default if no state matches
-                    }
-                    size="small"
-                  />
+                  <strong>Message</strong>
                 </TableCell>
-                <TableCell>{ticket.answer || "N/A"}</TableCell>
-                <TableCell>{ticket.expertId || "N/A"}</TableCell>
+                <TableCell>
+                  <strong>Report Time</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>State</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Answer</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Expert</strong>
+                </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {tickets.map((ticket) => (
+                <TableRow key={ticket.ticketId} hover>
+                  <TableCell>{ticket.ticketId}</TableCell>
+                  <TableCell>{ticket.message}</TableCell>
+                  <TableCell>
+                    {new Date(ticket.reportTime).toLocaleString()}
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={ticket.state}
+                      color={
+                        ticket.state === "Pending"
+                          ? "error"
+                          : ticket.state === "Under Review"
+                          ? "warning"
+                          : ticket.state === "Checked"
+                          ? "success"
+                          : "default"
+                      }
+                      size="small"
+                    />
+                  </TableCell>
+                  <TableCell>{ticket.answer || "N/A"}</TableCell>
+                  <TableCell>{ticket.expertId || "N/A"}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <Typography sx={{ mt: 2, textAlign: "center" }}>
+            No tickets to display.
+          </Typography>
+        )}
       </TableContainer>
     </Box>
   );
