@@ -39,11 +39,11 @@ const RegisterTicket = ({ serviceId }) => {
       setError(
         err.response
           ? err.response.data
-          : "An error occurred while submitting the ticket."
+          : "An error from Network occurred while submitting the ticket."
       );
       setResponse(null);
       setSnackbarMessage(
-        "Your ticket has been sended to Support team, please wait to checked."
+        "Your previous ticket for this service is being processed. Please wait until the previous ticket is processed."
       );
       setSeverity("error");
     } finally {
