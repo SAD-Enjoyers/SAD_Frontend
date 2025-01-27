@@ -12,12 +12,12 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
       "/signuppage": {
-        target: "http://localhost:3000", // Localhost backend
+        target: "http://91.132.50.155:3000", // Localhost backend
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/signuppage/, "/api"), // Rewrite to match the backend route
       },
       "/forgetPassword": {
-        target: "http://localhost:3000", // Localhost backend
+        target: "http://91.132.50.155:3000", // Localhost backend
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/forgetPassword/, "/api"), // Rewrite to match the backend route
       },
