@@ -17,10 +17,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import {
-  Image as ImageIcon,
-  LocalOffer as LocalOfferIcon,
-} from "@mui/icons-material";
+import { LocalOffer as LocalOfferIcon } from "@mui/icons-material";
 
 const ArticleSettings = ({ articleData, accessToken }) => {
   const [newImage, setNewImage] = useState(null);
@@ -33,18 +30,20 @@ const ArticleSettings = ({ articleData, accessToken }) => {
   const [price, setPrice] = useState(articleData?.price || "");
   const [activityStatus, setActivityStatus] = useState("Active");
 
-  const [tag1, setTag1] = useState(articleData?.tag1 || "");
-  const [tag2, setTag2] = useState(articleData?.tag2 || "");
-  const [tag3, setTag3] = useState(articleData?.tag3 || "");
-
   const [categories, setCategories] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([tag1, tag2, tag3]);
+  const [selectedTags, setSelectedTags] = useState([
+    articleData?.tag1,
+    articleData?.tag2,
+    articleData?.tag3,
+  ].filter(Boolean));
 
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
+
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -55,10 +54,8 @@ const ArticleSettings = ({ articleData, accessToken }) => {
         console.error("Error fetching categories:", error);
       }
     };
-
-    setSelectedTags([tag1, tag2, tag3].filter(Boolean));
     fetchCategories();
-  }, [articleData, tag1, tag2, tag3]);
+  }, []);
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -82,7 +79,14 @@ const ArticleSettings = ({ articleData, accessToken }) => {
   };
 
   const uploadNewImage = async () => {
-    if (!newImage) return;
+    if (!newImage) {
+      setSnackbar({
+        open: true,
+        message: "Please select an image to upload.",
+        severity: "warning",
+      });
+      return;
+    }
 
     const formData = new FormData();
     formData.append("image", newImage);
@@ -96,7 +100,6 @@ const ArticleSettings = ({ articleData, accessToken }) => {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",
-            "x-role": localStorage.getItem("role"),
           },
         }
       );
@@ -123,30 +126,35 @@ const ArticleSettings = ({ articleData, accessToken }) => {
   };
 
   const handleSaveChanges = async () => {
+    if (!name || !description || !price || selectedTags.length === 0) {
+      setSnackbar({
+        open: true,
+        message: "Please fill in all required fields.",
+        severity: "warning",
+      });
+      return;
+    }
+
     try {
-      const updatedTags = [
-        selectedTags[0] || null,
-        selectedTags[1] || null,
-        selectedTags[2] || null,
-      ];
+      setIsSaving(true);
 
       const updatedArticleData = {
         serviceId: articleData.serviceId,
         title: name,
         description,
-        tag1: updatedTags[0],
-        tag2: updatedTags[1],
-        tag3: updatedTags[2],
+        tag1: selectedTags[0] || null,
+        tag2: selectedTags[1] || null,
+        tag3: selectedTags[2] || null,
         activityStatus,
         price: parseFloat(price),
         image: uploadedImage,
+        level: level
       };
 
       await axios.put("/api/v1/article/edit-article", updatedArticleData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
-          "x-role": localStorage.getItem("role"),
         },
       });
 
@@ -162,61 +170,60 @@ const ArticleSettings = ({ articleData, accessToken }) => {
         message: "Failed to update article data.",
         severity: "error",
       });
+    } finally {
+      setIsSaving(false);
     }
   };
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} container spacing={2} alignItems="center">
-        <Grid item xs={12} sm={4}>
-          <Typography variant="h6">Current Image:</Typography>
-          {uploadedImage ? (
-            <Avatar
-              src={`/api/v1/uploads/service-images/${uploadedImage}`}
-              alt="Article Image"
-              sx={{ width: 200, height: 200, marginBottom: 2 }}
-            />
-          ) : (
-            <CircularProgress />
-          )}
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={uploadNewImage}
-            sx={{ marginTop: 2 }}
-            disabled={isUploading || !newImage}
-          >
-            {isUploading ? "Uploading..." : "Upload & Save Image"}
-          </Button>
-        </Grid>
-        <Grid item xs={12} sm={8}>
-          <Typography variant="h6">Article Name:</Typography>
-          <TextField
-            fullWidth
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            variant="outlined"
-            sx={{ marginBottom: 2 }}
+      <Grid item xs={12} sm={4}>
+        <Typography variant="h6">Current Image:</Typography>
+        {uploadedImage ? (
+          <Avatar
+            src={`/api/v1/uploads/service-images/${uploadedImage}`}
+            alt="Article Image"
+            sx={{ width: 200, height: 200, marginBottom: 2 }}
           />
-          <Typography variant="h6">Article Description:</Typography>
-          <TextField
-            fullWidth
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            variant="outlined"
-            multiline
-            rows={4}
-            sx={{ marginBottom: 2 }}
-          />
-        </Grid>
+        ) : (
+          <CircularProgress />
+        )}
+        <input type="file" accept="image/*" onChange={handleImageChange} />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={uploadNewImage}
+          sx={{ marginTop: 2 }}
+          disabled={isUploading}
+        >
+          {isUploading ? "Uploading..." : "Upload Image"}
+        </Button>
+      </Grid>
+
+      <Grid item xs={12} sm={8}>
+        <Typography variant="h6">Article Name:</Typography>
+        <TextField
+          fullWidth
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          variant="outlined"
+          sx={{ marginBottom: 2 }}
+        />
+        <Typography variant="h6">Article Description:</Typography>
+        <TextField
+          fullWidth
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          variant="outlined"
+          multiline
+          rows={4}
+          sx={{ marginBottom: 2 }}
+        />
       </Grid>
 
       <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          Activity Status:
-        </Typography>
-        <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
+        <Typography variant="body1">Activity Status:</Typography>
+        <FormControl fullWidth sx={{ marginBottom: 2 }}>
           <InputLabel>Activity Status</InputLabel>
           <Select
             value={activityStatus}
@@ -230,25 +237,20 @@ const ArticleSettings = ({ articleData, accessToken }) => {
       </Grid>
 
       <Grid item xs={12}>
-        <Typography variant="body1" sx={{ marginBottom: 1 }}>
+        <Typography variant="body1">
           <LocalOfferIcon sx={{ marginRight: 1, color: "#0288D1" }} /> Tags:
         </Typography>
-        <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
+        <FormControl fullWidth sx={{ marginBottom: 2 }}>
           <InputLabel>Tags</InputLabel>
           <Select
             multiple
             value={selectedTags}
             onChange={handleTagChange}
             renderValue={(selected) => selected.join(", ")}
-            MenuProps={{
-              PaperProps: { style: { maxHeight: 200, overflow: "auto" } },
-            }}
           >
             {categories.map((category) => (
               <MenuItem key={category.categoryId} value={category.category}>
-                <Checkbox
-                  checked={selectedTags.indexOf(category.category) > -1}
-                />
+                <Checkbox checked={selectedTags.includes(category.category)} />
                 <ListItemText primary={category.category} />
               </MenuItem>
             ))}
@@ -257,9 +259,7 @@ const ArticleSettings = ({ articleData, accessToken }) => {
       </Grid>
 
       <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          Price:
-        </Typography>
+        <Typography variant="body1">Price:</Typography>
         <TextField
           fullWidth
           type="number"
@@ -271,10 +271,8 @@ const ArticleSettings = ({ articleData, accessToken }) => {
       </Grid>
 
       <Grid item xs={12} sm={6}>
-        <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          Level:
-        </Typography>
-        <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
+        <Typography variant="body1">Level:</Typography>
+        <FormControl fullWidth sx={{ marginBottom: 2 }}>
           <InputLabel>Level</InputLabel>
           <Select
             value={level}
@@ -293,9 +291,10 @@ const ArticleSettings = ({ articleData, accessToken }) => {
           variant="contained"
           color="secondary"
           onClick={handleSaveChanges}
+          disabled={isSaving}
           sx={{ padding: "10px 20px", width: "100%" }}
         >
-          Save Changes
+          {isSaving ? "Saving..." : "Save Changes"}
         </Button>
       </Grid>
 
