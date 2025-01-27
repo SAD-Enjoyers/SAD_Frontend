@@ -123,7 +123,12 @@ function QuestionPage() {
         const token = localStorage.getItem("token");
   
         if (!token) {
-          setErrorMessage("User is not authenticated. ");
+          setErrorMessage("You must log in to rate this question.");
+        }
+
+        if (question.author === "current_user") { // فرض کنید "current_user" شناسه کاربر جاری است
+          setErrorMessage("You cannot rate your own question.");
+           // جلوگیری از ادامه اجرا
         }
   
         // Optionally, get the user role
@@ -147,7 +152,7 @@ function QuestionPage() {
         if (!response.ok) {
           const errorData = await response.json();
           if (response.status === 403) {
-            setErrorMessage("User is not authenticated. " || "You have already submitted a rating, but you can update it.");
+            setErrorMessage( errorData.message || "You are not authorized to submit a rating.");
           } else {
             throw new Error("Failed to submit rating.");
           }
