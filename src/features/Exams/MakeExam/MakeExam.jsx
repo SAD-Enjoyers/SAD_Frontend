@@ -17,7 +17,7 @@ import {
   Alert,
 } from "@mui/material";
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
-import { School, SchoolOutlined } from "@mui/icons-material";
+import { AddBox, School, SchoolOutlined } from "@mui/icons-material";
 import LoadingScreen from "../../../common/Loading";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -65,10 +65,16 @@ export default function MakeExam() {
     let isValid = true;
 
     if (!examName.trim()) {
-      setExamNameError(" ");
+      setExamNameError("Exam name is required. ");
       isValid = false;
     } else {
       setExamNameError("");
+    }
+    if (!description.trim()) {
+      setDescriptionError("Description is required.");
+      isValid = false;
+    } else {
+      setDescriptionError("");
     }
 
     if (!selectedLevel) {
@@ -226,7 +232,6 @@ export default function MakeExam() {
       maxMembers,
       minPassScore: parseInt(minScore),
     };
-    console.log(formData);
 
     fetch("/api/v1/exam/make-exam", {
       method: "POST",
@@ -239,11 +244,10 @@ export default function MakeExam() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         toast.success("Add Exam successfully");
         setTimeout(() => {
           navigate("/PrivateExam/" + data.data.serviceId);
-        }, 4000);
+        }, 3000);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -373,7 +377,7 @@ export default function MakeExam() {
           >
             Add New Exam
           </Typography>
-          <form onSubmit={handleFormSubmit}>
+          <Box>
             <Grid2
               container
               // alignItems="center"
@@ -394,11 +398,6 @@ export default function MakeExam() {
                       setExamNameError("");
                     }
                   }}
-                  onBlur={() => {
-                    if (examName.trim() === "") {
-                      setExamNameError("Course name is required.");
-                    }
-                  }}
                   helperText={examNameError}
                   error={!!examNameError}
                   variant="outlined"
@@ -416,8 +415,8 @@ export default function MakeExam() {
                 <TextField
                   label="Description"
                   fullWidth
-                  required
                   multiline
+                  required
                   rows={4}
                   value={description}
                   onChange={(e) => {
@@ -426,11 +425,6 @@ export default function MakeExam() {
                       setDescriptionError("Description is required.");
                     } else {
                       setDescriptionError("");
-                    }
-                  }}
-                  onBlur={() => {
-                    if (description.trim() === "") {
-                      setDescriptionError("Description is required.");
                     }
                   }}
                   helperText={descriptionError} // نمایش ارور
@@ -448,8 +442,7 @@ export default function MakeExam() {
                   <FormControl
                     fullWidth
                     variant="outlined"
-                    error={!!selectedLevelError}
-                    // helperText={selectedLevelError}
+                    error={!!selectedLevelError} // فعال‌سازی حالت ارور
                   >
                     <InputLabel>Level</InputLabel>
                     <Select
@@ -492,7 +485,6 @@ export default function MakeExam() {
                           <School
                             sx={{ fontSize: "1.2rem", color: "#4CAF50" }}
                           />
-
                           <Typography
                             variant="body2"
                             sx={{ fontSize: "0.9rem" }}
@@ -528,6 +520,15 @@ export default function MakeExam() {
                         </Box>
                       </MenuItem>
                     </Select>
+                    {/* نمایش ارور */}
+                    {selectedLevelError && (
+                      <Typography
+                        color="error"
+                        sx={{ mt: 1, fontSize: "13px", ml: "17px" }}
+                      >
+                        {selectedLevelError}
+                      </Typography>
+                    )}
                   </FormControl>
                 </Box>
               </Grid2>
@@ -589,13 +590,20 @@ export default function MakeExam() {
                       </MenuItem>
                     ))}
                   </Select>
+                  {selectedSubjectsError && (
+                    <Typography
+                      color="error"
+                      sx={{ mt: 1, fontSize: "13px", ml: "17px" }}
+                    >
+                      {selectedSubjectsError}
+                    </Typography>
+                  )}
                 </FormControl>
               </Grid2>
               <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
                 <Box
                   display={"flex"}
                   flexDirection={"column"}
-                  mb={"25px"}
                   justifyContent={"center"}
                   alignItems={"center"}
 
@@ -604,8 +612,6 @@ export default function MakeExam() {
                   <TextField
                     error={!!timeError}
                     label="exam time"
-                    // helperText={timeError}
-
                     value={value}
                     onChange={(e) => {
                       setValue(e.target.value);
@@ -629,6 +635,14 @@ export default function MakeExam() {
                     }}
                   ></TextField>
                 </Box>
+                {selectedLevelError && (
+                  <Typography
+                    color="error"
+                    sx={{ mt: 1, fontSize: "13px", ml: "17px" }}
+                  >
+                    {selectedLevelError}
+                  </Typography>
+                )}
               </Grid2>
 
               <Grid2 size={12}>
@@ -693,6 +707,14 @@ export default function MakeExam() {
                         },
                       }}
                     />
+                    {priceError && (
+                      <Typography
+                        color="error"
+                        sx={{ mr: 3, fontSize: "13px" }}
+                      >
+                        {priceError}
+                      </Typography>
+                    )}
                   </Box>
                   <Box
                     sx={{
@@ -746,6 +768,14 @@ export default function MakeExam() {
                         },
                       }}
                     />
+                    {minScoreError && (
+                      <Typography
+                        color="error"
+                        sx={{ mr: 3, fontSize: "13px" }}
+                      >
+                        {minScoreError}
+                      </Typography>
+                    )}
                   </Box>
                 </Box>
               </Grid2>
@@ -754,11 +784,15 @@ export default function MakeExam() {
 
             {/* دکمه ارسال */}
             <Box textAlign="center" mt={3} mb={5}>
-              <Button type="submit" variant="contained" color="primary">
+              <Button
+                onClick={handleFormSubmit}
+                variant="contained"
+                color="primary"
+              >
                 Add Exam
               </Button>
             </Box>
-          </form>
+          </Box>
           <Snackbar
             open={openSnackbar}
             autoHideDuration={1000}

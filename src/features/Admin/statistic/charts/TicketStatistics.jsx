@@ -63,7 +63,7 @@ const TicketStatistics = (props) => {
         alignItems: "center",
         justifyContent: "center",
         textAlign: "center",
-        width: { xs: "50%", sm: "80%", md: "100%" }, // واکنش‌گرا
+        // width: { xs: "50%", sm: "80%", md: "100%" }, // واکنش‌گرا
         height: "300px",
         paddingTop: 3,
         mt: 4,

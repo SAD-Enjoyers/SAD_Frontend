@@ -124,6 +124,7 @@ const ExamSettings = ({ examData, accessToken }) => {
         examDuration,
       };
 
+      // Update the exam data on the backend
       await axios.put("/api/v1/exam/edit-exam", updatedExamData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -131,6 +132,34 @@ const ExamSettings = ({ examData, accessToken }) => {
           "x-role": localStorage.getItem("role"),
         },
       });
+
+      // Fetch the updated exam data from the backend
+      const fetchResponse = await fetch(
+        `/api/v1/exam/${updatedExamData.serviceId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "x-role": "user",
+          },
+        }
+      );
+
+      const fetchedData = await fetchResponse.json();
+
+      // Update state with the fetched data
+      if (fetchedData.status === "success") {
+        const updatedExam = fetchedData.data;
+        setName(updatedExam.name);
+        setDescription(updatedExam.description);
+        setLevel(updatedExam.level);
+        setPrice(updatedExam.price);
+        setActivityStatus(updatedExam.activityStatus);
+        setExamDuration(updatedExam.examDuration);
+        setTag1(updatedExam.tag1);
+        setTag2(updatedExam.tag2);
+        setTag3(updatedExam.tag3);
+        setUploadedImage(updatedExam.image); // Update the image with the new one
+      }
 
       // Show success snackbar
       setSnackbarMessage("Image updated and exam data saved successfully!");
@@ -165,13 +194,14 @@ const ExamSettings = ({ examData, accessToken }) => {
         level,
         price: parseFloat(price),
         activityStatus,
-        image: examData.image,
+        image: uploadedImage, // Use the uploaded image
         tag1: updatedTags[0],
         tag2: updatedTags[1],
         tag3: updatedTags[2],
         examDuration: parseFloat(examDuration),
       };
 
+      // Send the PUT request to save changes
       await axios.put("/api/v1/exam/edit-exam", updatedExamData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -180,12 +210,37 @@ const ExamSettings = ({ examData, accessToken }) => {
         },
       });
 
+      // Fetch the updated exam data from the backend
+      const response = await fetch(`/api/v1/exam/${examData.serviceId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-role": "user",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch updated exam data");
+      }
+
+      const updatedData = await response.json();
+      if (updatedData.status === "success") {
+        const newExamData = updatedData.data;
+
+        // Update each state variable with the new data
+        setName(newExamData.name);
+        setDescription(newExamData.description);
+        setLevel(newExamData.level);
+        setPrice(newExamData.price);
+        setActivityStatus(newExamData.activityStatus);
+        setExamDuration(newExamData.examDuration);
+        setUploadedImage(newExamData.image);
+        setSelectedTags([newExamData.tag1, newExamData.tag2, newExamData.tag3]);
+      }
+
       // Show success snackbar
-      setSnackbarMessage("Exam data updated successfully!");
+      setSnackbarMessage("Exam data updated and fetched successfully!");
       setSeverity("success");
       setOpenSnackbar(true);
-
-      setSelectedTags(selectedTags); // Update state to reflect saved tags
     } catch (error) {
       console.error("Error updating exam data:", error);
 
@@ -203,7 +258,9 @@ const ExamSettings = ({ examData, accessToken }) => {
     if (value.length <= 3) {
       setSelectedTags(value);
     } else {
-      alert("You can only select up to 3 tags.");
+      setSnackbarMessage("You can only select up to 3 tags.");
+      setSeverity("error");
+      setOpenSnackbar(true);
     }
   };
 

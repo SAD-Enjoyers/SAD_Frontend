@@ -33,8 +33,7 @@ function QuestionPage() {
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // Error message state
-  const [ratingStatus, setRatingStatus] = useState(null);  // اضافه کردن استیت جدید
-
+  const [ratingStatus, setRatingStatus] = useState(null); // اضافه کردن استیت جدید
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -42,17 +41,22 @@ function QuestionPage() {
         // const urlParams = new URLSearchParams(window.location.search);
         // const questionId = urlParams.get("questionId") ;
 
-        const response = await fetch(`/api/v1/questions/get-question?questionId=${questionId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `/api/v1/questions/get-question?questionId=${questionId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // Include Bearer
+              "x-role": localStorage.getItem("role"),
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch question");
         }
-      
+
         const data = await response.json();
         console.log("Response from server:", data);
         if (data.status === "success") {
@@ -60,18 +64,35 @@ function QuestionPage() {
             id: data.data.question.questionId,
             title: data.data.question.questionName,
             text: data.data.question.questionText,
-            tags: [data.data.question.tag1, data.data.question.tag2, data.data.question.tag3].filter(Boolean),
+            tags: [
+              data.data.question.tag1,
+              data.data.question.tag2,
+              data.data.question.tag3,
+            ].filter(Boolean),
             rating: parseFloat(data.data.question.score),
             ratingCount: data.data.question.numberOfVoters,
             options: [
-              { text: data.data.question.o1, isCorrect: data.data.question.rightAnswer === 1 },
-              { text: data.data.question.o2, isCorrect: data.data.question.rightAnswer === 2 },
-              { text: data.data.question.o3, isCorrect: data.data.question.rightAnswer === 3 },
-              { text: data.data.question.o4, isCorrect: data.data.question.rightAnswer === 4 },
+              {
+                text: data.data.question.o1,
+                isCorrect: data.data.question.rightAnswer === 1,
+              },
+              {
+                text: data.data.question.o2,
+                isCorrect: data.data.question.rightAnswer === 2,
+              },
+              {
+                text: data.data.question.o3,
+                isCorrect: data.data.question.rightAnswer === 3,
+              },
+              {
+                text: data.data.question.o4,
+                isCorrect: data.data.question.rightAnswer === 4,
+              },
             ],
             author: data.data.question.userName || "Unknown Author",
-            userScore: data.userScore !== null ? data.userScore : 0,
+            userScore: data.data.userScore !== null ? data.data.userScore : 0,
           };
+          console.log(data.data.userScore);
 
           setQuestion(fetchedQuestion);
         } else {
@@ -121,21 +142,26 @@ function QuestionPage() {
       try {
         // Retrieve the token (the same key used at login)
         const token = localStorage.getItem("token");
-  
+
         if (!token) {
-          setErrorMessage("User is not authenticated. ");
+          setErrorMessage("You must log in to rate this question.");
         }
-  
+
+        // if (question.author === "current_user") { // فرض کنید "current_user" شناسه کاربر جاری است
+        //   setErrorMessage("You cannot rate your own question.");
+        //    // جلوگیری از ادامه اجرا
+        // }
+
         // Optionally, get the user role
         const role = localStorage.getItem("role") || "user";
-  
+
         // If you are using a proxy, "/api/v1/..." is fine.
         // Otherwise, use the full URL: "http://localhost:3000/api/v1/..."
         const response = await fetch("/api/v1/questions/score-submission", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,  // Include Bearer
+            Authorization: `Bearer ${token}`, // Include Bearer
             "x-role": role,
           },
           body: JSON.stringify({
@@ -143,65 +169,63 @@ function QuestionPage() {
             scored: newValue,
           }),
         });
-  
+
         if (!response.ok) {
           const errorData = await response.json();
           if (response.status === 403) {
-            setErrorMessage("User is not authenticated. " || "You have already submitted a rating, but you can update it.");
+            setErrorMessage(
+              errorData.message || "You are not authorized to submit a rating."
+            );
           } else {
             throw new Error("Failed to submit rating.");
           }
           return;
         }
-  
+
         const data = await response.json();
-        console.log("API Response after submitting rating:", data)
-        
+        console.log("API Response after submitting rating:", data);
+
         if (data.status === "success") {
           setQuestion((prevQuestion) => ({
             ...prevQuestion,
             rating: parseFloat(data.data.score),
             ratingCount: data.data.numberOfVoters,
             userScore: data.data.userScore || newValue,
-            
           }));
 
           localStorage.setItem(`rating-${question.id}`, newValue);
-        // اگر اولین بار است ریتینگ داده شده، پیام ارسال می‌شود
-        if (ratingStatus === null) {
-          setSuccessMessage("Your rating has been successfully submitted.");
-          setRatingStatus("submitted");
+          // اگر اولین بار است ریتینگ داده شده، پیام ارسال می‌شود
+          if (ratingStatus === null) {
+            setSuccessMessage("Your rating has been successfully submitted.");
+            setRatingStatus("submitted");
+          } else {
+            // اگر ریتینگ آپدیت شده باشد، پیام آپدیت شدن داده می‌شود
+            setSuccessMessage("Your rating has been updated successfully!");
+            setRatingStatus("updated");
+          }
         } else {
-          // اگر ریتینگ آپدیت شده باشد، پیام آپدیت شدن داده می‌شود
-          setSuccessMessage("Your rating has been updated successfully!");
-          setRatingStatus("updated");
+          throw new Error("Unexpected response format");
         }
-      } else {
-        throw new Error("Unexpected response format");
-      }
       } catch (error) {
         console.error("Error submitting rating:", error);
         setErrorMessage("Error submitting rating. Please try again.");
       }
     }
   };
-  
-  useEffect(() => {
-    if (question) {
-      const savedRating = localStorage.getItem(`rating-${question.id}`);
-      if (savedRating && parseFloat(savedRating) !== question.userScore) {
-        setQuestion((prevQuestion) => ({
-          ...prevQuestion,
-          userScore: parseFloat(savedRating),
-        }));
-      }
-    }
-  }, [question?.id]);
-  
-  
-  
 
-  
+  // useEffect(() => {
+  //   if (question) {
+  //     const savedRating = localStorage.getItem(`rating-${question.id}`);
+  //     console.log(question.userScore);
+
+  //     if (savedRating && parseFloat(savedRating) !== question.userScore) {
+  //       setQuestion((prevQuestion) => ({
+  //         ...prevQuestion,
+  //         userScore: parseFloat(savedRating),
+  //       }));
+  //     }
+  //   }
+  // }, [question?.id]);
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -212,7 +236,11 @@ function QuestionPage() {
   }
 
   if (error) {
-    return <Typography variant="h6" color="error">Error: {error}</Typography>;
+    return (
+      <Typography variant="h6" color="error">
+        Error: {error}
+      </Typography>
+    );
   }
 
   return (
@@ -267,7 +295,14 @@ function QuestionPage() {
                 Author: {question.author}
               </Typography>
 
-              <Box sx={{ marginTop: 2, display: "flex", flexWrap: "wrap", marginLeft: "10px" }}>
+              <Box
+                sx={{
+                  marginTop: 2,
+                  display: "flex",
+                  flexWrap: "wrap",
+                  marginLeft: "10px",
+                }}
+              >
                 {question.tags.map((tag, index) => (
                   <Chip
                     key={index}
@@ -291,7 +326,9 @@ function QuestionPage() {
                       <FormControlLabel
                         key={index}
                         value={option.text}
-                        control={<Radio sx={{ zIndex: 1 }} disabled={submitted} />}
+                        control={
+                          <Radio sx={{ zIndex: 1 }} disabled={submitted} />
+                        }
                         label={`${index + 1}. ${option.text}`}
                         sx={{
                           display: "flex",
@@ -306,9 +343,7 @@ function QuestionPage() {
                               ? "red"
                               : "inherit",
                           fontWeight:
-                            submitted && option.isCorrect
-                              ? "bold"
-                              : "normal",
+                            submitted && option.isCorrect ? "bold" : "normal",
                         }}
                       />
                     ))}
@@ -345,39 +380,39 @@ function QuestionPage() {
               textAlign: "center",
             }}
           >
-     {/* Error Message */}
-     {errorMessage && (
-        <Typography
-          sx={{
-            backgroundColor: '#f8d7da',
-            color: '#721c24',
-            padding: '8px 16px',
-            borderRadius: '5px',
-            fontSize: '14px',
-            marginBottom: '10px',
-          }}
-        >
-          {errorMessage}
-        </Typography>
-      )}
+            {/* Error Message */}
+            {errorMessage && (
+              <Typography
+                sx={{
+                  backgroundColor: "#f8d7da",
+                  color: "#721c24",
+                  padding: "8px 16px",
+                  borderRadius: "5px",
+                  fontSize: "14px",
+                  marginBottom: "10px",
+                }}
+              >
+                {errorMessage}
+              </Typography>
+            )}
 
-      {/* Success Message */}
-      {successMessage &&(
-        <Typography
-          sx={{
-            backgroundColor: '#d4edda',
-            color: '#155724',
-            padding: '8px 16px',
-            borderRadius: '5px',
-            marginBottom: '10px',
-            fontSize: '14px',
-          }}
-        >
-          {successMessage}
-        </Typography>
-      )}
+            {/* Success Message */}
+            {successMessage && (
+              <Typography
+                sx={{
+                  backgroundColor: "#d4edda",
+                  color: "#155724",
+                  padding: "8px 16px",
+                  borderRadius: "5px",
+                  marginBottom: "10px",
+                  fontSize: "14px",
+                }}
+              >
+                {successMessage}
+              </Typography>
+            )}
 
-  {/* Update Message (for rating update)
+            {/* Update Message (for rating update)
   {hasSubmitted && (
     <Typography
       sx={{
@@ -396,22 +431,31 @@ function QuestionPage() {
     </Typography>
   )} */}
 
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', fontSize: '18px', color: '#000', marginBottom: '10px' }}>
+            <Typography
+              variant="h6"
+              gutterBottom
+              sx={{
+                fontWeight: "bold",
+                fontSize: "18px",
+                color: "#000",
+                marginBottom: "10px",
+              }}
+            >
               Rate this question
             </Typography>
 
             {question.userScore !== null && (
-        <Typography
-          variant="body1"
-          sx={{
-            marginTop: 2,
-            color: "#4CAF50",
-            fontWeight: "bold",
-          }}
-        >
-        {question.userScore} / 5
-        </Typography>
-      )}
+              <Typography
+                variant="body1"
+                sx={{
+                  marginTop: 2,
+                  color: "#4CAF50",
+                  fontWeight: "bold",
+                }}
+              >
+                {question.userScore} / 5
+              </Typography>
+            )}
 
             <MuiRating
               name={`rating-${question.id}`}
@@ -419,32 +463,38 @@ function QuestionPage() {
               onChange={handleRatingChange}
               precision={0.5}
               sx={{
-                color: '#FFD700',
-                fontSize: '24px',
-                cursor: 'pointer',
-                '& .MuiRating-iconEmpty': {
-                  color: '#FFD70066',
+                color: "#FFD700",
+                fontSize: "24px",
+                cursor: "pointer",
+                "& .MuiRating-iconEmpty": {
+                  color: "#FFD70066",
                 },
-                marginBottom: '10px',
+                marginBottom: "10px",
               }}
             />
 
             <Typography
               variant="body1"
-              sx={{  marginTop: '5px', color: "#1E88E5", fontWeight: "bold",fontSize: '14px' }}
+              sx={{
+                marginTop: "5px",
+                color: "#1E88E5",
+                fontWeight: "bold",
+                fontSize: "14px",
+              }}
             >
               Average Rating: {question.rating.toFixed(1)}
             </Typography>
             <Typography
               variant="body1"
-              sx={{    color: '#1E88E5',
-                fontWeight: 'bold',
-                fontSize: '14px',
-                marginTop: '5px', }}
+              sx={{
+                color: "#1E88E5",
+                fontWeight: "bold",
+                fontSize: "14px",
+                marginTop: "5px",
+              }}
             >
               Total Votes: {question?.ratingCount || 0}
             </Typography>
-
 
             {/* {question.userScore !== null && (
         <Typography
@@ -485,7 +535,9 @@ function QuestionPage() {
             position: "relative",
           }}
         >
-          {successMessage.includes("Correct") ? "Correct Answer!" : "Incorrect Answer!"}
+          {successMessage.includes("Correct")
+            ? "Correct Answer!"
+            : "Incorrect Answer!"}
           <IconButton
             edge="end"
             color="inherit"
@@ -510,7 +562,7 @@ function QuestionPage() {
             }}
           >
             <span style={{ color: "#000", fontWeight: "bold" }}>
-              The correct answer is: {" "}
+              The correct answer is:{" "}
             </span>
             <span
               style={{
