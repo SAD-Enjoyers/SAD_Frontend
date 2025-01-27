@@ -223,12 +223,12 @@ export default function AddAdmin({ closeState }) {
                   backgroundColor: "#caf0f8",
                   borderColor: "#023e8a",
                 },
+                mr: 2,
               }}
               onClick={() => {
                 closeState;
                 cancleHandle();
               }}
-              sx={{ mr: 2 }}
             >
               Cancel
             </Button>
