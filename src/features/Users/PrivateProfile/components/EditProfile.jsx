@@ -29,9 +29,7 @@ export default function EditProfile({ closeState, fetchData }) {
   };
   const submitImage = async (closeState) => {
     if (!selectedImage) {
-      toast.error("Please select an image first!", {
-        autoClose: 3000,
-      });
+      submitInformation(false, closeState);
 
       return;
     }
@@ -83,8 +81,13 @@ export default function EditProfile({ closeState, fetchData }) {
     if (image) formData.image = image;
     if (address) formData.address = address;
 
-    const token = localStorage.getItem("token");
+    // Check if formData is empty
+    if (Object.keys(formData).length === 0) {
+      toast.error("Form data is empty. Please fill in the information.");
+      return; // Stop further execution
+    }
 
+    const token = localStorage.getItem("token");
     fetch("/api/v1/profile/edit-profile", {
       method: "PUT",
       headers: {
@@ -96,14 +99,16 @@ export default function EditProfile({ closeState, fetchData }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        toast.success("change profile successfully");
+        toast.success("Profile updated successfully.");
         setTimeout(() => {
           closeState();
-          fetchData(token);
-        }, 3000);
+          // fetchData(token);
+          window.location.reload();
+        }, 2000);
       })
       .catch((error) => {
         console.error("Error:", error);
+        toast.error("Request failed. Please try again.");
       });
   };
 

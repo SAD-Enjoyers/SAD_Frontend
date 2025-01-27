@@ -190,7 +190,7 @@ const ArticleContent = ({ articleData, accessToken }) => {
                 overflowY: "auto",
                 backgroundColor: "white",
                 fontFamily: "'Roboto', 'Arial', sans-serif",
-                lineHeight: "1.6",
+                
               }}
             />
           </Box>

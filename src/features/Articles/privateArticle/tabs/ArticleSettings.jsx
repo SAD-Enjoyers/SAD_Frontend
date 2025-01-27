@@ -22,27 +22,21 @@ import { LocalOffer as LocalOfferIcon } from "@mui/icons-material";
 const ArticleSettings = ({ articleData, accessToken }) => {
   const [newImage, setNewImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadedImage, setUploadedImage] = useState(articleData?.image || "");
-
-  const [name, setName] = useState(articleData?.name || "");
-  const [description, setDescription] = useState(
-    articleData?.description || ""
-  );
-  const [level, setLevel] = useState(articleData?.level || "");
-  const [price, setPrice] = useState(articleData?.price || "");
+  const [uploadedImage, setUploadedImage] = useState("");
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [level, setLevel] = useState("");
+  const [price, setPrice] = useState("");
   const [activityStatus, setActivityStatus] = useState("Active");
-
   const [categories, setCategories] = useState([]);
   const [selectedTags, setSelectedTags] = useState(
-    [articleData?.tag1, articleData?.tag2, articleData?.tag3].filter(Boolean)
+    [].filter(Boolean)
   );
-
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
-
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -52,14 +46,45 @@ const ArticleSettings = ({ articleData, accessToken }) => {
         setCategories(response.data.data.categoryList || []);
       } catch (error) {
         console.error("Error fetching categories:", error);
+        setSnackbar({
+          open: true,
+          message: "Failed to load categories.",
+          severity: "error",
+        });
       }
     };
-    fetchCategories();
-  }, []);
 
-  const handleSnackbarClose = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
+    const fetchArticleDetails = async () => {
+      try {
+        const response = await axios.get(
+          `/api/v1/article/preview/${articleData.serviceId}`
+        );
+
+        const articleDetails = response.data.data.Article;
+        setName(articleDetails.name);
+        setDescription(articleDetails.description);
+        setLevel(articleDetails.level);
+        setPrice(articleDetails.price);
+        setUploadedImage(articleDetails.image);
+        setActivityStatus(articleDetails.activityStatus);
+        setSelectedTags(
+          [articleDetails.tag1, articleDetails.tag2, articleDetails.tag3].filter(Boolean)
+        );
+      } catch (error) {
+        console.error("Error fetching article details:", error);
+        setSnackbar({
+          open: true,
+          message: "Failed to load article details.",
+          severity: "error",
+        });
+      }
+    };
+
+    fetchCategories();
+    fetchArticleDetails();
+  }, [articleData.serviceId]);
+
+  const handleSnackbarClose = () => setSnackbar({ ...snackbar, open: false });
 
   const handleTagChange = (event) => {
     const { value } = event.target;
@@ -75,7 +100,16 @@ const ArticleSettings = ({ articleData, accessToken }) => {
   };
 
   const handleImageChange = (e) => {
-    setNewImage(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file && file.size <= 2 * 1024 * 1024) {
+      setNewImage(file);
+    } else {
+      setSnackbar({
+        open: true,
+        message: "Image size must be less than 2MB.",
+        severity: "warning",
+      });
+    }
   };
 
   const uploadNewImage = async () => {
@@ -104,29 +138,7 @@ const ArticleSettings = ({ articleData, accessToken }) => {
         }
       );
 
-      const newImageName = response.data.data.fileName;
-      setUploadedImage(newImageName);
-
-      const updatedArticleData = {
-        serviceId: articleData.serviceId,
-        title: name,
-        description,
-        tag1: selectedTags[0] || null,
-        tag2: selectedTags[1] || null,
-        tag3: selectedTags[2] || null,
-        activityStatus,
-        price: parseFloat(price),
-        image: uploadedImage,
-        level: level,
-      };
-
-      await axios.put("/api/v1/article/edit-article", updatedArticleData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      });
-
+      setUploadedImage(response.data.data.fileName);
       setSnackbar({
         open: true,
         message: "Image uploaded successfully!",
@@ -168,7 +180,7 @@ const ArticleSettings = ({ articleData, accessToken }) => {
         activityStatus,
         price: parseFloat(price),
         image: uploadedImage,
-        level: level,
+        level,
       };
 
       await axios.put("/api/v1/article/edit-article", updatedArticleData, {
