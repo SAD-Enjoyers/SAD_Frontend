@@ -65,40 +65,46 @@ export default function MakeExam() {
     let isValid = true;
 
     if (!examName.trim()) {
-      setExamNameError("this feild required*");
+      setExamNameError("Exam name is required. ");
       isValid = false;
     } else {
       setExamNameError("");
     }
+    if (!description.trim()) {
+      setDescriptionError("Description is required.");
+      isValid = false;
+    } else {
+      setDescriptionError("");
+    }
 
     if (!selectedLevel) {
-      setSelectedLevelError("this feild required*");
+      setSelectedLevelError(" ");
       isValid = false;
     } else {
       setSelectedLevelError("");
     }
 
     if (selectedSubjects.length === 0) {
-      setSelectedSubjectsError("this feild required*");
+      setSelectedSubjectsError(" ");
       isValid = false;
     } else {
       setSelectedSubjectsError("");
     }
 
     if (!value) {
-      setTimeError("this feild required*");
+      setTimeError(" ");
       isValid = false;
     } else {
       setTimeError("");
     }
     if (!price) {
-      setPriceError(" this feild required*");
+      setPriceError(" ");
       isValid = false;
     } else {
       setPriceError("");
     }
     if (!minScore) {
-      setMinScoreError("this feild required*");
+      setMinScoreError(" ");
       isValid = false;
     } else {
       setMinScoreError("");
@@ -238,11 +244,10 @@ export default function MakeExam() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         toast.success("Add Exam successfully");
         setTimeout(() => {
           navigate("/PrivateExam/" + data.data.serviceId);
-        }, 4000);
+        }, 3000);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -411,10 +416,16 @@ export default function MakeExam() {
                   label="Description"
                   fullWidth
                   multiline
+                  required
                   rows={4}
                   value={description}
                   onChange={(e) => {
                     setDescription(e.target.value);
+                    if (e.target.value.trim() === "") {
+                      setDescriptionError("Description is required.");
+                    } else {
+                      setDescriptionError("");
+                    }
                   }}
                   helperText={descriptionError} // نمایش ارور
                   error={!!descriptionError} // بررسی ارور برای فعال کردن حالت قرمز
@@ -696,12 +707,12 @@ export default function MakeExam() {
                         },
                       }}
                     />
-                    {selectedLevelError && (
+                    {priceError && (
                       <Typography
                         color="error"
                         sx={{ mr: 3, fontSize: "13px" }}
                       >
-                        {selectedLevelError}
+                        {priceError}
                       </Typography>
                     )}
                   </Box>
@@ -757,12 +768,12 @@ export default function MakeExam() {
                         },
                       }}
                     />
-                    {selectedLevelError && (
+                    {minScoreError && (
                       <Typography
                         color="error"
                         sx={{ mr: 3, fontSize: "13px" }}
                       >
-                        {selectedLevelError}
+                        {minScoreError}
                       </Typography>
                     )}
                   </Box>
