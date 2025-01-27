@@ -24,24 +24,26 @@ const ArticleContent = ({ articleData, accessToken }) => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [attachment, setAttachment] = useState(null);
   const [attachmentName, setAttachmentName] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   useEffect(() => {
     const fetchArticleContent = async () => {
       try {
-        const apiUrl = `/api/v1/article/blog/${articleData.serviceId}`;
-        const response = await axios.get(apiUrl, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "x-role": localStorage.getItem("role"),
-          },
-        });
+        const response = await axios.get(
+          `/api/v1/article/blog/${articleData.serviceId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
 
         if (response?.data?.data) {
           setTitle(response.data.data.title || "");
@@ -51,22 +53,25 @@ const ArticleContent = ({ articleData, accessToken }) => {
           throw new Error("No article data found.");
         }
       } catch (error) {
-        console.error("Error fetching article content:", error);
-        setSnackbarSeverity("error");
-        setSnackbarMessage("Failed to load article content.");
-        setOpenSnackbar(true);
+        showSnackbar("Failed to load article content.", "error");
       }
     };
 
     fetchArticleContent();
-  }, [articleData]);
+  }, [articleData, accessToken]);
+
+  const showSnackbar = (message, severity = "success") => {
+    setSnackbar({ open: true, message, severity });
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file && file.size > 5 * 1024 * 1024) {
-      setSnackbarSeverity("error");
-      setSnackbarMessage("File size must be less than 5MB.");
-      setOpenSnackbar(true);
+      showSnackbar("File size must be less than 5MB.", "error");
       return;
     }
 
@@ -74,40 +79,24 @@ const ArticleContent = ({ articleData, accessToken }) => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch(`/api/v1/educational-service/upload-attachment`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "x-role": localStorage.getItem("role"),
-        },
-        body: formData,
-      });
+      const response = await axios.post(
+        `/api/v1/educational-service/upload-attachment`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-      }
-
-      const responseData = await response.json();
-
-      setAttachmentName(responseData.data.fileName || file.name);
-      setAttachment(file);
-
-      setSnackbarSeverity("success");
-      setSnackbarMessage("Attachment uploaded successfully!");
-      setOpenSnackbar(true);
+      setAttachmentName(response.data.data.fileName || file.name);
+      showSnackbar("Attachment uploaded successfully!");
     } catch (error) {
-      console.error("Error uploading attachment:", error);
-      setSnackbarSeverity("error");
-      setSnackbarMessage(error.message || "Failed to upload the attachment.");
-      setOpenSnackbar(true);
-    } finally {
-      setLoading(false);
+      showSnackbar(error.response?.data?.message || "Failed to upload the attachment.", "error");
     }
   };
 
   const handlePublicPage = () => {
-    localStorage.setItem("articleData", JSON.stringify(articleData));
     navigate("/PublicArticle", { state: { articleData } });
   };
 
@@ -115,42 +104,31 @@ const ArticleContent = ({ articleData, accessToken }) => {
     event.preventDefault();
 
     if (!title.trim() || !content.trim()) {
-      setSnackbarSeverity("error");
-      setSnackbarMessage("Title and content are required.");
-      setOpenSnackbar(true);
+      showSnackbar("Title and content are required.", "error");
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/v1/article/blog/${articleData.serviceId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "x-role": localStorage.getItem("role"),
-        },
-        body: JSON.stringify({
+      await axios.post(
+        `/api/v1/article/blog/${articleData.serviceId}`,
+        {
           title,
           text: content,
           attachment: attachmentName,
-        }),
-      });
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-      }
-
-      setSnackbarSeverity("success");
-      setSnackbarMessage("Article saved successfully!");
-      setOpenSnackbar(true);
+      showSnackbar("Article saved successfully!");
     } catch (error) {
-      console.error("Error saving article:", error);
-      setSnackbarSeverity("error");
-      setSnackbarMessage(error.message || "Failed to save the article.");
-      setOpenSnackbar(true);
+      showSnackbar(error.response?.data?.message || "Failed to save the article.", "error");
     } finally {
       setLoading(false);
     }
@@ -175,7 +153,7 @@ const ArticleContent = ({ articleData, accessToken }) => {
             gap: 2,
           }}
         >
-          <Box sx={{ flex: 1, paddingTop:2 }}>
+          <Box sx={{ flex: 1, paddingTop: 2 }}>
             <Typography variant="h6" gutterBottom>
               Rich Text Editor
             </Typography>
@@ -185,12 +163,12 @@ const ArticleContent = ({ articleData, accessToken }) => {
               onChange={(value) => setContent(value)}
               style={{
                 padding: "10px",
-                minHeight: "1200px",
+                minHeight: "400px",
                 maxHeight: "1000px",
                 overflowY: "auto",
                 backgroundColor: "white",
                 fontFamily: "'Roboto', 'Arial', sans-serif",
-                
+
               }}
             />
           </Box>
@@ -208,9 +186,8 @@ const ArticleContent = ({ articleData, accessToken }) => {
             </Typography>
             <div
               style={{
-
                 padding: "10px",
-                minHeight: "1200px",
+                minHeight: "400px",
                 maxHeight: "1000px",
                 overflowY: "auto",
                 backgroundColor: "white",
@@ -255,17 +232,17 @@ const ArticleContent = ({ articleData, accessToken }) => {
       </Button>
 
       <Snackbar
-        open={openSnackbar}
+        open={snackbar.open}
         autoHideDuration={3000}
-        onClose={() => setOpenSnackbar(false)}
+        onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
-          onClose={() => setOpenSnackbar(false)}
-          severity={snackbarSeverity}
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
           sx={{ width: "100%" }}
         >
-          {snackbarMessage}
+          {snackbar.message}
         </Alert>
       </Snackbar>
     </div>

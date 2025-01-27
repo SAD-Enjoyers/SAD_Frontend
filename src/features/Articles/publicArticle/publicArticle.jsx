@@ -369,6 +369,7 @@ function PublicArticle() {
                 <Button
                   variant="contained"
                   sx={{ marginTop: 2 }}
+                  target="_blank" // Open in a new tab
                   href={`/api/v1/uploads/article-attachments/${articleContents.attachment}`}
                 >
                   Download Attachment
