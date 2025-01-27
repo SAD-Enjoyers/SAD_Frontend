@@ -25,17 +25,17 @@ const ArticleSettings = ({ articleData, accessToken }) => {
   const [uploadedImage, setUploadedImage] = useState(articleData?.image || "");
 
   const [name, setName] = useState(articleData?.name || "");
-  const [description, setDescription] = useState(articleData?.description || "");
+  const [description, setDescription] = useState(
+    articleData?.description || ""
+  );
   const [level, setLevel] = useState(articleData?.level || "");
   const [price, setPrice] = useState(articleData?.price || "");
   const [activityStatus, setActivityStatus] = useState("Active");
 
   const [categories, setCategories] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([
-    articleData?.tag1,
-    articleData?.tag2,
-    articleData?.tag3,
-  ].filter(Boolean));
+  const [selectedTags, setSelectedTags] = useState(
+    [articleData?.tag1, articleData?.tag2, articleData?.tag3].filter(Boolean)
+  );
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -107,6 +107,26 @@ const ArticleSettings = ({ articleData, accessToken }) => {
       const newImageName = response.data.data.fileName;
       setUploadedImage(newImageName);
 
+      const updatedArticleData = {
+        serviceId: articleData.serviceId,
+        title: name,
+        description,
+        tag1: selectedTags[0] || null,
+        tag2: selectedTags[1] || null,
+        tag3: selectedTags[2] || null,
+        activityStatus,
+        price: parseFloat(price),
+        image: uploadedImage,
+        level: level,
+      };
+
+      await axios.put("/api/v1/article/edit-article", updatedArticleData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
       setSnackbar({
         open: true,
         message: "Image uploaded successfully!",
@@ -148,7 +168,7 @@ const ArticleSettings = ({ articleData, accessToken }) => {
         activityStatus,
         price: parseFloat(price),
         image: uploadedImage,
-        level: level
+        level: level,
       };
 
       await axios.put("/api/v1/article/edit-article", updatedArticleData, {
