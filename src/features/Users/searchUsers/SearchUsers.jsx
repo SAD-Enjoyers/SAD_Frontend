@@ -10,7 +10,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-
+import defaultProfilePicture from "../../../assets/images/defaultProfilePicture.jpg";
 function SearchUsers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,8 +31,8 @@ function SearchUsers() {
           lastName: q.lastName,
           description: q.description,
           image:
-            q.image == "/api/public/defaultProfilePicture.jpg"
-              ? "/api/public/defaultProfilePicture.jpg"
+            !q.image || q.image === "/api/public/defaultProfilePicture.jpg"
+              ? defaultProfilePicture
               : "/api/v1/uploads/profile-images/" + q.image,
         }));
         setUsers(transformedQuestions);
