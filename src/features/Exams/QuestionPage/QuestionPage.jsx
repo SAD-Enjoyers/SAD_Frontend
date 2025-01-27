@@ -126,10 +126,10 @@ function QuestionPage() {
           setErrorMessage("You must log in to rate this question.");
         }
 
-        if (question.author === "current_user") { // فرض کنید "current_user" شناسه کاربر جاری است
-          setErrorMessage("You cannot rate your own question.");
-           // جلوگیری از ادامه اجرا
-        }
+        // if (question.author === "current_user") { // فرض کنید "current_user" شناسه کاربر جاری است
+        //   setErrorMessage("You cannot rate your own question.");
+        //    // جلوگیری از ادامه اجرا
+        // }
   
         // Optionally, get the user role
         const role = localStorage.getItem("role") || "user";
