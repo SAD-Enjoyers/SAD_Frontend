@@ -113,7 +113,7 @@ const WalletPage = () => {
         if (response.status === 200) {
           setSnackbarMessage("Deposit successful!");
           setSnackbarSeverity("success");
-          window.location.reload();
+        
         } else {
           throw new Error("Deposit failed");
         }
@@ -149,7 +149,7 @@ const WalletPage = () => {
         if (response.status === 200) {
           setSnackbarMessage("Withdrawal successful!");
           setSnackbarSeverity("success");
-          window.location.reload();
+          
         } else {
           throw new Error("Withdrawal failed");
         }
@@ -186,7 +186,6 @@ const WalletPage = () => {
         if (response.status === 200) {
           setSnackbarMessage("Card number updated successfully!");
           setSnackbarSeverity("success");
-          window.location.reload();
         } else {
           throw new Error("Failed to update card number");
         }
