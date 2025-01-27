@@ -109,11 +109,11 @@ function QuestionPage() {
     setCorrectAnswer(correct.text);
     setOpenDialog(true); // Open dialog after submission
 
-    if (selected && selected.isCorrect) {
-      setSuccessMessage("Correct! You chose the right answer.");
-    } else {
-      setSuccessMessage(`Incorrect! The correct answer is: ${correct.text}.`);
-    }
+    // if (selected && selected.isCorrect) {
+    //   setSuccessMessage("Correct! You chose the right answer.");
+    // } else {
+    //   setSuccessMessage(`Incorrect! The correct answer is: ${correct.text}.`);
+    // }
   };
 
   const handleRatingChange = async (event, newValue) => {
@@ -123,7 +123,7 @@ function QuestionPage() {
         const token = localStorage.getItem("token");
   
         if (!token) {
-          throw new Error("User is not authenticated. Token is missing.");
+          setErrorMessage("User is not authenticated. ");
         }
   
         // Optionally, get the user role
@@ -147,7 +147,7 @@ function QuestionPage() {
         if (!response.ok) {
           const errorData = await response.json();
           if (response.status === 403) {
-            setErrorMessage(errorData.message || "You have already submitted a rating, but you can update it.");
+            setErrorMessage("User is not authenticated. " || "You have already submitted a rating, but you can update it.");
           } else {
             throw new Error("Failed to submit rating.");
           }
@@ -155,13 +155,14 @@ function QuestionPage() {
         }
   
         const data = await response.json();
+        console.log("API Response after submitting rating:", data)
         
         if (data.status === "success") {
           setQuestion((prevQuestion) => ({
             ...prevQuestion,
             rating: parseFloat(data.data.score),
             ratingCount: data.data.numberOfVoters,
-            userScore: newValue, 
+            userScore: data.data.userScore || newValue,
             
           }));
 
@@ -188,14 +189,16 @@ function QuestionPage() {
   useEffect(() => {
     if (question) {
       const savedRating = localStorage.getItem(`rating-${question.id}`);
-      if (savedRating) {
+      if (savedRating && parseFloat(savedRating) !== question.userScore) {
         setQuestion((prevQuestion) => ({
           ...prevQuestion,
           userScore: parseFloat(savedRating),
         }));
       }
     }
-  }, [question]);
+  }, [question?.id]);
+  
+  
   
 
   
@@ -346,15 +349,12 @@ function QuestionPage() {
      {errorMessage && (
         <Typography
           sx={{
-            backgroundColor: "#f8d7da",
-            color: "#721c24",
-            padding: "10px 20px",
-            borderRadius: "5px",
-            fontSize: "14px",
-            fontWeight: 500,
-            textAlign: "center",
-            border: "1px solid #f5c6cb",
-            marginBottom: "10px",
+            backgroundColor: '#f8d7da',
+            color: '#721c24',
+            padding: '8px 16px',
+            borderRadius: '5px',
+            fontSize: '14px',
+            marginBottom: '10px',
           }}
         >
           {errorMessage}
@@ -365,15 +365,12 @@ function QuestionPage() {
       {successMessage &&(
         <Typography
           sx={{
-            backgroundColor: "#d4edda",
-            color: "#155724",
-            padding: "10px 20px",
-            borderRadius: "5px",
-            fontSize: "14px",
-            fontWeight: 500,
-            textAlign: "center",
-            border: "1px solid #c3e6cb",
-            marginBottom: "10px",
+            backgroundColor: '#d4edda',
+            color: '#155724',
+            padding: '8px 16px',
+            borderRadius: '5px',
+            marginBottom: '10px',
+            fontSize: '14px',
           }}
         >
           {successMessage}
@@ -399,38 +396,57 @@ function QuestionPage() {
     </Typography>
   )} */}
 
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', fontSize: '18px', color: '#000', marginBottom: '10px' }}>
               Rate this question
             </Typography>
+
+            {question.userScore !== null && (
+        <Typography
+          variant="body1"
+          sx={{
+            marginTop: 2,
+            color: "#4CAF50",
+            fontWeight: "bold",
+          }}
+        >
+        {question.userScore} / 5
+        </Typography>
+      )}
+
             <MuiRating
               name={`rating-${question.id}`}
               value={question.userScore || 0}
               onChange={handleRatingChange}
               precision={0.5}
               sx={{
-                color: "#FFD700",
-                fontSize: "48px",
-                cursor:  "pointer",
-                "& .MuiRating-iconEmpty": {
-                  color: "#FFD70066",
+                color: '#FFD700',
+                fontSize: '24px',
+                cursor: 'pointer',
+                '& .MuiRating-iconEmpty': {
+                  color: '#FFD70066',
                 },
+                marginBottom: '10px',
               }}
             />
 
             <Typography
               variant="body1"
-              sx={{  marginTop: 2, color: "#1E88E5", fontWeight: "bold" }}
+              sx={{  marginTop: '5px', color: "#1E88E5", fontWeight: "bold",fontSize: '14px' }}
             >
               Average Rating: {question.rating.toFixed(1)}
             </Typography>
             <Typography
               variant="body1"
-              sx={{ marginTop: 1, color: "#1E88E5", fontWeight: "bold" }}
+              sx={{    color: '#1E88E5',
+                fontWeight: 'bold',
+                fontSize: '14px',
+                marginTop: '5px', }}
             >
-              Total Votes: {question.ratingCount}
+              Total Votes: {question?.ratingCount || 0}
             </Typography>
-            
-            {question.userScore !== null && (
+
+
+            {/* {question.userScore !== null && (
         <Typography
           variant="body1"
           sx={{
@@ -442,7 +458,7 @@ function QuestionPage() {
           Your Rating: {question.userScore}
 
         </Typography>
-      )}
+      )} */}
           </Box>
         </Box>
       </Box>

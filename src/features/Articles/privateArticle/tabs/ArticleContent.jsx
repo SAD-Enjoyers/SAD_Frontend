@@ -175,7 +175,7 @@ const ArticleContent = ({ articleData, accessToken }) => {
             gap: 2,
           }}
         >
-          <Box sx={{ flex: 1 }}>
+          <Box sx={{ flex: 1, paddingTop:2 }}>
             <Typography variant="h6" gutterBottom>
               Rich Text Editor
             </Typography>
@@ -184,12 +184,13 @@ const ArticleContent = ({ articleData, accessToken }) => {
               value={content}
               onChange={(value) => setContent(value)}
               style={{
-                height: "200px",
-                minHeight: "400px",
-                marginBottom: "40px",
-                width: "100%",
+                padding: "10px",
+                minHeight: "1200px",
+                maxHeight: "1000px",
+                overflowY: "auto",
                 backgroundColor: "white",
-                borderRadius: 10,
+                fontFamily: "'Roboto', 'Arial', sans-serif",
+                lineHeight: "1.6",
               }}
             />
           </Box>
@@ -207,10 +208,9 @@ const ArticleContent = ({ articleData, accessToken }) => {
             </Typography>
             <div
               style={{
-                whiteSpace: "pre-wrap",
-                border: "1px solid #ddd",
+
                 padding: "10px",
-                minHeight: "400px",
+                minHeight: "1200px",
                 maxHeight: "1000px",
                 overflowY: "auto",
                 backgroundColor: "white",

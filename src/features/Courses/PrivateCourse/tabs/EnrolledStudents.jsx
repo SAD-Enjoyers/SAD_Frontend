@@ -147,7 +147,7 @@ const EnrolledStudents = ({ courseId, accessToken }) => {
               }}
             >
               <Avatar
-                src={`/api/v1/uploads/service-images/${participant.image}`}
+                src={`/api/v1/uploads/profile-images/${participant.image}`}
                 alt={participant.id}
                 sx={{ width: 80, height: 80, marginBottom: "16px" }}
               />
