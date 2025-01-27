@@ -16,6 +16,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/signuppage/, ""), // Adjust path as needed
       },
+      "/forgetPassword": {
+        target: "http://localhost:3000/api/", // Address for forgetPassword
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/forgetPassword/, ""), // Adjust path as needed
+      },
     },
   },
 });
