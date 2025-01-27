@@ -33,7 +33,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api/v1/auth/signup": {
-        target: "http://localhost:3000", // Localhost for the signup route
+        target: "http://91.132.50.155:3000", // Localhost for the signup route
         changeOrigin: true,
         rewrite: (path) =>
           path.replace(/^\/api\/v1\/auth\/signup/, "/v1/auth/signup"),
