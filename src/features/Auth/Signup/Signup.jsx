@@ -83,7 +83,7 @@ function Signup() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/v1/auth/signup", {
+      const response = await fetch("/signuppage/v1/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
