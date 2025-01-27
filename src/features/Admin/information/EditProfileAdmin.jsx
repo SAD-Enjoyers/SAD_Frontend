@@ -10,13 +10,13 @@ import {
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
-export default function EditProfile({ closeState }) {
+export default function EditProfile({ fetchData }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
 
-  const submitInformation = (closeState) => {
+  const submitInformation = (fetchData) => {
     const formData = {};
     if (firstName) formData.firstName = firstName;
     if (lastName) formData.lastName = lastName;
@@ -36,9 +36,8 @@ export default function EditProfile({ closeState }) {
       .then((data) => {
         toast.success("change profile successfully");
         setTimeout(() => {
-          closeState();
-          window.location.reload();
-        }, 3000);
+          fetchData(localStorage.getItem("AdminToken"));
+        }, 1000);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -48,13 +47,6 @@ export default function EditProfile({ closeState }) {
   return (
     <Box
       sx={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        zIndex: 10,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -67,8 +59,6 @@ export default function EditProfile({ closeState }) {
           width: "90%",
           maxWidth: 400,
           backgroundColor: "white",
-          borderRadius: 2,
-          boxShadow: 5,
         }}
       >
         <Typography variant="h6" gutterBottom>
@@ -138,18 +128,10 @@ export default function EditProfile({ closeState }) {
           </Box>
           <Box display="flex" justifyContent="flex-end" mt={2}>
             <Button
-              variant="outlined"
-              color="secondary"
-              onClick={closeState}
-              sx={{ mr: 2 }}
-            >
-              Cancel
-            </Button>
-            <Button
               variant="contained"
               color="primary"
               onClick={() => {
-                submitInformation(closeState);
+                submitInformation(fetchData);
               }}
             >
               Save

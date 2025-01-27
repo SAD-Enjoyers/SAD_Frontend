@@ -170,17 +170,17 @@ export default function ReviewComponent(props) {
 
   const navigateToPublicExam = (examData) => {
     localStorage.setItem("examData", JSON.stringify(examData)); // Save to localStorage
-    navigate("/PublicExam", { state: { examData } });
+    navigate(`/ExamPreview/${examData.serviceId}`);
   };
 
   const navigateToPublicArticle = (articleData) => {
     localStorage.setItem("articleData", JSON.stringify(articleData)); // Save to localStorage
-    navigate("/PublicArticle", { state: { articleData } });
+    navigate(`/ArticlePreview/${articleData.serviceId}`);
   };
 
   const navigateToPublicCourse = (courseData) => {
     localStorage.setItem("courseData", JSON.stringify(courseData)); // Save to localStorage
-    navigate("/PublicCourse", { state: { courseData } });
+    navigate(`/CoursePreview/${courseData.serviceId}`);
   };
 
   // اجرا در بارگذاری اولیه
