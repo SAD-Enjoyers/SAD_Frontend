@@ -12,14 +12,14 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
       "/signuppage": {
-        target: "http://localhost:3000/api/", // Address for signup
+        target: "http://localhost:3000", // Localhost backend
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/signuppage/, ""), // Adjust path as needed
+        rewrite: (path) => path.replace(/^\/signuppage/, "/api"), // Rewrite to match the backend route
       },
       "/forgetPassword": {
-        target: "http://localhost:3000/api/", // Address for forgetPassword
+        target: "http://localhost:3000", // Localhost backend
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/forgetPassword/, ""), // Adjust path as needed
+        rewrite: (path) => path.replace(/^\/forgetPassword/, "/api"), // Rewrite to match the backend route
       },
     },
   },
