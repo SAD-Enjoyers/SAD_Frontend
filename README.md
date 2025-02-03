@@ -170,6 +170,12 @@ A preview of one of the private services pages, demonstrating advanced features.
 
 ![Private Services Page](src/assets/screenshots/private-services-page.png)
 
+### Public Services Page
+
+A glimpse of one of the public services pages, highlighting the services available to all users.
+
+![Public Services Page](src/assets/screenshots/public-services-page.png)
+
 ---
 
 Thank you for being a part of **SAD_Enjoyers**!
