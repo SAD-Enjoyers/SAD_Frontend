@@ -7,6 +7,7 @@ Welcome to the **SAD_Enjoyers** frontend repository! This is the frontend servic
 This repository contains the user interface of the SAD_Enjoyers application, which communicates with the backend via API endpoints. The frontend is designed to be responsive, efficient, and user-friendly.
 
 The **SAD_Enjoyers** project consists of two main repositories:
+
 1. [Backend Repository](https://github.com/SAD-Enjoyers/SAD_Backend)
 2. Frontend Repository (this repository)
 
@@ -85,6 +86,7 @@ frontend/
    ```
 
 2. **Install dependencies:**
+
    - Install NodeJS version 20.18.0
 
    ```bash
@@ -102,7 +104,7 @@ frontend/
 2. **Set environment variables**:
    - Define `VITE_API_BASE_URL` for backend API communication
    - Set authentication-related values if needed
-   
+
 ## Usage
 
 - **Start the development server**:
@@ -134,7 +136,40 @@ We welcome contributions to this project! Please follow these steps:
 3. Make changes and commit.
 4. Submit a pull request for review.
 
+## Screenshots
+
+Here are some previews of the application:
+
+### Main Page
+
+This is the homepage of our application, showcasing the interface and main features.
+
+![Main Page](src/assets/screenshots/main-page.png)
+
+---
+
+### Profile Page
+
+The profile page where users can view and manage their personal information.
+
+![Profile Page](src/assets/screenshots/profile-page.png)
+
+---
+
+### Admin Page
+
+The admin dashboard, where administrators can manage users, content, and analytics.
+
+![Admin Page](src/assets/screenshots/admin-page.png)
+
+---
+
+### Private Services Page
+
+A preview of one of the private services pages, demonstrating advanced features.
+
+![Private Services Page](src/assets/screenshots/private-services-page.png)
+
 ---
 
 Thank you for being a part of **SAD_Enjoyers**!
-
